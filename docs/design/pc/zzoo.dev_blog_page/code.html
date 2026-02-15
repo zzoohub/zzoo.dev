@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>zzoo.dev Blog Page</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Use Inter as the main sans font and JetBrains Mono for a developer mono feel -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2060df",
+                        "primary-dark": "#1a4cb0",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#111621",
+                        "surface-dark": "#1a202c",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for horizontal tag list */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-100 font-display transition-colors duration-200">
+<!-- Sticky Header -->
+<header class="fixed top-0 left-0 w-full z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 transition-colors duration-200">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+<!-- Logo -->
+<div class="flex-shrink-0">
+<a class="font-mono text-xl font-bold tracking-tight text-gray-900 dark:text-white hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                    zzoo.dev
+                </a>
+</div>
+<!-- Desktop Navigation -->
+<nav class="hidden md:flex space-x-8">
+<a class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Home</a>
+<a class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Services</a>
+<a class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Projects</a>
+<a class="text-sm font-bold text-gray-900 dark:text-white relative after:content-[''] after:absolute after:-bottom-[21px] after:left-0 after:w-full after:h-[2px] after:bg-primary" href="#">Blog</a>
+<a class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">About</a>
+</nav>
+<!-- Right Controls -->
+<div class="flex items-center space-x-4">
+<button class="text-xs font-mono font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white uppercase">KO</button>
+<div class="w-px h-4 bg-gray-300 dark:bg-gray-700"></div>
+<button aria-label="Toggle Dark Mode" class="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+<svg class="lucide lucide-moon hidden dark:block" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
+<svg class="lucide lucide-sun block dark:hidden" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>
+</button>
+<!-- Mobile Menu Button -->
+<button class="md:hidden text-gray-500 dark:text-gray-400">
+<svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg>
+</button>
+</div>
+</div>
+</header>
+<main class="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+<!-- Page Header -->
+<section class="text-center mb-16 max-w-2xl mx-auto">
+<h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-gray-900 dark:text-white mb-4">Blog</h1>
+<p class="text-xl text-gray-500 dark:text-gray-400 font-light leading-relaxed">
+                Writing about software, architecture, and building things that work.
+            </p>
+</section>
+<!-- Tag Filter Row -->
+<div class="mb-16">
+<div class="flex overflow-x-auto gap-3 pb-4 hide-scrollbar justify-start sm:justify-center">
+<button class="whitespace-nowrap px-4 py-2 bg-primary text-white text-sm font-medium rounded-full hover:bg-primary-dark transition-colors shadow-lg shadow-primary/20">All</button>
+<button class="whitespace-nowrap px-4 py-2 bg-transparent border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 text-sm font-medium rounded-full hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-900 dark:hover:text-white transition-all">Architecture</button>
+<button class="whitespace-nowrap px-4 py-2 bg-transparent border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 text-sm font-medium rounded-full hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-900 dark:hover:text-white transition-all">Frontend</button>
+<button class="whitespace-nowrap px-4 py-2 bg-transparent border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 text-sm font-medium rounded-full hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-900 dark:hover:text-white transition-all">DevOps</button>
+<button class="whitespace-nowrap px-4 py-2 bg-transparent border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 text-sm font-medium rounded-full hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-900 dark:hover:text-white transition-all">TypeScript</button>
+<button class="whitespace-nowrap px-4 py-2 bg-transparent border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 text-sm font-medium rounded-full hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-900 dark:hover:text-white transition-all">Career</button>
+</div>
+</div>
+<!-- Blog Post List -->
+<div class="max-w-4xl mx-auto flex flex-col">
+<!-- Post Item 1 -->
+<article class="group py-8 sm:py-10 border-b border-gray-200 dark:border-gray-800 last:border-0 hover:bg-gray-50 dark:hover:bg-white/5 -mx-4 px-4 sm:mx-0 sm:px-6 rounded-2xl transition-all duration-300 cursor-pointer">
+<div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between mb-2">
+<time class="text-sm font-mono text-gray-400 dark:text-gray-500 mb-2 sm:mb-0" datetime="2026-02-10">Feb 10, 2026 · 8 min read</time>
+</div>
+<h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-3 group-hover:text-primary dark:group-hover:text-primary transition-colors">
+                    Why I Chose Next.js for Static Sites in 2026
+                </h2>
+<p class="text-base text-gray-600 dark:text-gray-400 leading-relaxed mb-4 max-w-3xl">
+                    A practical comparison of modern SSG options. Is the complexity of the app router worth it for simple blogs? I dive into build times, DX, and output quality.
+                </p>
+<div class="flex flex-wrap gap-2 mt-auto">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">Architecture</span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">Next.js</span>
+</div>
+</article>
+<!-- Post Item 2 -->
+<article class="group py-8 sm:py-10 border-b border-gray-200 dark:border-gray-800 last:border-0 hover:bg-gray-50 dark:hover:bg-white/5 -mx-4 px-4 sm:mx-0 sm:px-6 rounded-2xl transition-all duration-300 cursor-pointer">
+<div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between mb-2">
+<time class="text-sm font-mono text-gray-400 dark:text-gray-500 mb-2 sm:mb-0" datetime="2026-01-28">Jan 28, 2026 · 6 min read</time>
+</div>
+<h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-3 group-hover:text-primary dark:group-hover:text-primary transition-colors">
+                    Designing for AI Discoverability: llms.txt and Beyond
+                </h2>
+<p class="text-base text-gray-600 dark:text-gray-400 leading-relaxed mb-4 max-w-3xl">
+                    SEO isn't just for Google anymore. How to structure your developer blog so that LLMs can effectively cite and retrieve your content.
+                </p>
+<div class="flex flex-wrap gap-2 mt-auto">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">AI</span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">SEO</span>
+</div>
+</article>
+<!-- Post Item 3 -->
+<article class="group py-8 sm:py-10 border-b border-gray-200 dark:border-gray-800 last:border-0 hover:bg-gray-50 dark:hover:bg-white/5 -mx-4 px-4 sm:mx-0 sm:px-6 rounded-2xl transition-all duration-300 cursor-pointer">
+<div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between mb-2">
+<time class="text-sm font-mono text-gray-400 dark:text-gray-500 mb-2 sm:mb-0" datetime="2026-01-15">Jan 15, 2026 · 5 min read</time>
+</div>
+<h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-3 group-hover:text-primary dark:group-hover:text-primary transition-colors">
+                    Building a D2 Diagram Pipeline for Documentation
+                </h2>
+<p class="text-base text-gray-600 dark:text-gray-400 leading-relaxed mb-4 max-w-3xl">
+                    Stop dragging boxes around. Learn how to treat your architecture diagrams as code, version control them, and render them automatically in CI.
+                </p>
+<div class="flex flex-wrap gap-2 mt-auto">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">DevOps</span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">D2</span>
+</div>
+</article>
+<!-- Post Item 4 -->
+<article class="group py-8 sm:py-10 border-b border-gray-200 dark:border-gray-800 last:border-0 hover:bg-gray-50 dark:hover:bg-white/5 -mx-4 px-4 sm:mx-0 sm:px-6 rounded-2xl transition-all duration-300 cursor-pointer">
+<div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between mb-2">
+<time class="text-sm font-mono text-gray-400 dark:text-gray-500 mb-2 sm:mb-0" datetime="2025-12-22">Dec 22, 2025 · 12 min read</time>
+</div>
+<h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-3 group-hover:text-primary dark:group-hover:text-primary transition-colors">
+                    TypeScript Patterns I Use in Every Project
+                </h2>
+<p class="text-base text-gray-600 dark:text-gray-400 leading-relaxed mb-4 max-w-3xl">
+                    From discriminated unions to branded types. A collection of patterns that catch bugs at compile time without making your codebase unreadable.
+                </p>
+<div class="flex flex-wrap gap-2 mt-auto">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">TypeScript</span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">Frontend</span>
+</div>
+</article>
+<!-- Post Item 5 -->
+<article class="group py-8 sm:py-10 border-b border-gray-200 dark:border-gray-800 last:border-0 hover:bg-gray-50 dark:hover:bg-white/5 -mx-4 px-4 sm:mx-0 sm:px-6 rounded-2xl transition-all duration-300 cursor-pointer">
+<div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between mb-2">
+<time class="text-sm font-mono text-gray-400 dark:text-gray-500 mb-2 sm:mb-0" datetime="2025-11-05">Nov 05, 2025 · 9 min read</time>
+</div>
+<h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-3 group-hover:text-primary dark:group-hover:text-primary transition-colors">
+                    The Case for Solopreneurship in Tech
+                </h2>
+<p class="text-base text-gray-600 dark:text-gray-400 leading-relaxed mb-4 max-w-3xl">
+                    Why the era of the "full-stack developer" is shifting towards the "full-product developer". Leveraging modern tools to build businesses alone.
+                </p>
+<div class="flex flex-wrap gap-2 mt-auto">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">Career</span>
+</div>
+</article>
+</div>
+<!-- Bottom CTA -->
+<section class="mt-24 mb-16 text-center">
+<h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">Want to work together?</h2>
+<button class="bg-primary hover:bg-primary-dark text-white font-medium px-8 py-3 rounded-full transition-all shadow-lg shadow-primary/30 transform hover:-translate-y-0.5">
+                Get in Touch
+            </button>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-gray-50 dark:bg-[#0b0e14] border-t border-gray-200 dark:border-gray-800">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+<!-- Brand -->
+<div class="col-span-1">
+<a class="font-mono text-lg font-bold text-gray-900 dark:text-white mb-4 block" href="#">zzoo.dev</a>
+<p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed max-w-xs">
+                        Building software with intention. Focused on clean architecture, performance, and developer experience.
+                    </p>
+</div>
+<!-- Nav -->
+<div class="col-span-1">
+<h3 class="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">Explore</h3>
+<ul class="space-y-3">
+<li><a class="text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Services</a></li>
+<li><a class="text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Projects</a></li>
+<li><a class="text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Blog</a></li>
+<li><a class="text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">About</a></li>
+</ul>
+</div>
+<!-- Connect -->
+<div class="col-span-1">
+<h3 class="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">Connect</h3>
+<ul class="space-y-3">
+<li><a class="text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">GitHub</a></li>
+<li><a class="text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Twitter / X</a></li>
+<li><a class="text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">LinkedIn</a></li>
+<li><a class="text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Email</a></li>
+</ul>
+</div>
+</div>
+<div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800 flex flex-col sm:flex-row justify-between items-center">
+<p class="text-xs text-gray-500 dark:text-gray-500">
+                    © 2026 zzoo.dev. All rights reserved.
+                </p>
+<div class="mt-4 sm:mt-0 flex space-x-6">
+<a class="text-xs text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white" href="#">Privacy</a>
+<a class="text-xs text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white" href="#">Terms</a>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

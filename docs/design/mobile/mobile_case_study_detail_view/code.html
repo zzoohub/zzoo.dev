@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mobile Case Study Detail View - zzoo.dev</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                    spacing: {
+                        'safe-bottom': 'env(safe-area-inset-bottom)',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for dark theme feel */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #101622; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333; 
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #444; 
+        }
+        
+        /* Blur backdrop support */
+        .backdrop-blur-md {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-gray-100 font-display min-h-screen antialiased selection:bg-primary/30 selection:text-primary-100 pb-24">
+<!-- Sticky Header -->
+<header class="fixed top-0 left-0 right-0 h-14 z-50 flex items-center justify-between px-4 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
+<div class="font-mono text-lg font-bold tracking-tight">zzoo.dev</div>
+<button class="p-2 -mr-2 text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
+<span class="material-icons-outlined text-2xl">menu</span>
+</button>
+</header>
+<!-- Main Content Wrapper -->
+<main class="pt-20 px-4 max-w-lg mx-auto w-full">
+<!-- Breadcrumb -->
+<nav class="mb-6">
+<p class="text-sm font-medium text-gray-500 dark:text-gray-500">
+<a class="hover:text-primary dark:hover:text-primary transition-colors" href="#">Projects</a>
+<span class="mx-1">/</span>
+<span class="text-gray-900 dark:text-gray-300">E-Commerce Rebuild</span>
+</p>
+</nav>
+<!-- Project Header -->
+<section class="mb-10">
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary dark:text-blue-400 border border-primary/20">
+                    Startup
+                </span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
+                    3 months
+                </span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800/30">
+                    Completed
+                </span>
+</div>
+<h1 class="text-3xl font-bold tracking-tight mb-4 text-gray-900 dark:text-white leading-tight">
+                E-Commerce Platform Rebuild
+            </h1>
+<p class="text-lg font-semibold text-gray-700 dark:text-gray-300 leading-relaxed border-l-4 border-primary pl-4">
+                Migrating a legacy monolith to a scalable, high-performance microservices architecture.
+            </p>
+</section>
+<!-- Content: Overview -->
+<section class="mb-10 prose prose-gray dark:prose-invert prose-lg max-w-none">
+<h2 class="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">Overview</h2>
+<p class="text-gray-600 dark:text-gray-400 leading-7 text-[16px]">
+                The client, a rapidly growing D2C fashion brand, was struggling with a decade-old codebase that crashed during peak traffic. The goal was to modernize the stack without interrupting daily sales operations.
+            </p>
+</section>
+<!-- Tech Stack -->
+<section class="mb-12">
+<h3 class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-500 mb-4">Technology Stack</h3>
+<div class="space-y-4">
+<div>
+<span class="text-sm font-medium text-gray-400 dark:text-gray-500 block mb-2">Frontend</span>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded text-sm text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700">Next.js</span>
+<span class="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded text-sm text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700">React</span>
+<span class="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded text-sm text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700">TypeScript</span>
+<span class="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded text-sm text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700">Tailwind CSS</span>
+</div>
+</div>
+<div>
+<span class="text-sm font-medium text-gray-400 dark:text-gray-500 block mb-2">Backend &amp; Data</span>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded text-sm text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700">Node.js</span>
+<span class="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded text-sm text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700">GraphQL</span>
+<span class="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded text-sm text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700">PostgreSQL</span>
+<span class="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded text-sm text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700">Redis</span>
+</div>
+</div>
+<div>
+<span class="text-sm font-medium text-gray-400 dark:text-gray-500 block mb-2">Infrastructure</span>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded text-sm text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700">AWS</span>
+<span class="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded text-sm text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700">Docker</span>
+<span class="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded text-sm text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700">Terraform</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Content: Problem -->
+<section class="mb-10">
+<h2 class="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">The Problem</h2>
+<p class="text-gray-600 dark:text-gray-400 leading-7 text-[16px] mb-4">
+                The existing PHP monolith had become unmanageable. Deployment times exceeded 45 minutes, and the database was a single point of failure. During Black Friday sales, the checkout page experienced a 30% error rate due to connection pooling limits.
+            </p>
+</section>
+<!-- Architecture Diagram -->
+<section class="mb-12">
+<div class="w-full bg-gray-900 dark:bg-[#0c111a] rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden relative group">
+<!-- Diagram Placeholder Visuals -->
+<div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/graphy-dark.png')] opacity-20"></div>
+<div class="relative p-6 flex flex-col items-center justify-center min-h-[240px]">
+<!-- Abstract Nodes -->
+<div class="flex justify-between w-full max-w-[200px] mb-8">
+<div class="w-12 h-12 rounded bg-gray-800 border border-gray-700 flex items-center justify-center">
+<span class="material-icons-outlined text-gray-500 text-xl">devices</span>
+</div>
+<div class="flex-1 border-t-2 border-dashed border-gray-700 self-center mx-2 relative top-[1px]"></div>
+<div class="w-12 h-12 rounded bg-primary/20 border border-primary/40 flex items-center justify-center shadow-[0_0_15px_rgba(19,91,236,0.2)]">
+<span class="material-icons-outlined text-primary text-xl">dns</span>
+</div>
+</div>
+<div class="h-8 border-l-2 border-dashed border-gray-700 mb-2"></div>
+<div class="material-icons-outlined text-gray-600 rotate-90">arrow_right_alt</div>
+<div class="flex gap-4 mt-2">
+<div class="w-10 h-10 rounded bg-gray-800 border border-gray-700 flex items-center justify-center">
+<span class="material-icons-outlined text-gray-500 text-sm">storage</span>
+</div>
+<div class="w-10 h-10 rounded bg-gray-800 border border-gray-700 flex items-center justify-center">
+<span class="material-icons-outlined text-gray-500 text-sm">cached</span>
+</div>
+<div class="w-10 h-10 rounded bg-gray-800 border border-gray-700 flex items-center justify-center">
+<span class="material-icons-outlined text-gray-500 text-sm">lock</span>
+</div>
+</div>
+</div>
+<div class="absolute bottom-3 right-3 text-[10px] text-gray-600 font-mono">System Architecture v2.0</div>
+</div>
+<p class="mt-2 text-xs text-center text-gray-500 italic" data-alt="Abstract minimalist architecture diagram showing data flow from client devices to server infrastructure">High-level architecture of the new microservices implementation.</p>
+</section>
+<!-- Content: Solution -->
+<section class="mb-10">
+<h2 class="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">The Solution</h2>
+<p class="text-gray-600 dark:text-gray-400 leading-7 text-[16px]">
+                We implemented a strangler fig pattern to gradually migrate functionalities. The checkout process was the first to move to a serverless architecture using AWS Lambda, ensuring instant scaling. We introduced Redis for session caching, which immediately alleviated database load.
+            </p>
+</section>
+<!-- Results Section -->
+<section class="mb-16">
+<h2 class="text-xl font-bold mb-6 text-gray-900 dark:text-gray-100">Key Outcomes</h2>
+<div class="grid grid-cols-1 gap-4">
+<!-- Result Card 1 -->
+<div class="bg-white dark:bg-gray-800/40 border border-gray-200 dark:border-gray-700 rounded-lg p-5 flex items-center justify-between">
+<div>
+<div class="text-3xl font-bold text-gray-900 dark:text-white">40%</div>
+<div class="text-sm font-medium text-gray-500 dark:text-gray-400 mt-1">Faster Load Times</div>
+</div>
+<div class="h-10 w-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+<span class="material-icons-outlined text-green-600 dark:text-green-400">speed</span>
+</div>
+</div>
+<!-- Result Card 2 -->
+<div class="bg-white dark:bg-gray-800/40 border border-gray-200 dark:border-gray-700 rounded-lg p-5 flex items-center justify-between">
+<div>
+<div class="text-3xl font-bold text-gray-900 dark:text-white">99.9%</div>
+<div class="text-sm font-medium text-gray-500 dark:text-gray-400 mt-1">Uptime Achieved</div>
+</div>
+<div class="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+<span class="material-icons-outlined text-primary">cloud_done</span>
+</div>
+</div>
+<!-- Result Card 3 -->
+<div class="bg-white dark:bg-gray-800/40 border border-gray-200 dark:border-gray-700 rounded-lg p-5 flex items-center justify-between">
+<div>
+<div class="text-3xl font-bold text-gray-900 dark:text-white">15%</div>
+<div class="text-sm font-medium text-gray-500 dark:text-gray-400 mt-1">Conversion Lift</div>
+</div>
+<div class="h-10 w-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+<span class="material-icons-outlined text-purple-600 dark:text-purple-400">trending_up</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Simple Footer -->
+<footer class="pb-8 border-t border-gray-200 dark:border-gray-800 pt-8">
+<div class="flex flex-col gap-4 text-center">
+<p class="text-sm text-gray-500">© 2023 zzoo.dev. All rights reserved.</p>
+<div class="flex justify-center gap-6">
+<a class="text-gray-400 hover:text-white transition-colors" href="#">Twitter</a>
+<a class="text-gray-400 hover:text-white transition-colors" href="#">GitHub</a>
+<a class="text-gray-400 hover:text-white transition-colors" href="#">LinkedIn</a>
+</div>
+</div>
+</footer>
+</main>
+<!-- Sticky Bottom Bar -->
+<div class="fixed bottom-6 left-4 right-4 z-50">
+<div class="bg-gray-900/95 dark:bg-[#1a202c]/95 backdrop-blur-md border border-gray-700/50 shadow-2xl rounded-xl p-3 pl-5 flex items-center justify-between ring-1 ring-white/5">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Next Step</span>
+<span class="text-sm font-medium text-white">Liked this project?</span>
+</div>
+<div class="flex items-center gap-3">
+<button class="bg-primary hover:bg-blue-600 text-white text-sm font-semibold py-2 px-5 rounded-lg transition-colors shadow-lg shadow-blue-900/20">
+                    Contact
+                </button>
+<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-gray-400 transition-colors">
+<span class="material-icons-outlined text-lg">close</span>
+</button>
+</div>
+</div>
+</div>
+</body></html>

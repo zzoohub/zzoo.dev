@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Case Study: E-Commerce Rebuild | zzoo.dev</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2060df",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#111621",
+                        "card-dark": "#1a2130",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "1.5rem", "xl": "2rem", "2xl": "3rem", "full": "9999px"},
+                    typography: (theme) => ({
+                        DEFAULT: {
+                            css: {
+                                color: theme('colors.gray.300'),
+                                h1: { color: theme('colors.white') },
+                                h2: { color: theme('colors.white') },
+                                h3: { color: theme('colors.white') },
+                                strong: { color: theme('colors.white') },
+                            },
+                        },
+                    }),
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for dark mode */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111621; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2d3748; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4a5568; 
+        }
+        
+        .glass-nav {
+            background-color: rgba(17, 22, 33, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Reading Progress Bar */
+        #progress-bar {
+            width: 0%;
+            height: 2px;
+            background-color: #2060df;
+            position: fixed;
+            top: 64px; /* Height of header */
+            left: 0;
+            z-index: 40;
+            transition: width 0.1s ease;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-gray-300 antialiased selection:bg-primary/30 selection:text-white">
+<!-- Sticky Header -->
+<header class="fixed top-0 w-full z-50 glass-nav h-16 transition-all duration-300">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+<a class="text-xl font-bold tracking-tight text-white font-mono hover:text-primary transition-colors" href="#">zzoo.dev</a>
+<nav class="hidden md:flex items-center space-x-8">
+<a class="text-sm font-medium text-gray-400 hover:text-white transition-colors" href="#">Work</a>
+<a class="text-sm font-medium text-gray-400 hover:text-white transition-colors" href="#">About</a>
+<a class="text-sm font-medium text-gray-400 hover:text-white transition-colors" href="#">Notes</a>
+</nav>
+<div class="flex items-center space-x-4">
+<button class="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/5">
+<span class="sr-only">Contact</span>
+<svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<div class="h-4 w-px bg-gray-700"></div>
+<button class="p-2 text-yellow-400 rounded-full bg-white/5">
+<svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+</div>
+</header>
+<!-- Reading Progress Bar -->
+<div id="progress-bar"></div>
+<main class="pt-32 pb-24 px-4 sm:px-6">
+<!-- Breadcrumb & Hero -->
+<div class="max-w-2xl mx-auto mb-16">
+<nav aria-label="Breadcrumb" class="flex mb-8">
+<ol class="flex items-center space-x-2 text-sm text-gray-500 font-mono">
+<li><a class="hover:text-primary transition-colors" href="#">Projects</a></li>
+<li><span class="text-gray-700">/</span></li>
+<li class="text-gray-300">E-Commerce Rebuild</li>
+</ol>
+</nav>
+<div class="space-y-6">
+<!-- Meta Pills -->
+<div class="flex flex-wrap gap-3">
+<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20 font-mono">Lead Developer</span>
+<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-gray-400 border border-white/10 font-mono">3 Months</span>
+<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-gray-400 border border-white/10 font-mono">Migration</span>
+</div>
+<h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                    E-Commerce Platform Rebuild
+                </h1>
+<p class="text-xl text-gray-400 leading-relaxed font-light">
+                    Transforming a legacy monolith into a scalable, headless architecture that drove a 25% increase in conversion rates.
+                </p>
+</div>
+</div>
+<!-- Hero Image / Abstract Representation -->
+<div class="max-w-4xl mx-auto mb-20 rounded-2xl overflow-hidden border border-white/5 shadow-2xl shadow-primary/5 relative group">
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent opacity-60 z-10"></div>
+<img alt="Abstract digital network visualization with blue nodes" class="w-full h-[400px] object-cover opacity-80 group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="Abstract digital network visualization representing complex system architecture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDK72OMkzCHql-7zP-gfDpRgcrRHb2ANpkiBYuTFsewB80LhH0b_dLBa-n0QCh5GewQOojmAh-Pf31v4HhUycSRHX-QqX8NWzLLPOaTPBqeNqWgcTook0yfiYjIiX7txIjNKZgdj2mrAeoKmB979TimgWRs8qjidGOmhsUcVs8mArBglaQtNWyaFupQAfP8XXmi_mViyakFkfnjofbXCzsXuzZvWQR7pE8jwRD5VP1nJpSFLbR9zBWdVhWNbwcpIgvKsvGbsG60o0A"/>
+<div class="absolute bottom-6 left-6 z-20">
+<p class="text-xs font-mono text-gray-400 uppercase tracking-widest">System Visualization</p>
+</div>
+</div>
+<!-- Main Content: Problem & Solution -->
+<article class="max-w-2xl mx-auto space-y-16">
+<!-- Overview -->
+<section class="prose prose-lg prose-invert text-gray-400">
+<h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+<span class="w-1.5 h-8 bg-primary rounded-full"></span>
+                    Overview
+                </h2>
+<p class="leading-relaxed">
+                    The client, a mid-sized fashion retailer, was struggling with a 5-year-old monolithic application that was becoming increasingly difficult to maintain. Page load times were averaging 4+ seconds, leading to significant bounce rates on mobile devices.
+                </p>
+<p class="leading-relaxed">
+                    My role was to architect and execute a complete rebuild, decoupling the frontend from the backend to enable a modern, headless commerce experience.
+                </p>
+</section>
+<!-- The Problem -->
+<section class="prose prose-lg prose-invert text-gray-400">
+<h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+<span class="w-1.5 h-8 bg-gray-700 rounded-full"></span>
+                    The Problem
+                </h2>
+<ul class="space-y-4 list-none pl-0">
+<li class="flex items-start gap-4">
+<div class="flex-shrink-0 w-6 h-6 rounded-full bg-red-500/10 flex items-center justify-center mt-1">
+<svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<span><strong class="text-gray-200">Technical Debt:</strong> The legacy codebase was fragile, with simple updates taking days to deploy due to lack of automated testing.</span>
+</li>
+<li class="flex items-start gap-4">
+<div class="flex-shrink-0 w-6 h-6 rounded-full bg-red-500/10 flex items-center justify-center mt-1">
+<svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<span><strong class="text-gray-200">Performance:</strong> Server-side rendering time was slow, and caching strategies were ineffective during high-traffic sales events.</span>
+</li>
+<li class="flex items-start gap-4">
+<div class="flex-shrink-0 w-6 h-6 rounded-full bg-red-500/10 flex items-center justify-center mt-1">
+<svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<span><strong class="text-gray-200">Scalability:</strong> The database was a single point of failure, often locking up during concurrent write operations.</span>
+</li>
+</ul>
+</section>
+<!-- The Solution -->
+<section class="prose prose-lg prose-invert text-gray-400">
+<h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+<span class="w-1.5 h-8 bg-primary rounded-full"></span>
+                    The Solution
+                </h2>
+<p class="leading-relaxed mb-8">
+                    We moved to a Jamstack architecture. By pre-rendering critical pages and using edge functions for dynamic content, we drastically reduced Time to First Byte (TTFB).
+                </p>
+<!-- Tech Stack Categorized -->
+<div class="bg-card-dark rounded-xl p-6 border border-white/5 space-y-6">
+<h3 class="text-sm font-mono uppercase tracking-widest text-gray-500 mb-4">Technology Stack</h3>
+<div class="grid grid-cols-1 md:grid-cols-[100px_1fr] gap-4 items-center border-b border-white/5 pb-4 last:border-0 last:pb-0">
+<span class="text-sm font-semibold text-white">Frontend</span>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 rounded-full text-xs font-mono bg-white/5 text-gray-300 border border-white/10">Next.js 14</span>
+<span class="px-3 py-1 rounded-full text-xs font-mono bg-white/5 text-gray-300 border border-white/10">TypeScript</span>
+<span class="px-3 py-1 rounded-full text-xs font-mono bg-white/5 text-gray-300 border border-white/10">Tailwind CSS</span>
+<span class="px-3 py-1 rounded-full text-xs font-mono bg-white/5 text-gray-300 border border-white/10">Framer Motion</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-[100px_1fr] gap-4 items-center border-b border-white/5 pb-4 last:border-0 last:pb-0">
+<span class="text-sm font-semibold text-white">Backend</span>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 rounded-full text-xs font-mono bg-white/5 text-gray-300 border border-white/10">Node.js</span>
+<span class="px-3 py-1 rounded-full text-xs font-mono bg-white/5 text-gray-300 border border-white/10">NestJS</span>
+<span class="px-3 py-1 rounded-full text-xs font-mono bg-white/5 text-gray-300 border border-white/10">PostgreSQL</span>
+<span class="px-3 py-1 rounded-full text-xs font-mono bg-white/5 text-gray-300 border border-white/10">Redis</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-[100px_1fr] gap-4 items-center">
+<span class="text-sm font-semibold text-white">Infra</span>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 rounded-full text-xs font-mono bg-white/5 text-gray-300 border border-white/10">AWS</span>
+<span class="px-3 py-1 rounded-full text-xs font-mono bg-white/5 text-gray-300 border border-white/10">Docker</span>
+<span class="px-3 py-1 rounded-full text-xs font-mono bg-white/5 text-gray-300 border border-white/10">Terraform</span>
+</div>
+</div>
+</div>
+</section>
+</article>
+<!-- Architecture Diagram Section -->
+<section class="max-w-4xl mx-auto mt-20 mb-20">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xl font-bold text-white">System Architecture</h3>
+<span class="text-xs font-mono text-gray-500 bg-white/5 px-2 py-1 rounded">v2.0 Flow</span>
+</div>
+<div class="bg-card-dark rounded-2xl border border-white/5 p-8 md:p-12 relative overflow-hidden">
+<!-- Decorative grid background -->
+<div class="absolute inset-0 z-0 opacity-10" style="background-image: radial-gradient(#4b5563 1px, transparent 1px); background-size: 20px 20px;">
+</div>
+<!-- Diagram Content -->
+<div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-4">
+<!-- Client -->
+<div class="flex flex-col items-center gap-3">
+<div class="w-32 h-20 bg-background-dark border border-gray-600 rounded-lg flex items-center justify-center shadow-lg">
+<span class="text-sm font-mono text-gray-300">Client App</span>
+</div>
+<span class="text-xs text-gray-500">Next.js</span>
+</div>
+<!-- Arrow -->
+<div class="hidden md:flex flex-col items-center">
+<span class="text-[10px] text-gray-500 font-mono mb-1">HTTPS</span>
+<div class="w-16 h-px bg-gray-600 relative">
+<div class="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 border-t border-r border-gray-600 rotate-45"></div>
+</div>
+</div>
+<!-- Mobile Arrow -->
+<div class="md:hidden h-8 w-px bg-gray-600 relative">
+<div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-2 border-b border-r border-gray-600 rotate-45"></div>
+</div>
+<!-- Gateway -->
+<div class="flex flex-col items-center gap-3">
+<div class="w-32 h-20 bg-background-dark border border-primary/40 rounded-lg flex items-center justify-center shadow-lg shadow-primary/5">
+<span class="text-sm font-mono text-primary font-bold">API Gateway</span>
+</div>
+<span class="text-xs text-gray-500">Rate Limit / Auth</span>
+</div>
+<!-- Arrow -->
+<div class="hidden md:flex flex-col items-center">
+<div class="w-16 h-px bg-gray-600 relative">
+<div class="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 border-t border-r border-gray-600 rotate-45"></div>
+</div>
+</div>
+<!-- Mobile Arrow -->
+<div class="md:hidden h-8 w-px bg-gray-600 relative">
+<div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-2 border-b border-r border-gray-600 rotate-45"></div>
+</div>
+<!-- Services -->
+<div class="flex flex-col gap-2">
+<div class="w-36 h-12 bg-background-dark border border-gray-600 rounded-lg flex items-center justify-center shadow-lg">
+<span class="text-xs font-mono text-gray-300">Product Service</span>
+</div>
+<div class="w-36 h-12 bg-background-dark border border-gray-600 rounded-lg flex items-center justify-center shadow-lg">
+<span class="text-xs font-mono text-gray-300">Order Service</span>
+</div>
+</div>
+<!-- Arrow -->
+<div class="hidden md:flex flex-col items-center">
+<div class="w-16 h-px bg-gray-600 relative">
+<div class="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 border-t border-r border-gray-600 rotate-45"></div>
+</div>
+</div>
+<!-- Mobile Arrow -->
+<div class="md:hidden h-8 w-px bg-gray-600 relative">
+<div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-2 border-b border-r border-gray-600 rotate-45"></div>
+</div>
+<!-- DB -->
+<div class="flex flex-col items-center gap-3">
+<div class="w-24 h-24 bg-background-dark border border-gray-600 rounded-full flex flex-col items-center justify-center shadow-lg">
+<svg class="w-6 h-6 text-gray-500 mb-1" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="text-xs font-mono text-gray-300">PostgreSQL</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Results Section -->
+<section class="max-w-4xl mx-auto mb-24">
+<h2 class="text-2xl font-bold text-white mb-8 text-center">Impact &amp; Results</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Card 1 -->
+<div class="bg-card-dark p-8 rounded-2xl border border-white/5 hover:border-primary/30 transition-colors group">
+<div class="text-5xl font-bold text-white mb-2 group-hover:text-primary transition-colors">40%</div>
+<div class="h-1 w-12 bg-gray-700 rounded-full mb-4 group-hover:bg-primary transition-colors"></div>
+<h3 class="text-lg font-semibold text-gray-200 mb-1">Faster Loads</h3>
+<p class="text-sm text-gray-500">Decreased average page load from 4.2s to 2.5s.</p>
+</div>
+<!-- Card 2 -->
+<div class="bg-card-dark p-8 rounded-2xl border border-white/5 hover:border-primary/30 transition-colors group">
+<div class="text-5xl font-bold text-white mb-2 group-hover:text-primary transition-colors">25%</div>
+<div class="h-1 w-12 bg-gray-700 rounded-full mb-4 group-hover:bg-primary transition-colors"></div>
+<h3 class="text-lg font-semibold text-gray-200 mb-1">Conversion Uplift</h3>
+<p class="text-sm text-gray-500">Direct correlation between speed and sales.</p>
+</div>
+<!-- Card 3 -->
+<div class="bg-card-dark p-8 rounded-2xl border border-white/5 hover:border-primary/30 transition-colors group">
+<div class="text-5xl font-bold text-white mb-2 group-hover:text-primary transition-colors">99.9%</div>
+<div class="h-1 w-12 bg-gray-700 rounded-full mb-4 group-hover:bg-primary transition-colors"></div>
+<h3 class="text-lg font-semibold text-gray-200 mb-1">System Uptime</h3>
+<p class="text-sm text-gray-500">Eliminated database locks during peak hours.</p>
+</div>
+</div>
+</section>
+<!-- Contextual CTA -->
+<div class="max-w-2xl mx-auto text-center border-t border-white/10 pt-16">
+<h2 class="text-3xl font-bold text-white mb-4">Facing a similar challenge?</h2>
+<p class="text-gray-400 mb-8 max-w-md mx-auto">
+                I help startups and businesses scale their tech stack without the bloat of a large agency.
+            </p>
+<button class="bg-primary hover:bg-primary/90 text-white font-medium px-8 py-3 rounded-full transition-all shadow-lg shadow-primary/20 hover:shadow-primary/40 transform hover:-translate-y-0.5">
+                Let's Talk
+            </button>
+</div>
+</main>
+<!-- Footer -->
+<footer class="border-t border-white/5 py-12">
+<div class="max-w-7xl mx-auto px-4 text-center">
+<p class="text-gray-600 text-sm font-mono">© 2023 zzoo.dev. Crafted with code.</p>
+</div>
+</footer>
+<!-- Floating CTA -->
+<a class="fixed bottom-8 right-8 z-50 bg-white dark:bg-gray-100 text-background-dark font-semibold px-6 py-3 rounded-full shadow-2xl hover:scale-105 transition-transform flex items-center gap-2 group" href="#">
+        Hire Me
+        <span class="group-hover:translate-x-1 transition-transform">→</span>
+</a>
+<!-- Simple Scroll Script for Progress Bar -->
+<script>
+        window.onscroll = function() {
+            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            let scrolled = (winScroll / height) * 100;
+            document.getElementById("progress-bar").style.width = scrolled + "%";
+        };
+    </script>
+</body></html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Why I Chose Next.js - zzoo.dev</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#2060df",
+              "background-light": "#f6f6f8",
+              "background-dark": "#111621",
+              "surface-dark": "#1a2130", // Slightly lighter background for cards/code blocks
+            },
+            fontFamily: {
+              "display": ["Inter", "sans-serif"],
+              "mono": ["JetBrains Mono", "monospace"], // Using JetBrains Mono as a proxy for Geist Mono
+            },
+            borderRadius: {
+              "DEFAULT": "1rem", 
+              "lg": "2rem", 
+              "xl": "3rem", 
+              "full": "9999px"
+            },
+            typography: (theme) => ({
+                DEFAULT: {
+                    css: {
+                        color: theme('colors.gray.300'),
+                    },
+                },
+            }),
+          },
+        },
+      }
+    </script>
+<style>
+        /* Custom scrollbar for code blocks */
+        .code-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+        .code-scroll::-webkit-scrollbar-track {
+            background: #111621;
+            border-radius: 4px;
+        }
+        .code-scroll::-webkit-scrollbar-thumb {
+            background: #2d3748;
+            border-radius: 4px;
+        }
+        .code-scroll::-webkit-scrollbar-thumb:hover {
+            background: #4a5568;
+        }
+        
+        /* Prose Styles Override */
+        .prose p {
+            margin-bottom: 1.5em;
+            font-size: 1.125rem; /* 18px */
+            line-height: 1.8;
+        }
+        .prose h2 {
+            margin-top: 2.5em;
+            margin-bottom: 1em;
+            font-weight: 700;
+            font-size: 1.75rem; /* 28px */
+            letter-spacing: -0.025em;
+            color: white;
+        }
+        .prose h3 {
+            margin-top: 2em;
+            margin-bottom: 0.75em;
+            font-weight: 600;
+            font-size: 1.375rem; /* 22px */
+            color: #e2e8f0;
+        }
+        .prose ul {
+            margin-bottom: 1.5em;
+            padding-left: 1.5em;
+            list-style-type: disc;
+        }
+        .prose li {
+            margin-bottom: 0.5em;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-gray-300 antialiased selection:bg-primary/30 selection:text-white">
+<!-- Sticky Header -->
+<header class="fixed top-0 left-0 right-0 z-50 h-16 border-b border-gray-200 dark:border-white/5 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+<div class="max-w-5xl mx-auto px-4 sm:px-6 h-full flex items-center justify-between">
+<a class="font-mono text-lg font-bold text-gray-900 dark:text-white hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                zzoo.dev
+            </a>
+<nav class="hidden md:flex items-center gap-8 text-sm font-medium">
+<a class="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors" href="#">Home</a>
+<a class="text-primary dark:text-primary font-semibold" href="#">Blog</a>
+<a class="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors" href="#">Projects</a>
+<a class="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors" href="#">About</a>
+</nav>
+<button class="md:hidden text-gray-500 hover:text-white">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+</div>
+</header>
+<main class="pt-32 pb-24 px-4 sm:px-6">
+<!-- Article Header Section -->
+<article class="max-w-2xl mx-auto">
+<!-- Breadcrumb -->
+<nav class="mb-8">
+<ol class="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+<li><a class="hover:text-primary transition-colors" href="#">Blog</a></li>
+<li><span class="mx-1">/</span></li>
+<li class="truncate max-w-[200px] sm:max-w-xs">Why I Chose Next.js...</li>
+</ol>
+</nav>
+<!-- Metadata -->
+<div class="flex items-center gap-3 text-sm font-mono text-gray-500 dark:text-gray-400 mb-6">
+<time datetime="2026-02-10">Feb 10, 2026</time>
+<span class="w-1 h-1 rounded-full bg-gray-500"></span>
+<span>8 min read</span>
+</div>
+<!-- Title -->
+<h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-gray-900 dark:text-white mb-6 leading-tight">
+                Why I Chose Next.js for My Solopreneur Journey
+            </h1>
+<!-- Tags -->
+<div class="flex flex-wrap gap-2 mb-12">
+<span class="px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">React</span>
+<span class="px-3 py-1 rounded-full text-xs font-medium bg-gray-200 dark:bg-white/5 text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-white/10">Engineering</span>
+<span class="px-3 py-1 rounded-full text-xs font-medium bg-gray-200 dark:bg-white/5 text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-white/10">Architecture</span>
+</div>
+<!-- Article Body -->
+<div class="prose prose-invert max-w-none text-gray-300">
+<p>
+                    When starting <strong class="text-white">zzoo.dev</strong>, I faced the classic developer paralysis: which tech stack should I choose? The options are endless—Remix, Astro, plain React, or even simpler static site generators. However, as a solopreneur optimizing for velocity and performance, one framework stood out clearly above the noise.
+                </p>
+<h2>The Need for Velocity</h2>
+<p>
+                    Time is the most expensive resource when you are a team of one. I needed a framework that provided sensible defaults without locking me into rigid patterns. <span class="bg-gray-800 text-gray-200 font-mono text-sm px-1.5 py-0.5 rounded">create-next-app</span> became my starting line, eliminating days of webpack configuration.
+                </p>
+<p>
+                    The hybrid rendering model—allowing me to mix Static Site Generation (SSG) for my blog posts and Server-Side Rendering (SSR) for my dynamic dashboard—was the killer feature. It meant I didn't have to compromise on SEO for content or interactivity for apps.
+                </p>
+<!-- Blockquote Component -->
+<blockquote class="my-10 pl-6 border-l-4 border-primary italic text-xl text-gray-400 font-medium">
+                    "The developer experience is unmatched when you need to ship fast. It feels less like a framework and more like a production-grade platform."
+                </blockquote>
+<h2>Configuring for Performance</h2>
+<p>
+                    Out of the box, the image optimization is incredible. But what really impressed me was how easy it was to customize the build process. Here is a snippet of my configuration to handle advanced caching headers and image domains.
+                </p>
+<!-- Code Block Component -->
+<div class="my-8 rounded-lg overflow-hidden border border-gray-700 bg-surface-dark shadow-lg">
+<div class="flex items-center justify-between px-4 py-2 bg-black/20 border-b border-gray-700/50">
+<span class="text-xs font-mono text-gray-400">next.config.js</span>
+<div class="flex gap-1.5">
+<div class="w-2.5 h-2.5 rounded-full bg-red-500/20 border border-red-500/50"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-yellow-500/20 border border-yellow-500/50"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-green-500/20 border border-green-500/50"></div>
+</div>
+</div>
+<div class="p-4 overflow-x-auto code-scroll">
+<pre class="font-mono text-sm leading-relaxed text-gray-300"><code><span class="text-purple-400">const</span> <span class="text-blue-400">nextConfig</span> <span class="text-gray-400">=</span> {
+  <span class="text-blue-400">reactStrictMode</span>: <span class="text-purple-400">true</span>,
+  <span class="text-blue-400">images</span>: {
+    <span class="text-blue-400">domains</span>: [<span class="text-green-400">'cdn.zzoo.dev'</span>, <span class="text-green-400">'avatars.githubusercontent.com'</span>],
+    <span class="text-blue-400">formats</span>: [<span class="text-green-400">'image/avif'</span>, <span class="text-green-400">'image/webp'</span>],
+  },
+  <span class="text-gray-500">// Experimental features for faster builds</span>
+  <span class="text-blue-400">experimental</span>: {
+    <span class="text-blue-400">serverActions</span>: <span class="text-purple-400">true</span>,
+  },
+};
+
+<span class="text-purple-400">module</span>.<span class="text-purple-400">exports</span> <span class="text-gray-400">=</span> <span class="text-blue-400">nextConfig</span>;</code></pre>
+</div>
+</div>
+<h3>The Ecosystem Advantage</h3>
+<p>
+                    Beyond the code, the ecosystem is vast. Whether it's Vercel for hosting, simplified authentication with Auth.js, or styling with Tailwind CSS (which this site uses heavily), everything just <em>works</em>. The friction between idea and deployment is nearly zero.
+                </p>
+<p>
+                    Ultimately, choosing Next.js wasn't just a technical decision; it was a business decision. It allows me to spend less time configuring tools and more time building value.
+                </p>
+</div>
+<!-- Divider -->
+<hr class="my-12 border-gray-800"/>
+<!-- Post Footer Navigation -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+<a class="group flex flex-col items-start gap-2 p-4 rounded-xl border border-transparent hover:border-gray-800 hover:bg-surface-dark transition-all" href="#">
+<span class="text-xs font-mono text-gray-500 group-hover:text-primary transition-colors">← Previous Post</span>
+<span class="text-lg font-semibold text-gray-200 group-hover:text-white">Migrating from Create React App</span>
+</a>
+<a class="group flex flex-col items-end gap-2 p-4 rounded-xl border border-transparent hover:border-gray-800 hover:bg-surface-dark transition-all text-right" href="#">
+<span class="text-xs font-mono text-gray-500 group-hover:text-primary transition-colors">Next Post →</span>
+<span class="text-lg font-semibold text-gray-200 group-hover:text-white">Mastering Tailwind CSS Grid</span>
+</a>
+</div>
+<!-- CTA Section -->
+<div class="rounded-2xl bg-gradient-to-br from-surface-dark to-background-dark border border-white/5 p-8 sm:p-12 text-center relative overflow-hidden">
+<!-- Abstract bg pattern -->
+<div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 mix-blend-overlay pointer-events-none" data-alt="Subtle geometric background pattern"></div>
+<h3 class="text-2xl font-bold text-white mb-3 relative z-10">Want to work together?</h3>
+<p class="text-gray-400 mb-8 max-w-md mx-auto relative z-10">I help startups build high-performance web applications with Next.js and modern tooling.</p>
+<button class="relative z-10 px-8 py-3 rounded-full bg-primary hover:bg-primary/90 text-white font-medium transition-transform active:scale-95 shadow-lg shadow-primary/25">
+                    Let's Build Something
+                </button>
+</div>
+</article>
+</main>
+<!-- Floating Action Button -->
+<div class="fixed bottom-8 right-8 z-40 hidden md:block">
+<a class="flex items-center gap-2 px-5 py-3 rounded-full bg-primary hover:bg-primary/90 text-white font-medium shadow-xl shadow-black/50 transition-all hover:-translate-y-1" href="#">
+<span>Get in Touch</span>
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</a>
+</div>
+</body></html>

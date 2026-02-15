@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>zzoo.dev Mobile Contact Page</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ffffff",
+                        "accent-green": "#13ec5b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#0a0a0a",
+                        "surface-dark": "#171717",
+                        "surface-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                    },
+                    borderRadius: { "DEFAULT": "1rem", "lg": "1.5rem", "xl": "2rem", "2xl": "2.5rem", "full": "9999px" },
+                }
+            },
+        }
+    </script>
+<style type="text/tailwindcss">::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #333;
+            border-radius: 20px;
+        }
+        .glass-header {
+            background: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .pulse-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #13ec5b;
+            opacity: 0.7;
+            animation: ripple 2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+        }
+        @keyframes ripple {
+            0% {
+                transform: scale(1);
+                opacity: 0.4;
+            }
+            100% {
+                transform: scale(2.5);
+                opacity: 0;
+            }
+        }
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display antialiased min-h-screen flex justify-center">
+<div class="w-full max-w-[390px] min-h-screen relative flex flex-col bg-background-light dark:bg-background-dark shadow-2xl mx-auto overflow-hidden">
+<header class="fixed top-0 w-full max-w-[390px] h-[56px] glass-header z-50 flex items-center justify-between px-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-white dark:bg-white flex items-center justify-center text-black font-bold text-xs">Z</div>
+<span class="font-semibold tracking-tight text-sm">zzoo.dev</span>
+</div>
+<button class="text-slate-400 hover:text-white transition-colors">
+<span class="material-icons-round text-xl">menu</span>
+</button>
+</header>
+<main class="flex-1 pt-24 px-4 pb-8 flex flex-col">
+<div class="mb-8">
+<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-white/10 mb-6 shadow-sm">
+<div class="relative w-2 h-2 flex items-center justify-center">
+<div class="pulse-ring"></div>
+<div class="relative w-2 h-2 bg-accent-green rounded-full"></div>
+</div>
+<span class="text-xs font-medium text-slate-600 dark:text-slate-300">Open to new projects</span>
+</div>
+<h1 class="text-4xl font-bold tracking-tight mb-2 text-slate-900 dark:text-white">Contact</h1>
+<p class="text-lg text-slate-500 dark:text-slate-400 font-medium">Let's build something efficient.</p>
+</div>
+<div class="bg-white dark:bg-surface-dark border border-slate-200 dark:border-white/5 rounded-2xl p-6 mb-8 shadow-lg shadow-black/20 relative overflow-hidden group">
+<div class="absolute -top-10 -right-10 w-32 h-32 bg-white/5 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex flex-col items-center text-center space-y-6 relative z-10">
+<div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center text-slate-600 dark:text-white mb-2">
+<span class="material-icons-round text-2xl">mail</span>
+</div>
+<div class="space-y-1">
+<p class="text-sm text-slate-400 uppercase tracking-wider font-semibold">Email Address</p>
+<p class="font-mono text-xl text-slate-900 dark:text-white select-all">hello@zzoo.dev</p>
+</div>
+<div class="w-full space-y-3">
+<a class="flex items-center justify-center gap-2 w-full bg-white text-black font-semibold py-3.5 px-4 rounded-full transition-transform active:scale-[0.98] border border-transparent" href="mailto:hello@zzoo.dev">
+<span class="material-icons-round text-lg">send</span>
+<span>Send Email</span>
+</a>
+<button class="flex items-center justify-center gap-2 w-full bg-transparent border border-slate-300 dark:border-white/20 hover:bg-slate-50 dark:hover:bg-white/5 text-slate-900 dark:text-white font-medium py-3.5 px-4 rounded-full transition-colors active:scale-[0.98]" onclick="navigator.clipboard.writeText('hello@zzoo.dev'); this.querySelector('span:last-child').textContent = 'Copied!'">
+<span class="material-icons-round text-lg text-slate-400">content_copy</span>
+<span>Copy Address</span>
+</button>
+</div>
+</div>
+</div>
+<div class="space-y-3 mb-10">
+<h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider pl-1 mb-2">Connect</h3>
+<a class="flex items-center justify-between p-4 bg-white dark:bg-surface-dark/50 border border-slate-200 dark:border-white/5 rounded-xl hover:bg-slate-50 dark:hover:bg-surface-dark transition-all group" href="#">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-900 dark:text-white transition-colors">
+<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path></svg>
+</div>
+<div class="flex flex-col">
+<span class="font-medium text-slate-900 dark:text-white">GitHub</span>
+<span class="text-xs text-slate-500">Check out my repos</span>
+</div>
+</div>
+<span class="material-icons-round text-slate-400 group-hover:translate-x-1 transition-all">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-4 bg-white dark:bg-surface-dark/50 border border-slate-200 dark:border-white/5 rounded-xl hover:bg-slate-50 dark:hover:bg-surface-dark transition-all group" href="#">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-900 dark:text-white transition-colors">
+<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path></svg>
+</div>
+<div class="flex flex-col">
+<span class="font-medium text-slate-900 dark:text-white">LinkedIn</span>
+<span class="text-xs text-slate-500">Professional network</span>
+</div>
+</div>
+<span class="material-icons-round text-slate-400 group-hover:translate-x-1 transition-all">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-4 bg-white dark:bg-surface-dark/50 border border-slate-200 dark:border-white/5 rounded-xl hover:bg-slate-50 dark:hover:bg-surface-dark transition-all group" href="#">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-900 dark:text-white transition-colors">
+<span class="material-icons-round text-xl">calendar_today</span>
+</div>
+<div class="flex flex-col">
+<span class="font-medium text-slate-900 dark:text-white">Cal.com</span>
+<span class="text-xs text-slate-500 dark:text-slate-400">Book a 30-min call</span>
+</div>
+</div>
+<span class="material-icons-round text-slate-400 group-hover:translate-x-1 transition-all">chevron_right</span>
+</a>
+</div>
+</main>
+<footer class="py-8 px-4 border-t border-slate-200 dark:border-white/5 flex flex-col items-center justify-center text-center space-y-4">
+<div class="w-8 h-8 rounded bg-white flex items-center justify-center text-black font-bold text-sm shadow-lg shadow-white/5">Z</div>
+<div class="flex flex-col gap-1">
+<p class="text-xs text-slate-500">© 2024 zzoo.dev</p>
+<div class="flex gap-4 justify-center text-xs text-slate-600 dark:text-slate-400">
+<a class="hover:text-white transition-colors" href="#">Privacy</a>
+<span>•</span>
+<a class="hover:text-white transition-colors" href="#">Terms</a>
+</div>
+</div>
+</footer>
+</div>
+
+</body></html>

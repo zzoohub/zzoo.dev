@@ -18,20 +18,20 @@
 
 ### 1.1 Purpose
 
-This PRD defines the requirements for a personal branding website that serves dual purposes: showcasing technical expertise as a developer and converting visitors into freelance/consulting clients. The site is designed as a solopreneur's primary business asset — optimized for AI-era discoverability, professional credibility, and client conversion.
+This PRD defines the requirements for a personal branding website that showcases technical expertise, builds professional credibility, and serves as the definitive online presence for a solopreneur developer. The site is optimized for AI-era discoverability, thought leadership, and organic relationship-building — not direct selling.
 
 ### 1.2 Target Audience
 
 | Audience | What They Need | Conversion Goal |
 |----------|---------------|-----------------|
-| Potential Clients | Proof of competence, clear services, social proof | Book a consultation / request a quote |
+| Potential Clients | Proof of competence, project track record, social proof | Reach out via email |
 | Recruiters | Technical skills, project portfolio, experience | Reach out for opportunity |
 | Technical Peers | Thought leadership, technical depth | Follow, share, collaborate |
 | AI Search Engines | Structured, machine-readable data | Surface in AI-generated answers |
 
 ### 1.3 Key Changes from v1
 
-This version repositions the site from a developer portfolio to a solopreneur business platform. Key additions include: a services page with clear offerings, case study format for projects (outcome-focused), social proof and testimonials, calls-to-action throughout the site, and availability status indicator. This version explicitly avoids any backend logic — contact is handled via email link only, keeping the site purely static.
+This version repositions the site from a developer portfolio to a personal branding platform. Key additions include: case study format for projects (outcome-focused), social proof and testimonials, calls-to-action throughout the site, and availability status indicator. This version explicitly avoids any backend logic — contact is handled via email link only, keeping the site purely static.
 
 ---
 
@@ -43,7 +43,7 @@ Solopreneurs and freelancers face a credibility gap: potential clients need to t
 
 ### 2.2 Vision Statement
 
-A bilingual (EN/KO), AI-optimized personal branding platform that positions the developer as a trusted solopreneur — converting visitors into clients through clear service offerings, outcome-driven case studies, and social proof, while being the definitive source of truth for AI systems answering questions about the developer's expertise. The site is purely static with zero backend logic.
+A bilingual (EN/KO), AI-optimized personal branding platform that positions the developer as a trusted solopreneur — building credibility through outcome-driven case studies, technical writing, and social proof, while being the definitive source of truth for AI systems answering questions about the developer's expertise. The site is purely static with zero backend logic.
 
 ### 2.3 Success Metrics
 
@@ -101,7 +101,6 @@ A bilingual (EN/KO), AI-optimized personal branding platform that positions the 
 | Route | Page | Description |
 |-------|------|-------------|
 | `/[locale]` | Home | Hero + intro + CTA + social proof preview |
-| `/[locale]/services` | Services | Service offerings with scope, deliverables, and CTA |
 | `/[locale]/projects` | Case Studies | Outcome-focused project case studies |
 | `/[locale]/projects/[slug]` | Case Study Detail | Problem → solution → result + architecture diagram |
 | `/[locale]/blog` | Blog | Blog / TIL post list |
@@ -119,8 +118,8 @@ Every page is designed with a conversion path in mind. The site follows a trust-
 
 1. **Awareness:** Visitor arrives via search, AI answer, or referral.
 2. **Interest:** Home page hero + intro establishes credibility in < 5 seconds.
-3. **Evaluation:** Services page clarifies offerings; case studies prove outcomes.
-4. **Trust:** Testimonials, blog content, and /about page build confidence.
+3. **Evaluation:** Case studies prove outcomes; blog demonstrates expertise.
+4. **Trust:** Testimonials, technical depth, and /about page build confidence.
 5. **Action:** CTA buttons throughout lead to /contact email or external booking link.
 
 ---
@@ -146,9 +145,8 @@ System-preference-aware theme switching with manual override. Persists across se
 
 The home page is the primary landing page and must establish credibility within 5 seconds. Structure:
 
-- Hero section: Professional headline (not just name — a value proposition), short tagline, primary CTA button ("Book a Call" or "View Services")
-- Short introduction: 2–3 sentences positioning expertise and target client
-- Services preview: 3 service cards linking to /services
+- Hero section: Professional headline (not just name — a value proposition), short tagline, primary CTA button ("See My Work" or "Get in Touch")
+- Short introduction: 2–3 sentences positioning expertise and background
 - Featured case studies: 2–3 top projects with outcome metrics
 - Social proof strip: Client testimonial quotes or logo bar
 - External links: GitHub, LinkedIn, email, and other profiles as icon links
@@ -156,20 +154,7 @@ The home page is the primary landing page and must establish credibility within 
 
 - **Priority:** P0 — Must Have
 
-#### F4: Services Page
-
-A dedicated page clearly communicating what the developer offers as a freelancer/solopreneur. This is the most important conversion page.
-
-- Service cards: Each service includes title, description, typical scope, deliverables, and timeline range
-- Pricing signals: "Starting from" ranges or "Contact for quote" — reduces friction by setting expectations
-- Process section: Brief explanation of how engagements work (discovery → proposal → execution → delivery)
-- FAQ section: Address common client questions (communication, revisions, payment terms)
-- CTA: Prominent "Get in Touch" button linking to email
-
-- **Priority:** P0 — Must Have
-- **Acceptance Criteria:** At least 2 service offerings defined; each includes scope and deliverables; CTA links to contact/email; page renders in both locales
-
-#### F5: Case Studies (Replaces Project Cards)
+#### F4: Case Studies (Replaces Project Cards)
 
 Projects are presented as case studies focused on client outcomes rather than tech specs. This is a critical distinction for solopreneur positioning — clients buy outcomes, not technology.
 
@@ -186,18 +171,18 @@ Each case study contains:
 - **Priority:** P0 — Must Have
 - **Acceptance Criteria:** At least 2 case studies at launch; each includes all 7 sections; D2 diagrams render in both themes; outcome metrics visible on list page cards
 
-#### F6: Blog / TIL Section
+#### F5: Blog / TIL Section
 
 MDX-based blog with code syntax highlighting, images, and embedded components. Tag-based categorization. RSS feed auto-generated. Each post includes title, date, reading time, tags, and locale. Blog content serves dual purpose: thought leadership for brand building and SEO/AI content for discoverability.
 
 - **Priority:** P0 — Must Have
 
-#### F7: AI Discoverability Layer
+#### F6: AI Discoverability Layer
 
 Machine-readable metadata for AI search engines and LLM crawlers:
 
-- **llms.txt:** Plain text summary at site root — identity, expertise, services, and key projects
-- **JSON-LD:** Person schema (home/about), Service schema (services page), SoftwareApplication (case studies), Article (blog posts)
+- **llms.txt:** Plain text summary at site root — identity, expertise, and key projects
+- **JSON-LD:** Person schema (home/about), SoftwareApplication (case studies), Article (blog posts)
 - **Open Graph + Twitter Card** meta tags on all pages
 - **Canonical URLs and hreflang tags** for bilingual SEO
 - **RSS feed** for content syndication
@@ -206,7 +191,7 @@ Machine-readable metadata for AI search engines and LLM crawlers:
 
 - **Priority:** P0 — Must Have
 
-#### F8: Contact Page (Email-Only, No Backend)
+#### F7: Contact Page (Email-Only, No Backend)
 
 A simple, clean contact page with no form or backend logic. Contact is handled entirely through email and external links. This keeps the site purely static and eliminates spam concerns.
 
@@ -219,27 +204,27 @@ A simple, clean contact page with no form or backend logic. Contact is handled e
 - **Priority:** P0 — Must Have
 - **Acceptance Criteria:** Email link works in both locales; copy button copies email to clipboard; external links open in new tab
 
-#### F9: Testimonials / Social Proof
+#### F8: Testimonials / Social Proof
 
-Client testimonials displayed as quotes with attribution (name, company, role). Shown on the home page as a preview strip and optionally on the services page. Content managed via MDX or a JSON data file for easy updates.
+Client testimonials displayed as quotes with attribution (name, company, role). Shown on the home page as a preview strip. Content managed via MDX or a JSON data file for easy updates.
 
 - **Priority:** P1 — Should Have
 
-#### F10: /now Page with Availability
+#### F9: /now Page with Availability
 
 Living document showing current professional status: what the developer is working on, learning, and available for. Includes a clear availability indicator ("Open to new projects" / "Limited availability" / "Fully booked until [date]"). Updated manually via MDX. Follows the nownownow.com convention.
 
 - **Priority:** P1 — Should Have
 
-#### F11: About / Resume Page
+#### F10: About / Resume Page
 
 Detailed professional biography with career timeline. Clean, parseable text optimized for both human reading and AI extraction. Optionally includes downloadable PDF resume. Emphasis on the solopreneur narrative: why the developer works independently, what they bring to clients.
 
 - **Priority:** P1 — Should Have
 
-#### F12: Global CTA Components
+#### F11: Global CTA Components
 
-Reusable call-to-action components embedded throughout the site. A sticky or floating CTA on long pages (blog posts, case studies) that remains accessible as visitors scroll. CTAs adapt based on context: "Hire Me" on case studies, "Subscribe" on blog posts, "Get a Quote" on services.
+Reusable call-to-action components embedded throughout the site. A sticky or floating CTA on long pages (blog posts, case studies) that remains accessible as visitors scroll. CTAs adapt based on context: "Hire Me" on case studies, "Subscribe" on blog posts, "Get in Touch" on about/now pages.
 
 - **Priority:** P1 — Should Have
 
@@ -300,19 +285,6 @@ links:
 ---
 ```
 
-#### Service
-
-```yaml
----
-title: string
-description: string
-scope: string[]        # list of deliverables
-timeline: string       # e.g., "2–4 weeks"
-pricingHint: string    # e.g., "Starting from $3,000" or "Contact for quote"
-icon: string           # icon identifier
----
-```
-
 #### Testimonial (JSON)
 
 ```json
@@ -337,9 +309,6 @@ icon: string           # icon identifier
 │   │   ├── en/*.mdx            # English case studies
 │   │   └── ko/*.mdx            # Korean case studies
 │   ├── diagrams/*.d2           # D2 architecture diagram sources
-│   ├── services/
-│   │   ├── en.json             # English service definitions
-│   │   └── ko.json             # Korean service definitions
 │   └── testimonials.json       # Client testimonials data
 ├── messages/
 │   ├── en.json                 # English UI translations
@@ -394,7 +363,7 @@ A Node.js build script (`scripts/build-diagrams.js`) handles D2 compilation. It 
 
 - Unique title and meta description per page and locale
 - Canonical URLs with hreflang alternates
-- JSON-LD structured data (Person, Service, SoftwareApplication, Article)
+- JSON-LD structured data (Person, SoftwareApplication, Article)
 - XML sitemap, RSS feed, robots.txt, llms.txt
 - Open Graph and Twitter Card meta tags
 
@@ -436,9 +405,9 @@ Cloudflare Pages supports custom domains with automatic SSL. The site will be se
 | Phase | Duration | Deliverables |
 |-------|----------|-------------|
 | Phase 1 | Week 1–2 | Project scaffolding: Next.js + TypeScript + Tailwind + next-intl + next-themes. Home page with hero, intro, CTA, external links, availability badge. Global layout: nav, footer, locale switcher, theme toggle. |
-| Phase 2 | Week 3–4 | Services page with offerings and CTA. Case studies section: list view + detail page (problem/solution/result + D2 diagram). D2 build pipeline (light/dark). Contact page with email link and external profiles. |
+| Phase 2 | Week 3–4 | Case studies section: list view + detail page (problem/solution/result + D2 diagram). D2 build pipeline (light/dark). Contact page with email link and external profiles. |
 | Phase 3 | Week 5–6 | Blog section with MDX, syntax highlighting, tag filtering, RSS. AI discoverability: JSON-LD, llms.txt, OG tags, sitemap. /now and /about pages. Testimonials component. |
-| Phase 4 | Week 6 | Cloudflare Pages deployment. Custom domain setup. Performance + SEO audit. Content population (at least 2 case studies, 2 blog posts, 2 services). Final QA and launch. |
+| Phase 4 | Week 6 | Cloudflare Pages deployment. Custom domain setup. Performance + SEO audit. Content population (at least 2 case studies, 2 blog posts). Final QA and launch. |
 
 ---
 

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>zzoo.dev Blog Mobile View</title>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Icons -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["monospace"] 
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar hiding for horizontal scroll */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display antialiased selection:bg-primary/30 selection:text-white pb-10">
+<!-- Sticky Header -->
+<header class="fixed top-0 left-0 right-0 z-50 h-[56px] flex items-center justify-between px-6 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+<div class="font-mono font-bold text-lg tracking-tight text-slate-900 dark:text-white">
+            zzoo.dev
+        </div>
+<button class="p-2 -mr-2 text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors rounded-full">
+<span class="material-icons-outlined text-2xl">menu</span>
+</button>
+</header>
+<!-- Main Content Wrapper -->
+<main class="mt-[56px] px-6 max-w-md mx-auto">
+<!-- Page Header -->
+<section class="pt-10 pb-6">
+<h1 class="text-4xl font-extrabold mb-3 text-slate-900 dark:text-white">Blog</h1>
+<p class="text-lg text-slate-500 dark:text-slate-400 leading-relaxed font-light">
+                Writing about software, architecture, and building things that work.
+            </p>
+</section>
+<!-- Tag Filter Row -->
+<section class="mb-8 -mx-6">
+<div class="flex overflow-x-auto no-scrollbar px-6 space-x-3 pb-2">
+<!-- Active 'All' Tag -->
+<button class="whitespace-nowrap px-5 py-2 rounded-full bg-primary text-white text-sm font-medium shadow-lg shadow-primary/20 transition-transform active:scale-95">
+                    All
+                </button>
+<!-- Inactive Tags -->
+<button class="whitespace-nowrap px-5 py-2 rounded-full border border-slate-300 dark:border-slate-700 bg-transparent text-slate-600 dark:text-slate-400 text-sm font-medium hover:border-primary hover:text-primary dark:hover:border-primary dark:hover:text-primary transition-colors">
+                    Architecture
+                </button>
+<button class="whitespace-nowrap px-5 py-2 rounded-full border border-slate-300 dark:border-slate-700 bg-transparent text-slate-600 dark:text-slate-400 text-sm font-medium hover:border-primary hover:text-primary dark:hover:border-primary dark:hover:text-primary transition-colors">
+                    Frontend
+                </button>
+<button class="whitespace-nowrap px-5 py-2 rounded-full border border-slate-300 dark:border-slate-700 bg-transparent text-slate-600 dark:text-slate-400 text-sm font-medium hover:border-primary hover:text-primary dark:hover:border-primary dark:hover:text-primary transition-colors">
+                    DevOps
+                </button>
+<button class="whitespace-nowrap px-5 py-2 rounded-full border border-slate-300 dark:border-slate-700 bg-transparent text-slate-600 dark:text-slate-400 text-sm font-medium hover:border-primary hover:text-primary dark:hover:border-primary dark:hover:text-primary transition-colors">
+                    TypeScript
+                </button>
+<button class="whitespace-nowrap px-5 py-2 rounded-full border border-slate-300 dark:border-slate-700 bg-transparent text-slate-600 dark:text-slate-400 text-sm font-medium hover:border-primary hover:text-primary dark:hover:border-primary dark:hover:text-primary transition-colors">
+                    Career
+                </button>
+</div>
+<!-- Fade overlay for scroll indication -->
+<div class="pointer-events-none absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-background-light dark:from-background-dark to-transparent md:hidden"></div>
+</section>
+<!-- Blog Post List -->
+<section class="space-y-0">
+<!-- Post 1 -->
+<article class="py-8 border-b border-slate-200 dark:border-slate-800 group cursor-pointer">
+<div class="flex items-center space-x-2 text-xs font-medium text-slate-500 dark:text-slate-500 uppercase tracking-wider mb-3">
+<span class="material-icons-outlined text-sm">calendar_today</span>
+<span>Feb 10, 2026</span>
+<span>·</span>
+<span>8 min read</span>
+</div>
+<h2 class="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-primary transition-colors leading-tight">
+                    Why I Chose Next.js for Static Sites in 2026
+                </h2>
+<p class="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                    A practical comparison of modern SSG options and why the ecosystem keeps pulling me back to the Vercel stack despite the alternatives.
+                </p>
+<div class="flex flex-wrap gap-2">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-300 border border-primary/20">
+                        Architecture
+                    </span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-transparent">
+                        Next.js
+                    </span>
+</div>
+</article>
+<!-- Post 2 -->
+<article class="py-8 border-b border-slate-200 dark:border-slate-800 group cursor-pointer">
+<div class="flex items-center space-x-2 text-xs font-medium text-slate-500 dark:text-slate-500 uppercase tracking-wider mb-3">
+<span class="material-icons-outlined text-sm">calendar_today</span>
+<span>Jan 28, 2026</span>
+<span>·</span>
+<span>5 min read</span>
+</div>
+<h2 class="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-primary transition-colors leading-tight">
+                    Designing for AI Discoverability: llms.txt and Beyond
+                </h2>
+<p class="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                    How to structure your technical content so that LLMs can effectively parse, understand, and reference your documentation.
+                </p>
+<div class="flex flex-wrap gap-2">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-transparent">
+                        AI
+                    </span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-transparent">
+                        SEO
+                    </span>
+</div>
+</article>
+<!-- Post 3 -->
+<article class="py-8 border-b border-slate-200 dark:border-slate-800 group cursor-pointer">
+<div class="flex items-center space-x-2 text-xs font-medium text-slate-500 dark:text-slate-500 uppercase tracking-wider mb-3">
+<span class="material-icons-outlined text-sm">calendar_today</span>
+<span>Jan 15, 2026</span>
+<span>·</span>
+<span>12 min read</span>
+</div>
+<h2 class="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-primary transition-colors leading-tight">
+                    Building a D2 Diagram Pipeline for Documentation
+                </h2>
+<p class="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                    Automating architecture diagrams using D2 scripts, GitHub Actions, and a bit of shell scripting magic.
+                </p>
+<div class="flex flex-wrap gap-2">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-transparent">
+                        DevOps
+                    </span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-transparent">
+                        D2
+                    </span>
+</div>
+</article>
+<!-- Post 4 -->
+<article class="py-8 border-b border-slate-200 dark:border-slate-800 group cursor-pointer">
+<div class="flex items-center space-x-2 text-xs font-medium text-slate-500 dark:text-slate-500 uppercase tracking-wider mb-3">
+<span class="material-icons-outlined text-sm">calendar_today</span>
+<span>Dec 22, 2025</span>
+<span>·</span>
+<span>6 min read</span>
+</div>
+<h2 class="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-primary transition-colors leading-tight">
+                    TypeScript Patterns I Use in Every Project
+                </h2>
+<p class="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                    From discriminated unions to branded types, here are the patterns that have saved me from the most bugs in production.
+                </p>
+<div class="flex flex-wrap gap-2">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-transparent">
+                        TypeScript
+                    </span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-transparent">
+                        Frontend
+                    </span>
+</div>
+</article>
+<!-- Post 5 -->
+<article class="py-8 border-b border-slate-200 dark:border-slate-800 group cursor-pointer">
+<div class="flex items-center space-x-2 text-xs font-medium text-slate-500 dark:text-slate-500 uppercase tracking-wider mb-3">
+<span class="material-icons-outlined text-sm">calendar_today</span>
+<span>Nov 30, 2025</span>
+<span>·</span>
+<span>4 min read</span>
+</div>
+<h2 class="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-primary transition-colors leading-tight">
+                    The Case for Solopreneurship in Tech
+                </h2>
+<p class="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                    Why I left a Senior Staff role to build small, profitable internet products on my own terms.
+                </p>
+<div class="flex flex-wrap gap-2">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-transparent">
+                        Career
+                    </span>
+</div>
+</article>
+</section>
+<!-- Bottom CTA -->
+<section class="mt-12 mb-16 py-12 px-6 bg-slate-200 dark:bg-slate-800/50 rounded-lg text-center border border-slate-300 dark:border-slate-700">
+<h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">Want to work together?</h2>
+<p class="text-slate-600 dark:text-slate-400 mb-8 text-sm max-w-xs mx-auto">
+                I help startups scale their engineering teams and build robust MVPs.
+            </p>
+<button class="w-full bg-primary hover:bg-blue-600 text-white font-semibold py-4 px-6 rounded-full transition-all active:scale-[0.98] shadow-lg shadow-primary/25 flex items-center justify-center space-x-2">
+<span>Get in Touch</span>
+<span class="material-icons-outlined text-sm">arrow_forward</span>
+</button>
+</section>
+</main>
+<!-- Footer -->
+<footer class="border-t border-slate-200 dark:border-slate-800 py-12 px-6 bg-white dark:bg-background-dark">
+<div class="max-w-md mx-auto flex flex-col space-y-8">
+<div class="font-mono font-bold text-lg tracking-tight text-slate-900 dark:text-white">
+                zzoo.dev
+            </div>
+<nav class="flex flex-col space-y-4">
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary font-medium transition-colors" href="#">Home</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary font-medium transition-colors" href="#">Blog</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary font-medium transition-colors" href="#">Projects</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary font-medium transition-colors" href="#">About</a>
+</nav>
+<div class="flex space-x-6 pt-4">
+<a class="text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="sr-only">Twitter</span>
+<svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewbox="0 0 24 24">
+<path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path>
+</svg>
+</a>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="sr-only">GitHub</span>
+<svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewbox="0 0 24 24">
+<path clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" fill-rule="evenodd"></path>
+</svg>
+</a>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="sr-only">LinkedIn</span>
+<svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewbox="0 0 24 24">
+<path clip-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" fill-rule="evenodd"></path>
+</svg>
+</a>
+</div>
+<p class="text-xs text-slate-500 dark:text-slate-600">
+                © 2026 zzoo.dev. All rights reserved.
+            </p>
+</div>
+</footer>
+</body></html>

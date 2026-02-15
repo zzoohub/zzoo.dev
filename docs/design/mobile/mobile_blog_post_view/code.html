@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mobile Blog Post View</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "primary-dark": "#0d42b0",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "code-bg": "#1e2430", // Slightly lighter than bg-dark for code blocks
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                    typography: (theme) => ({
+                        DEFAULT: {
+                            css: {
+                                color: theme('colors.gray.300'),
+                                h1: {
+                                    color: theme('colors.white'),
+                                },
+                                h2: {
+                                    color: theme('colors.white'),
+                                },
+                                strong: {
+                                    color: theme('colors.white'),
+                                },
+                                code: {
+                                    color: theme('colors.primary'),
+                                },
+                            },
+                        },
+                    }),
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom Scrollbar for code blocks */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .code-scroll::-webkit-scrollbar {
+            height: 6px;
+        }
+        .code-scroll::-webkit-scrollbar-track {
+            background: rgba(19, 91, 236, 0.1); 
+            border-radius: 4px;
+        }
+        .code-scroll::-webkit-scrollbar-thumb {
+            background: rgba(19, 91, 236, 0.4); 
+            border-radius: 4px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-gray-100 antialiased min-h-screen flex justify-center">
+<!-- Mobile Container Wrapper to simulate phone width on desktop, but full width on mobile -->
+<div class="w-full max-w-[390px] min-h-screen bg-background-light dark:bg-background-dark relative shadow-2xl mx-auto border-x border-gray-200 dark:border-gray-800">
+<!-- 1. Sticky Header -->
+<header class="sticky top-0 z-50 h-[56px] w-full flex items-center justify-between px-4 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-800/50">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                    z
+                </div>
+<span class="font-bold text-lg tracking-tight">zzoo.dev</span>
+</div>
+<button class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors">
+<span class="material-icons text-gray-500 dark:text-gray-400 text-xl">menu</span>
+</button>
+</header>
+<!-- Main Content Area -->
+<main class="px-4 pb-32">
+<!-- 2. Post Header -->
+<div class="pt-8 pb-6">
+<div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-4 font-medium">
+<span>Oct 24, 2023</span>
+<span class="w-1 h-1 rounded-full bg-gray-400"></span>
+<span>6 min read</span>
+</div>
+<h1 class="text-[28px] leading-tight font-bold text-gray-900 dark:text-white mb-6">
+                    Why I Chose Next.js for My Portfolio
+                </h1>
+<!-- Pill Tags -->
+<div class="flex flex-wrap gap-2 mb-8">
+<span class="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-semibold border border-primary/20">
+                        #NextJS
+                    </span>
+<span class="px-3 py-1.5 rounded-full bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-semibold border border-transparent">
+                        #React
+                    </span>
+<span class="px-3 py-1.5 rounded-full bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-semibold border border-transparent">
+                        #WebDev
+                    </span>
+</div>
+<!-- Hero Image (Simulated with abstract div) -->
+<div class="w-full h-48 rounded-lg overflow-hidden mb-8 relative">
+<img alt="Abstract blue liquid wave pattern background" class="w-full h-full object-cover" data-alt="Abstract blue liquid wave pattern background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlBV0YdYtNkLXxlgr7SSK0JxLESAKDPOzPCPIkY3Pc6AtiHJkXCyP1V65t_wsrmEqShCgXiKBVJXeF9gqtjmmmnHa1I64NTCWZkK578HDnVQQSHAQYKAyoR6K_ZRshr3fG9Ua0n7p8B4HyFaP0gJJdsIa6queijg5Ma1aFNz3N7Qmcpvs6y8UYJ87FuergglOkktRkAiV1qulrP4tje8XUQymZy4WLHlJkAKhiKbCZ8jPFoErAebPlqtzbVg6MjcPBN7Z4QzCDKeo"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/80 to-transparent opacity-60"></div>
+</div>
+</div>
+<!-- 3. Article Body -->
+<article class="prose prose-invert prose-lg max-w-none">
+<!-- Paragraph 1 -->
+<p class="text-[16px] leading-[1.75] text-gray-700 dark:text-gray-300 mb-6 font-normal">
+                    When building a modern web application, the choice of framework is critical. It’s not just about what’s popular right now, but what provides the best developer experience and end-user performance. For me, that answer was <span class="font-bold text-gray-900 dark:text-white">Next.js</span>.
+                </p>
+<!-- Paragraph 2 with inline code -->
+<p class="text-[16px] leading-[1.75] text-gray-700 dark:text-gray-300 mb-8 font-normal">
+                    One of the biggest selling points was the hybrid rendering model. Being able to choose between <code class="font-mono text-sm bg-gray-200 dark:bg-[#1e2430] text-primary px-1.5 py-0.5 rounded border border-gray-300 dark:border-gray-700/50">Static Site Generation</code> and <code class="font-mono text-sm bg-gray-200 dark:bg-[#1e2430] text-primary px-1.5 py-0.5 rounded border border-gray-300 dark:border-gray-700/50">Server Side Rendering</code> on a per-page basis gave me incredible flexibility.
+                </p>
+<!-- Blockquote -->
+<blockquote class="pl-4 border-l-4 border-primary my-8 italic">
+<p class="text-xl text-gray-800 dark:text-white font-medium leading-relaxed">
+                        "Performance isn't just a metric; it's a feature. Users shouldn't have to wait for your JavaScript to hydrate."
+                    </p>
+</blockquote>
+<p class="text-[16px] leading-[1.75] text-gray-700 dark:text-gray-300 mb-6 font-normal">
+                    Here is a quick look at how simple it is to set up a dynamic route that fetches data at build time:
+                </p>
+<!-- Full-width Code Block -->
+<div class="full-bleed -mx-4 mb-8 bg-[#0d1117] border-y border-gray-800 overflow-hidden shadow-inner">
+<div class="px-4 py-2 border-b border-gray-800 flex items-center justify-between bg-[#161b22]">
+<span class="text-xs text-gray-400 font-mono">pages/posts/[id].js</span>
+<div class="flex gap-1.5">
+<div class="w-2.5 h-2.5 rounded-full bg-red-500/20 border border-red-500/50"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-yellow-500/20 border border-yellow-500/50"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-green-500/20 border border-green-500/50"></div>
+</div>
+</div>
+<div class="code-scroll overflow-x-auto p-4">
+<pre class="font-mono text-sm leading-relaxed text-gray-300 min-w-max"><code><span class="text-purple-400">export</span> <span class="text-purple-400">async</span> <span class="text-blue-400">function</span> <span class="text-yellow-200">getStaticProps</span>({ params }) {
+  <span class="text-gray-500">// Fetch data required for the page</span>
+  <span class="text-purple-400">const</span> post = <span class="text-purple-400">await</span> <span class="text-blue-300">getPostContent</span>(params.id);
+  
+  <span class="text-purple-400">return</span> {
+    <span class="text-red-300">props</span>: {
+      post,
+    },
+  };
+}</code></pre>
+</div>
+</div>
+<p class="text-[16px] leading-[1.75] text-gray-700 dark:text-gray-300 mb-6 font-normal">
+                    This simplicity is what makes the ecosystem thrive. You spend less time configuring Webpack and more time building features that matter.
+                </p>
+<h2 class="text-xl font-bold text-gray-900 dark:text-white mt-10 mb-4">Conclusion</h2>
+<p class="text-[16px] leading-[1.75] text-gray-700 dark:text-gray-300 mb-8 font-normal">
+                    Ultimately, the best tool is the one that fits your needs. For my portfolio, Next.js ticked all the boxes: speed, developer experience, and scalability.
+                </p>
+</article>
+<!-- Divider -->
+<hr class="border-gray-200 dark:border-gray-800 my-8"/>
+<!-- 4. Post Footer Navigation -->
+<div class="flex flex-col gap-4">
+<a class="group block p-5 rounded-lg bg-white dark:bg-[#151b26] border border-gray-200 dark:border-gray-800 hover:border-primary/50 dark:hover:border-primary/50 transition-all shadow-sm" href="#">
+<span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1 block">Previous Post</span>
+<span class="text-base font-bold text-gray-900 dark:text-white group-hover:text-primary transition-colors">Understanding React Server Components</span>
+</a>
+<a class="group block p-5 rounded-lg bg-white dark:bg-[#151b26] border border-gray-200 dark:border-gray-800 hover:border-primary/50 dark:hover:border-primary/50 transition-all shadow-sm text-right" href="#">
+<span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1 block">Next Post</span>
+<span class="text-base font-bold text-gray-900 dark:text-white group-hover:text-primary transition-colors">Designing for Dark Mode with Tailwind</span>
+</a>
+</div>
+<!-- Author Bio Mini (Bonus for premium feel) -->
+<div class="mt-12 flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-gray-800 border-2 border-gray-700">
+<img alt="Portrait of a male author looking away" class="w-full h-full object-cover" data-alt="Portrait of a male author looking away" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAECNb3I_sx45AIJaU2FuAgpmDlLYrDAG08W6qaJ1W38J9ZLMbYunkD7hZ-3U6i6rIM-zbWNwmJSG3DYOY0ZhyyCw4TfuKATCTMPbUe0MeR0RrDmPVNvABINcsHqCXlJM7uZcUujphGYa-_1E9AQN21aRmMIqBo-fAOKHJM1f5RXsSH0zH0dDAwWgEJyLyXfyMqhNMuxUFXzZCIq1zOiZ0N_ZAyfZZoAYmPDDYW8UStGfq4D_5DbRAa9cqDVZwRZM0am2B8GT06zjk"/>
+</div>
+<div>
+<h3 class="text-sm font-bold text-gray-900 dark:text-white">Written by Alex</h3>
+<p class="text-xs text-gray-500 dark:text-gray-400">Frontend Engineer &amp; UI Designer</p>
+</div>
+</div>
+</main>
+<!-- 5. Fixed Bottom Action Bar -->
+<div class="fixed bottom-6 left-0 right-0 px-4 z-40 w-full max-w-[390px] mx-auto pointer-events-none">
+<div class="bg-background-dark/90 dark:bg-[#1a202c]/90 backdrop-blur-lg border border-gray-700/50 p-2 pl-4 pr-2 rounded-full shadow-2xl flex items-center justify-between gap-4 pointer-events-auto transform transition-transform hover:scale-[1.02]">
+<div class="flex flex-col">
+<span class="text-white text-sm font-semibold">Have a project?</span>
+<span class="text-gray-400 text-xs">Let's build something great.</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="bg-primary hover:bg-primary-dark text-white text-sm font-medium px-4 py-2 rounded-full flex items-center gap-1 transition-colors shadow-lg shadow-primary/20">
+                        Get in Touch <span class="material-icons text-sm" style="font-size: 14px;">arrow_forward</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-700/50 hover:bg-gray-700 text-gray-400 hover:text-white transition-colors">
+<span class="material-icons text-sm">close</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

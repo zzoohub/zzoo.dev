@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>zzoo.dev - Projects</title>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Icons -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2060df",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#111621",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", "monospace"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom Utilities for backdrop blur if needed beyond standard Tailwind */
+        .glass-header {
+            background-color: rgba(17, 22, 33, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display min-h-screen flex flex-col">
+<!-- Sticky Header -->
+<header class="fixed top-0 w-full z-50 h-16 border-b border-slate-200 dark:border-slate-800 glass-header">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+<!-- Logo -->
+<div class="flex-shrink-0 w-32">
+<a class="text-lg font-semibold font-mono tracking-tight text-slate-900 dark:text-white hover:opacity-80 transition-opacity" href="#">
+                    zzoo.dev
+                </a>
+</div>
+<!-- Desktop Navigation -->
+<nav class="hidden md:flex items-center justify-center space-x-8 flex-1">
+<a class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Home</a>
+<a class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Services</a>
+<a class="text-sm font-bold text-primary dark:text-primary" href="#">Projects</a>
+<a class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Blog</a>
+<a class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">About</a>
+</nav>
+<!-- Right Controls -->
+<div class="w-32 flex justify-end items-center gap-4">
+<button class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white transition-colors">KO</button>
+<button aria-label="Toggle dark mode" class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white transition-colors">
+<span class="material-icons text-[20px]">dark_mode</span>
+</button>
+<!-- Mobile Menu Button -->
+<button class="md:hidden text-slate-600 dark:text-slate-400">
+<span class="material-icons">menu</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow pt-32 pb-24 px-4 sm:px-6 lg:px-8">
+<!-- Page Header -->
+<section class="max-w-3xl mx-auto text-center mb-16">
+<h1 class="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-white mb-4">
+                Projects
+            </h1>
+<p class="text-xl md:text-2xl text-slate-500 dark:text-slate-400 font-light">
+                Real outcomes from real engagements.
+            </p>
+</section>
+<!-- Case Study Cards List -->
+<div class="max-w-5xl mx-auto space-y-8">
+<!-- Card 1 -->
+<article class="group relative rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#1A2130] p-6 md:p-8 hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-300 shadow-sm hover:shadow-md">
+<div class="flex flex-col md:flex-row gap-6 md:gap-8">
+<div class="flex-1">
+<!-- Meta -->
+<div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-3 font-mono">
+<span>E-Commerce Startup</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+<span>3 months</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+<span class="text-green-600 dark:text-green-400">Completed</span>
+</div>
+<!-- Title -->
+<h2 class="text-2xl font-semibold text-slate-900 dark:text-white mb-4">
+                            Platform Re-architecture &amp; Performance Overhaul
+                        </h2>
+<!-- Metrics -->
+<div class="mb-5 p-4 rounded-lg bg-primary/5 dark:bg-primary/10 border border-primary/10 border-l-4 border-l-primary">
+<p class="text-lg font-semibold text-primary dark:text-white">
+                                40% faster page loads, 25% increase in conversion
+                            </p>
+</div>
+<!-- Description -->
+<p class="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
+                            Migrated a legacy monolith to a headless architecture. Focused on optimizing Core Web Vitals and implementing edge caching strategies to drastically reduce Time to First Byte (TTFB).
+                        </p>
+<!-- Tech Stack & Action -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-auto">
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 text-xs font-mono rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">Next.js</span>
+<span class="px-3 py-1 text-xs font-mono rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">TypeScript</span>
+<span class="px-3 py-1 text-xs font-mono rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">Vercel</span>
+</div>
+<a class="inline-flex items-center text-sm font-semibold text-primary hover:text-primary/80 transition-colors group-hover:translate-x-1 duration-300" href="#">
+                                Read Case Study <span class="material-icons text-sm ml-1">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="group relative rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#1A2130] p-6 md:p-8 hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-300 shadow-sm hover:shadow-md">
+<div class="flex flex-col md:flex-row gap-6 md:gap-8">
+<div class="flex-1">
+<!-- Meta -->
+<div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-3 font-mono">
+<span>FinTech</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+<span>6 months</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+<span class="text-green-600 dark:text-green-400">Live</span>
+</div>
+<!-- Title -->
+<h2 class="text-2xl font-semibold text-slate-900 dark:text-white mb-4">
+                            Real-Time Analytics Dashboard
+                        </h2>
+<!-- Metrics -->
+<div class="mb-5 p-4 rounded-lg bg-primary/5 dark:bg-primary/10 border border-primary/10 border-l-4 border-l-primary">
+<p class="text-lg font-semibold text-primary dark:text-white">
+                                3x faster data processing, 99.9% uptime
+                            </p>
+</div>
+<!-- Description -->
+<p class="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
+                            Engineered a high-throughput ingestion pipeline and a responsive frontend dashboard for visualizing financial market data in real-time with sub-second latency.
+                        </p>
+<!-- Tech Stack & Action -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-auto">
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 text-xs font-mono rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">React</span>
+<span class="px-3 py-1 text-xs font-mono rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">Go</span>
+<span class="px-3 py-1 text-xs font-mono rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">ClickHouse</span>
+</div>
+<a class="inline-flex items-center text-sm font-semibold text-primary hover:text-primary/80 transition-colors group-hover:translate-x-1 duration-300" href="#">
+                                Read Case Study <span class="material-icons text-sm ml-1">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</article>
+<!-- Card 3 -->
+<article class="group relative rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#1A2130] p-6 md:p-8 hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-300 shadow-sm hover:shadow-md">
+<div class="flex flex-col md:flex-row gap-6 md:gap-8">
+<div class="flex-1">
+<!-- Meta -->
+<div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-3 font-mono">
+<span>SaaS Enterprise</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+<span>Ongoing</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+<span class="text-blue-500 dark:text-blue-400">Retainer</span>
+</div>
+<!-- Title -->
+<h2 class="text-2xl font-semibold text-slate-900 dark:text-white mb-4">
+                            Design System &amp; Component Library
+                        </h2>
+<!-- Metrics -->
+<div class="mb-5 p-4 rounded-lg bg-primary/5 dark:bg-primary/10 border border-primary/10 border-l-4 border-l-primary">
+<p class="text-lg font-semibold text-primary dark:text-white">
+                                60% reduction in UI development time
+                            </p>
+</div>
+<!-- Description -->
+<p class="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
+                            Established a scalable design system to unify the UI across 4 different products. Created a documented component library that streamlined developer-designer collaboration.
+                        </p>
+<!-- Tech Stack & Action -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-auto">
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 text-xs font-mono rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">React</span>
+<span class="px-3 py-1 text-xs font-mono rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">Storybook</span>
+<span class="px-3 py-1 text-xs font-mono rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">Tailwind CSS</span>
+</div>
+<a class="inline-flex items-center text-sm font-semibold text-primary hover:text-primary/80 transition-colors group-hover:translate-x-1 duration-300" href="#">
+                                Read Case Study <span class="material-icons text-sm ml-1">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</article>
+</div>
+<!-- Bottom CTA -->
+<section class="mt-24 mb-12 text-center">
+<h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">Like what you see?</h2>
+<button class="bg-primary hover:bg-primary/90 text-white font-medium px-8 py-3 rounded-lg shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5 active:translate-y-0 text-sm md:text-base">
+                Discuss Your Project
+            </button>
+</section>
+</main>
+<!-- Footer -->
+<footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111621] py-12">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+<!-- Brand -->
+<div class="space-y-4">
+<span class="text-lg font-semibold font-mono tracking-tight text-slate-900 dark:text-white">zzoo.dev</span>
+<p class="text-sm text-slate-500 dark:text-slate-400 max-w-xs">
+                        Building high-performance digital products for startups and enterprises.
+                    </p>
+</div>
+<!-- Nav -->
+<div>
+<h3 class="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider mb-4">Navigate</h3>
+<ul class="space-y-3">
+<li><a class="text-sm text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Home</a></li>
+<li><a class="text-sm text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Services</a></li>
+<li><a class="text-sm text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Projects</a></li>
+<li><a class="text-sm text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">About</a></li>
+</ul>
+</div>
+<!-- Connect -->
+<div>
+<h3 class="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider mb-4">Connect</h3>
+<ul class="space-y-3">
+<li><a class="text-sm text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Twitter / X</a></li>
+<li><a class="text-sm text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">LinkedIn</a></li>
+<li><a class="text-sm text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">GitHub</a></li>
+<li><a class="text-sm text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Email Me</a></li>
+</ul>
+</div>
+</div>
+<div class="pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-xs text-slate-500 dark:text-slate-500">
+                    © 2024 zzoo.dev. All rights reserved.
+                </p>
+<div class="flex gap-6">
+<a class="text-xs text-slate-500 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-300" href="#">Privacy Policy</a>
+<a class="text-xs text-slate-500 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-300" href="#">Terms of Service</a>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

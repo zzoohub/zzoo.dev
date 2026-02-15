@@ -14,6 +14,8 @@ Personal branding website for a solopreneur developer. Bilingual (EN/KO), static
 2. Once the implementation is complete, run the two sub-agents below in parallel:
    - Run a **security-reviewer** sub-agent for security audit → fix
    - Run a **tester** sub-agent for testing only changed code → fix
+3. Bilingual (EN/KO) based on user language preference
+4. Mobile-first responsive design
 
 ## Commands
 
@@ -48,7 +50,6 @@ Use `bunx --bun shadcn@latest add <component>` to add shadcn/ui components.
 
 ```
 /[locale]/                    # Home
-/[locale]/services            # Service offerings
 /[locale]/projects/[slug]     # Case studies
 /[locale]/blog/[slug]         # Blog posts
 /[locale]/about               # About/Resume

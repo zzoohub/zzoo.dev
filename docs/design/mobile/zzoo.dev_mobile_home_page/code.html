@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>zzoo.dev Mobile Home Page</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-green": "#19e65e",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#111111",
+                        "surface-dark": "#1a1a1a",
+                        "surface-darker": "#151515",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["Geist Mono", "monospace"],
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "1.5rem", "xl": "2rem", "2xl": "2.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-100 font-display antialiased selection:bg-white selection:text-black">
+<header class="fixed top-0 w-full z-50 h-[56px] flex items-center justify-between px-4 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-gray-200 dark:border-white/10">
+<div class="font-mono text-lg font-bold tracking-tight text-gray-900 dark:text-white">
+            zzoo.dev
+        </div>
+<button class="p-2 -mr-2 text-gray-600 dark:text-gray-300 transition-colors">
+<span class="material-icons-round text-2xl">menu</span>
+</button>
+</header>
+<main class="w-full max-w-[390px] mx-auto pt-[80px] pb-12 px-4 flex flex-col gap-16">
+<section class="flex flex-col items-center text-center gap-6">
+<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-green opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary-green"></span>
+</span>
+<span class="text-xs font-medium text-gray-400 uppercase tracking-wide">Open to new projects</span>
+</div>
+<div class="space-y-4">
+<h1 class="text-4xl font-bold leading-[1.1] tracking-tight text-gray-900 dark:text-white">
+                    I build software that solves <span class="text-white">real problems.</span>
+</h1>
+<p class="text-lg text-gray-500 dark:text-gray-400 leading-relaxed max-w-[320px] mx-auto">
+                    Full-stack development focused on performance, scalability, and user experience.
+                </p>
+</div>
+<div class="flex flex-col w-full gap-3 mt-2">
+<button class="w-full py-4 px-6 bg-white hover:bg-gray-200 active:scale-[0.98] transition-all text-black font-semibold rounded-full text-center">
+                    View Services
+                </button>
+<button class="w-full py-4 px-6 bg-transparent border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 active:scale-[0.98] transition-all font-medium rounded-full text-center">
+                    See My Work
+                </button>
+</div>
+</section>
+<section class="flex flex-col gap-6">
+<div class="flex flex-col gap-1">
+<span class="text-sm font-mono text-gray-500 uppercase tracking-wider">What I Do</span>
+<h2 class="text-2xl font-bold text-gray-900 dark:text-white">Services</h2>
+</div>
+<div class="flex flex-col gap-4">
+<div class="group relative p-6 bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/5 rounded-2xl active:border-white/20 transition-colors">
+<div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-white mb-4 border border-white/10">
+<span class="material-icons-round">devices</span>
+</div>
+<h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Web Development</h3>
+<p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-4">
+                        Custom websites and web applications built with modern frameworks like React and Tailwind.
+                    </p>
+<a class="inline-flex items-center text-sm font-semibold text-white hover:text-gray-300 transition-colors" href="#">
+                        Learn more <span class="material-icons-round text-sm ml-1">arrow_forward</span>
+</a>
+</div>
+<div class="group relative p-6 bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/5 rounded-2xl active:border-white/20 transition-colors">
+<div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-white mb-4 border border-white/10">
+<span class="material-icons-round">smartphone</span>
+</div>
+<h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Mobile Apps</h3>
+<p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-4">
+                        Cross-platform mobile experiences that feel native and perform beautifully on iOS and Android.
+                    </p>
+<a class="inline-flex items-center text-sm font-semibold text-white hover:text-gray-300 transition-colors" href="#">
+                        Learn more <span class="material-icons-round text-sm ml-1">arrow_forward</span>
+</a>
+</div>
+<div class="group relative p-6 bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/5 rounded-2xl active:border-white/20 transition-colors">
+<div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-white mb-4 border border-white/10">
+<span class="material-icons-round">code</span>
+</div>
+<h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Technical Consulting</h3>
+<p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-4">
+                        Architecture planning, code reviews, and tech stack selection for startups.
+                    </p>
+<a class="inline-flex items-center text-sm font-semibold text-white hover:text-gray-300 transition-colors" href="#">
+                        Learn more <span class="material-icons-round text-sm ml-1">arrow_forward</span>
+</a>
+</div>
+</div>
+</section>
+<section class="flex flex-col gap-6">
+<div class="flex flex-col gap-1">
+<span class="text-sm font-mono text-gray-500 uppercase tracking-wider">Selected Work</span>
+<h2 class="text-2xl font-bold text-gray-900 dark:text-white">Projects</h2>
+</div>
+<div class="flex flex-col gap-6">
+<div class="flex flex-col gap-3 group cursor-pointer">
+<div class="w-full aspect-[4/3] rounded-2xl overflow-hidden bg-surface-darker relative border border-white/5">
+<img alt="Data analytics dashboard interface dark mode" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" data-alt="Dark themed financial dashboard showing graphs and data" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpGVAhbHH3LTJmRV8KM--18UIxZJc_bNeW87VdLyMFJaJY_BiclTHOSrOuRBFu5gJCmI3UIitAgPo6SyMN26bMwyQb_W6W1sre5OTJv0LQjNP0OtebJldAln7it5lEWGrdp5nGVRYIFgGcw5xjCE_-gxswyqgFgdzntP_cOuHDioitjSwBKQ1KD5jFc5r5fco2IzXUg9ejVUj5rnfkuy-_qSVSYRtNjmD3R3VmJoRogoe8DAJgcsRVclAfRsRwgvLH3zcVbhatAik"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+<div class="absolute bottom-4 left-4 right-4">
+<span class="px-2 py-1 bg-black/50 backdrop-blur-sm rounded-md text-[10px] uppercase font-mono tracking-wide text-white border border-white/10">Fintech</span>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-start mb-1">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white">Flow Finance</h3>
+<span class="material-icons-round text-gray-500 dark:text-gray-500 -rotate-45 text-xl">arrow_forward</span>
+</div>
+<p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Real-time crypto portfolio tracker.</p>
+<p class="text-sm text-white font-medium">
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-white mr-2 align-middle"></span>
+                            40% faster load times
+                        </p>
+</div>
+</div>
+<div class="flex flex-col gap-3 group cursor-pointer">
+<div class="w-full aspect-[4/3] rounded-2xl overflow-hidden bg-surface-darker relative border border-white/5">
+<img alt="Modern e-commerce shopping cart interface" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" data-alt="Minimalist e-commerce product page layout" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDC11q5ipdweDBjvVSYH5AnI36hqBRV2lUy6NrVZC2PIY-npEHNHi03clJFj8Ua4cy8IudrEOC6Bjg5ydwEZsEPxyCcjNt0XOFcIO7wCM5S7FD1eoklGXSZ69C1MR5In3GSzhUHZ-0fQSeTtk4lkzQlthJpEmhWWMGpEgEuz0MQSMv5q2ZHZmQoQLRtu9FZJtD9_2RP0WPKniLZBOerjFHMlm9Fyoyz3F-je_n2DLVqPkhTPqqa-dYmi2aJ9x168feOXAFfSPtE4eU"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+<div class="absolute bottom-4 left-4 right-4">
+<span class="px-2 py-1 bg-black/50 backdrop-blur-sm rounded-md text-[10px] uppercase font-mono tracking-wide text-white border border-white/10">E-Commerce</span>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-start mb-1">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white">Lumina Shop</h3>
+<span class="material-icons-round text-gray-500 dark:text-gray-500 -rotate-45 text-xl">arrow_forward</span>
+</div>
+<p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Headless Shopify storefront.</p>
+<p class="text-sm text-white font-medium">
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-white mr-2 align-middle"></span>
+                            2x conversion rate increase
+                        </p>
+</div>
+</div>
+</div>
+</section>
+<section class="py-8 px-4 bg-white/5 rounded-3xl border border-white/10 text-center relative overflow-hidden">
+<div class="absolute -top-10 -left-10 w-32 h-32 bg-white/5 blur-3xl rounded-full pointer-events-none"></div>
+<span class="material-icons-round text-5xl text-white/10 mb-4 block">format_quote</span>
+<blockquote class="text-lg font-medium text-gray-800 dark:text-gray-200 italic mb-6 leading-relaxed">
+                "zzoo.dev delivered our MVP in record time. The code quality is exceptional and the UI is exactly what we envisioned."
+            </blockquote>
+<cite class="not-italic flex flex-col items-center">
+<span class="font-bold text-gray-900 dark:text-white">Sarah Kim</span>
+<span class="text-sm text-gray-500 dark:text-gray-400 font-mono">CTO, TechStart Inc.</span>
+</cite>
+</section>
+<section class="flex flex-col items-center text-center gap-6 py-8">
+<h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+                Ready to start<br/>a project?
+            </h2>
+<p class="text-gray-500 dark:text-gray-400">
+                Let's turn your idea into a reality.
+            </p>
+<button class="w-full py-4 px-6 bg-white text-black hover:bg-gray-100 active:scale-[0.98] transition-all font-bold rounded-full text-center shadow-lg shadow-white/5">
+                Get in Touch
+            </button>
+</section>
+</main>
+<footer class="bg-gray-100 dark:bg-surface-darker pt-16 pb-12 px-8 border-t border-gray-200 dark:border-white/5">
+<div class="w-full max-w-[390px] mx-auto flex flex-col gap-12">
+<div class="flex flex-col gap-6">
+<span class="font-mono text-xl font-bold tracking-tight text-gray-900 dark:text-white">zzoo.dev</span>
+<nav class="flex flex-col gap-4">
+<a class="text-gray-600 dark:text-gray-400 hover:text-white transition-colors" href="#">Home</a>
+<a class="text-gray-600 dark:text-gray-400 hover:text-white transition-colors" href="#">Services</a>
+<a class="text-gray-600 dark:text-gray-400 hover:text-white transition-colors" href="#">Projects</a>
+<a class="text-gray-600 dark:text-gray-400 hover:text-white transition-colors" href="#">Blog</a>
+<a class="text-gray-600 dark:text-gray-400 hover:text-white transition-colors" href="#">About</a>
+</nav>
+</div>
+<div class="flex flex-col gap-6">
+<h4 class="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-white">Socials</h4>
+<div class="flex flex-col gap-4">
+<a class="flex items-center gap-3 text-gray-600 dark:text-gray-400 hover:text-white transition-colors group" href="#">
+<img alt="GitHub" class="w-5 h-5 dark:invert group-hover:opacity-80" data-alt="GitHub logo icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAeCgPNwZZIlEYbNVdMBzJrrFFslQ-SlEcHySKNKHAMKlmU4-0O02tCGh2IFrQuE9vmTwwBJXkChDf-86mLDnxBitDV2JxUcEgru0YwkCGzKtJAPEOfndQurdRG-9xkJW2HJxrk7F6W2zPlgiHmGusF2W_88ftPV_2-N1Fe1TRe_MWAPvMMKTFTit2g-XqYpzjqLUv3Cfhwt5IzbYq6aNfYI1Mbie4_0p20AlG-BQYshCVWxIh8NX-dE1rN6gSzHz_JKzUGaCSGKt4"/>
+                        GitHub
+                    </a>
+<a class="flex items-center gap-3 text-gray-600 dark:text-gray-400 hover:text-white transition-colors group" href="#">
+<img alt="LinkedIn" class="w-5 h-5 dark:invert group-hover:opacity-80" data-alt="LinkedIn logo icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBL2YjPeF5OHAlVIrrexKs4ndMIJlowTGrKoXHGFEPnjfh54QobffcuuUhLT1x-GieTe00PiH6iVwVhq1mkCowuf5oq13fFREUcQbcERBLJuypXccxxtsvIRb_tX3acyXbBgU_xwgmSz5DUpQQPSJXkULQK0JmRiej-TkxJaAhkcrrin0tPo2CLBbvWocPb1w6PHN4Fy13YICik31xUdWMgUq63Uxn31R0XfyIbfz8JR4cwXV2G6Ii9wQMIjpXeFlMIG5kEOEkmf44"/>
+                        LinkedIn
+                    </a>
+</div>
+</div>
+<div class="pt-8 border-t border-gray-200 dark:border-white/10 text-center">
+<p class="text-xs text-gray-500 dark:text-gray-600 font-mono">
+                    © 2023 zzoo.dev. All rights reserved.
+                </p>
+</div>
+</div>
+</footer>
+
+</body></html>
