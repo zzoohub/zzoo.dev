@@ -1,8 +1,20 @@
 import { useTranslations } from "next-intl";
+import { setRequestLocale } from "next-intl/server";
 import { AvailabilityBadge } from "@/components/availability-badge";
 import { CTASection } from "@/components/cta-section";
 
-export default function NowPage() {
+export default async function NowPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  return <NowPageContent />;
+}
+
+function NowPageContent() {
   const t = useTranslations("now");
 
   return (

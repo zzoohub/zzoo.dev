@@ -1,11 +1,16 @@
 import { useTranslations } from "next-intl";
-import { getLocale } from "next-intl/server";
+import { setRequestLocale } from "next-intl/server";
 import { getAllCaseStudies } from "@/lib/content";
 import { ProjectCard } from "@/components/project-card";
 
 
-export default async function ProjectsPage() {
-  const locale = await getLocale();
+export default async function ProjectsPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   const projects = getAllCaseStudies(locale);
 
   return <ProjectsContent projects={projects} />;

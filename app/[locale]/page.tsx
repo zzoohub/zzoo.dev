@@ -1,15 +1,20 @@
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { getAllCaseStudies, getTestimonials } from "@/lib/content";
-import { getLocale } from "next-intl/server";
+import { setRequestLocale } from "next-intl/server";
 import { AvailabilityBadge } from "@/components/availability-badge";
 import { Section } from "@/components/section";
 import { ProjectCard } from "@/components/project-card";
 import { Testimonial } from "@/components/testimonial";
 import { CTASection } from "@/components/cta-section";
 
-export default async function HomePage() {
-  const locale = await getLocale();
+export default async function HomePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   const projects = getAllCaseStudies(locale).filter((p) => p.featured);
   const testimonials = getTestimonials().filter((t) => t.featured);
 

@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import { useTranslations } from "next-intl";
+import { setRequestLocale } from "next-intl/server";
 import { siteConfig } from "@/lib/site-config";
 import { AvailabilityBadge } from "@/components/availability-badge";
 import { CopyButton } from "@/components/copy-button";
@@ -10,7 +11,18 @@ const channels = [
   { href: siteConfig.social.linkedin, label: "LinkedIn", icon: Linkedin },
 ];
 
-export default function ContactPage() {
+export default async function ContactPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  return <ContactPageContent />;
+}
+
+function ContactPageContent() {
   const t = useTranslations("contact");
 
   return (

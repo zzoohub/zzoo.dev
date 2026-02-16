@@ -30,6 +30,12 @@ bunx vitest run lib/content      # Run a single test file
 bunx vitest run --coverage       # Run tests with v8 coverage
 ```
 
+```bash
+bun run build:worker             # Full Cloudflare Workers build (diagrams + opennextjs-cloudflare)
+bun run preview                  # Local preview via opennextjs-cloudflare
+bun run deploy                   # Deploy to Cloudflare Workers (needs CLOUDFLARE_API_TOKEN + CLOUDFLARE_ACCOUNT_ID)
+```
+
 Use `bunx --bun shadcn@latest add <component>` to add shadcn/ui components.
 
 ## Tech Stack
@@ -44,7 +50,7 @@ Use `bunx --bun shadcn@latest add <component>` to add shadcn/ui components.
 - **next-themes** for dark mode (`.dark` class strategy)
 - **shadcn/ui** (new-york style, lucide icons, RSC-compatible)
 - **Vitest** + Testing Library for unit/component tests
-- Deployment: **Cloudflare Pages** with `@opennextjs/cloudflare`
+- Deployment: **Cloudflare Workers** with `@opennextjs/cloudflare` (config: `open-next.config.ts`, `wrangler.jsonc`)
 
 ## Architecture
 
@@ -75,7 +81,8 @@ Projects can have an optional design doc (`design.en.mdx`/`design.ko.mdx`) rende
 - Namespaces: `nav`, `hero`, `home`, `projects`, `project`, `blog`, `about`, `now`, `contact`, `footer`, `availability`, `common`
 - Navigation: import `Link`, `redirect`, `usePathname` from `@/i18n/navigation` (locale-aware)
 - Middleware: `middleware.ts` handles locale detection and routing
-- Server components: use `getLocale()` from `next-intl/server`
+- Server components: every page/layout must call `setRequestLocale(locale)` with locale from `params` — NOT `getLocale()` which makes pages dynamic
+- Async server components cannot call `useTranslations` — use async wrapper + sync inner component pattern
 - Client components: use `useTranslations('Namespace')` hook
 
 ### Route Structure
@@ -109,10 +116,15 @@ Projects can have an optional design doc (`design.en.mdx`/`design.ko.mdx`) rende
 - Coverage includes `lib/**` and `components/**`, excludes test files and `types.ts`
 - Test files live alongside source: `components/foo.test.tsx`, `lib/bar.test.ts`
 
+### Vitest Gotchas
+
+- `vi.useFakeTimers({ shouldAdvanceTime: true })` causes flaky tests on CI — real wall-clock time accumulates. Use `vi.useFakeTimers()` without it.
+- For async handlers with fake timers (e.g. clipboard API), use `vi.advanceTimersByTimeAsync(0)` inside `act()` to flush promises.
+
 ## Key Constraints
 
 - **SSG only** — no server-side rendering, no backend, no API routes. All pages must be statically exportable.
-- **Cloudflare Pages compatibility** — use `@opennextjs/cloudflare`; test early for compatibility issues.
+- **Cloudflare Workers compatibility** — use `@opennextjs/cloudflare`; verify all routes show `●` (SSG) in `next build` output, not `ƒ` (Dynamic).
 - **Performance targets** — Lighthouse 95+, initial JS < 100KB gzipped, FCP < 1.0s.
 - **Accessibility** — WCAG 2.1 AA compliance. Skip link, ARIA labels, semantic HTML.
 - **AI discoverability** — include `llms.txt`, JSON-LD structured data, RSS feed, XML sitemap.

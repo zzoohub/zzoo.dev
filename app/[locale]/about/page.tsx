@@ -1,12 +1,17 @@
-import { getLocale } from "next-intl/server";
+import { setRequestLocale } from "next-intl/server";
 import { useTranslations } from "next-intl";
 import { compileMDX } from "next-mdx-remote/rsc";
 import { getAboutContent } from "@/lib/content";
 import { CTASection } from "@/components/cta-section";
 import type { ExperienceEntry } from "@/lib/types";
 
-export default async function AboutPage() {
-  const locale = await getLocale();
+export default async function AboutPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   const about = getAboutContent(locale);
 
   const mdxContent = about
