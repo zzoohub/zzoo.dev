@@ -133,7 +133,7 @@ describe("CopyButton", () => {
     });
 
     it("resets after exactly 2000ms", async () => {
-      vi.useFakeTimers({ shouldAdvanceTime: true });
+      vi.useFakeTimers();
 
       render(<CopyButton text="test" label="Copy" />);
       const button = screen.getByRole("button");
