@@ -22,7 +22,6 @@ export interface CaseStudyMeta {
   techStack: string[];
   featured?: boolean;
   duration: string;
-  outcomeMetric: string;
   startDate: string;
   endDate?: string;
   d2Diagram?: string;

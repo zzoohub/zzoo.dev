@@ -352,7 +352,6 @@ techStack:
   - Next.js
   - TypeScript
 duration: 3 months
-outcomeMetric: 40% performance improvement
 startDate: 2023-06-01
 endDate: 2023-09-01
 ---
@@ -369,7 +368,6 @@ Content`
         status: "completed",
         techStack: ["Next.js", "TypeScript"],
         duration: "3 months",
-        outcomeMetric: "40% performance improvement",
         startDate: "2023-06-01",
         endDate: "2023-09-01",
         featured: false,
@@ -386,7 +384,6 @@ description: Desc
 clientType: Agency
 status: active
 duration: 2 months
-outcomeMetric: Success
 startDate: 2024-01-01
 ---
 Content`
@@ -406,7 +403,6 @@ description: Desc
 clientType: Startup
 status: active
 duration: 1 month
-outcomeMetric: Metric
 startDate: 2024-01-01
 ---
 Content`
@@ -427,7 +423,6 @@ clientType: Enterprise
 status: completed
 featured: true
 duration: 6 months
-outcomeMetric: Great success
 startDate: 2023-01-01
 endDate: 2023-07-01
 ---
@@ -451,8 +446,7 @@ Content`
         callCount++;
         const base = `clientType: Test
 status: completed
-duration: 1 month
-outcomeMetric: Success`;
+duration: 1 month`;
 
         if (callCount === 1) {
           return `---\ntitle: Old\ndescription: Desc\n${base}\nstartDate: 2022-01-01\n---\nContent`;
@@ -485,7 +479,6 @@ outcomeMetric: Success`;
 description: Desc
 clientType: Test
 duration: 1 month
-outcomeMetric: Success
 startDate: 2024-01-01`;
 
         if (callCount === 1) {
@@ -513,7 +506,6 @@ description: 설명
 clientType: 스타트업
 status: active
 duration: 3개월
-outcomeMetric: 성공
 startDate: 2024-01-01
 ---
 내용`
@@ -544,7 +536,6 @@ description: Description
 clientType: Test
 status: active
 duration: 1 month
-outcomeMetric: Success
 startDate: 2024-01-01
 ---
 Content`;
@@ -567,7 +558,6 @@ description: Desc
 clientType: Test
 status: active
 duration: 1 month
-outcomeMetric: Success
 startDate: 2024-01-01
 d2Diagram: architecture.d2
 ---
@@ -588,7 +578,6 @@ description: Desc
 clientType: Test
 status: active
 duration: 1 month
-outcomeMetric: Success
 startDate: 2024-01-01
 links:
   live: https://example.com
@@ -616,7 +605,6 @@ description: Desc
 clientType: Test
 status: active
 duration: 1 month
-outcomeMetric: Success
 startDate: 2024-01-01
 ---
 Content`
@@ -636,7 +624,6 @@ description: Desc
 clientType: Test
 status: active
 duration: 1 month
-outcomeMetric: Success
 startDate: 2024-01-01
 ---
 Content`
@@ -677,7 +664,6 @@ status: active
 techStack:
   - React
 duration: 2 months
-outcomeMetric: 50% improvement
 startDate: 2024-01-01
 ---
 Project details here`
@@ -694,7 +680,6 @@ Project details here`
         techStack: ["React"],
         featured: false,
         duration: "2 months",
-        outcomeMetric: "50% improvement",
         startDate: "2024-01-01",
       });
       expect(study?.content).toBe("Project details here");
@@ -725,7 +710,6 @@ description: Done
 clientType: Enterprise
 status: completed
 duration: 6 months
-outcomeMetric: Success
 startDate: 2023-01-01
 endDate: 2023-07-01
 ---
@@ -745,7 +729,6 @@ description: Ongoing
 clientType: Startup
 status: active
 duration: ongoing
-outcomeMetric: TBD
 startDate: 2024-01-01
 ---
 Content`
@@ -764,7 +747,6 @@ description: Desc
 clientType: Test
 status: active
 duration: 1 month
-outcomeMetric: Success
 startDate: 2024-01-01
 d2Diagram: diagram.d2
 ---
@@ -784,7 +766,6 @@ description: Desc
 clientType: Test
 status: active
 duration: 1 month
-outcomeMetric: Success
 startDate: 2024-01-01
 links:
   live: https://live.example.com
@@ -978,7 +959,6 @@ status: completed
 techStack:
   - Next.js
 duration: 3 months
-outcomeMetric: 40% performance improvement
 startDate: 2023-06-01
 endDate: 2023-09-01
 ---
@@ -996,7 +976,6 @@ Parent case study content`;
         status: "completed",
         techStack: ["Next.js"],
         duration: "3 months",
-        outcomeMetric: "40% performance improvement",
         startDate: "2023-06-01",
         endDate: "2023-09-01",
       });
@@ -1037,7 +1016,6 @@ techStack:
   - TypeScript
 featured: true
 duration: 6 months
-outcomeMetric: 90% success
 startDate: 2023-01-01
 endDate: 2023-07-01
 d2Diagram: diagram.d2
@@ -1077,7 +1055,6 @@ description: Parent description
 clientType: Startup
 status: active
 duration: 2 months
-outcomeMetric: Success
 startDate: 2024-01-01
 ---
 Parent content`;

@@ -20,13 +20,7 @@ export function ProjectCard({ project }: { project: CaseStudyMeta }) {
         {project.title}
       </h3>
 
-      <div className="mt-3 rounded-md bg-primary/10 px-4 py-2">
-        <p className="text-base font-semibold text-foreground">
-          {project.outcomeMetric}
-        </p>
-      </div>
-
-      <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
+      <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
         {project.description}
       </p>
 

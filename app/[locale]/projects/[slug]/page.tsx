@@ -58,9 +58,6 @@ function ProjectDetailContent({
 }) {
   const t = useTranslations("project");
 
-  // Parse outcome metrics for stat cards
-  const metrics = meta.outcomeMetric.split(",").map((m) => m.trim());
-
   return (
     <>
       <section className="py-10 md:py-16">
@@ -187,33 +184,6 @@ function ProjectDetailContent({
               </Link>
             </section>
           )}
-        </div>
-      </section>
-
-      {/* Results */}
-      <section className="border-t border-border bg-muted/30 py-16 md:py-20">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <h2 className="text-center text-2xl font-bold tracking-tight md:text-3xl">
-            {t("results")}
-          </h2>
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-            {metrics.map((metric, i) => {
-              const parts = metric.match(
-                /^([\d.]+%?x?)\s*(.*)/
-              );
-              const value = parts?.[1] ?? metric;
-              const label = parts?.[2] ?? "";
-              return (
-                <div
-                  key={i}
-                  className="rounded-xl border border-border bg-background p-8 text-center shadow-sm"
-                >
-                  <p className="text-4xl font-bold tracking-tight">{value}</p>
-                  <p className="mt-2 text-sm text-muted-foreground">{label}</p>
-                </div>
-              );
-            })}
-          </div>
         </div>
       </section>
 
