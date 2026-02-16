@@ -1,36 +1,96 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# zzoo.dev
+
+Personal branding website for a solopreneur developer. Bilingual (EN/KO), statically generated, deployed to Cloudflare Workers.
+
+## Tech Stack
+
+- **Next.js 16** (App Router, SSG only)
+- **React 19**, **TypeScript** (strict mode)
+- **Tailwind CSS v4** with oklch theming
+- **Bun** as package manager
+- **next-intl** for i18n (EN/KO)
+- **next-mdx-remote** for MDX content
+- **next-themes** for dark mode
+- **shadcn/ui** components
+- **D2** diagrams (compiled to SVG at build time)
+- **Vitest** + Testing Library for tests
+- **Cloudflare Workers** via `@opennextjs/cloudflare`
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
+bun install
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the site.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | Description |
+|---------|-------------|
+| `bun dev` | Start dev server (port 3000) |
+| `bun run build` | Production build (SSG, includes diagram compilation) |
+| `bun run build:diagrams` | Compile `.d2` files to SVG (light + dark themes) |
+| `bun run lint` | ESLint |
+| `bun test` | Run tests (watch mode) |
+| `bunx vitest run` | Run tests once (CI mode) |
+| `bun run build:worker` | Full Cloudflare Workers build |
+| `bun run preview` | Local preview via opennextjs-cloudflare |
+| `bun run deploy` | Deploy to Cloudflare Workers |
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+content/              # File-based MDX content
+├── about/            # About page (en.mdx, ko.mdx)
+├── blog/             # Blog posts by slug
+├── projects/         # Case studies by slug
+└── testimonials.json # Social proof data
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+messages/             # UI translation strings
+├── en.json
+└── ko.json
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+app/[locale]/         # Locale-prefixed routes (Next.js App Router)
+components/           # React components
+lib/                  # Utilities, content loading, site config
+public/diagrams/      # Pre-rendered D2 SVGs
+```
 
-## Deploy on Vercel
+## Content
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Content is authored as MDX files in the `content/` directory with locale-specific variants (`en.mdx`, `ko.mdx`). Frontmatter is parsed with `gray-matter` and MDX is rendered server-side via `next-mdx-remote/rsc`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Adding a blog post
+
+Create `content/blog/<slug>/en.mdx` (and optionally `ko.mdx`) with frontmatter:
+
+```yaml
+---
+title: Post Title
+description: Short description
+date: 2026-01-01
+tags: [tag1, tag2]
+---
+```
+
+### Adding a project
+
+Create `content/projects/<slug>/en.mdx` (and optionally `ko.mdx`) with frontmatter:
+
+```yaml
+---
+title: Project Name
+description: Short description
+clientType: Startup
+status: completed
+techStack: [Next.js, TypeScript]
+featured: true
+launchDate: 2026-01-01
+---
+```
+
+## License
+
+All rights reserved.
