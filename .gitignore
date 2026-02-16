@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# generated diagrams (rebuilt from content/diagrams/*.d2)
+/public/diagrams/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

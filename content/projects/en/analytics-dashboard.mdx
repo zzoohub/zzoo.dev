@@ -1,0 +1,40 @@
+---
+title: "Real-Time Analytics Dashboard"
+description: "Engineered a high-throughput ingestion pipeline and a responsive frontend dashboard for visualizing financial market data in real-time with sub-second latency."
+clientType: "FinTech"
+status: "active"
+techStack: ["React", "Go", "ClickHouse"]
+featured: true
+duration: "6 months"
+outcomeMetric: "3x faster data processing, 99.9% uptime"
+startDate: "2025-08-01"
+---
+
+## Overview
+
+A fintech startup needed a real-time analytics dashboard to visualize financial market data for their institutional clients. The existing solution was a legacy Java application that couldn't handle the data volume required for real-time analysis.
+
+## The Problem
+
+- **Latency:** The existing system had 5-10 second delays in data display, unacceptable for financial trading decisions.
+- **Scale:** During market open hours, the system needed to process 100K+ events per second.
+- **Reliability:** The legacy system experienced frequent downtime during peak trading hours.
+
+## The Solution
+
+I designed a two-tier architecture:
+
+1. **Ingestion Layer (Go):** A high-performance Go service processes incoming market data events, performs aggregation, and writes to ClickHouse. The service uses worker pools and batched writes to maximize throughput.
+
+2. **Frontend (React):** A responsive dashboard built with React, using WebSocket connections for real-time data streaming. Charts render with `<canvas>` for 60fps performance even with thousands of data points.
+
+Key technical decisions:
+- **ClickHouse** for time-series data — 10x faster than PostgreSQL for analytical queries
+- **WebSocket** with binary protocol for minimal overhead
+- **Virtual scrolling** for tables with 100K+ rows
+
+## Results
+
+- **3x** faster data processing compared to the legacy system
+- **99.9%** uptime over the first 6 months
+- **Sub-200ms** latency from event ingestion to dashboard display

@@ -1,0 +1,49 @@
+---
+title: "TypeScript Patterns I Use in Every Project"
+description: "From discriminated unions to branded types. A collection of patterns that catch bugs at compile time without making your codebase unreadable."
+date: "2025-12-21"
+tags: ["TypeScript", "Frontend"]
+locale: "en"
+draft: false
+---
+
+After years of TypeScript, I've settled on a set of patterns that I reach for in every project. These aren't theoretical — they're battle-tested patterns that prevent real bugs.
+
+## Discriminated Unions
+
+The most powerful TypeScript pattern. Instead of optional fields and null checks, model your state as a union of distinct shapes.
+
+```typescript
+type AsyncState<T> =
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "success"; data: T }
+  | { status: "error"; error: Error };
+```
+
+## Branded Types
+
+Prevent mixing up primitive values that represent different things. A `UserId` should never be assignable to an `OrderId`, even though both are strings.
+
+```typescript
+type Brand<K, T> = K & { __brand: T };
+type UserId = Brand<string, "UserId">;
+type OrderId = Brand<string, "OrderId">;
+```
+
+## The `satisfies` Operator
+
+Use `satisfies` to validate object shape without widening the type. This gives you autocomplete and type safety simultaneously.
+
+```typescript
+const config = {
+  apiUrl: "https://api.example.com",
+  timeout: 5000,
+} satisfies Record<string, string | number>;
+```
+
+## Exhaustive Pattern Matching
+
+Always handle every case in a discriminated union. The `never` type ensures you get a compile error if a new variant is added without handling it.
+
+These patterns have a high signal-to-noise ratio — they catch real bugs without adding unnecessary complexity.

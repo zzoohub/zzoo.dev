@@ -1,0 +1,70 @@
+## Product Vision
+
+Rebuild a legacy monolithic e-commerce platform into a modern, headless architecture that delivers sub-second page loads and a seamless checkout experience.
+
+## Goals
+
+1. **Performance** — Achieve under 1.5s LCP on all product pages
+2. **Conversion** — Increase checkout completion rate by 20%+
+3. **Developer Experience** — Enable same-day feature deployments with CI/CD
+4. **Scalability** — Handle 10x traffic spikes during sales events without degradation
+
+## Non-Goals
+
+- Native mobile app (mobile web is sufficient for this phase)
+- Multi-tenant / marketplace features
+- Internationalization (single-market launch)
+
+## Technical Requirements
+
+### Frontend
+- **Framework:** Next.js with static generation for catalog pages
+- **Styling:** Tailwind CSS with a custom design system
+- **State:** React Server Components for data fetching, client components for interactivity
+
+### Backend
+- **API:** RESTful with OpenAPI spec
+- **Database:** PostgreSQL with read replicas for horizontal scaling
+- **Caching:** Redis for session management, cart persistence, and product catalog caching
+- **Payments:** Stripe integration with webhook-based order confirmation
+
+### Infrastructure
+- **Hosting:** Vercel for frontend, managed PostgreSQL on Neon
+- **CDN:** Vercel Edge Network for static assets and edge functions
+- **Monitoring:** Sentry for error tracking, Vercel Analytics for performance
+
+## Phases
+
+### Phase 1: Foundation (Weeks 1-2)
+- Set up monorepo structure
+- Database schema design and migration
+- Authentication flow (email + social login)
+- Basic product listing pages (SSG)
+
+### Phase 2: Core Commerce (Weeks 3-6)
+- Product detail pages with variant selection
+- Shopping cart with Redis-backed persistence
+- Checkout flow with Stripe integration
+- Order confirmation and email notifications
+
+### Phase 3: Optimization (Weeks 7-9)
+- Image optimization pipeline
+- Search with faceted filtering
+- Performance tuning (target: Lighthouse 95+)
+- Load testing for 10x traffic scenarios
+
+### Phase 4: Launch (Weeks 10-12)
+- Staging environment validation
+- Data migration from legacy system
+- Gradual traffic cutover (10% → 50% → 100%)
+- Post-launch monitoring and hotfixes
+
+## Success Metrics
+
+| Metric | Baseline | Target |
+|--------|----------|--------|
+| LCP (p75) | 4.2s | < 1.5s |
+| Checkout conversion | 2.1% | > 2.6% |
+| Deploy frequency | Weekly | Daily |
+| Error rate | 1.2% | < 0.1% |
+| Uptime | 99.5% | 99.9% |

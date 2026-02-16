@@ -1,0 +1,121 @@
+{
+  "nav": {
+    "home": "홈",
+    "projects": "프로젝트",
+    "blog": "블로그",
+    "about": "소개",
+    "now": "현재",
+    "contact": "연락처"
+  },
+  "hero": {
+    "badge": "새 프로젝트 가능",
+    "title": "실제 문제를 해결하는 소프트웨어를 만듭니다.",
+    "subtitle": "초기 스타트업을 위한 확장 가능한 웹 애플리케이션과 기술 아키텍처를 전문으로 하는 풀스택 개발자이자 솔로프리너입니다.",
+    "cta_primary": "작업물 보기",
+    "cta_secondary": "연락하기"
+  },
+  "home": {
+    "featured_label": "주요 작업",
+    "featured_title": "주요 프로젝트",
+    "testimonial_label": "클라이언트 후기",
+    "bottom_cta_title": "프로젝트를 시작할 준비가 되셨나요?",
+    "bottom_cta_subtitle": "필요하신 사항을 이야기해 주세요.",
+    "bottom_cta_button": "연락하기"
+  },
+  "projects": {
+    "title": "프로젝트",
+    "subtitle": "실제 참여에서 얻은 실질적인 결과.",
+    "read_case_study": "케이스 스터디 읽기",
+    "bottom_cta_title": "마음에 드셨나요?",
+    "bottom_cta_button": "프로젝트 논의하기"
+  },
+  "project": {
+    "overview": "개요",
+    "problem": "문제",
+    "solution": "해결책",
+    "results": "결과 및 영향",
+    "tech_stack": "기술 스택",
+    "architecture": "아키텍처",
+    "view_live": "라이브 보기",
+    "view_source": "소스 보기",
+    "documentation": "문서",
+    "prd_available": "제품 요구사항",
+    "prd_description": "이 프로젝트의 전체 제품 요구사항 문서를 확인하세요.",
+    "view_prd": "PRD 보기",
+    "bottom_cta_title": "비슷한 과제를 겪고 계신가요?",
+    "bottom_cta_subtitle": "대규모 에이전시의 부담 없이 기술 스택을 확장할 수 있도록 도와드립니다.",
+    "bottom_cta_button": "이야기하기"
+  },
+  "blog": {
+    "title": "블로그",
+    "subtitle": "소프트웨어, 아키텍처, 그리고 잘 작동하는 것들에 대해 씁니다.",
+    "all": "전체",
+    "min_read": "분 소요",
+    "bottom_cta_title": "함께 일하고 싶으신가요?",
+    "bottom_cta_button": "연락하기"
+  },
+  "about": {
+    "title": "소개",
+    "bio_1": "깔끔하고 효율적이며 사용자 중심의 디지털 제품을 만드는 데 열정을 가진 풀스택 개발자입니다. 복잡한 시스템이 대규모로 어떻게 작동하는지에 대한 끊임없는 호기심과 직관적인 사용자 인터페이스를 만드는 열정이 소프트웨어 여정의 원동력이었습니다.",
+    "bio_2": "기업 엔지니어링 분야에서 7년 이상 일한 후, 스타트업과 초기 단계 기업을 위한 맞춤 솔루션을 만들며 독립적으로 일하기 시작했습니다. 모든 결정이 제품의 미래를 좌우하는 제로 투 원 단계의 역동적인 과정을 좋아합니다.",
+    "bio_3": "코딩을 하지 않을 때는 등산을 하거나, 복잡한 커피를 내리거나, 홈랩 환경을 이것저것 만지고 있습니다.",
+    "experience": "경력",
+    "exp_1_period": "2024 — 현재",
+    "exp_1_title": "솔로프리너 & 프리랜서 개발자",
+    "exp_1_company": "독립",
+    "exp_1_description": "클라이언트를 위한 맞춤형 웹 애플리케이션 개발 및 자체 마이크로 SaaS 제품 출시. Next.js, TypeScript, 서버리스 아키텍처에 집중.",
+    "exp_2_period": "2021 — 2024",
+    "exp_2_title": "시니어 소프트웨어 엔지니어",
+    "exp_2_company": "TechCorp",
+    "exp_2_description": "핵심 결제 인프라를 담당하는 5명의 엔지니어 팀을 이끌었습니다. 시스템 안정성을 99.9%로 향상시키고 기술 부채를 줄였습니다.",
+    "exp_3_period": "2019 — 2021",
+    "exp_3_title": "소프트웨어 엔지니어",
+    "exp_3_company": "StartupXYZ",
+    "exp_3_description": "고성장 핀테크 스타트업에서 풀스택 개발. React Native를 사용하여 모바일 앱의 핵심 기능을 구현했습니다.",
+    "exp_4_period": "2017 — 2019",
+    "exp_4_title": "주니어 개발자",
+    "exp_4_company": "WebAgency",
+    "exp_4_description": "지역 비즈니스를 위한 픽셀 퍼펙트 랜딩 페이지와 소규모 이커머스 사이트를 제작. HTML, CSS, 바닐라 JavaScript를 마스터했습니다.",
+    "download_resume": "이력서 다운로드 (PDF)",
+    "bottom_cta_title": "함께 일하는 것에 관심이 있으신가요?",
+    "bottom_cta_subtitle": "현재 프리랜서 프로젝트와 컨설팅이 가능합니다. 멋진 것을 만들어 봅시다.",
+    "bottom_cta_button": "연락하기"
+  },
+  "now": {
+    "title": "현재",
+    "last_updated": "최종 업데이트",
+    "working_on": "작업 중",
+    "learning": "학습 중",
+    "reading": "읽는 중",
+    "available_for": "가능한 작업",
+    "bottom_cta_title": "맞는 것 같으신가요?",
+    "bottom_cta_subtitle": "어떻게 도움을 드릴 수 있을지 이야기해 봅시다.",
+    "bottom_cta_button": "연락하기"
+  },
+  "contact": {
+    "title": "연락처",
+    "subtitle": "이메일이 가장 좋은 연락 방법입니다.",
+    "email_label": "이메일 주소",
+    "send_email": "이메일 보내기",
+    "copy_address": "주소 복사",
+    "copied": "복사됨!",
+    "connect": "소셜",
+    "response_time": "보통 24시간 이내에 답변드립니다",
+    "prefer_call": "통화를 원하시면 Cal.com에서 시간을 예약하세요"
+  },
+  "footer": {
+    "navigation": "탐색",
+    "connect": "연결",
+    "available": "가능",
+    "limited": "제한적",
+    "booked": "예약됨"
+  },
+  "availability": {
+    "available": "새 프로젝트 가능",
+    "limited": "제한된 가용성",
+    "booked": "{date}까지 예약됨"
+  },
+  "common": {
+    "skip_to_main": "본문으로 건너뛰기"
+  }
+}

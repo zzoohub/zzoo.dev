@@ -1,0 +1,121 @@
+{
+  "nav": {
+    "home": "Home",
+    "projects": "Projects",
+    "blog": "Blog",
+    "about": "About",
+    "now": "Now",
+    "contact": "Contact"
+  },
+  "hero": {
+    "badge": "Open to new projects",
+    "title": "I build software that solves real problems.",
+    "subtitle": "Full-stack developer and solopreneur specializing in scalable web applications and technical architecture for early-stage startups.",
+    "cta_primary": "See My Work",
+    "cta_secondary": "Get in Touch"
+  },
+  "home": {
+    "featured_label": "Selected Work",
+    "featured_title": "Featured Projects",
+    "testimonial_label": "What Clients Say",
+    "bottom_cta_title": "Ready to start a project?",
+    "bottom_cta_subtitle": "Let's talk about what you need.",
+    "bottom_cta_button": "Get in Touch"
+  },
+  "projects": {
+    "title": "Projects",
+    "subtitle": "Real outcomes from real engagements.",
+    "read_case_study": "Read Case Study",
+    "bottom_cta_title": "Like what you see?",
+    "bottom_cta_button": "Discuss Your Project"
+  },
+  "project": {
+    "overview": "Overview",
+    "problem": "The Problem",
+    "solution": "The Solution",
+    "results": "Impact & Results",
+    "tech_stack": "Technology Stack",
+    "architecture": "Architecture",
+    "view_live": "View Live",
+    "view_source": "View Source",
+    "documentation": "Docs",
+    "prd_available": "Product Requirements",
+    "prd_description": "Read the full product requirements document for this project.",
+    "view_prd": "View PRD",
+    "bottom_cta_title": "Facing a similar challenge?",
+    "bottom_cta_subtitle": "I help startups and businesses scale their tech stack without the bloat of a large agency.",
+    "bottom_cta_button": "Let's Talk"
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Writing about software, architecture, and building things that work.",
+    "all": "All",
+    "min_read": "min read",
+    "bottom_cta_title": "Want to work together?",
+    "bottom_cta_button": "Get in Touch"
+  },
+  "about": {
+    "title": "About",
+    "bio_1": "I'm a full-stack developer with a passion for building clean, efficient, and user-centric digital products. My journey in software has been driven by a relentless curiosity for how complex systems work at scale and a passion for crafting intuitive user interfaces.",
+    "bio_2": "After spending over seven years in the corporate engineering world, I transitioned to working for myself, building custom solutions for startups and early-stage companies. I love the chaos of the zero-to-one phase, where every decision shapes the future of the product.",
+    "bio_3": "When I'm not coding, you can find me hiking trails, brewing overly complicated coffee, or tinkering with my homelab setup.",
+    "experience": "Experience",
+    "exp_1_period": "2024 — Present",
+    "exp_1_title": "Solopreneur & Freelance Developer",
+    "exp_1_company": "Independent",
+    "exp_1_description": "Building bespoke web applications for clients and launching own micro-SaaS products. Focusing on Next.js, TypeScript, and serverless architectures.",
+    "exp_2_period": "2021 — 2024",
+    "exp_2_title": "Senior Software Engineer",
+    "exp_2_company": "TechCorp",
+    "exp_2_description": "Led a team of 5 engineers working on core payment infrastructure. Improved system reliability by 99.9% and reduced technical debt.",
+    "exp_3_period": "2019 — 2021",
+    "exp_3_title": "Software Engineer",
+    "exp_3_company": "StartupXYZ",
+    "exp_3_description": "Full-stack development for a high-growth fintech startup. Implemented key features for the mobile app using React Native.",
+    "exp_4_period": "2017 — 2019",
+    "exp_4_title": "Junior Developer",
+    "exp_4_company": "WebAgency",
+    "exp_4_description": "Crafted pixel-perfect landing pages and small e-commerce sites for local businesses. Mastered HTML, CSS, and vanilla JavaScript.",
+    "download_resume": "Download Resume (PDF)",
+    "bottom_cta_title": "Interested in working together?",
+    "bottom_cta_subtitle": "I'm currently available for freelance projects and consulting. Let's build something great.",
+    "bottom_cta_button": "Get in Touch"
+  },
+  "now": {
+    "title": "Now",
+    "last_updated": "Last updated",
+    "working_on": "Working On",
+    "learning": "Learning",
+    "reading": "Reading",
+    "available_for": "Available For",
+    "bottom_cta_title": "Sounds like a fit?",
+    "bottom_cta_subtitle": "Let's discuss how I can help your team.",
+    "bottom_cta_button": "Get in Touch"
+  },
+  "contact": {
+    "title": "Contact",
+    "subtitle": "The best way to reach me is email.",
+    "email_label": "EMAIL ADDRESS",
+    "send_email": "Send Email",
+    "copy_address": "Copy Address",
+    "copied": "Copied!",
+    "connect": "CONNECT",
+    "response_time": "I typically respond within 24 hours",
+    "prefer_call": "Prefer a call? Book a time on Cal.com"
+  },
+  "footer": {
+    "navigation": "Navigation",
+    "connect": "Connect",
+    "available": "Available",
+    "limited": "Limited",
+    "booked": "Booked"
+  },
+  "availability": {
+    "available": "Open to new projects",
+    "limited": "Limited availability",
+    "booked": "Booked until {date}"
+  },
+  "common": {
+    "skip_to_main": "Skip to main content"
+  }
+}
