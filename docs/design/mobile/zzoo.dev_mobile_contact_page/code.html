@@ -1,164 +1,268 @@
-<!DOCTYPE html>
+<!doctype html>
 
-<html class="dark" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Contact | zzoo.dev</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#19e65e",
-                        "background-light": "#f6f8f6",
-                        "background-dark": "#000000", // Adjusted to pure black as per instructions
-                        "neutral-dark": "#121212",
-                    },
-                    fontFamily: {
-                        "display": ["Inter", "sans-serif"],
-                        "mono": ["JetBrains Mono", "monospace"]
-                    },
-                    borderRadius: {
-                        "DEFAULT": "1rem",
-                        "lg": "2rem",
-                        "xl": "3rem",
-                        "full": "9999px"
+<html class="dark" lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <title>Contact | zzoo.dev</title>
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet"
+        />
+        <script id="tailwind-config">
+            tailwind.config = {
+                darkMode: "class",
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: "#19e65e",
+                            "background-light": "#f6f8f6",
+                            "background-dark": "#000000", // Adjusted to pure black as per instructions
+                            "neutral-dark": "#121212",
+                        },
+                        fontFamily: {
+                            display: ["Inter", "sans-serif"],
+                            mono: ["JetBrains Mono", "monospace"],
+                        },
+                        borderRadius: {
+                            DEFAULT: "1rem",
+                            lg: "2rem",
+                            xl: "3rem",
+                            full: "9999px",
+                        },
                     },
                 },
-            },
-        }
-    </script>
-<style>
-        body {
-            background-color: #0a0a0a;
-            font-family: 'Inter', sans-serif;
-        }
-        .geist-mono {
-            font-family: 'JetBrains Mono', monospace;
-            letter-spacing: -0.02em;
-        }
-        .custom-border {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .pulse-dot {
-            box-shadow: 0 0 0 0 rgba(25, 230, 94, 0.7);
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(25, 230, 94, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(25, 230, 94, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(25, 230, 94, 0); }
-        }
-        /* Mobile Frame for Desktop View */
-        .mobile-viewport {
-            width: 390px;
-            min-height: 844px;
-            margin: 2rem auto;
-            position: relative;
-            overflow: hidden;
-            border: 8px solid #1a1a1a;
-            border-radius: 3rem;
-        }
-        @media (max-width: 450px) {
-            .mobile-viewport {
-                width: 100%;
-                margin: 0;
-                border: none;
-                border-radius: 0;
+            };
+        </script>
+        <style>
+            body {
+                background-color: #0a0a0a;
+                font-family: "Inter", sans-serif;
             }
-        }
-    </style>
-</head>
-<body class="bg-background-light dark:bg-background-dark text-white font-display">
-<!-- Desktop Centering Wrapper -->
-<div class="min-h-screen flex items-center justify-center bg-[#0a0a0a] p-4">
-<!-- Mobile Container (390px) -->
-<div class="mobile-viewport bg-background-dark shadow-2xl flex flex-col">
-<!-- Sticky Header -->
-<header class="sticky top-0 z-50 h-[56px] w-full bg-background-dark/80 backdrop-blur-md flex items-center justify-between px-4 custom-border">
-<div class="geist-mono text-lg font-bold text-white">
-                    zzoo.dev
-                </div>
-<button class="w-10 h-10 flex items-center justify-center text-white">
-<span class="material-icons">menu</span>
-</button>
-</header>
-<!-- Main Content -->
-<main class="flex-1 px-4 pt-12">
-<!-- Hero Section -->
-<section class="mb-12">
-<h1 class="text-[32px] font-bold text-white mb-2 leading-tight">Contact</h1>
-<div class="geist-mono text-[28px] font-bold text-white mb-8 break-all leading-tight">
-                        hello@zzoo.dev
+            .geist-mono {
+                font-family: "JetBrains Mono", monospace;
+                letter-spacing: -0.02em;
+            }
+            .custom-border {
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .pulse-dot {
+                box-shadow: 0 0 0 0 rgba(25, 230, 94, 0.7);
+                animation: pulse 2s infinite;
+            }
+            @keyframes pulse {
+                0% {
+                    transform: scale(0.95);
+                    box-shadow: 0 0 0 0 rgba(25, 230, 94, 0.7);
+                }
+                70% {
+                    transform: scale(1);
+                    box-shadow: 0 0 0 6px rgba(25, 230, 94, 0);
+                }
+                100% {
+                    transform: scale(0.95);
+                    box-shadow: 0 0 0 0 rgba(25, 230, 94, 0);
+                }
+            }
+            /* Mobile Frame for Desktop View */
+            .mobile-viewport {
+                width: 390px;
+                min-height: 844px;
+                margin: 2rem auto;
+                position: relative;
+                overflow: hidden;
+                border: 8px solid #1a1a1a;
+                border-radius: 3rem;
+            }
+            @media (max-width: 450px) {
+                .mobile-viewport {
+                    width: 100%;
+                    margin: 0;
+                    border: none;
+                    border-radius: 0;
+                }
+            }
+        </style>
+    </head>
+    <body
+        class="bg-background-light dark:bg-background-dark text-white font-display"
+    >
+        <!-- Desktop Centering Wrapper -->
+        <div
+            class="min-h-screen flex items-center justify-center bg-[#0a0a0a] p-4"
+        >
+            <!-- Mobile Container (390px) -->
+            <div
+                class="mobile-viewport bg-background-dark shadow-2xl flex flex-col"
+            >
+                <!-- Sticky Header -->
+                <header
+                    class="sticky top-0 z-50 h-[56px] w-full bg-background-dark/80 backdrop-blur-md flex items-center justify-between px-4 custom-border"
+                >
+                    <div class="geist-mono text-lg font-bold text-white">
+                        zzoo.dev
                     </div>
-<!-- Buttons Stack -->
-<div class="flex flex-col gap-4 mb-6">
-<button class="w-full bg-white text-black font-bold py-4 rounded-full flex items-center justify-center gap-2 hover:bg-neutral-200 transition-colors">
-<span class="material-icons text-sm">send</span>
-                            Send Email
-                        </button>
-<button class="w-full bg-transparent border border-white text-white font-bold py-4 rounded-full flex items-center justify-center gap-2 hover:bg-white/10 transition-colors">
-<span class="material-icons text-sm">content_copy</span>
-                            Copy Address
-                        </button>
-</div>
-<!-- Availability Indicator -->
-<div class="flex items-center gap-3 px-1">
-<div class="w-2.5 h-2.5 rounded-full bg-primary pulse-dot"></div>
-<span class="text-sm font-medium text-neutral-400">Available for new projects</span>
-</div>
-</section>
-<!-- Links Section -->
-<section class="mt-12">
-<div class="flex flex-col">
-<a class="h-[48px] flex items-center justify-between custom-border group hover:bg-white/5 transition-all" href="#">
-<div class="flex items-center gap-3">
-<img alt="" class="w-5 h-5 opacity-70 group-hover:opacity-100" data-alt="GitHub monochrome icon logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCidlJ_Ly6DHiyD01PgQhqeFXe42mdggbTOd2WFk3tcaa4Ih3TPrbtcdob7B2Jk-TRTo0WE-2e3Wu5MKeoXqXsxsJ3XckJjBMkjJ39Jfli_jOHZrqMjnW1kGW9alZQ5rtRalezRdC7I_lgUh6Xw0k2P3NM5dMMqlrVsL_2QUi4E5Mugbj-A-fCJkU7_hQ_QqybcwcFtvfsZLzfnUaFbIfK64TkPV50r9n0cboHbfihy65i51MXVGMPiWqwiN-clIMikexGJ7PeLSQw"/>
-<span class="text-sm font-medium">GitHub</span>
-</div>
-<span class="material-icons text-neutral-600 text-sm">north_east</span>
-</a>
-<a class="h-[48px] flex items-center justify-between custom-border group hover:bg-white/5 transition-all" href="#">
-<div class="flex items-center gap-3">
-<img alt="" class="w-5 h-5 opacity-70 group-hover:opacity-100" data-alt="LinkedIn monochrome icon logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFqoN-Cqktu_l-MwGz13So3Pb7O7MeGNn7AnFTAG0lxmdpptH4NEA6FBbyxbDVHMQmwbS88wcL9LHHDLg6L9LzKr9ufdYKxt6hhUoX3uEu-SfK4L1s029ALcgX4hdiBvVxGmVFVQEgxa8NWbt99pYkERcSlRqVX1IvqqxmcplxLYMiQgwv-tJ6nXo1uwmOuIzaZdwRgo9xgBWCT6x0F9fI6skCHT_4WPBc_Rd5Gd3e-vIr1J6x9bHobRlKV1VegAfzGDZsmXze4gM"/>
-<span class="text-sm font-medium">LinkedIn</span>
-</div>
-<span class="material-icons text-neutral-600 text-sm">north_east</span>
-</a>
-<a class="h-[48px] flex items-center justify-between custom-border group hover:bg-white/5 transition-all" href="#">
-<div class="flex items-center gap-3">
-<span class="material-icons text-white opacity-70 group-hover:opacity-100 text-[20px]">calendar_today</span>
-<span class="text-sm font-medium">Cal.com</span>
-</div>
-<span class="material-icons text-neutral-600 text-sm">north_east</span>
-</a>
-<a class="h-[48px] flex items-center justify-between custom-border group hover:bg-white/5 transition-all" href="#">
-<div class="flex items-center gap-3">
-<img alt="" class="w-5 h-5 opacity-70 group-hover:opacity-100" data-alt="Twitter X monochrome icon logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsI6MrwRfzVLv5GRAOVCkd6ltI-IY3baKEt66EivJKBIueQ1aHRWv3g5IF-OEFTCdoXSqJt8c6dq7Qm8HvJFJ_Bzq_5UHXxd1JuwJ1rN119ZVU3HkGBH-5HNzdRk6Mz4eYQETeSysVMfEYgMK-k1YpY5js8Gr9LDSNY1BMLGHvNnU2AvJmMQAcexIVVmuluFj86sdAcQBtSywUIZTDGCRNjV60YbjwZmg4FOWZDJsNciEI7C-Fnh5cCEAanVjUKgv-UFUgwjBMyik"/>
-<span class="text-sm font-medium">X / Twitter</span>
-</div>
-<span class="material-icons text-neutral-600 text-sm">north_east</span>
-</a>
-</div>
-</section>
-</main>
-<!-- Minimal Footer -->
-<footer class="p-8 mt-auto flex flex-col items-center gap-4">
-<div class="w-12 h-[1px] bg-neutral-800"></div>
-<div class="text-center">
-<div class="geist-mono text-sm font-bold text-white mb-1">zzoo.dev</div>
-<p class="text-[10px] uppercase tracking-[0.2em] text-neutral-500 font-medium">
-                        © 2024 Built for humans
-                    </p>
-</div>
-</footer>
-<!-- Bottom UI bar for mobile feel -->
-<div class="h-1.5 w-32 bg-neutral-800 rounded-full mx-auto mb-2 opacity-30"></div>
-</div>
-</div>
-</body></html>
+                    <button
+                        class="w-10 h-10 flex items-center justify-center text-white"
+                    >
+                        <span class="material-icons">menu</span>
+                    </button>
+                </header>
+                <!-- Main Content -->
+                <main class="flex-1 px-4 pt-12">
+                    <!-- Hero Section -->
+                    <section class="mb-12">
+                        <h1
+                            class="text-[32px] font-bold text-white mb-2 leading-tight"
+                        >
+                            Contact
+                        </h1>
+                        <div
+                            class="geist-mono text-[28px] font-bold text-white mb-8 break-all leading-tight"
+                        >
+                            zzoo.origin@gmail.com
+                        </div>
+                        <!-- Buttons Stack -->
+                        <div class="flex flex-col gap-4 mb-6">
+                            <button
+                                class="w-full bg-white text-black font-bold py-4 rounded-full flex items-center justify-center gap-2 hover:bg-neutral-200 transition-colors"
+                            >
+                                <span class="material-icons text-sm">send</span>
+                                Send Email
+                            </button>
+                            <button
+                                class="w-full bg-transparent border border-white text-white font-bold py-4 rounded-full flex items-center justify-center gap-2 hover:bg-white/10 transition-colors"
+                            >
+                                <span class="material-icons text-sm"
+                                    >content_copy</span
+                                >
+                                Copy Address
+                            </button>
+                        </div>
+                        <!-- Availability Indicator -->
+                        <div class="flex items-center gap-3 px-1">
+                            <div
+                                class="w-2.5 h-2.5 rounded-full bg-primary pulse-dot"
+                            ></div>
+                            <span class="text-sm font-medium text-neutral-400"
+                                >Available for new projects</span
+                            >
+                        </div>
+                    </section>
+                    <!-- Links Section -->
+                    <section class="mt-12">
+                        <div class="flex flex-col">
+                            <a
+                                class="h-[48px] flex items-center justify-between custom-border group hover:bg-white/5 transition-all"
+                                href="#"
+                            >
+                                <div class="flex items-center gap-3">
+                                    <img
+                                        alt=""
+                                        class="w-5 h-5 opacity-70 group-hover:opacity-100"
+                                        data-alt="GitHub monochrome icon logo"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCidlJ_Ly6DHiyD01PgQhqeFXe42mdggbTOd2WFk3tcaa4Ih3TPrbtcdob7B2Jk-TRTo0WE-2e3Wu5MKeoXqXsxsJ3XckJjBMkjJ39Jfli_jOHZrqMjnW1kGW9alZQ5rtRalezRdC7I_lgUh6Xw0k2P3NM5dMMqlrVsL_2QUi4E5Mugbj-A-fCJkU7_hQ_QqybcwcFtvfsZLzfnUaFbIfK64TkPV50r9n0cboHbfihy65i51MXVGMPiWqwiN-clIMikexGJ7PeLSQw"
+                                    />
+                                    <span class="text-sm font-medium"
+                                        >GitHub</span
+                                    >
+                                </div>
+                                <span
+                                    class="material-icons text-neutral-600 text-sm"
+                                    >north_east</span
+                                >
+                            </a>
+                            <a
+                                class="h-[48px] flex items-center justify-between custom-border group hover:bg-white/5 transition-all"
+                                href="#"
+                            >
+                                <div class="flex items-center gap-3">
+                                    <img
+                                        alt=""
+                                        class="w-5 h-5 opacity-70 group-hover:opacity-100"
+                                        data-alt="LinkedIn monochrome icon logo"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFqoN-Cqktu_l-MwGz13So3Pb7O7MeGNn7AnFTAG0lxmdpptH4NEA6FBbyxbDVHMQmwbS88wcL9LHHDLg6L9LzKr9ufdYKxt6hhUoX3uEu-SfK4L1s029ALcgX4hdiBvVxGmVFVQEgxa8NWbt99pYkERcSlRqVX1IvqqxmcplxLYMiQgwv-tJ6nXo1uwmOuIzaZdwRgo9xgBWCT6x0F9fI6skCHT_4WPBc_Rd5Gd3e-vIr1J6x9bHobRlKV1VegAfzGDZsmXze4gM"
+                                    />
+                                    <span class="text-sm font-medium"
+                                        >LinkedIn</span
+                                    >
+                                </div>
+                                <span
+                                    class="material-icons text-neutral-600 text-sm"
+                                    >north_east</span
+                                >
+                            </a>
+                            <a
+                                class="h-[48px] flex items-center justify-between custom-border group hover:bg-white/5 transition-all"
+                                href="#"
+                            >
+                                <div class="flex items-center gap-3">
+                                    <span
+                                        class="material-icons text-white opacity-70 group-hover:opacity-100 text-[20px]"
+                                        >calendar_today</span
+                                    >
+                                    <span class="text-sm font-medium"
+                                        >Cal.com</span
+                                    >
+                                </div>
+                                <span
+                                    class="material-icons text-neutral-600 text-sm"
+                                    >north_east</span
+                                >
+                            </a>
+                            <a
+                                class="h-[48px] flex items-center justify-between custom-border group hover:bg-white/5 transition-all"
+                                href="#"
+                            >
+                                <div class="flex items-center gap-3">
+                                    <img
+                                        alt=""
+                                        class="w-5 h-5 opacity-70 group-hover:opacity-100"
+                                        data-alt="Twitter X monochrome icon logo"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsI6MrwRfzVLv5GRAOVCkd6ltI-IY3baKEt66EivJKBIueQ1aHRWv3g5IF-OEFTCdoXSqJt8c6dq7Qm8HvJFJ_Bzq_5UHXxd1JuwJ1rN119ZVU3HkGBH-5HNzdRk6Mz4eYQETeSysVMfEYgMK-k1YpY5js8Gr9LDSNY1BMLGHvNnU2AvJmMQAcexIVVmuluFj86sdAcQBtSywUIZTDGCRNjV60YbjwZmg4FOWZDJsNciEI7C-Fnh5cCEAanVjUKgv-UFUgwjBMyik"
+                                    />
+                                    <span class="text-sm font-medium"
+                                        >X / Twitter</span
+                                    >
+                                </div>
+                                <span
+                                    class="material-icons text-neutral-600 text-sm"
+                                    >north_east</span
+                                >
+                            </a>
+                        </div>
+                    </section>
+                </main>
+                <!-- Minimal Footer -->
+                <footer class="p-8 mt-auto flex flex-col items-center gap-4">
+                    <div class="w-12 h-[1px] bg-neutral-800"></div>
+                    <div class="text-center">
+                        <div
+                            class="geist-mono text-sm font-bold text-white mb-1"
+                        >
+                            zzoo.dev
+                        </div>
+                        <p
+                            class="text-[10px] uppercase tracking-[0.2em] text-neutral-500 font-medium"
+                        >
+                            © 2024 Built for humans
+                        </p>
+                    </div>
+                </footer>
+                <!-- Bottom UI bar for mobile feel -->
+                <div
+                    class="h-1.5 w-32 bg-neutral-800 rounded-full mx-auto mb-2 opacity-30"
+                ></div>
+            </div>
+        </div>
+    </body>
+</html>

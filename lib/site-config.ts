@@ -4,12 +4,11 @@ export type Locale = "en" | "ko";
 export const siteConfig = {
   name: "zzoo.dev",
   url: "https://zzoo.dev",
-  email: "hello@zzoo.dev",
+  email: "zzoo.origin@gmail.com",
   availability: "available" as AvailabilityStatus,
   bookedUntil: undefined as string | undefined,
   social: {
-    github: "https://github.com/zzoo",
+    github: "https://github.com/zzoohub",
     linkedin: "https://linkedin.com/in/zzoo",
   },
-  calLink: "https://cal.com/zzoo",
 } as const;

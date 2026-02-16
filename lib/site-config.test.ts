@@ -23,7 +23,7 @@ describe("site-config", () => {
     it("has an email property", () => {
       expect(siteConfig.email).toBeDefined();
       expect(typeof siteConfig.email).toBe("string");
-      expect(siteConfig.email).toBe("hello@zzoo.dev");
+      expect(siteConfig.email).toBe("zzoo.origin@gmail.com");
     });
 
     it("email has valid format", () => {
@@ -50,7 +50,7 @@ describe("site-config", () => {
     it("bookedUntil is undefined or string", () => {
       expect(
         siteConfig.bookedUntil === undefined ||
-          typeof siteConfig.bookedUntil === "string"
+          typeof siteConfig.bookedUntil === "string",
       ).toBe(true);
     });
 
@@ -62,7 +62,7 @@ describe("site-config", () => {
     it("social has github property", () => {
       expect(siteConfig.social.github).toBeDefined();
       expect(typeof siteConfig.social.github).toBe("string");
-      expect(siteConfig.social.github).toBe("https://github.com/zzoo");
+      expect(siteConfig.social.github).toBe("https://github.com/zzoohub");
     });
 
     it("social.github is a valid URL", () => {
@@ -77,16 +77,6 @@ describe("site-config", () => {
 
     it("social.linkedin is a valid URL", () => {
       expect(() => new URL(siteConfig.social.linkedin)).not.toThrow();
-    });
-
-    it("has a calLink property", () => {
-      expect(siteConfig.calLink).toBeDefined();
-      expect(typeof siteConfig.calLink).toBe("string");
-      expect(siteConfig.calLink).toBe("https://cal.com/zzoo");
-    });
-
-    it("calLink is a valid URL", () => {
-      expect(() => new URL(siteConfig.calLink)).not.toThrow();
     });
 
     it("is a readonly object at compile time", () => {
