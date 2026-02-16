@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { getAllPRDSlugs, getCaseStudyPRD } from "@/lib/content";
 import { compileMDX } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
 
 export async function generateStaticParams() {
   const prdSlugs = getAllPRDSlugs();
@@ -23,7 +24,7 @@ export default async function PRDPage({
 
   const { content: mdxContent } = await compileMDX({
     source: prd.content,
-    options: { parseFrontmatter: false },
+    options: { parseFrontmatter: false, mdxOptions: { remarkPlugins: [remarkGfm] } },
   });
 
   return <PRDContent meta={prd.meta} content={mdxContent} slug={slug} />;
@@ -77,7 +78,7 @@ function PRDContent({
           <p className="text-sm font-medium uppercase tracking-wider text-muted-foreground">
             {t("prd_available")}
           </p>
-          <h1 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl lg:text-[2.5rem] lg:leading-tight">
+          <h1 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">
             {meta.title}
           </h1>
         </header>

@@ -49,17 +49,23 @@ function calculateReadingTime(content: string, locale: string): number {
 }
 
 export function getAllBlogPosts(locale: string): BlogPostMeta[] {
-  const dir = path.join(contentDir, "blog", locale);
+  const dir = path.join(contentDir, "blog");
   if (!fs.existsSync(dir)) return [];
 
-  const files = fs.readdirSync(dir).filter((f) => f.endsWith(".mdx"));
-  const posts = files
-    .map((filename) => {
-      const raw = fs.readFileSync(path.join(dir, filename), "utf-8");
+  const slugDirs = fs.readdirSync(dir).filter((entry) => {
+    const entryPath = path.join(dir, entry);
+    return fs.statSync(entryPath).isDirectory();
+  });
+
+  const posts = slugDirs
+    .map((slug) => {
+      const filePath = path.join(dir, slug, `${locale}.mdx`);
+      if (!fs.existsSync(filePath)) return null;
+      const raw = fs.readFileSync(filePath, "utf-8");
       const { data, content } = matter(raw);
       if (data.draft) return null;
       return {
-        slug: filename.replace(/\.mdx$/, ""),
+        slug,
         title: data.title,
         description: data.description,
         date: toDateString(data.date),
@@ -81,7 +87,7 @@ export function getBlogPost(
   slug: string
 ): { meta: BlogPostMeta; content: string } | null {
   if (!isValidSlug(slug)) return null;
-  const filePath = path.join(contentDir, "blog", locale, `${slug}.mdx`);
+  const filePath = path.join(contentDir, "blog", slug, `${locale}.mdx`);
   if (!fs.existsSync(filePath)) return null;
 
   const raw = fs.readFileSync(filePath, "utf-8");
@@ -103,30 +109,36 @@ export function getBlogPost(
 }
 
 export function getAllCaseStudies(locale: string): CaseStudyMeta[] {
-  const dir = path.join(contentDir, "projects", locale);
+  const dir = path.join(contentDir, "projects");
   if (!fs.existsSync(dir)) return [];
 
-  const files = fs
-    .readdirSync(dir)
-    .filter((f) => f.endsWith(".mdx") && !f.endsWith(".prd.mdx"));
-  const studies = files.map((filename) => {
-    const raw = fs.readFileSync(path.join(dir, filename), "utf-8");
-    const { data } = matter(raw);
-    return {
-      slug: filename.replace(/\.mdx$/, ""),
-      title: data.title,
-      description: data.description,
-      clientType: data.clientType,
-      status: data.status,
-      techStack: data.techStack ?? [],
-      featured: data.featured ?? false,
-      duration: data.duration,
-      startDate: toDateString(data.startDate),
-      endDate: data.endDate ? toDateString(data.endDate) : undefined,
-      d2Diagram: data.d2Diagram ?? undefined,
-      links: sanitizeLinks(data.links),
-    } satisfies CaseStudyMeta;
+  const slugDirs = fs.readdirSync(dir).filter((entry) => {
+    const entryPath = path.join(dir, entry);
+    return fs.statSync(entryPath).isDirectory();
   });
+
+  const studies = slugDirs
+    .map((slug) => {
+      const filePath = path.join(dir, slug, `${locale}.mdx`);
+      if (!fs.existsSync(filePath)) return null;
+      const raw = fs.readFileSync(filePath, "utf-8");
+      const { data } = matter(raw);
+      return {
+        slug,
+        title: data.title,
+        description: data.description,
+        clientType: data.clientType,
+        status: data.status,
+        techStack: data.techStack ?? [],
+        featured: data.featured ?? false,
+        duration: data.duration,
+        startDate: toDateString(data.startDate),
+        endDate: data.endDate ? toDateString(data.endDate) : undefined,
+        d2Diagram: data.d2Diagram ?? undefined,
+        links: sanitizeLinks(data.links),
+      } satisfies CaseStudyMeta;
+    })
+    .filter(Boolean) as CaseStudyMeta[];
 
   return studies.sort(
     (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
@@ -138,7 +150,7 @@ export function getCaseStudy(
   slug: string
 ): { meta: CaseStudyMeta; content: string } | null {
   if (!isValidSlug(slug)) return null;
-  const filePath = path.join(contentDir, "projects", locale, `${slug}.mdx`);
+  const filePath = path.join(contentDir, "projects", slug, `${locale}.mdx`);
   if (!fs.existsSync(filePath)) return null;
 
   const raw = fs.readFileSync(filePath, "utf-8");
@@ -165,7 +177,7 @@ export function getCaseStudy(
 
 export function hasPRD(locale: string, slug: string): boolean {
   if (!isValidSlug(slug)) return false;
-  const filePath = path.join(contentDir, "projects", locale, `${slug}.prd.mdx`);
+  const filePath = path.join(contentDir, "projects", slug, `prd.${locale}.mdx`);
   return fs.existsSync(filePath);
 }
 
@@ -174,7 +186,7 @@ export function getCaseStudyPRD(
   slug: string
 ): { meta: CaseStudyMeta; content: string } | null {
   if (!isValidSlug(slug)) return null;
-  const filePath = path.join(contentDir, "projects", locale, `${slug}.prd.mdx`);
+  const filePath = path.join(contentDir, "projects", slug, `prd.${locale}.mdx`);
   if (!fs.existsSync(filePath)) return null;
 
   const raw = fs.readFileSync(filePath, "utf-8");
@@ -191,16 +203,21 @@ export function getCaseStudyPRD(
 }
 
 export function getAllPRDSlugs(): { locale: string; slug: string }[] {
+  const dir = path.join(contentDir, "projects");
+  if (!fs.existsSync(dir)) return [];
+
+  const slugDirs = fs.readdirSync(dir).filter((entry) => {
+    const entryPath = path.join(dir, entry);
+    return fs.statSync(entryPath).isDirectory();
+  });
+
   const results: { locale: string; slug: string }[] = [];
-  for (const locale of ["en", "ko"]) {
-    const dir = path.join(contentDir, "projects", locale);
-    if (!fs.existsSync(dir)) continue;
-    const files = fs.readdirSync(dir).filter((f) => f.endsWith(".prd.mdx"));
-    for (const filename of files) {
-      results.push({
-        locale,
-        slug: filename.replace(/\.prd\.mdx$/, ""),
-      });
+  for (const slug of slugDirs) {
+    for (const locale of ["en", "ko"]) {
+      const prdPath = path.join(dir, slug, `prd.${locale}.mdx`);
+      if (fs.existsSync(prdPath)) {
+        results.push({ locale, slug });
+      }
     }
   }
   return results;

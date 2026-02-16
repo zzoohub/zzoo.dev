@@ -6,6 +6,7 @@ import { getAllCaseStudies, getCaseStudy, hasPRD } from "@/lib/content";
 import { CTASection } from "@/components/cta-section";
 import { D2Diagram } from "@/components/d2-diagram";
 import { compileMDX } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
 import { ExternalLink, Github, FileText } from "lucide-react";
 
 export async function generateStaticParams() {
@@ -30,7 +31,7 @@ export default async function ProjectDetailPage({
 
   const { content: mdxContent } = await compileMDX({
     source: study.content,
-    options: { parseFrontmatter: false },
+    options: { parseFrontmatter: false, mdxOptions: { remarkPlugins: [remarkGfm] } },
   });
 
   const hasPrd = hasPRD(locale, slug);
@@ -88,7 +89,7 @@ function ProjectDetailContent({
               <span className="capitalize">{meta.status}</span>
             </div>
 
-            <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl lg:text-[2.5rem] lg:leading-tight">
+            <h1 className="mt-4 text-2xl font-bold tracking-tight sm:text-3xl">
               {meta.title}
             </h1>
 

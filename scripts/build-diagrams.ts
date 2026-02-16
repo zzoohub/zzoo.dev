@@ -2,7 +2,7 @@ import { execFileSync } from "child_process";
 import fs from "fs";
 import path from "path";
 
-const DIAGRAMS_DIR = path.join(process.cwd(), "content", "diagrams");
+const CONTENT_DIR = path.join(process.cwd(), "content");
 const OUTPUT_DIR = path.join(process.cwd(), "public", "diagrams");
 
 function isD2Installed(): boolean {
@@ -14,13 +14,22 @@ function isD2Installed(): boolean {
   }
 }
 
-function buildDiagrams() {
-  if (!fs.existsSync(DIAGRAMS_DIR)) {
-    console.log("[build-diagrams] No content/diagrams directory found, skipping.");
-    return;
+function findD2Files(dir: string): string[] {
+  if (!fs.existsSync(dir)) return [];
+  const results: string[] = [];
+  for (const entry of fs.readdirSync(dir)) {
+    const fullPath = path.join(dir, entry);
+    if (fs.statSync(fullPath).isDirectory()) {
+      results.push(...findD2Files(fullPath));
+    } else if (entry.endsWith(".d2")) {
+      results.push(fullPath);
+    }
   }
+  return results;
+}
 
-  const files = fs.readdirSync(DIAGRAMS_DIR).filter((f) => f.endsWith(".d2"));
+function buildDiagrams() {
+  const files = findD2Files(CONTENT_DIR);
   if (files.length === 0) {
     console.log("[build-diagrams] No .d2 files found, skipping.");
     return;
@@ -35,9 +44,8 @@ function buildDiagrams() {
 
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
-  for (const file of files) {
-    const name = file.replace(/\.d2$/, "");
-    const inputPath = path.join(DIAGRAMS_DIR, file);
+  for (const inputPath of files) {
+    const name = path.basename(inputPath, ".d2");
 
     const themes: [string, string][] = [["light", "0"], ["dark", "200"]];
     for (const [theme, themeId] of themes) {

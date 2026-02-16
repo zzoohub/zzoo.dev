@@ -33,7 +33,7 @@ function HomeContent({
           <div className="max-w-2xl md:max-w-2xl">
             <AvailabilityBadge size="md" />
 
-            <h1 className="mt-6 text-4xl font-bold leading-[1.1] tracking-tight md:text-5xl">
+            <h1 className="mt-6 text-3xl font-bold leading-[1.1] tracking-tight md:text-4xl">
               {t("hero.title")}
             </h1>
 

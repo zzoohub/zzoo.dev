@@ -9,7 +9,7 @@ export default function NowPage() {
     <>
       <section className="py-16 md:py-20">
         <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold tracking-tight md:text-5xl">
+          <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
             {t("title")}
           </h1>
 

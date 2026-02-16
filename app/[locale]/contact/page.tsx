@@ -2,7 +2,7 @@ import { useTranslations } from "next-intl";
 import { siteConfig } from "@/lib/site-config";
 import { AvailabilityBadge } from "@/components/availability-badge";
 import { CopyButton } from "@/components/copy-button";
-import { Mail, Github, Linkedin, Calendar, ArrowRight, Send } from "lucide-react";
+import { Mail, Github, Linkedin, ArrowRight, Send } from "lucide-react";
 
 const externalLinks = [
   {
@@ -17,12 +17,6 @@ const externalLinks = [
     description: "Professional network",
     icon: Linkedin,
   },
-  {
-    href: siteConfig.calLink,
-    label: "Cal.com",
-    description: "Book a 30-minute call",
-    icon: Calendar,
-  },
 ];
 
 export default function ContactPage() {
@@ -34,7 +28,7 @@ export default function ContactPage() {
         {/* Header */}
         <div className="text-center md:text-left">
           <AvailabilityBadge size="md" />
-          <h1 className="mt-6 text-4xl font-bold tracking-tight md:text-5xl">
+          <h1 className="mt-6 text-3xl font-bold tracking-tight md:text-4xl">
             {t("title")}
           </h1>
           <p className="mt-4 text-lg text-muted-foreground">{t("subtitle")}</p>
@@ -96,10 +90,6 @@ export default function ContactPage() {
           </div>
         </div>
 
-        {/* Cal.com note */}
-        <p className="mt-8 text-center text-sm text-muted-foreground">
-          {t("prefer_call")}
-        </p>
       </div>
     </section>
   );

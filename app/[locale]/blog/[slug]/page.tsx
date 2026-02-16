@@ -3,8 +3,8 @@ import { getLocale } from "next-intl/server";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { getAllBlogPosts, getBlogPost } from "@/lib/content";
-import { CTASection } from "@/components/cta-section";
 import { compileMDX } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
 
 export async function generateStaticParams() {
   const enPosts = getAllBlogPosts("en");
@@ -28,7 +28,7 @@ export default async function BlogPostPage({
 
   const { content: mdxContent } = await compileMDX({
     source: post.content,
-    options: { parseFrontmatter: false },
+    options: { parseFrontmatter: false, mdxOptions: { remarkPlugins: [remarkGfm] } },
   });
 
   const allPosts = getAllBlogPosts(locale);
@@ -95,7 +95,7 @@ function BlogPostContent({
               </span>
             </div>
 
-            <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl lg:text-[2.5rem] lg:leading-tight">
+            <h1 className="mt-4 text-2xl font-bold tracking-tight sm:text-3xl">
               {meta.title}
             </h1>
 
@@ -147,10 +147,6 @@ function BlogPostContent({
         </div>
       </article>
 
-      <CTASection
-        title={t("bottom_cta_title")}
-        buttonText={t("bottom_cta_button")}
-      />
     </>
   );
 }

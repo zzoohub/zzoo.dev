@@ -16,6 +16,7 @@ vi.mock("fs", () => ({
     existsSync: vi.fn(),
     readdirSync: vi.fn(),
     readFileSync: vi.fn(),
+    statSync: vi.fn(),
   },
 }));
 
@@ -34,7 +35,8 @@ describe("content", () => {
   describe("toDateString helper", () => {
     it("converts Date object to ISO string format", () => {
       mockFs.existsSync.mockReturnValue(true);
-      mockFs.readdirSync.mockReturnValue(["test.mdx"] as unknown as fs.Dirent[]);
+      mockFs.readdirSync.mockReturnValue(["test"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
 
       const testDate = new Date("2024-01-15T10:30:00Z");
       mockFs.readFileSync.mockReturnValue(
@@ -47,7 +49,8 @@ describe("content", () => {
 
     it("converts string date to string format", () => {
       mockFs.existsSync.mockReturnValue(true);
-      mockFs.readdirSync.mockReturnValue(["test.mdx"] as unknown as fs.Dirent[]);
+      mockFs.readdirSync.mockReturnValue(["test"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
       mockFs.readFileSync.mockReturnValue(
         "---\ntitle: Test\ndescription: Desc\ndate: 2024-01-15\n---\nContent"
       );
@@ -58,7 +61,8 @@ describe("content", () => {
 
     it("handles numeric date values", () => {
       mockFs.existsSync.mockReturnValue(true);
-      mockFs.readdirSync.mockReturnValue(["test.mdx"] as unknown as fs.Dirent[]);
+      mockFs.readdirSync.mockReturnValue(["test"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
       mockFs.readFileSync.mockReturnValue(
         "---\ntitle: Test\ndescription: Desc\ndate: 20240115\n---\nContent"
       );
@@ -74,24 +78,45 @@ describe("content", () => {
       const posts = getAllBlogPosts("en");
       expect(posts).toEqual([]);
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/blog/en")
+        expect.stringContaining("content/blog")
       );
     });
 
-    it("returns empty array when directory exists but has no files", () => {
+    it("returns empty array when directory exists but has no slug dirs", () => {
       mockFs.existsSync.mockReturnValue(true);
       mockFs.readdirSync.mockReturnValue([]);
       const posts = getAllBlogPosts("en");
       expect(posts).toEqual([]);
     });
 
-    it("filters out non-mdx files", () => {
+    it("skips slug dirs without matching locale file", () => {
+      mockFs.readdirSync.mockReturnValue(["post1", "post2"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
+
+      // blog dir exists, but locale files don't
+      mockFs.existsSync.mockImplementation((p: string) => {
+        if (p.endsWith("content/blog")) return true;
+        return false; // no en.mdx files
+      });
+
+      const posts = getAllBlogPosts("en");
+      expect(posts).toEqual([]);
+    });
+
+    it("filters out non-directory entries", () => {
       mockFs.existsSync.mockReturnValue(true);
       mockFs.readdirSync.mockReturnValue([
-        "post1.mdx",
-        "post2.md",
+        "post1",
         "readme.txt",
       ] as unknown as fs.Dirent[]);
+
+      let statCallCount = 0;
+      mockFs.statSync.mockImplementation(() => {
+        statCallCount++;
+        // Only first entry is a directory
+        return { isDirectory: () => statCallCount === 1 };
+      });
+
       mockFs.readFileSync.mockReturnValue(
         "---\ntitle: Test\ndescription: Desc\ndate: 2024-01-01\n---\nContent"
       );
@@ -102,7 +127,8 @@ describe("content", () => {
 
     it("parses MDX frontmatter correctly", () => {
       mockFs.existsSync.mockReturnValue(true);
-      mockFs.readdirSync.mockReturnValue(["test.mdx"] as unknown as fs.Dirent[]);
+      mockFs.readdirSync.mockReturnValue(["test"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
       mockFs.readFileSync.mockReturnValue(
         "---\ntitle: Test Post\ndescription: A test post\ndate: 2024-01-15\ntags:\n  - typescript\n  - testing\n---\nThis is test content with about 200 words to calculate reading time properly. " +
           "Lorem ipsum dolor sit amet ".repeat(25)
@@ -124,9 +150,10 @@ describe("content", () => {
     it("excludes draft posts", () => {
       mockFs.existsSync.mockReturnValue(true);
       mockFs.readdirSync.mockReturnValue([
-        "published.mdx",
-        "draft.mdx",
+        "published",
+        "draft",
       ] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
 
       let callCount = 0;
       mockFs.readFileSync.mockImplementation(() => {
@@ -145,7 +172,8 @@ describe("content", () => {
 
     it("sets default empty tags when not provided", () => {
       mockFs.existsSync.mockReturnValue(true);
-      mockFs.readdirSync.mockReturnValue(["test.mdx"] as unknown as fs.Dirent[]);
+      mockFs.readdirSync.mockReturnValue(["test"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
       mockFs.readFileSync.mockReturnValue(
         "---\ntitle: Test\ndescription: Desc\ndate: 2024-01-01\n---\nContent"
       );
@@ -156,7 +184,8 @@ describe("content", () => {
 
     it("calculates reading time for English content", () => {
       mockFs.existsSync.mockReturnValue(true);
-      mockFs.readdirSync.mockReturnValue(["test.mdx"] as unknown as fs.Dirent[]);
+      mockFs.readdirSync.mockReturnValue(["test"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
       // 400 words = 2 minutes at 200 words/min
       const words = "word ".repeat(400);
       mockFs.readFileSync.mockReturnValue(
@@ -169,7 +198,8 @@ describe("content", () => {
 
     it("calculates reading time for Korean content", () => {
       mockFs.existsSync.mockReturnValue(true);
-      mockFs.readdirSync.mockReturnValue(["test.mdx"] as unknown as fs.Dirent[]);
+      mockFs.readdirSync.mockReturnValue(["test"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
       // 600 characters = 2 minutes at 300 chars/min
       const koreanText = "한".repeat(600);
       mockFs.readFileSync.mockReturnValue(
@@ -182,7 +212,8 @@ describe("content", () => {
 
     it("rounds up reading time", () => {
       mockFs.existsSync.mockReturnValue(true);
-      mockFs.readdirSync.mockReturnValue(["test.mdx"] as unknown as fs.Dirent[]);
+      mockFs.readdirSync.mockReturnValue(["test"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
       // 250 words = 1.25 minutes, should round up to 2
       const words = "word ".repeat(250);
       mockFs.readFileSync.mockReturnValue(
@@ -196,10 +227,11 @@ describe("content", () => {
     it("sorts posts by date descending", () => {
       mockFs.existsSync.mockReturnValue(true);
       mockFs.readdirSync.mockReturnValue([
-        "old.mdx",
-        "new.mdx",
-        "middle.mdx",
+        "old",
+        "new",
+        "middle",
       ] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
 
       let callCount = 0;
       mockFs.readFileSync.mockImplementation(() => {
@@ -222,7 +254,8 @@ describe("content", () => {
 
     it("handles Korean locale correctly", () => {
       mockFs.existsSync.mockReturnValue(true);
-      mockFs.readdirSync.mockReturnValue(["test.mdx"] as unknown as fs.Dirent[]);
+      mockFs.readdirSync.mockReturnValue(["test"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
       mockFs.readFileSync.mockReturnValue(
         "---\ntitle: 테스트\ndescription: 설명\ndate: 2024-01-01\n---\n내용"
       );
@@ -230,7 +263,7 @@ describe("content", () => {
       const posts = getAllBlogPosts("ko");
       expect(posts[0].locale).toBe("ko");
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/blog/ko")
+        expect.stringContaining("content/blog")
       );
     });
   });
@@ -278,7 +311,7 @@ describe("content", () => {
       mockFs.existsSync.mockReturnValue(false);
       getBlogPost("en", "my-post");
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/blog/en/my-post.mdx")
+        expect.stringContaining("content/blog/my-post/en.mdx")
       );
     });
 
@@ -286,7 +319,7 @@ describe("content", () => {
       mockFs.existsSync.mockReturnValue(false);
       getBlogPost("ko", "my-post");
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/blog/ko/my-post.mdx")
+        expect.stringContaining("content/blog/my-post/ko.mdx")
       );
     });
 
@@ -328,11 +361,11 @@ describe("content", () => {
       const studies = getAllCaseStudies("en");
       expect(studies).toEqual([]);
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/projects/en")
+        expect.stringContaining("content/projects")
       );
     });
 
-    it("returns empty array when directory exists but has no files", () => {
+    it("returns empty array when directory exists but has no slug dirs", () => {
       mockFs.existsSync.mockReturnValue(true);
       mockFs.readdirSync.mockReturnValue([]);
       const studies = getAllCaseStudies("en");
@@ -341,7 +374,8 @@ describe("content", () => {
 
     it("parses case study frontmatter correctly", () => {
       mockFs.existsSync.mockReturnValue(true);
-      mockFs.readdirSync.mockReturnValue(["project.mdx"] as unknown as fs.Dirent[]);
+      mockFs.readdirSync.mockReturnValue(["project"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
       mockFs.readFileSync.mockReturnValue(
         `---
 title: E-commerce Rebuild
@@ -376,7 +410,8 @@ Content`
 
     it("sets default empty techStack when not provided", () => {
       mockFs.existsSync.mockReturnValue(true);
-      mockFs.readdirSync.mockReturnValue(["project.mdx"] as unknown as fs.Dirent[]);
+      mockFs.readdirSync.mockReturnValue(["project"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
       mockFs.readFileSync.mockReturnValue(
         `---
 title: Project
@@ -395,7 +430,8 @@ Content`
 
     it("defaults featured to false when not specified", () => {
       mockFs.existsSync.mockReturnValue(true);
-      mockFs.readdirSync.mockReturnValue(["project.mdx"] as unknown as fs.Dirent[]);
+      mockFs.readdirSync.mockReturnValue(["project"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
       mockFs.readFileSync.mockReturnValue(
         `---
 title: Project
@@ -414,7 +450,8 @@ Content`
 
     it("handles featured flag correctly", () => {
       mockFs.existsSync.mockReturnValue(true);
-      mockFs.readdirSync.mockReturnValue(["project.mdx"] as unknown as fs.Dirent[]);
+      mockFs.readdirSync.mockReturnValue(["project"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
       mockFs.readFileSync.mockReturnValue(
         `---
 title: Project
@@ -436,10 +473,11 @@ Content`
     it("sorts case studies by startDate descending", () => {
       mockFs.existsSync.mockReturnValue(true);
       mockFs.readdirSync.mockReturnValue([
-        "old.mdx",
-        "new.mdx",
-        "middle.mdx",
+        "old",
+        "new",
+        "middle",
       ] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
 
       let callCount = 0;
       mockFs.readFileSync.mockImplementation(() => {
@@ -467,10 +505,11 @@ duration: 1 month`;
     it("handles different status values", () => {
       mockFs.existsSync.mockReturnValue(true);
       mockFs.readdirSync.mockReturnValue([
-        "active.mdx",
-        "completed.mdx",
-        "archived.mdx",
+        "active",
+        "completed",
+        "archived",
       ] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
 
       let callCount = 0;
       mockFs.readFileSync.mockImplementation(() => {
@@ -498,7 +537,8 @@ startDate: 2024-01-01`;
 
     it("handles Korean locale correctly", () => {
       mockFs.existsSync.mockReturnValue(true);
-      mockFs.readdirSync.mockReturnValue(["project.mdx"] as unknown as fs.Dirent[]);
+      mockFs.readdirSync.mockReturnValue(["project"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
       mockFs.readFileSync.mockReturnValue(
         `---
 title: 프로젝트
@@ -514,43 +554,27 @@ startDate: 2024-01-01
       const studies = getAllCaseStudies("ko");
       expect(studies).toHaveLength(1);
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/projects/ko")
+        expect.stringContaining("content/projects")
       );
     });
 
-    it("filters out .prd.mdx files from case studies list", () => {
-      mockFs.existsSync.mockReturnValue(true);
-      mockFs.readdirSync.mockReturnValue([
-        "project1.mdx",
-        "project1.prd.mdx",
-        "project2.mdx",
-        "project2.prd.mdx",
-      ] as unknown as fs.Dirent[]);
+    it("skips slug dirs without matching locale file", () => {
+      mockFs.readdirSync.mockReturnValue(["project1", "project2"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
 
-      let callCount = 0;
-      mockFs.readFileSync.mockImplementation(() => {
-        callCount++;
-        return `---
-title: Project ${callCount}
-description: Description
-clientType: Test
-status: active
-duration: 1 month
-startDate: 2024-01-01
----
-Content`;
+      mockFs.existsSync.mockImplementation((p: string) => {
+        if (p.endsWith("content/projects")) return true;
+        return false; // no locale files
       });
 
       const studies = getAllCaseStudies("en");
-      // Should only include .mdx files, not .prd.mdx files
-      expect(studies).toHaveLength(2);
-      expect(studies[0].slug).toBe("project1");
-      expect(studies[1].slug).toBe("project2");
+      expect(studies).toEqual([]);
     });
 
     it("includes d2Diagram field when provided", () => {
       mockFs.existsSync.mockReturnValue(true);
-      mockFs.readdirSync.mockReturnValue(["project.mdx"] as unknown as fs.Dirent[]);
+      mockFs.readdirSync.mockReturnValue(["project"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
       mockFs.readFileSync.mockReturnValue(
         `---
 title: Project
@@ -570,7 +594,8 @@ Content`
 
     it("includes links field when provided", () => {
       mockFs.existsSync.mockReturnValue(true);
-      mockFs.readdirSync.mockReturnValue(["project.mdx"] as unknown as fs.Dirent[]);
+      mockFs.readdirSync.mockReturnValue(["project"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
       mockFs.readFileSync.mockReturnValue(
         `---
 title: Project
@@ -597,7 +622,8 @@ Content`
 
     it("handles missing d2Diagram field", () => {
       mockFs.existsSync.mockReturnValue(true);
-      mockFs.readdirSync.mockReturnValue(["project.mdx"] as unknown as fs.Dirent[]);
+      mockFs.readdirSync.mockReturnValue(["project"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
       mockFs.readFileSync.mockReturnValue(
         `---
 title: Project
@@ -616,7 +642,8 @@ Content`
 
     it("handles missing links field", () => {
       mockFs.existsSync.mockReturnValue(true);
-      mockFs.readdirSync.mockReturnValue(["project.mdx"] as unknown as fs.Dirent[]);
+      mockFs.readdirSync.mockReturnValue(["project"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
       mockFs.readFileSync.mockReturnValue(
         `---
 title: Project
@@ -689,7 +716,7 @@ Project details here`
       mockFs.existsSync.mockReturnValue(false);
       getCaseStudy("en", "my-project");
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/projects/en/my-project.mdx")
+        expect.stringContaining("content/projects/my-project/en.mdx")
       );
     });
 
@@ -697,7 +724,7 @@ Project details here`
       mockFs.existsSync.mockReturnValue(false);
       getCaseStudy("ko", "my-project");
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/projects/ko/my-project.mdx")
+        expect.stringContaining("content/projects/my-project/ko.mdx")
       );
     });
 
@@ -856,21 +883,21 @@ Content`
   });
 
   describe("hasPRD", () => {
-    it("returns true when .prd.mdx file exists", () => {
+    it("returns true when prd.{locale}.mdx file exists", () => {
       mockFs.existsSync.mockReturnValue(true);
       const result = hasPRD("en", "e-commerce-rebuild");
       expect(result).toBe(true);
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/projects/en/e-commerce-rebuild.prd.mdx")
+        expect.stringContaining("content/projects/e-commerce-rebuild/prd.en.mdx")
       );
     });
 
-    it("returns false when .prd.mdx file does not exist", () => {
+    it("returns false when prd.{locale}.mdx file does not exist", () => {
       mockFs.existsSync.mockReturnValue(false);
       const result = hasPRD("en", "no-prd-project");
       expect(result).toBe(false);
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/projects/en/no-prd-project.prd.mdx")
+        expect.stringContaining("content/projects/no-prd-project/prd.en.mdx")
       );
     });
 
@@ -890,7 +917,7 @@ Content`
       mockFs.existsSync.mockReturnValue(false);
       hasPRD("ko", "test-project");
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/projects/ko/test-project.prd.mdx")
+        expect.stringContaining("content/projects/test-project/prd.ko.mdx")
       );
     });
 
@@ -908,7 +935,7 @@ Content`
   });
 
   describe("getCaseStudyPRD", () => {
-    it("returns null when .prd.mdx file does not exist", () => {
+    it("returns null when prd file does not exist", () => {
       mockFs.existsSync.mockReturnValue(false);
       const result = getCaseStudyPRD("en", "nonexistent");
       expect(result).toBeNull();
@@ -921,13 +948,13 @@ Content`
     });
 
     it("returns null when parent case study does not exist", () => {
-      // PRD file exists but parent .mdx does not
+      // PRD file exists but parent locale .mdx does not
       let callCount = 0;
-      mockFs.existsSync.mockImplementation((path: string) => {
+      mockFs.existsSync.mockImplementation(() => {
         callCount++;
-        // First call checks .prd.mdx (exists)
+        // First call checks prd.en.mdx (exists)
         if (callCount === 1) return true;
-        // Second call checks parent .mdx (does not exist)
+        // Second call checks en.mdx (does not exist)
         return false;
       });
 
@@ -940,17 +967,16 @@ Content`
     });
 
     it("returns PRD content with parent case study meta when both exist", () => {
-      // Both .prd.mdx and .mdx exist
       mockFs.existsSync.mockReturnValue(true);
 
       let callCount = 0;
       mockFs.readFileSync.mockImplementation(() => {
         callCount++;
-        // First call reads .prd.mdx
+        // First call reads prd.en.mdx
         if (callCount === 1) {
           return "---\ntitle: PRD Title\n---\nPRD detailed content here";
         }
-        // Second call reads parent .mdx
+        // Second call reads en.mdx (parent)
         return `---
 title: E-commerce Rebuild
 description: Rebuilt platform
@@ -985,7 +1011,7 @@ Parent case study content`;
       mockFs.existsSync.mockReturnValue(false);
       getCaseStudyPRD("en", "test-project");
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/projects/en/test-project.prd.mdx")
+        expect.stringContaining("content/projects/test-project/prd.en.mdx")
       );
     });
 
@@ -993,7 +1019,7 @@ Parent case study content`;
       mockFs.existsSync.mockReturnValue(false);
       getCaseStudyPRD("ko", "test-project");
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/projects/ko/test-project.prd.mdx")
+        expect.stringContaining("content/projects/test-project/prd.ko.mdx")
       );
     });
 
@@ -1067,38 +1093,35 @@ Parent content`;
   });
 
   describe("getAllPRDSlugs", () => {
-    it("returns empty array when no project directories exist", () => {
+    it("returns empty array when projects directory does not exist", () => {
       mockFs.existsSync.mockReturnValue(false);
       const result = getAllPRDSlugs();
       expect(result).toEqual([]);
     });
 
-    it("returns empty array when directories exist but no .prd.mdx files", () => {
-      mockFs.existsSync.mockReturnValue(true);
-      mockFs.readdirSync.mockReturnValue([
-        "project1.mdx",
-        "project2.mdx",
-      ] as unknown as fs.Dirent[]);
+    it("returns empty array when no slug dirs have PRD files", () => {
+      mockFs.readdirSync.mockReturnValue(["project1", "project2"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
+
+      mockFs.existsSync.mockImplementation((p: string) => {
+        if (p.endsWith("content/projects")) return true;
+        return false; // no prd files
+      });
 
       const result = getAllPRDSlugs();
       expect(result).toEqual([]);
     });
 
-    it("returns PRD slugs from en locale", () => {
-      let callCount = 0;
-      mockFs.existsSync.mockImplementation(() => {
-        callCount++;
-        // First call: en directory exists
-        if (callCount === 1) return true;
-        // Second call: ko directory does not exist
+    it("returns PRD slugs for en locale", () => {
+      mockFs.readdirSync.mockReturnValue(["e-commerce-rebuild", "analytics-dashboard"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
+
+      mockFs.existsSync.mockImplementation((p: string) => {
+        if (p.endsWith("content/projects")) return true;
+        // Only en PRD files exist
+        if (p.endsWith("prd.en.mdx")) return true;
         return false;
       });
-
-      mockFs.readdirSync.mockReturnValue([
-        "e-commerce-rebuild.mdx",
-        "e-commerce-rebuild.prd.mdx",
-        "analytics-dashboard.prd.mdx",
-      ] as unknown as fs.Dirent[]);
 
       const result = getAllPRDSlugs();
       expect(result).toHaveLength(2);
@@ -1106,19 +1129,15 @@ Parent content`;
       expect(result).toContainEqual({ locale: "en", slug: "analytics-dashboard" });
     });
 
-    it("returns PRD slugs from ko locale", () => {
-      let callCount = 0;
-      mockFs.existsSync.mockImplementation(() => {
-        callCount++;
-        // First call: en directory does not exist
-        if (callCount === 1) return false;
-        // Second call: ko directory exists
-        return true;
-      });
+    it("returns PRD slugs for ko locale", () => {
+      mockFs.readdirSync.mockReturnValue(["project-ko"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
 
-      mockFs.readdirSync.mockReturnValue([
-        "project-ko.prd.mdx",
-      ] as unknown as fs.Dirent[]);
+      mockFs.existsSync.mockImplementation((p: string) => {
+        if (p.endsWith("content/projects")) return true;
+        if (p.endsWith("prd.ko.mdx")) return true;
+        return false;
+      });
 
       const result = getAllPRDSlugs();
       expect(result).toHaveLength(1);
@@ -1126,97 +1145,56 @@ Parent content`;
     });
 
     it("returns PRD slugs from both locales", () => {
-      mockFs.existsSync.mockReturnValue(true);
+      mockFs.readdirSync.mockReturnValue(["project1", "project2"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
 
-      let callCount = 0;
-      mockFs.readdirSync.mockImplementation(() => {
-        callCount++;
-        // First call: en directory
-        if (callCount === 1) {
-          return [
-            "project1.mdx",
-            "project1.prd.mdx",
-            "project2.prd.mdx",
-          ] as unknown as fs.Dirent[];
-        }
-        // Second call: ko directory
-        return [
-          "project1.mdx",
-          "project1.prd.mdx",
-          "project3.prd.mdx",
-        ] as unknown as fs.Dirent[];
-      });
-
-      const result = getAllPRDSlugs();
-      expect(result).toHaveLength(4);
-      expect(result).toContainEqual({ locale: "en", slug: "project1" });
-      expect(result).toContainEqual({ locale: "en", slug: "project2" });
-      expect(result).toContainEqual({ locale: "ko", slug: "project1" });
-      expect(result).toContainEqual({ locale: "ko", slug: "project3" });
-    });
-
-    it("filters out non-.prd.mdx files", () => {
-      mockFs.existsSync.mockReturnValue(true);
-      mockFs.readdirSync.mockReturnValue([
-        "project.mdx",
-        "project.prd.mdx",
-        "readme.md",
-        "notes.txt",
-        "other.prd.md",
-      ] as unknown as fs.Dirent[]);
-
-      const result = getAllPRDSlugs();
-      expect(result).toHaveLength(2); // One from en, one from ko (both return same files)
-      expect(result.every(r => r.slug === "project")).toBe(true);
-    });
-
-    it("correctly strips .prd.mdx extension", () => {
-      mockFs.existsSync.mockReturnValue(true);
-      mockFs.readdirSync.mockReturnValue([
-        "complex-project-name.prd.mdx",
-      ] as unknown as fs.Dirent[]);
-
-      const result = getAllPRDSlugs();
-      expect(result[0].slug).toBe("complex-project-name");
-      expect(result[0].slug).not.toContain(".prd");
-      expect(result[0].slug).not.toContain(".mdx");
-    });
-
-    it("handles slugs with hyphens and underscores", () => {
-      let callCount = 0;
-      mockFs.existsSync.mockImplementation(() => {
-        callCount++;
-        if (callCount === 1) return true;
+      mockFs.existsSync.mockImplementation((p: string) => {
+        if (p.endsWith("content/projects")) return true;
+        // project1 has both locales, project2 only has en
+        if (p.includes("project1") && p.endsWith("prd.en.mdx")) return true;
+        if (p.includes("project1") && p.endsWith("prd.ko.mdx")) return true;
+        if (p.includes("project2") && p.endsWith("prd.en.mdx")) return true;
         return false;
       });
 
+      const result = getAllPRDSlugs();
+      expect(result).toHaveLength(3);
+      expect(result).toContainEqual({ locale: "en", slug: "project1" });
+      expect(result).toContainEqual({ locale: "ko", slug: "project1" });
+      expect(result).toContainEqual({ locale: "en", slug: "project2" });
+    });
+
+    it("correctly extracts slug from directory name", () => {
+      mockFs.readdirSync.mockReturnValue(["complex-project-name"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
+
+      mockFs.existsSync.mockImplementation((p: string) => {
+        if (p.endsWith("content/projects")) return true;
+        if (p.endsWith("prd.en.mdx")) return true;
+        return false;
+      });
+
+      const result = getAllPRDSlugs();
+      expect(result[0].slug).toBe("complex-project-name");
+    });
+
+    it("handles slugs with hyphens and underscores", () => {
       mockFs.readdirSync.mockReturnValue([
-        "test_project-v2.prd.mdx",
-        "another-project_123.prd.mdx",
+        "test_project-v2",
+        "another-project_123",
       ] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
+
+      mockFs.existsSync.mockImplementation((p: string) => {
+        if (p.endsWith("content/projects")) return true;
+        if (p.endsWith("prd.en.mdx")) return true;
+        return false;
+      });
 
       const result = getAllPRDSlugs();
       expect(result).toHaveLength(2);
       expect(result).toContainEqual({ locale: "en", slug: "test_project-v2" });
       expect(result).toContainEqual({ locale: "en", slug: "another-project_123" });
-    });
-
-    it("maintains order of files as returned by filesystem", () => {
-      let callCount = 0;
-      mockFs.existsSync.mockImplementation(() => {
-        callCount++;
-        if (callCount === 1) return true;
-        return false;
-      });
-
-      mockFs.readdirSync.mockReturnValue([
-        "zebra.prd.mdx",
-        "alpha.prd.mdx",
-        "middle.prd.mdx",
-      ] as unknown as fs.Dirent[]);
-
-      const result = getAllPRDSlugs();
-      expect(result.map(r => r.slug)).toEqual(["zebra", "alpha", "middle"]);
     });
   });
 });

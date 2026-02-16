@@ -26,7 +26,7 @@ export function BlogListClient({
       <section className="py-16 md:py-20">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight md:text-5xl">
+            <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
               {t("title")}
             </h1>
             <p className="mt-4 text-lg text-muted-foreground">

@@ -1,0 +1,107 @@
+direction: down
+
+classes: {
+  presentation: {
+    style.stroke: "#3949AB"
+    style.stroke-width: 2
+    style.border-radius: 12
+  }
+  application: {
+    style.stroke: "#00838F"
+    style.stroke-width: 2
+    style.border-radius: 8
+  }
+  database: {
+    style.stroke: "#E65100"
+    style.stroke-width: 2
+    shape: cylinder
+  }
+  storage: {
+    style.stroke: "#2E7D32"
+    style.stroke-width: 2
+    shape: stored_data
+  }
+  external: {
+    style.stroke: "#C62828"
+    style.stroke-width: 2
+    shape: cloud
+  }
+  monitoring: {
+    style.stroke: "#7B1FA2"
+    style.stroke-width: 2
+    style.border-radius: 8
+  }
+}
+
+# --- Vertical spine ---
+
+mobile: Mobile App\n(React Native / Expo) {
+  class: presentation
+  icon: https://icons.terrastruct.com/dev%2Freact.svg
+}
+
+api: API Server\n(Rust / Axum) {
+  class: application
+  icon: https://icons.terrastruct.com/tech%2F022-server.svg
+}
+
+db: PostgreSQL\n(Neon Serverless) {
+  class: database
+  icon: https://icons.terrastruct.com/dev%2Fpostgresql.svg
+}
+
+# --- Side services ---
+
+r2: Cloudflare R2\n(Photo Storage) {
+  class: storage
+}
+
+idp: OAuth Providers\n(Google / Apple) {
+  class: external
+}
+
+sentry: Sentry\n(Observability) {
+  class: monitoring
+}
+
+# --- Main vertical flow ---
+
+mobile -> api: REST /api/v1\n(JWT Bearer) {
+  style.stroke: "#1976D2"
+  style.stroke-width: 2
+}
+
+api -> db: SQL/TLS {
+  style.stroke: "#E65100"
+  style.stroke-width: 2
+}
+
+# --- Side connections ---
+
+mobile -> r2: Presigned PUT\n(direct upload) {
+  style.stroke: "#388E3C"
+  style.stroke-width: 2
+}
+
+api -> r2: S3 API\n(presigned URL gen) {
+  style.stroke: "#388E3C"
+  style.stroke-width: 1
+}
+
+api -> idp: JWKS verification {
+  style.stroke: "#C62828"
+  style.stroke-width: 1
+  style.stroke-dash: 5
+}
+
+mobile -> sentry: Client errors {
+  style.stroke: "#7B1FA2"
+  style.stroke-width: 1
+  style.stroke-dash: 5
+}
+
+api -> sentry: Server errors {
+  style.stroke: "#7B1FA2"
+  style.stroke-width: 1
+  style.stroke-dash: 5
+}
