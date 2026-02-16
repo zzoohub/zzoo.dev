@@ -1,0 +1,137 @@
+---
+title: "How I Use Claude Code as a Solo Developer"
+description: "21 custom skills, 7 specialized agents, and a CLAUDE.md system that turns AI pair programming into a repeatable workflow. Here's the setup behind every project I ship."
+date: "2026-02-17"
+tags:
+  - claude-code
+  - ai
+  - solo-developer
+  - workflow
+draft: false
+---
+
+I ship products alone. A personal website, a meal tracking app, an AI content platform — all maintained by one person. The secret isn't working harder. It's having a system that makes Claude Code work like a team.
+
+Over the past few months, I've built a setup where Claude Code doesn't just autocomplete lines — it follows project conventions, runs security reviews, writes tests to 100% coverage, and reviews database schemas like a senior DBA. Every project gets the same quality bar, enforced automatically.
+
+Here's how it works.
+
+## The CLAUDE.md System
+
+Every project has a `CLAUDE.md` file at its root. Think of it as a constitution for AI behavior in that codebase. It defines the tech stack, architecture patterns, key constraints, and — most importantly — **which skills and agents must be used**.
+
+The critical pattern across all my projects:
+
+```
+1. All implementation MUST use specified skills
+2. After implementation, run TWO agents IN PARALLEL:
+   - security-reviewer → audit → fix
+   - tester → test changed code → fix
+```
+
+This isn't a suggestion. It's a hard rule. Every feature, every bug fix, every refactor goes through this pipeline. The `CLAUDE.md` file makes it automatic — Claude Code reads it at the start of every session and follows the workflow without being asked.
+
+For my Next.js website, the CLAUDE.md mandates `vercel-react-best-practices` and `vercel-composition-patterns` skills. For my Rust API, it's `axum` and `postgresql`. For the React Native app, `react-native` and `vercel-react-native-skills`. The right expertise is loaded before the first line of code is written.
+
+## 21 Skills: Encoded Expertise
+
+Skills are knowledge files that Claude Code loads on demand. Some I wrote myself, and some come from official sources. I use 21 across seven domains:
+
+**Architecture & Design** — `data-modeling`, `api-design`, `ux-design`, `design-system`. These encode how I think about system design: entity extraction, REST conventions, cognitive ergonomics, design tokens.
+
+**Web Frameworks** — `vercel-react-best-practices` (45 rules across 8 categories), `vercel-composition-patterns`, `nextjs`. The `vercel-*` prefixed skills are **officially provided by Vercel** — not something I wrote. The React best practices skill alone covers waterfall prevention, bundle optimization, server-side patterns, re-render avoidance, and rendering strategies. Having framework vendors ship skills like these is a game changer: the people who built the framework encode exactly how they want you to use it. `nextjs` is a custom skill I wrote to fill in the gaps the official ones don't cover.
+
+**Mobile** — `react-native`, `vercel-react-native-skills` (also official from Vercel). List performance, animations, state management patterns specific to React Native.
+
+**Backend** — `axum`, `axum-hexagonal`, `fastapi`, `fastapi-hexagonal`. Both Rust and Python stacks with hexagonal architecture patterns baked in.
+
+**Database** — `postgresql`, `sqlite`, `neon-postgres`. Problem-solving patterns for pagination, full-text search, N+1 queries, zero-downtime migrations, partitioning.
+
+**AI/ML** — `langgraph`. ReAct agents, multi-agent systems, human-in-the-loop patterns.
+
+**Quality** — `security-checklists`, `web-vitals-checklist`, `i18n-patterns`, `web-design-guidelines`.
+
+The key insight: skills aren't documentation. They're **constraints**. When Claude Code loads `vercel-react-best-practices`, it doesn't just know React patterns — it's compelled to follow 45 specific rules. Waterfall prevention is marked CRITICAL priority. Bundle size optimization is CRITICAL. These aren't guidelines; they're guardrails.
+
+I expect this to become a major trend. As more framework authors and tool vendors publish official skills, the baseline quality of AI-generated code will rise across the board. Imagine every major library shipping a skill that encodes its best practices — not as docs you might read, but as constraints the AI must follow. The custom skills I wrote fill the gaps today, but the official ones are already better for the domains they cover.
+
+## 7 Agents: A Virtual Team
+
+Agents are specialized sub-processes that handle specific tasks autonomously. I have seven, split between development and planning:
+
+### Development Agents
+
+**security-reviewer** — Runs a security audit after every implementation. Scans for OWASP top 10, checks for secrets exposure, SQL injection, command injection, XSS, IDOR, race conditions. Classifies findings by severity. Escalates to me for payment logic, auth changes, cryptography, or compliance-related code.
+
+**tester** — Targets 100% test coverage across line, branch, function, and statement metrics. Analyzes changed code, plans test strategy, writes tests, runs them, iterates until coverage is complete. Important rule: it never modifies application code, only test files.
+
+**database-reviewer** — Takes a senior DBA perspective. Asks the questions that matter: "Will this schema survive reality?" Checks for missing foreign key constraints, mixed ID strategies, undocumented denormalization, nullable-everything anti-patterns. Escalates multi-table migrations and PK strategy changes.
+
+**ui-engineer** — Builds pure UI components with zero business logic. On web, uses shadcn/ui or custom components following the design system skill. On mobile, uses the design-system skill with platform-native patterns. Strict boundary: no state management, no data fetching, no routing.
+
+**web-vitals-auditor** — Automated performance audit. Builds and serves the app, runs Lighthouse on both desktop and mobile, checks against targets: LCP < 2.5s, INP < 200ms, CLS < 0.1, TTFB < 800ms, FCP < 1.8s. Outputs a report with scores, bundle analysis, and actionable recommendations.
+
+### Planning Agents
+
+**ux-designer** — Designs from first principles. Five-step process: Define the problem → Map user journeys → Design interactions → Remove friction → Validate accessibility. Outputs user flows, screen specs with primary actions and information hierarchy.
+
+**copywriter** — Product copy and UX microcopy with six persuasion principles: one message only, certainty beats maximum reward, novelty is enough, specify concrete action, power of aggregation, write as one message. Delivers 2–3 variations with character counts and A/B test suggestions.
+
+The UX designer and copywriter work as a pipeline: designer creates the flow, then hands off to the copywriter for persuasive text, CTAs, onboarding copy, and error messages.
+
+## Workflow Pipelines
+
+The real power isn't individual tools — it's how they compose into repeatable workflows:
+
+**Standard Development:**
+```
+Implementation (with skills) → [security-reviewer + tester] (parallel) → Fix → Done
+```
+
+**Data Modeling:**
+```
+data-modeling skill → database-reviewer agent → api-design skill → implementation
+```
+
+**Frontend:**
+```
+nextjs skill → implementation → vercel-react-best-practices (review)
+```
+
+**UX Design:**
+```
+ux-designer agent → copywriter agent (persuasive text only)
+```
+
+Every project enforces the same development workflow through CLAUDE.md. The schema review pipeline runs automatically when database changes are involved. The security-and-testing parallel pass happens on every change. No exceptions.
+
+## MCP Servers: External Integrations
+
+Claude Code connects to external services through MCP (Model Context Protocol) servers. My setup includes:
+
+- **Context7** — Real-time documentation lookup for any library
+- **Playwright** — Browser automation for testing and screenshots
+- **Sentry** — Error tracking integration for debugging production issues
+- **Neon** — Direct database operations and schema management
+- **Notion** — Workspace integration for project management
+- **GitHub** — Full GitHub workflow (PRs, issues, code search)
+- **D2** — Architecture diagram generation (compiled to themed SVGs)
+- **Cloudflare** — Workers, KV, R2, D1 management
+
+These aren't just nice-to-haves. The Neon MCP means Claude Code can run migrations, inspect schemas, and tune queries without me context-switching. The Sentry MCP means production errors feed directly into debugging sessions. The D2 MCP generates architecture diagrams that ship as part of project documentation.
+
+## What This Actually Looks Like
+
+A typical session: I describe a feature in natural language. Claude Code reads the CLAUDE.md, loads the required skills, and starts implementing. When it's done, two agents spin up in parallel — security reviewer scanning for vulnerabilities, tester writing tests to 100% coverage. If either finds issues, they get fixed. Then I review and ship.
+
+I don't manually run linters. I don't write boilerplate tests. I don't do security checklists from memory. The system handles it.
+
+The investment was building the 21 skills, configuring the 7 agents, and writing detailed CLAUDE.md files for each project. That took time. But now every new feature, across every project, gets the benefit of that accumulated knowledge — automatically.
+
+## The Compound Effect
+
+Each skill, agent, and CLAUDE.md file is individually simple. A security checklist. A set of React rules. A DBA review process. But composed together, they create something that feels like having a team: an architect who knows my patterns, a security engineer who never sleeps, a QA lead who insists on 100% coverage, and a DBA who asks "will this survive reality?"
+
+For a solo developer shipping multiple products, that's the difference between burning out and scaling up.
+
+The vibes are good. The agents have my back.

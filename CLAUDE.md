@@ -54,17 +54,25 @@ Content lives in `content/` with locale-specific MDX files:
 
 ```
 content/
-├── about/          # en.mdx, ko.mdx
-├── blog/{slug}/    # en.mdx, ko.mdx (frontmatter: title, description, date, tags, draft)
-└── projects/{slug}/ # en.mdx, ko.mdx + optional .d2 diagram files
+├── about/            # en.mdx, ko.mdx
+├── blog/{slug}/      # en.mdx, ko.mdx
+├── projects/{slug}/  # en.mdx, ko.mdx + optional design.en.mdx, design.ko.mdx + *.d2 files
+└── testimonials.json # Array of { quote, author, role, company }
 ```
 
 `lib/content.ts` loads content via filesystem using `gray-matter` for frontmatter + `next-mdx-remote/rsc` for rendering. All content functions accept a `locale` parameter. Slugs are validated with `/^[a-zA-Z0-9_-]+$/`.
+
+**Blog frontmatter:** `title`, `description`, `date` (ISO), `tags` (string[]), `draft` (optional bool)
+
+**Case study frontmatter:** `title`, `description`, `clientType`, `status` ("active"|"completed"|"archived"), `techStack` (string[]), `featured` (bool), `launchDate` (ISO), `d2Diagram` (optional), `links` (optional: `live`, `github`, `docs` URLs)
+
+Projects can have an optional design doc (`design.en.mdx`/`design.ko.mdx`) rendered as a second tab via `ProjectDetailTabs`.
 
 ### i18n (next-intl)
 
 - Config: `i18n/routing.ts` (locales: en, ko; default: en)
 - Translations: `messages/en.json`, `messages/ko.json` — UI strings only (not content)
+- Namespaces: `nav`, `hero`, `home`, `projects`, `project`, `blog`, `about`, `now`, `contact`, `footer`, `availability`, `common`
 - Navigation: import `Link`, `redirect`, `usePathname` from `@/i18n/navigation` (locale-aware)
 - Middleware: `middleware.ts` handles locale detection and routing
 - Server components: use `getLocale()` from `next-intl/server`
@@ -93,6 +101,13 @@ content/
 - **Site config**: `lib/site-config.ts` holds availability status, social links, email, cal link
 - **Dark mode**: `next-themes` with `.dark` class; CSS variables in `app/globals.css`
 - **Styling util**: use `cn()` from `@/lib/utils` (clsx + tailwind-merge)
+
+### Testing
+
+- Vitest + Testing Library with jsdom environment
+- `vitest.setup.ts` globally mocks `next-intl` (`useTranslations` returns the key as-is) and `next-themes` (`useTheme` returns `"light"`)
+- Coverage includes `lib/**` and `components/**`, excludes test files and `types.ts`
+- Test files live alongside source: `components/foo.test.tsx`, `lib/bar.test.ts`
 
 ## Key Constraints
 
