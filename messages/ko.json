@@ -5,52 +5,52 @@
     "blog": "블로그",
     "about": "소개",
     "now": "현재",
-    "contact": "연락처"
+    "contact": "연락"
   },
   "hero": {
-    "badge": "새 프로젝트 가능",
-    "title": "실제 문제를 해결하는 소프트웨어를 만듭니다.",
-    "subtitle": "초기 스타트업을 위한 확장 가능한 웹 애플리케이션과 기술 아키텍처를 전문으로 하는 풀스택 개발자이자 솔로프리너입니다.",
-    "cta_primary": "작업물 보기",
-    "cta_secondary": "연락하기"
+    "badge": "뭔가 만드는 중",
+    "title": "빠르게 만들고, 부수고, 계속 고칩니다.",
+    "subtitle": "AI를 최대한 활용하는 풀스택 개발자. 혼자서 전부 만듭니다.",
+    "cta_primary": "만든 것들 보기",
+    "cta_secondary": "인사하기"
   },
   "home": {
-    "featured_label": "주요 작업",
-    "featured_title": "주요 프로젝트",
-    "testimonial_label": "클라이언트 후기",
-    "bottom_cta_title": "프로젝트를 시작할 준비가 되셨나요?",
-    "bottom_cta_subtitle": "필요하신 사항을 이야기해 주세요.",
+    "featured_label": "최근 빌드",
+    "featured_title": "이런 걸 만들었어요",
+    "testimonial_label": "사람들이 해준 좋은 말",
+    "bottom_cta_title": "같이 뭔가 만들어 볼래요?",
+    "bottom_cta_subtitle": "재밌는 아이디어 얘기는 언제든 환영.",
     "bottom_cta_button": "연락하기"
   },
   "projects": {
     "title": "프로젝트",
-    "subtitle": "실제 참여에서 얻은 실질적인 결과.",
-    "read_case_study": "케이스 스터디 읽기",
-    "bottom_cta_title": "마음에 드셨나요?",
-    "bottom_cta_button": "프로젝트 논의하기"
+    "subtitle": "아이디어를 제품으로 만든 기록.",
+    "read_case_study": "자세히 보기",
+    "bottom_cta_title": "괜찮은 아이디어 있어요?",
+    "bottom_cta_button": "얘기해요"
   },
   "project": {
     "overview": "개요",
     "problem": "문제",
-    "solution": "해결책",
+    "solution": "이렇게 풀었어요",
     "tech_stack": "기술 스택",
     "architecture": "아키텍처",
     "view_live": "라이브 보기",
     "view_source": "소스 보기",
     "documentation": "문서",
-    "prd_available": "제품 요구사항",
-    "prd_description": "이 프로젝트의 전체 제품 요구사항 문서를 확인하세요.",
-    "view_prd": "PRD 보기",
-    "bottom_cta_title": "비슷한 과제를 겪고 계신가요?",
-    "bottom_cta_subtitle": "대규모 에이전시의 부담 없이 기술 스택을 확장할 수 있도록 도와드립니다.",
-    "bottom_cta_button": "이야기하기"
+    "breadcrumb_projects": "프로젝트",
+    "tab_overview": "제품 소개",
+    "tab_design_doc": "설계 문서",
+    "bottom_cta_title": "비슷한 걸 만들고 있나요?",
+    "bottom_cta_subtitle": "큰 에이전시 없이도 빠르게 배포할 수 있게 도와드려요.",
+    "bottom_cta_button": "얘기해요"
   },
   "blog": {
     "title": "블로그",
-    "subtitle": "소프트웨어, 아키텍처, 그리고 잘 작동하는 것들에 대해 씁니다.",
+    "subtitle": "만들고, 부수고, 그래도 배포하는 이야기.",
     "all": "전체",
     "min_read": "분 소요",
-    "bottom_cta_title": "함께 일하고 싶으신가요?",
+    "bottom_cta_title": "같이 해볼래요?",
     "bottom_cta_button": "연락하기"
   },
   "about": {
@@ -58,45 +58,44 @@
     "bio_1": "",
     "bio_2": "",
     "bio_3": "",
-    "experience": "경력",
-    "download_resume": "이력서 다운로드 (PDF)",
-    "bottom_cta_title": "함께 일하는 것에 관심이 있으신가요?",
-    "bottom_cta_subtitle": "현재 프리랜서 프로젝트와 컨설팅이 가능합니다. 멋진 것을 만들어 봅시다.",
+    "experience": "여정",
+    "bottom_cta_title": "편하게 연락주세요.",
     "bottom_cta_button": "연락하기"
   },
   "now": {
     "title": "현재",
     "last_updated": "최종 업데이트",
-    "working_on": "작업 중",
-    "learning": "학습 중",
+    "working_on": "만드는 중",
+    "learning": "배우는 중",
     "reading": "읽는 중",
-    "available_for": "가능한 작업",
-    "bottom_cta_title": "맞는 것 같으신가요?",
-    "bottom_cta_subtitle": "어떻게 도움을 드릴 수 있을지 이야기해 봅시다.",
+    "available_for": "이런 거 하고 싶어요",
+    "bottom_cta_title": "관심 가나요?",
+    "bottom_cta_subtitle": "한번 얘기해 봐요.",
     "bottom_cta_button": "연락하기"
   },
   "contact": {
-    "title": "연락처",
-    "subtitle": "이메일이 가장 좋은 연락 방법입니다.",
-    "email_label": "이메일 주소",
+    "title": "연락해요",
+    "subtitle": "이메일이 제일 빨라요.",
+    "email_label": "이메일",
     "send_email": "이메일 보내기",
     "copy_address": "주소 복사",
     "copied": "복사됨!",
-    "connect": "소셜",
-    "response_time": "보통 24시간 이내에 답변드립니다",
-    "prefer_call": "통화를 원하시면 Cal.com에서 시간을 예약하세요"
+    "connect": "여기서도 만나요",
+    "response_time": "보통 하루 안에 답장해요",
+    "github_description": "코드가 사는 곳",
+    "linkedin_description": "프로페셔널한 곳"
   },
   "footer": {
     "navigation": "탐색",
     "connect": "연결",
     "available": "가능",
-    "limited": "제한적",
+    "limited": "바쁨",
     "booked": "예약됨"
   },
   "availability": {
-    "available": "새 프로젝트 가능",
-    "limited": "제한된 가용성",
-    "booked": "{date}까지 예약됨"
+    "available": "뭔가 만드는 중",
+    "limited": "좀 바쁜 중",
+    "booked": "{date}까지 꽉 참"
   },
   "common": {
     "skip_to_main": "본문으로 건너뛰기"

@@ -1,0 +1,23 @@
+---
+title: "zzoo.dev — Engineering Design Doc"
+---
+
+## Technical Approach
+
+Every page is statically generated (SSG) at build time. With no server-side rendering or API routes, pages are served directly from Cloudflare Pages' global edge network — fast regardless of where visitors connect from.
+
+Content is managed as MDX files. Each piece is split into `content/[type]/[slug]/en.mdx` and `ko.mdx`, keeping translations independent. Architecture diagrams written in D2 are automatically compiled into SVGs in both light and dark theme variants at build time.
+
+The UI is built with Tailwind CSS v4 and shadcn/ui. The CSS variable-based theming system makes dark mode transitions seamless, and components built on Radix primitives ensure accessibility by default.
+
+## Tech Stack
+
+| Layer | Technology | Why |
+|-------|-----------|-----|
+| Framework | Next.js 16 (App Router) | React 19 support, ecosystem optimized for static generation |
+| Styling | Tailwind CSS v4 + shadcn/ui | Utility-first + accessible components |
+| Content | MDX + gray-matter | React components inside markdown |
+| i18n | next-intl | Battle-tested i18n with static export support |
+| Diagrams | D2 | Version-controllable declarative diagrams |
+| Hosting | Cloudflare Pages | Global edge CDN, free tier is more than enough |
+| Testing | Vitest + Testing Library | Fast unit tests |

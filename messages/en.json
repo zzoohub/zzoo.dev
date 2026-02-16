@@ -8,83 +8,82 @@
     "contact": "Contact"
   },
   "hero": {
-    "badge": "Open to new projects",
-    "title": "I build software that solves real problems.",
-    "subtitle": "Full-stack developer and solopreneur specializing in scalable web applications and technical architecture for early-stage startups.",
-    "cta_primary": "See My Work",
-    "cta_secondary": "Get in Touch"
+    "badge": "Building something new",
+    "title": "Ship fast, break things, keep fixing.",
+    "subtitle": "Fullstack developer powered by AI. I ship the whole thing, solo.",
+    "cta_primary": "See What I Built",
+    "cta_secondary": "Say Hi"
   },
   "home": {
-    "featured_label": "Selected Work",
-    "featured_title": "Featured Projects",
-    "testimonial_label": "What Clients Say",
-    "bottom_cta_title": "Ready to start a project?",
-    "bottom_cta_subtitle": "Let's talk about what you need.",
-    "bottom_cta_button": "Get in Touch"
+    "featured_label": "Recent Builds",
+    "featured_title": "Stuff I Shipped",
+    "testimonial_label": "Nice Things People Said",
+    "bottom_cta_title": "Wanna build something together?",
+    "bottom_cta_subtitle": "Always down to chat about weird ideas.",
+    "bottom_cta_button": "Hit Me Up"
   },
   "projects": {
     "title": "Projects",
-    "subtitle": "Real outcomes from real engagements.",
-    "read_case_study": "Read Case Study",
-    "bottom_cta_title": "Like what you see?",
-    "bottom_cta_button": "Discuss Your Project"
+    "subtitle": "Ideas I turned into products.",
+    "read_case_study": "Read More",
+    "bottom_cta_title": "Got a cool idea?",
+    "bottom_cta_button": "Let's Talk"
   },
   "project": {
     "overview": "Overview",
     "problem": "The Problem",
-    "solution": "The Solution",
-    "tech_stack": "Technology Stack",
+    "solution": "How I Fixed It",
+    "tech_stack": "Tech Stack",
     "architecture": "Architecture",
     "view_live": "View Live",
     "view_source": "View Source",
     "documentation": "Docs",
-    "prd_available": "Product Requirements",
-    "prd_description": "Read the full product requirements document for this project.",
-    "view_prd": "View PRD",
-    "bottom_cta_title": "Facing a similar challenge?",
-    "bottom_cta_subtitle": "I help startups and businesses scale their tech stack without the bloat of a large agency.",
-    "bottom_cta_button": "Let's Talk"
+    "breadcrumb_projects": "Projects",
+    "tab_overview": "Product Brief",
+    "tab_design_doc": "Design Doc",
+    "bottom_cta_title": "Working on something similar?",
+    "bottom_cta_subtitle": "I help teams ship faster without the overhead of a big agency.",
+    "bottom_cta_button": "Let's Chat"
   },
   "blog": {
     "title": "Blog",
-    "subtitle": "Writing about software, architecture, and building things that work.",
+    "subtitle": "Notes on building stuff, breaking stuff, and shipping anyway.",
     "all": "All",
     "min_read": "min read",
-    "bottom_cta_title": "Want to work together?",
-    "bottom_cta_button": "Get in Touch"
+    "bottom_cta_title": "Wanna collab?",
+    "bottom_cta_button": "Reach Out"
   },
   "about": {
     "title": "About",
     "bio_1": "",
     "bio_2": "",
     "bio_3": "",
-    "experience": "Experience",
-    "download_resume": "Download Resume (PDF)",
-    "bottom_cta_title": "Interested in working together?",
-    "bottom_cta_subtitle": "I'm currently available for freelance projects and consulting. Let's build something great.",
-    "bottom_cta_button": "Get in Touch"
+    "experience": "Journey So Far",
+    "bottom_cta_title": "Say hi anytime.",
+    "bottom_cta_button": "Contact"
   },
   "now": {
     "title": "Now",
     "last_updated": "Last updated",
-    "working_on": "Working On",
+    "working_on": "Building",
     "learning": "Learning",
     "reading": "Reading",
-    "available_for": "Available For",
-    "bottom_cta_title": "Sounds like a fit?",
-    "bottom_cta_subtitle": "Let's discuss how I can help your team.",
-    "bottom_cta_button": "Get in Touch"
+    "available_for": "Down For",
+    "bottom_cta_title": "Sounds like your vibe?",
+    "bottom_cta_subtitle": "Let's see if we click.",
+    "bottom_cta_button": "Say Hi"
   },
   "contact": {
-    "title": "Contact",
-    "subtitle": "The best way to reach me is email.",
-    "email_label": "EMAIL ADDRESS",
+    "title": "Let's Talk",
+    "subtitle": "Drop me a line. Email works best.",
+    "email_label": "EMAIL",
     "send_email": "Send Email",
     "copy_address": "Copy Address",
     "copied": "Copied!",
-    "connect": "CONNECT",
-    "response_time": "I typically respond within 24 hours",
-    "prefer_call": "Prefer a call? Book a time on Cal.com"
+    "connect": "FIND ME",
+    "response_time": "I usually reply within a day",
+    "github_description": "Where the code lives",
+    "linkedin_description": "The professional one"
   },
   "footer": {
     "navigation": "Navigation",
@@ -94,9 +93,9 @@
     "booked": "Booked"
   },
   "availability": {
-    "available": "Open to new projects",
-    "limited": "Limited availability",
-    "booked": "Booked until {date}"
+    "available": "Building something new",
+    "limited": "Kinda busy rn",
+    "booked": "Locked in until {date}"
   },
   "common": {
     "skip_to_main": "Skip to main content"

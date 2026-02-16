@@ -137,6 +137,10 @@
     border-bottom: 1px solid oklch(0.922 0 0);
   }
 
+  & > h2:first-child {
+    margin-top: 0;
+  }
+
   & :where(code):not(:where(pre code, [class~="not-prose"], [class~="not-prose"] *)) {
     background-color: var(--muted);
     padding: 0.2em 0.4em;
@@ -171,12 +175,13 @@
   }
 
   & :where(table):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-    display: block;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    table-layout: auto;
+    border-collapse: collapse;
     border: 1px solid var(--border);
     border-radius: 0.5rem;
     font-size: 0.875em;
+    overflow: hidden;
   }
 
   & :where(thead):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
@@ -188,6 +193,11 @@
     padding: 0.625em 1em;
     font-weight: 600;
     text-align: left;
+  }
+
+  & :where(thead th:first-child, tbody td:first-child):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    white-space: nowrap;
+    width: 1%;
   }
 
   & :where(tbody td):not(:where([class~="not-prose"], [class~="not-prose"] *)) {

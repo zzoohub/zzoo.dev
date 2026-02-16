@@ -30,7 +30,7 @@ function HomeContent({
       {/* Hero */}
       <section className="py-16 md:py-24">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl md:max-w-2xl">
+          <div className="mx-auto max-w-2xl text-center">
             <AvailabilityBadge size="md" />
 
             <h1 className="mt-6 text-3xl font-bold leading-[1.1] tracking-tight md:text-4xl">
@@ -41,16 +41,16 @@ function HomeContent({
               {t("hero.subtitle")}
             </p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
               <Link
                 href="/projects"
-                className="inline-flex h-12 items-center justify-center rounded-lg bg-primary px-6 font-medium text-primary-foreground transition-colors duration-150 hover:bg-primary/90"
+                className="inline-flex h-11 items-center justify-center rounded-lg bg-primary px-5 font-medium text-primary-foreground transition-colors duration-150 hover:bg-primary/90"
               >
                 {t("hero.cta_primary")}
               </Link>
               <Link
                 href="/contact"
-                className="inline-flex h-12 items-center justify-center rounded-lg border border-border px-6 font-medium transition-colors duration-150 hover:bg-muted"
+                className="inline-flex h-11 items-center justify-center rounded-lg border border-border px-5 font-medium transition-colors duration-150 hover:bg-muted"
               >
                 {t("hero.cta_secondary")}
               </Link>

@@ -5,9 +5,8 @@ import {
   getAllCaseStudies,
   getCaseStudy,
   getTestimonials,
-  hasPRD,
-  getCaseStudyPRD,
-  getAllPRDSlugs,
+  hasDesignDoc,
+  getDesignDoc,
 } from "./content";
 
 // Mock fs module
@@ -385,9 +384,7 @@ status: completed
 techStack:
   - Next.js
   - TypeScript
-duration: 3 months
-startDate: 2023-06-01
-endDate: 2023-09-01
+launchDate: 2023-06-01
 ---
 Content`
       );
@@ -401,9 +398,7 @@ Content`
         clientType: "SaaS",
         status: "completed",
         techStack: ["Next.js", "TypeScript"],
-        duration: "3 months",
-        startDate: "2023-06-01",
-        endDate: "2023-09-01",
+        launchDate: "2023-06-01",
         featured: false,
       });
     });
@@ -418,8 +413,7 @@ title: Project
 description: Desc
 clientType: Agency
 status: active
-duration: 2 months
-startDate: 2024-01-01
+launchDate: 2024-01-01
 ---
 Content`
       );
@@ -438,8 +432,7 @@ title: Project
 description: Desc
 clientType: Startup
 status: active
-duration: 1 month
-startDate: 2024-01-01
+launchDate: 2024-01-01
 ---
 Content`
       );
@@ -459,9 +452,7 @@ description: Desc
 clientType: Enterprise
 status: completed
 featured: true
-duration: 6 months
-startDate: 2023-01-01
-endDate: 2023-07-01
+launchDate: 2023-01-01
 ---
 Content`
       );
@@ -470,7 +461,7 @@ Content`
       expect(studies[0].featured).toBe(true);
     });
 
-    it("sorts case studies by startDate descending", () => {
+    it("sorts case studies by launchDate descending", () => {
       mockFs.existsSync.mockReturnValue(true);
       mockFs.readdirSync.mockReturnValue([
         "old",
@@ -483,15 +474,14 @@ Content`
       mockFs.readFileSync.mockImplementation(() => {
         callCount++;
         const base = `clientType: Test
-status: completed
-duration: 1 month`;
+status: completed`;
 
         if (callCount === 1) {
-          return `---\ntitle: Old\ndescription: Desc\n${base}\nstartDate: 2022-01-01\n---\nContent`;
+          return `---\ntitle: Old\ndescription: Desc\n${base}\nlaunchDate: 2022-01-01\n---\nContent`;
         } else if (callCount === 2) {
-          return `---\ntitle: New\ndescription: Desc\n${base}\nstartDate: 2024-01-01\n---\nContent`;
+          return `---\ntitle: New\ndescription: Desc\n${base}\nlaunchDate: 2024-01-01\n---\nContent`;
         } else {
-          return `---\ntitle: Middle\ndescription: Desc\n${base}\nstartDate: 2023-01-01\n---\nContent`;
+          return `---\ntitle: Middle\ndescription: Desc\n${base}\nlaunchDate: 2023-01-01\n---\nContent`;
         }
       });
 
@@ -517,15 +507,14 @@ duration: 1 month`;
         const base = `title: Project
 description: Desc
 clientType: Test
-duration: 1 month
-startDate: 2024-01-01`;
+launchDate: 2024-01-01`;
 
         if (callCount === 1) {
           return `---\n${base}\nstatus: active\n---\nContent`;
         } else if (callCount === 2) {
-          return `---\n${base}\nstatus: completed\nendDate: 2024-02-01\n---\nContent`;
+          return `---\n${base}\nstatus: completed\n---\nContent`;
         } else {
-          return `---\n${base}\nstatus: archived\nendDate: 2023-12-01\n---\nContent`;
+          return `---\n${base}\nstatus: archived\n---\nContent`;
         }
       });
 
@@ -545,8 +534,7 @@ title: 프로젝트
 description: 설명
 clientType: 스타트업
 status: active
-duration: 3개월
-startDate: 2024-01-01
+launchDate: 2024-01-01
 ---
 내용`
       );
@@ -581,8 +569,7 @@ title: Project
 description: Desc
 clientType: Test
 status: active
-duration: 1 month
-startDate: 2024-01-01
+launchDate: 2024-01-01
 d2Diagram: architecture.d2
 ---
 Content`
@@ -602,8 +589,7 @@ title: Project
 description: Desc
 clientType: Test
 status: active
-duration: 1 month
-startDate: 2024-01-01
+launchDate: 2024-01-01
 links:
   live: https://example.com
   github: https://github.com/example/repo
@@ -630,8 +616,7 @@ title: Project
 description: Desc
 clientType: Test
 status: active
-duration: 1 month
-startDate: 2024-01-01
+launchDate: 2024-01-01
 ---
 Content`
       );
@@ -650,8 +635,7 @@ title: Project
 description: Desc
 clientType: Test
 status: active
-duration: 1 month
-startDate: 2024-01-01
+launchDate: 2024-01-01
 ---
 Content`
       );
@@ -690,8 +674,7 @@ clientType: Startup
 status: active
 techStack:
   - React
-duration: 2 months
-startDate: 2024-01-01
+launchDate: 2024-01-01
 ---
 Project details here`
       );
@@ -706,8 +689,7 @@ Project details here`
         status: "active",
         techStack: ["React"],
         featured: false,
-        duration: "2 months",
-        startDate: "2024-01-01",
+        launchDate: "2024-01-01",
       });
       expect(study?.content).toBe("Project details here");
     });
@@ -728,43 +710,6 @@ Project details here`
       );
     });
 
-    it("handles endDate when provided", () => {
-      mockFs.existsSync.mockReturnValue(true);
-      mockFs.readFileSync.mockReturnValue(
-        `---
-title: Completed Project
-description: Done
-clientType: Enterprise
-status: completed
-duration: 6 months
-startDate: 2023-01-01
-endDate: 2023-07-01
----
-Content`
-      );
-
-      const study = getCaseStudy("en", "completed");
-      expect(study?.meta.endDate).toBe("2023-07-01");
-    });
-
-    it("handles missing endDate", () => {
-      mockFs.existsSync.mockReturnValue(true);
-      mockFs.readFileSync.mockReturnValue(
-        `---
-title: Active Project
-description: Ongoing
-clientType: Startup
-status: active
-duration: ongoing
-startDate: 2024-01-01
----
-Content`
-      );
-
-      const study = getCaseStudy("en", "active");
-      expect(study?.meta.endDate).toBeUndefined();
-    });
-
     it("includes d2Diagram field when provided", () => {
       mockFs.existsSync.mockReturnValue(true);
       mockFs.readFileSync.mockReturnValue(
@@ -773,8 +718,7 @@ title: Project
 description: Desc
 clientType: Test
 status: active
-duration: 1 month
-startDate: 2024-01-01
+launchDate: 2024-01-01
 d2Diagram: diagram.d2
 ---
 Content`
@@ -792,8 +736,7 @@ title: Project
 description: Desc
 clientType: Test
 status: active
-duration: 1 month
-startDate: 2024-01-01
+launchDate: 2024-01-01
 links:
   live: https://live.example.com
   github: https://github.com/example
@@ -882,101 +825,96 @@ Content`
     });
   });
 
-  describe("hasPRD", () => {
-    it("returns true when prd.{locale}.mdx file exists", () => {
+  describe("hasDesignDoc", () => {
+    it("returns true when design.{locale}.mdx file exists", () => {
       mockFs.existsSync.mockReturnValue(true);
-      const result = hasPRD("en", "e-commerce-rebuild");
+      const result = hasDesignDoc("en", "e-commerce-rebuild");
       expect(result).toBe(true);
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/projects/e-commerce-rebuild/prd.en.mdx")
+        expect.stringContaining("content/projects/e-commerce-rebuild/design.en.mdx")
       );
     });
 
-    it("returns false when prd.{locale}.mdx file does not exist", () => {
+    it("returns false when design.{locale}.mdx file does not exist", () => {
       mockFs.existsSync.mockReturnValue(false);
-      const result = hasPRD("en", "no-prd-project");
+      const result = hasDesignDoc("en", "no-design-project");
       expect(result).toBe(false);
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/projects/no-prd-project/prd.en.mdx")
+        expect.stringContaining("content/projects/no-design-project/design.en.mdx")
       );
     });
 
     it("returns false for invalid slug", () => {
-      const result = hasPRD("en", "../../../etc/passwd");
+      const result = hasDesignDoc("en", "../../../etc/passwd");
       expect(result).toBe(false);
       expect(mockFs.existsSync).not.toHaveBeenCalled();
     });
 
     it("returns false for slug with special characters", () => {
-      const result = hasPRD("en", "project@name");
+      const result = hasDesignDoc("en", "project@name");
       expect(result).toBe(false);
       expect(mockFs.existsSync).not.toHaveBeenCalled();
     });
 
     it("checks correct path for ko locale", () => {
       mockFs.existsSync.mockReturnValue(false);
-      hasPRD("ko", "test-project");
+      hasDesignDoc("ko", "test-project");
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/projects/test-project/prd.ko.mdx")
+        expect.stringContaining("content/projects/test-project/design.ko.mdx")
       );
     });
 
     it("handles slug with hyphens and underscores", () => {
       mockFs.existsSync.mockReturnValue(true);
-      const result = hasPRD("en", "test_project-v2");
+      const result = hasDesignDoc("en", "test_project-v2");
       expect(result).toBe(true);
     });
 
     it("handles slug with numbers", () => {
       mockFs.existsSync.mockReturnValue(true);
-      const result = hasPRD("en", "project123");
+      const result = hasDesignDoc("en", "project123");
       expect(result).toBe(true);
     });
   });
 
-  describe("getCaseStudyPRD", () => {
-    it("returns null when prd file does not exist", () => {
+  describe("getDesignDoc", () => {
+    it("returns null when design doc file does not exist", () => {
       mockFs.existsSync.mockReturnValue(false);
-      const result = getCaseStudyPRD("en", "nonexistent");
+      const result = getDesignDoc("en", "nonexistent");
       expect(result).toBeNull();
     });
 
     it("returns null for invalid slug", () => {
-      const result = getCaseStudyPRD("en", "../../../etc/passwd");
+      const result = getDesignDoc("en", "../../../etc/passwd");
       expect(result).toBeNull();
       expect(mockFs.existsSync).not.toHaveBeenCalled();
     });
 
     it("returns null when parent case study does not exist", () => {
-      // PRD file exists but parent locale .mdx does not
       let callCount = 0;
       mockFs.existsSync.mockImplementation(() => {
         callCount++;
-        // First call checks prd.en.mdx (exists)
         if (callCount === 1) return true;
-        // Second call checks en.mdx (does not exist)
         return false;
       });
 
       mockFs.readFileSync.mockReturnValue(
-        "---\ntitle: PRD Only\n---\nPRD content"
+        "---\ntitle: Design Doc Only\n---\nDesign content"
       );
 
-      const result = getCaseStudyPRD("en", "orphan-prd");
+      const result = getDesignDoc("en", "orphan-design");
       expect(result).toBeNull();
     });
 
-    it("returns PRD content with parent case study meta when both exist", () => {
+    it("returns design doc content with parent case study meta when both exist", () => {
       mockFs.existsSync.mockReturnValue(true);
 
       let callCount = 0;
       mockFs.readFileSync.mockImplementation(() => {
         callCount++;
-        // First call reads prd.en.mdx
         if (callCount === 1) {
-          return "---\ntitle: PRD Title\n---\nPRD detailed content here";
+          return "---\ntitle: Design Doc Title\n---\nDesign doc detailed content here";
         }
-        // Second call reads en.mdx (parent)
         return `---
 title: E-commerce Rebuild
 description: Rebuilt platform
@@ -984,16 +922,14 @@ clientType: SaaS
 status: completed
 techStack:
   - Next.js
-duration: 3 months
-startDate: 2023-06-01
-endDate: 2023-09-01
+launchDate: 2023-06-01
 ---
 Parent case study content`;
       });
 
-      const result = getCaseStudyPRD("en", "e-commerce-rebuild");
+      const result = getDesignDoc("en", "e-commerce-rebuild");
       expect(result).not.toBeNull();
-      expect(result?.content).toBe("PRD detailed content here");
+      expect(result?.content).toBe("Design doc detailed content here");
       expect(result?.meta).toMatchObject({
         slug: "e-commerce-rebuild",
         title: "E-commerce Rebuild",
@@ -1001,25 +937,23 @@ Parent case study content`;
         clientType: "SaaS",
         status: "completed",
         techStack: ["Next.js"],
-        duration: "3 months",
-        startDate: "2023-06-01",
-        endDate: "2023-09-01",
+        launchDate: "2023-06-01",
       });
     });
 
     it("checks correct file path for en locale", () => {
       mockFs.existsSync.mockReturnValue(false);
-      getCaseStudyPRD("en", "test-project");
+      getDesignDoc("en", "test-project");
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/projects/test-project/prd.en.mdx")
+        expect.stringContaining("content/projects/test-project/design.en.mdx")
       );
     });
 
     it("checks correct file path for ko locale", () => {
       mockFs.existsSync.mockReturnValue(false);
-      getCaseStudyPRD("ko", "test-project");
+      getDesignDoc("ko", "test-project");
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/projects/test-project/prd.ko.mdx")
+        expect.stringContaining("content/projects/test-project/design.ko.mdx")
       );
     });
 
@@ -1030,7 +964,7 @@ Parent case study content`;
       mockFs.readFileSync.mockImplementation(() => {
         callCount++;
         if (callCount === 1) {
-          return "---\ntitle: PRD\n---\nPRD content";
+          return "---\ntitle: Design Doc\n---\nDesign content";
         }
         return `---
 title: Featured Project
@@ -1041,9 +975,7 @@ techStack:
   - React
   - TypeScript
 featured: true
-duration: 6 months
-startDate: 2023-01-01
-endDate: 2023-07-01
+launchDate: 2023-01-01
 d2Diagram: diagram.d2
 links:
   live: https://example.com
@@ -1052,149 +984,13 @@ links:
 Content`;
       });
 
-      const result = getCaseStudyPRD("en", "featured-project");
+      const result = getDesignDoc("en", "featured-project");
       expect(result?.meta.featured).toBe(true);
       expect(result?.meta.d2Diagram).toBe("diagram.d2");
       expect(result?.meta.links).toEqual({
         live: "https://example.com",
         github: "https://github.com/example/repo",
       });
-    });
-
-    it("handles PRD with different frontmatter than parent", () => {
-      mockFs.existsSync.mockReturnValue(true);
-
-      let callCount = 0;
-      mockFs.readFileSync.mockImplementation(() => {
-        callCount++;
-        if (callCount === 1) {
-          // PRD has its own frontmatter (should be ignored, parent meta used)
-          return `---
-title: PRD Specific Title
-customField: value
----
-PRD content with requirements`;
-        }
-        return `---
-title: Parent Title
-description: Parent description
-clientType: Startup
-status: active
-duration: 2 months
-startDate: 2024-01-01
----
-Parent content`;
-      });
-
-      const result = getCaseStudyPRD("en", "test");
-      expect(result?.meta.title).toBe("Parent Title");
-      expect(result?.content).toBe("PRD content with requirements");
-    });
-  });
-
-  describe("getAllPRDSlugs", () => {
-    it("returns empty array when projects directory does not exist", () => {
-      mockFs.existsSync.mockReturnValue(false);
-      const result = getAllPRDSlugs();
-      expect(result).toEqual([]);
-    });
-
-    it("returns empty array when no slug dirs have PRD files", () => {
-      mockFs.readdirSync.mockReturnValue(["project1", "project2"] as unknown as fs.Dirent[]);
-      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
-
-      mockFs.existsSync.mockImplementation((p: string) => {
-        if (p.endsWith("content/projects")) return true;
-        return false; // no prd files
-      });
-
-      const result = getAllPRDSlugs();
-      expect(result).toEqual([]);
-    });
-
-    it("returns PRD slugs for en locale", () => {
-      mockFs.readdirSync.mockReturnValue(["e-commerce-rebuild", "analytics-dashboard"] as unknown as fs.Dirent[]);
-      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
-
-      mockFs.existsSync.mockImplementation((p: string) => {
-        if (p.endsWith("content/projects")) return true;
-        // Only en PRD files exist
-        if (p.endsWith("prd.en.mdx")) return true;
-        return false;
-      });
-
-      const result = getAllPRDSlugs();
-      expect(result).toHaveLength(2);
-      expect(result).toContainEqual({ locale: "en", slug: "e-commerce-rebuild" });
-      expect(result).toContainEqual({ locale: "en", slug: "analytics-dashboard" });
-    });
-
-    it("returns PRD slugs for ko locale", () => {
-      mockFs.readdirSync.mockReturnValue(["project-ko"] as unknown as fs.Dirent[]);
-      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
-
-      mockFs.existsSync.mockImplementation((p: string) => {
-        if (p.endsWith("content/projects")) return true;
-        if (p.endsWith("prd.ko.mdx")) return true;
-        return false;
-      });
-
-      const result = getAllPRDSlugs();
-      expect(result).toHaveLength(1);
-      expect(result).toContainEqual({ locale: "ko", slug: "project-ko" });
-    });
-
-    it("returns PRD slugs from both locales", () => {
-      mockFs.readdirSync.mockReturnValue(["project1", "project2"] as unknown as fs.Dirent[]);
-      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
-
-      mockFs.existsSync.mockImplementation((p: string) => {
-        if (p.endsWith("content/projects")) return true;
-        // project1 has both locales, project2 only has en
-        if (p.includes("project1") && p.endsWith("prd.en.mdx")) return true;
-        if (p.includes("project1") && p.endsWith("prd.ko.mdx")) return true;
-        if (p.includes("project2") && p.endsWith("prd.en.mdx")) return true;
-        return false;
-      });
-
-      const result = getAllPRDSlugs();
-      expect(result).toHaveLength(3);
-      expect(result).toContainEqual({ locale: "en", slug: "project1" });
-      expect(result).toContainEqual({ locale: "ko", slug: "project1" });
-      expect(result).toContainEqual({ locale: "en", slug: "project2" });
-    });
-
-    it("correctly extracts slug from directory name", () => {
-      mockFs.readdirSync.mockReturnValue(["complex-project-name"] as unknown as fs.Dirent[]);
-      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
-
-      mockFs.existsSync.mockImplementation((p: string) => {
-        if (p.endsWith("content/projects")) return true;
-        if (p.endsWith("prd.en.mdx")) return true;
-        return false;
-      });
-
-      const result = getAllPRDSlugs();
-      expect(result[0].slug).toBe("complex-project-name");
-    });
-
-    it("handles slugs with hyphens and underscores", () => {
-      mockFs.readdirSync.mockReturnValue([
-        "test_project-v2",
-        "another-project_123",
-      ] as unknown as fs.Dirent[]);
-      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
-
-      mockFs.existsSync.mockImplementation((p: string) => {
-        if (p.endsWith("content/projects")) return true;
-        if (p.endsWith("prd.en.mdx")) return true;
-        return false;
-      });
-
-      const result = getAllPRDSlugs();
-      expect(result).toHaveLength(2);
-      expect(result).toContainEqual({ locale: "en", slug: "test_project-v2" });
-      expect(result).toContainEqual({ locale: "en", slug: "another-project_123" });
     });
   });
 });

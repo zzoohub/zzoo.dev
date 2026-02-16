@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
-import type { BlogPostMeta, CaseStudyMeta, Testimonial } from "./types";
+import type { AboutData, BlogPostMeta, CaseStudyMeta, Testimonial } from "./types";
 
 const contentDir = path.join(process.cwd(), "content");
 
@@ -131,9 +131,7 @@ export function getAllCaseStudies(locale: string): CaseStudyMeta[] {
         status: data.status,
         techStack: data.techStack ?? [],
         featured: data.featured ?? false,
-        duration: data.duration,
-        startDate: toDateString(data.startDate),
-        endDate: data.endDate ? toDateString(data.endDate) : undefined,
+        launchDate: toDateString(data.launchDate),
         d2Diagram: data.d2Diagram ?? undefined,
         links: sanitizeLinks(data.links),
       } satisfies CaseStudyMeta;
@@ -141,7 +139,7 @@ export function getAllCaseStudies(locale: string): CaseStudyMeta[] {
     .filter(Boolean) as CaseStudyMeta[];
 
   return studies.sort(
-    (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+    (a, b) => new Date(b.launchDate).getTime() - new Date(a.launchDate).getTime()
   );
 }
 
@@ -165,9 +163,7 @@ export function getCaseStudy(
       status: data.status,
       techStack: data.techStack ?? [],
       featured: data.featured ?? false,
-      duration: data.duration,
-      startDate: toDateString(data.startDate),
-      endDate: data.endDate ? toDateString(data.endDate) : undefined,
+      launchDate: toDateString(data.launchDate),
       d2Diagram: data.d2Diagram ?? undefined,
       links: sanitizeLinks(data.links),
     },
@@ -175,24 +171,33 @@ export function getCaseStudy(
   };
 }
 
-export function hasPRD(locale: string, slug: string): boolean {
+export function hasDesignDoc(locale: string, slug: string): boolean {
   if (!isValidSlug(slug)) return false;
-  const filePath = path.join(contentDir, "projects", slug, `prd.${locale}.mdx`);
+  const filePath = path.join(
+    contentDir,
+    "projects",
+    slug,
+    `design.${locale}.mdx`
+  );
   return fs.existsSync(filePath);
 }
 
-export function getCaseStudyPRD(
+export function getDesignDoc(
   locale: string,
   slug: string
 ): { meta: CaseStudyMeta; content: string } | null {
   if (!isValidSlug(slug)) return null;
-  const filePath = path.join(contentDir, "projects", slug, `prd.${locale}.mdx`);
+  const filePath = path.join(
+    contentDir,
+    "projects",
+    slug,
+    `design.${locale}.mdx`
+  );
   if (!fs.existsSync(filePath)) return null;
 
   const raw = fs.readFileSync(filePath, "utf-8");
-  const { data, content } = matter(raw);
+  const { content } = matter(raw);
 
-  // Get the parent case study meta for context
   const parentStudy = getCaseStudy(locale, slug);
   if (!parentStudy) return null;
 
@@ -202,25 +207,17 @@ export function getCaseStudyPRD(
   };
 }
 
-export function getAllPRDSlugs(): { locale: string; slug: string }[] {
-  const dir = path.join(contentDir, "projects");
-  if (!fs.existsSync(dir)) return [];
+export function getAboutContent(locale: string): AboutData | null {
+  const filePath = path.join(contentDir, "about", `${locale}.mdx`);
+  if (!fs.existsSync(filePath)) return null;
 
-  const slugDirs = fs.readdirSync(dir).filter((entry) => {
-    const entryPath = path.join(dir, entry);
-    return fs.statSync(entryPath).isDirectory();
-  });
+  const raw = fs.readFileSync(filePath, "utf-8");
+  const { data, content } = matter(raw);
 
-  const results: { locale: string; slug: string }[] = [];
-  for (const slug of slugDirs) {
-    for (const locale of ["en", "ko"]) {
-      const prdPath = path.join(dir, slug, `prd.${locale}.mdx`);
-      if (fs.existsSync(prdPath)) {
-        results.push({ locale, slug });
-      }
-    }
-  }
-  return results;
+  return {
+    experience: (data.experience ?? []) as AboutData["experience"],
+    content,
+  };
 }
 
 export function getTestimonials(): Testimonial[] {

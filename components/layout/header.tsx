@@ -9,7 +9,6 @@ import { LanguageSwitcher } from "./language-switcher";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/", key: "home" },
   { href: "/projects", key: "projects" },
   { href: "/blog", key: "blog" },
   { href: "/about", key: "about" },

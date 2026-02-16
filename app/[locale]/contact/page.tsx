@@ -1,95 +1,94 @@
+import { Fragment } from "react";
 import { useTranslations } from "next-intl";
 import { siteConfig } from "@/lib/site-config";
 import { AvailabilityBadge } from "@/components/availability-badge";
 import { CopyButton } from "@/components/copy-button";
-import { Mail, Github, Linkedin, ArrowRight, Send } from "lucide-react";
+import { Mail, Github, Linkedin, ArrowUpRight } from "lucide-react";
 
-const externalLinks = [
-  {
-    href: siteConfig.social.github,
-    label: "GitHub",
-    description: "Check out my code",
-    icon: Github,
-  },
-  {
-    href: siteConfig.social.linkedin,
-    label: "LinkedIn",
-    description: "Professional network",
-    icon: Linkedin,
-  },
+const channels = [
+  { href: siteConfig.social.github, label: "GitHub", icon: Github },
+  { href: siteConfig.social.linkedin, label: "LinkedIn", icon: Linkedin },
 ];
 
 export default function ContactPage() {
   const t = useTranslations("contact");
 
   return (
-    <section className="py-16 md:py-20">
-      <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center md:text-left">
-          <AvailabilityBadge size="md" />
-          <h1 className="mt-6 text-3xl font-bold tracking-tight md:text-4xl">
-            {t("title")}
-          </h1>
-          <p className="mt-4 text-lg text-muted-foreground">{t("subtitle")}</p>
-        </div>
+    <section className="px-4 py-12 sm:px-6 md:flex md:min-h-[calc(100svh-4rem)] md:items-center md:justify-center md:py-24 lg:px-8">
+      <div className="mx-auto w-full max-w-2xl">
+        {/* Title */}
+        <h1 className="text-[32px] font-bold tracking-tight md:text-center">
+          {t("title")}
+        </h1>
 
-        {/* Email card */}
-        <div className="mt-10 rounded-xl border border-border bg-card p-8 text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-            <Mail className="h-6 w-6 text-muted-foreground" />
-          </div>
-          <p className="mt-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            {t("email_label")}
-          </p>
-          <p className="mt-2 font-mono text-xl md:text-2xl">
+        {/* Email */}
+        <div className="mt-1 md:mt-12 md:text-center">
+          <a
+            href={`mailto:${siteConfig.email}`}
+            className="font-mono text-[28px] font-bold tracking-tighter transition-opacity duration-200 hover:opacity-70 sm:text-4xl md:text-[40px]"
+          >
             {siteConfig.email}
-          </p>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {t("response_time")}
-          </p>
-
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
-            <a
-              href={`mailto:${siteConfig.email}`}
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-primary px-6 font-medium text-primary-foreground transition-colors duration-150 hover:bg-primary/90"
-            >
-              <Send className="h-4 w-4" />
-              {t("send_email")}
-            </a>
-            <CopyButton text={siteConfig.email} />
-          </div>
+          </a>
         </div>
 
-        {/* External links */}
-        <div className="mt-10">
-          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            {t("connect")}
-          </p>
-          <div className="mt-4 space-y-3">
-            {externalLinks.map((link) => (
+        {/* Buttons */}
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row md:mt-12 md:justify-center">
+          <a
+            href={`mailto:${siteConfig.email}`}
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-primary px-6 font-medium text-primary-foreground transition-colors duration-200 hover:bg-primary/90"
+          >
+            <Mail className="h-4 w-4" />
+            {t("send_email")}
+          </a>
+          <CopyButton
+            text={siteConfig.email}
+            className="h-12 rounded-full px-6"
+          />
+        </div>
+
+        {/* Availability */}
+        <div className="mt-8 md:mt-16 md:flex md:justify-center">
+          <AvailabilityBadge size="md" />
+        </div>
+
+        {/* Social Links — Desktop: horizontal with dividers */}
+        <div className="mt-10 hidden items-center justify-center gap-6 md:flex">
+          {channels.map((channel, i) => (
+            <Fragment key={channel.label}>
+              {i > 0 && <div className="h-4 w-px bg-border" />}
               <a
-                key={link.label}
-                href={link.href}
+                href={channel.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-4 rounded-lg border border-border p-4 transition-colors duration-150 hover:bg-muted"
+                className="flex items-center gap-2 text-muted-foreground transition-colors duration-200 hover:text-foreground"
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
-                  <link.icon className="h-5 w-5" />
-                </div>
-                <div className="flex-1">
-                  <p className="font-medium">{link.label}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {link.description}
-                  </p>
-                </div>
-                <ArrowRight className="h-5 w-5 text-muted-foreground" />
+                <channel.icon className="h-[18px] w-[18px]" />
+                <span className="font-mono text-sm uppercase tracking-wider">
+                  {channel.label}
+                </span>
               </a>
-            ))}
-          </div>
+            </Fragment>
+          ))}
         </div>
 
+        {/* Social Links — Mobile: stacked rows */}
+        <div className="mt-10 flex flex-col md:hidden">
+          {channels.map((channel) => (
+            <a
+              key={channel.label}
+              href={channel.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex h-12 items-center justify-between border-b border-border transition-colors hover:bg-muted/50"
+            >
+              <div className="flex items-center gap-3">
+                <channel.icon className="h-5 w-5 text-muted-foreground transition-colors group-hover:text-foreground" />
+                <span className="text-sm font-medium">{channel.label}</span>
+              </div>
+              <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
+            </a>
+          ))}
+        </div>
       </div>
     </section>
   );

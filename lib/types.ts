@@ -21,9 +21,7 @@ export interface CaseStudyMeta {
   status: "active" | "completed" | "archived";
   techStack: string[];
   featured?: boolean;
-  duration: string;
-  startDate: string;
-  endDate?: string;
+  launchDate: string;
   d2Diagram?: string;
   links?: {
     live?: string;
@@ -33,6 +31,18 @@ export interface CaseStudyMeta {
 }
 
 export interface CaseStudy extends CaseStudyMeta {
+  content: string;
+}
+
+export interface ExperienceEntry {
+  period: string;
+  title: string;
+  description: string;
+  current?: boolean;
+}
+
+export interface AboutData {
+  experience: ExperienceEntry[];
   content: string;
 }
 

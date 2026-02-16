@@ -15,10 +15,10 @@ techStack:
   - GCP Cloud Run
   - Pulumi
 featured: true
-duration: "Ongoing"
-startDate: "2025-06-01"
+launchDate: "2025-06-01"
 d2Diagram: "mealio-architecture-simplified"
 links:
+  live: "https://mealio.zzooapp.com"
   github: "https://github.com/zzoohub/mealio"
 ---
 
@@ -37,39 +37,6 @@ Mealio is a photo-first meal tracking app designed around a single principle: **
 - **Feature-Sliced Design** — The mobile codebase follows strict layer boundaries (`app → widgets → features → entities → shared`) for maintainable growth.
 - **Rust API** — Chose Axum over Node.js for type safety, performance, and memory efficiency on Cloud Run's autoscaling (0–3 instances).
 
-### Architecture
-
-**Mobile (React Native / Expo)**
-- Expo Router for file-based navigation
-- Zustand for client state, TanStack Query for server state
-- MMKV for fast local persistence
-- Bilingual (EN/KO) via i18next
-
-**API (Rust / Axum)**
-- SQLx with compile-time checked queries against Neon PostgreSQL
-- JWT + JWKS authentication (Google & Apple OAuth)
-- Presigned URL uploads to Cloudflare R2
-- OpenAPI spec with Swagger UI
-
-**Infrastructure (Pulumi)**
-- GCP Cloud Run with autoscaling (0–3 instances)
-- Neon managed PostgreSQL
-- Cloudflare R2 for photo storage
-- GCP Secret Manager for credentials
-- GitHub Actions CI/CD for automated builds and deploys
-
-## Tech Stack Deep Dive
-
-| Layer | Technology | Why |
-|-------|-----------|-----|
-| Mobile | React Native + Expo 55 | Cross-platform with native performance, OTA updates via EAS |
-| State | Zustand + TanStack Query | Clean separation of client vs. server state |
-| API | Rust + Axum 0.8 | Type safety, low memory footprint, fast cold starts on Cloud Run |
-| Database | PostgreSQL 18 (Neon) | Serverless Postgres with branching for dev/staging |
-| Storage | Cloudflare R2 | S3-compatible, zero egress fees for photo storage |
-| IaC | Pulumi (TypeScript) | Declarative infra management for GCP, Cloudflare, and Neon |
-| Monitoring | Sentry + PostHog | Error tracking + product analytics |
-
 ## Results
 
 - **15-second capture flow** — From camera tap to saved entry, consistently under 15 seconds
@@ -77,14 +44,3 @@ Mealio is a photo-first meal tracking app designed around a single principle: **
 - **Zero-to-three autoscaling** — Cloud Run scales to zero when idle, keeping costs minimal
 - **9 database migrations** — Stable schema evolution without downtime
 - **4 CI/CD pipelines** — Automated API deploy, mobile CI, EAS builds, and OTA updates
-
-## Learnings
-
-**What worked well:**
-- Rust on Cloud Run is excellent — fast cold starts (~200ms), tiny memory footprint, and the type system catches bugs at compile time.
-- Feature-Sliced Design kept the React Native codebase navigable as it grew. Strict import rules prevented the "everything imports everything" problem.
-- Presigned URL uploads to R2 offload work from the API — the client uploads directly to object storage.
-
-**What I'd do differently:**
-- Start with a monorepo tool (Turborepo or Nx) from day one instead of manual workspace management.
-- Invest in E2E tests earlier — the dual-mode (guest/auth) architecture has many edge cases that unit tests alone don't catch.

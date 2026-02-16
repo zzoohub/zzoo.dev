@@ -2,7 +2,7 @@ import { useTranslations } from "next-intl";
 import { getLocale } from "next-intl/server";
 import { getAllCaseStudies } from "@/lib/content";
 import { ProjectCard } from "@/components/project-card";
-import { CTASection } from "@/components/cta-section";
+
 
 export default async function ProjectsPage() {
   const locale = await getLocale();
@@ -39,11 +39,6 @@ function ProjectsContent({
         </div>
       </section>
 
-      <CTASection
-        title={t("bottom_cta_title")}
-        buttonText={t("bottom_cta_button")}
-        mailtoSubject="Project Discussion"
-      />
     </>
   );
 }

@@ -1,0 +1,36 @@
+---
+title: "Mealio — 설계 문서"
+---
+
+## 아키텍처
+
+**모바일 (React Native / Expo)**
+- Expo Router로 파일 기반 네비게이션
+- Zustand으로 클라이언트 상태, TanStack Query로 서버 상태 관리
+- MMKV로 빠른 로컬 영속성 확보
+- i18next를 통한 이중 언어(EN/KO) 지원
+
+**API (Rust / Axum)**
+- SQLx로 Neon PostgreSQL에 대한 컴파일 타임 쿼리 검증
+- JWT + JWKS 인증 (Google & Apple OAuth)
+- Cloudflare R2로의 Presigned URL 업로드
+- Swagger UI가 포함된 OpenAPI 스펙
+
+**인프라 (Pulumi)**
+- GCP Cloud Run 오토스케일링 (0~3 인스턴스)
+- Neon 관리형 PostgreSQL
+- Cloudflare R2 사진 저장소
+- GCP Secret Manager 자격증명 관리
+- GitHub Actions CI/CD 자동 빌드 및 배포
+
+## 기술 스택 상세
+
+| 레이어 | 기술 | 선택 이유 |
+|--------|------|----------|
+| 모바일 | React Native + Expo 55 | 네이티브 성능의 크로스플랫폼, EAS를 통한 OTA 업데이트 |
+| 상태관리 | Zustand + TanStack Query | 클라이언트/서버 상태의 깔끔한 분리 |
+| API | Rust + Axum 0.8 | 타입 안전성, 낮은 메모리 사용량, Cloud Run에서의 빠른 콜드 스타트 |
+| 데이터베이스 | PostgreSQL 18 (Neon) | 개발/스테이징용 브랜칭을 지원하는 서버리스 Postgres |
+| 스토리지 | Cloudflare R2 | S3 호환, 사진 저장에 이그레스 비용 제로 |
+| IaC | Pulumi (TypeScript) | GCP, Cloudflare, Neon의 선언적 인프라 관리 |
+| 모니터링 | Sentry + PostHog | 에러 추적 + 프로덕트 분석 |

@@ -12,7 +12,7 @@ export function Section({
   children: ReactNode;
 }) {
   return (
-    <section className="py-16 md:py-20">
+    <section className="pt-8 pb-16 md:pt-10 md:pb-20">
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         {label && (
           <p className="text-sm font-medium uppercase tracking-wider text-muted-foreground">

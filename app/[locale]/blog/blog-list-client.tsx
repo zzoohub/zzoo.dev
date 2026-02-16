@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import type { BlogPostMeta } from "@/lib/types";
 import { TagFilter } from "@/components/tag-filter";
 import { BlogPostItem } from "@/components/blog-post-item";
-import { CTASection } from "@/components/cta-section";
+
 
 export function BlogListClient({
   posts,
@@ -51,10 +51,6 @@ export function BlogListClient({
         </div>
       </section>
 
-      <CTASection
-        title={t("bottom_cta_title")}
-        buttonText={t("bottom_cta_button")}
-      />
     </>
   );
 }

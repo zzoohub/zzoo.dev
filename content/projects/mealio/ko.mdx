@@ -1,7 +1,7 @@
 ---
 title: "Mealio — 사진 중심 식사 기록 앱"
 description: "번거로운 식사 기록을 카메라 기반 캡처로 대체하는 크로스플랫폼 모바일 앱. React Native/Expo와 Rust API로 구축하여 App Store, Play Store, GCP Cloud Run에 배포했습니다."
-clientType: "개인 프로덕트"
+clientType: "개인 프로젝트"
 status: "active"
 techStack:
   - React Native
@@ -15,10 +15,10 @@ techStack:
   - GCP Cloud Run
   - Pulumi
 featured: true
-duration: "진행 중"
-startDate: "2025-06-01"
+launchDate: "2025-06-01"
 d2Diagram: "mealio-architecture-simplified"
 links:
+  live: "https://mealio.zzooapp.com"
   github: "https://github.com/zzoohub/mealio"
 ---
 
@@ -37,39 +37,6 @@ Mealio는 하나의 원칙을 중심으로 설계된 사진 중심 식사 기록
 - **Feature-Sliced Design** — 모바일 코드베이스는 엄격한 레이어 경계(`app → widgets → features → entities → shared`)를 따라 유지보수성을 확보했습니다.
 - **Rust API** — Cloud Run의 오토스케일링(0~3 인스턴스)에서 타입 안전성, 성능, 메모리 효율성을 위해 Node.js 대신 Axum을 선택했습니다.
 
-### 아키텍처
-
-**모바일 (React Native / Expo)**
-- Expo Router로 파일 기반 네비게이션
-- Zustand으로 클라이언트 상태, TanStack Query로 서버 상태 관리
-- MMKV로 빠른 로컬 영속성 확보
-- i18next를 통한 이중 언어(EN/KO) 지원
-
-**API (Rust / Axum)**
-- SQLx로 Neon PostgreSQL에 대한 컴파일 타임 쿼리 검증
-- JWT + JWKS 인증 (Google & Apple OAuth)
-- Cloudflare R2로의 Presigned URL 업로드
-- Swagger UI가 포함된 OpenAPI 스펙
-
-**인프라 (Pulumi)**
-- GCP Cloud Run 오토스케일링 (0~3 인스턴스)
-- Neon 관리형 PostgreSQL
-- Cloudflare R2 사진 저장소
-- GCP Secret Manager 자격증명 관리
-- GitHub Actions CI/CD 자동 빌드 및 배포
-
-## 기술 스택 상세
-
-| 레이어 | 기술 | 선택 이유 |
-|--------|------|----------|
-| 모바일 | React Native + Expo 55 | 네이티브 성능의 크로스플랫폼, EAS를 통한 OTA 업데이트 |
-| 상태관리 | Zustand + TanStack Query | 클라이언트/서버 상태의 깔끔한 분리 |
-| API | Rust + Axum 0.8 | 타입 안전성, 낮은 메모리 사용량, Cloud Run에서의 빠른 콜드 스타트 |
-| 데이터베이스 | PostgreSQL 18 (Neon) | 개발/스테이징용 브랜칭을 지원하는 서버리스 Postgres |
-| 스토리지 | Cloudflare R2 | S3 호환, 사진 저장에 이그레스 비용 제로 |
-| IaC | Pulumi (TypeScript) | GCP, Cloudflare, Neon의 선언적 인프라 관리 |
-| 모니터링 | Sentry + PostHog | 에러 추적 + 프로덕트 분석 |
-
 ## 결과
 
 - **15초 캡처 플로우** — 카메라 탭부터 저장까지 일관되게 15초 이내
@@ -77,14 +44,3 @@ Mealio는 하나의 원칙을 중심으로 설계된 사진 중심 식사 기록
 - **제로-투-쓰리 오토스케일링** — Cloud Run이 유휴 시 0으로 스케일 다운하여 비용 최소화
 - **9개 데이터베이스 마이그레이션** — 다운타임 없는 안정적인 스키마 진화
 - **4개 CI/CD 파이프라인** — API 배포, 모바일 CI, EAS 빌드, OTA 업데이트 자동화
-
-## 배운 점
-
-**잘 된 것:**
-- Cloud Run에서의 Rust는 훌륭합니다 — 빠른 콜드 스타트(~200ms), 작은 메모리 풋프린트, 그리고 타입 시스템이 컴파일 타임에 버그를 잡아줍니다.
-- Feature-Sliced Design이 React Native 코드베이스가 성장하면서도 탐색 가능하게 유지해줬습니다. 엄격한 임포트 규칙이 "모든 것이 모든 것을 임포트하는" 문제를 방지했습니다.
-- R2로의 Presigned URL 업로드가 API의 부하를 분산시킵니다 — 클라이언트가 오브젝트 스토리지에 직접 업로드합니다.
-
-**다르게 할 것:**
-- 수동 워크스페이스 관리 대신 처음부터 모노레포 도구(Turborepo 또는 Nx)를 도입하겠습니다.
-- E2E 테스트를 더 일찍 투자하겠습니다 — 듀얼 모드(게스트/인증) 아키텍처는 유닛 테스트만으로는 잡기 어려운 많은 엣지 케이스가 있습니다.
