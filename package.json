@@ -7,6 +7,9 @@
     "build:diagrams": "bun run scripts/build-diagrams.ts",
     "prebuild": "bun run build:diagrams",
     "build": "next build",
+    "build:worker": "bun run build:diagrams && opennextjs-cloudflare build",
+    "preview": "opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare deploy",
     "start": "next start",
     "lint": "eslint"
   },
