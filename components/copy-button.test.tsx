@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import { CopyButton } from "./copy-button";
 
@@ -225,7 +225,7 @@ describe("CopyButton", () => {
       const button = screen.getByRole("button");
 
       expect(button).toHaveClass("inline-flex");
-      expect(button).toHaveClass("h-12");
+      expect(button).toHaveClass("h-11");
       expect(button).toHaveClass("items-center");
       expect(button).toHaveClass("justify-center");
       expect(button).toHaveClass("gap-2");
@@ -244,7 +244,7 @@ describe("CopyButton", () => {
       render(<CopyButton text="test" />);
       const button = screen.getByRole("button");
 
-      expect(button).toHaveClass("px-6");
+      expect(button).toHaveClass("px-5");
     });
 
     it("applies text styling", () => {

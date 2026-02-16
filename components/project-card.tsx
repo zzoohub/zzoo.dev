@@ -1,6 +1,5 @@
 import { Link } from "@/i18n/navigation";
 import type { CaseStudyMeta } from "@/lib/types";
-import { ArrowRight } from "lucide-react";
 
 export function ProjectCard({ project }: { project: CaseStudyMeta }) {
   return (

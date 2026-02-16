@@ -20,7 +20,7 @@ vi.mock("fs", () => ({
 }));
 
 import fs from "fs";
-const mockFs = fs as any;
+const mockFs = fs as unknown as Record<string, ReturnType<typeof vi.fn>>;
 
 describe("content", () => {
   beforeEach(() => {

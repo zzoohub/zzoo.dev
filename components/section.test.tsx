@@ -107,11 +107,12 @@ describe("Section", () => {
       </Section>
     );
     const section = container.querySelector("section");
-    expect(section).toHaveClass("py-16");
+    expect(section).toHaveClass("pt-8");
+    expect(section).toHaveClass("pb-16");
   });
 
   it("applies correct CSS classes to label", () => {
-    const { container } = render(
+    render(
       <Section label="Label">
         <div>Content</div>
       </Section>
@@ -124,7 +125,7 @@ describe("Section", () => {
   });
 
   it("applies correct CSS classes to title", () => {
-    const { container } = render(
+    render(
       <Section title="Title">
         <div>Content</div>
       </Section>
@@ -135,7 +136,7 @@ describe("Section", () => {
   });
 
   it("applies correct CSS classes to subtitle", () => {
-    const { container } = render(
+    render(
       <Section subtitle="Subtitle">
         <div>Content</div>
       </Section>

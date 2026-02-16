@@ -1,6 +1,5 @@
 import { getLocale } from "next-intl/server";
 import { getAllBlogPosts } from "@/lib/content";
-import { CTASection } from "@/components/cta-section";
 import { BlogListClient } from "./blog-list-client";
 
 export default async function BlogPage() {

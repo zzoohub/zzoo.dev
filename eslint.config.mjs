@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // OpenNext Cloudflare build output:
     ".open-next/**",
+    // Test coverage output:
+    "coverage/**",
   ]),
 ]);
 
