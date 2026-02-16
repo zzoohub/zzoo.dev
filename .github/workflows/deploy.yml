@@ -45,6 +45,7 @@ jobs:
         with:
           name: open-next-build
           path: .open-next/
+          include-hidden-files: true
           retention-days: 1
 
   deploy:
