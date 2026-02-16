@@ -140,8 +140,7 @@ describe("CopyButton", () => {
 
       await act(async () => {
         fireEvent.click(button);
-        // Flush the async clipboard.writeText promise
-        await Promise.resolve();
+        await vi.advanceTimersByTimeAsync(0);
       });
 
       expect(screen.getByText("copied")).toBeInTheDocument();
