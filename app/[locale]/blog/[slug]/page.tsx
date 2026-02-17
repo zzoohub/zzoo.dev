@@ -1,10 +1,19 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { getAllBlogPosts, getBlogPost } from "@/lib/content";
+import {
+  buildPageMeta,
+  buildArticleJsonLd,
+  buildBreadcrumbJsonLd,
+  buildCanonicalUrl,
+} from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import { compileMDX } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
+import { siteConfig } from "@/lib/site-config";
 
 export async function generateStaticParams() {
   const enPosts = getAllBlogPosts("en");
@@ -13,6 +22,25 @@ export async function generateStaticParams() {
     ...enPosts.map((p) => ({ slug: p.slug })),
     ...koPosts.map((p) => ({ slug: p.slug })),
   ];
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string; locale: string }>;
+}): Promise<Metadata> {
+  const { slug, locale } = await params;
+  const post = getBlogPost(locale, slug);
+  if (!post) return {};
+  return buildPageMeta({
+    locale,
+    pathname: `/blog/${slug}`,
+    title: post.meta.title,
+    description: post.meta.description,
+    type: "article",
+    publishedTime: post.meta.date,
+    tags: post.meta.tags,
+  });
 }
 
 export default async function BlogPostPage({
@@ -36,13 +64,33 @@ export default async function BlogPostPage({
   const prevPost = currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null;
   const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
 
+  const pageUrl = buildCanonicalUrl(locale, `/blog/${slug}`);
+
   return (
-    <BlogPostContent
-      meta={post.meta}
-      content={mdxContent}
-      prevPost={prevPost}
-      nextPost={nextPost}
-    />
+    <>
+      <JsonLd
+        data={buildArticleJsonLd({
+          title: post.meta.title,
+          description: post.meta.description,
+          url: pageUrl,
+          datePublished: post.meta.date,
+          tags: post.meta.tags,
+        })}
+      />
+      <JsonLd
+        data={buildBreadcrumbJsonLd([
+          { name: "Home", url: siteConfig.url },
+          { name: "Blog", url: buildCanonicalUrl(locale, "/blog") },
+          { name: post.meta.title, url: pageUrl },
+        ])}
+      />
+      <BlogPostContent
+        meta={post.meta}
+        content={mdxContent}
+        prevPost={prevPost}
+        nextPost={nextPost}
+      />
+    </>
   );
 }
 

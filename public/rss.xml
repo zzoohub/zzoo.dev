@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>zzoo.dev</title>
+    <link>https://zzoo.dev</link>
+    <description>Blog posts from zzoo.dev</description>
+    <language>en</language>
+    <atom:link href="https://zzoo.dev/rss.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>How I Use Claude Code as a Solo Developer</title>
+      <link>https://zzoo.dev/en/blog/how-i-use-claude-code-as-a-solo-developer</link>
+      <guid isPermaLink="true">https://zzoo.dev/en/blog/how-i-use-claude-code-as-a-solo-developer</guid>
+      <description>21 custom skills, 7 specialized agents, and a CLAUDE.md system that turns AI pair programming into a repeatable workflow. Here&apos;s the setup behind every project I ship.</description>
+      <pubDate>Tue, 17 Feb 2026 00:00:00 GMT</pubDate>
+      <category>claude-code</category>
+      <category>ai</category>
+      <category>solo-developer</category>
+      <category>workflow</category>
+    </item>
+    <item>
+      <title>Why I Chose This Infra Stack as a Solo Developer</title>
+      <link>https://zzoo.dev/en/blog/why-i-chose-this-infra-stack-as-a-solo-developer</link>
+      <guid isPermaLink="true">https://zzoo.dev/en/blog/why-i-chose-this-infra-stack-as-a-solo-developer</guid>
+      <description>GCP Cloud Run, Neon, Cloudflare, and Pulumi — a pragmatic infrastructure stack built for one-person teams who ship many projects.</description>
+      <pubDate>Sun, 08 Feb 2026 00:00:00 GMT</pubDate>
+      <category>infrastructure</category>
+      <category>devops</category>
+      <category>solo-developer</category>
+      <category>pulumi</category>
+      <category>cloudflare</category>
+      <category>gcp</category>
+      <category>neon</category>
+    </item>
+    <item>
+      <title>Why Rust Is the Perfect Language for Vibe Coding</title>
+      <link>https://zzoo.dev/en/blog/why-rust-is-the-perfect-language-for-vibe-coding</link>
+      <guid isPermaLink="true">https://zzoo.dev/en/blog/why-rust-is-the-perfect-language-for-vibe-coding</guid>
+      <description>Rust has the steepest learning curve in programming — and that&apos;s exactly why it thrives in the AI era. The compiler does the teaching.</description>
+      <pubDate>Thu, 15 Jan 2026 00:00:00 GMT</pubDate>
+      <category>rust</category>
+      <category>vibe-coding</category>
+      <category>ai</category>
+    </item>
+  </channel>
+</rss>

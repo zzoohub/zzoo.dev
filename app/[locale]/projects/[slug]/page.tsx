@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { useTranslations } from "next-intl";
@@ -8,6 +9,14 @@ import {
   getDesignDoc,
   hasDesignDoc,
 } from "@/lib/content";
+import {
+  buildPageMeta,
+  buildProjectJsonLd,
+  buildBreadcrumbJsonLd,
+  buildCanonicalUrl,
+} from "@/lib/seo";
+import { siteConfig } from "@/lib/site-config";
+import { JsonLd } from "@/components/json-ld";
 import { D2Diagram } from "@/components/d2-diagram";
 import { ProjectDetailTabs } from "@/components/project-detail-tabs";
 import { compileMDX } from "next-mdx-remote/rsc";
@@ -26,6 +35,22 @@ export async function generateStaticParams() {
     ...enStudies.map((s) => ({ slug: s.slug })),
     ...koStudies.map((s) => ({ slug: s.slug })),
   ];
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string; locale: string }>;
+}): Promise<Metadata> {
+  const { slug, locale } = await params;
+  const study = getCaseStudy(locale, slug);
+  if (!study) return {};
+  return buildPageMeta({
+    locale,
+    pathname: `/projects/${slug}`,
+    title: study.meta.title,
+    description: study.meta.description,
+  });
 }
 
 export default async function ProjectDetailPage({
@@ -54,14 +79,35 @@ export default async function ProjectDetailPage({
     designDocMdx = compiled;
   }
 
+  const pageUrl = buildCanonicalUrl(locale, `/projects/${slug}`);
+  const breadcrumbLabel = locale === "ko" ? "프로젝트" : "Projects";
+
   return (
-    <ProjectDetailContent
-      meta={study.meta}
-      overviewContent={overviewMdx}
-      designDocContent={designDocMdx}
-      hasDesign={hasDesignDoc(locale, slug)}
-      slug={slug}
-    />
+    <>
+      <JsonLd
+        data={buildProjectJsonLd({
+          title: study.meta.title,
+          description: study.meta.description,
+          url: pageUrl,
+          datePublished: study.meta.launchDate,
+          techStack: study.meta.techStack,
+        })}
+      />
+      <JsonLd
+        data={buildBreadcrumbJsonLd([
+          { name: "Home", url: siteConfig.url },
+          { name: breadcrumbLabel, url: buildCanonicalUrl(locale, "/projects") },
+          { name: study.meta.title, url: pageUrl },
+        ])}
+      />
+      <ProjectDetailContent
+        meta={study.meta}
+        overviewContent={overviewMdx}
+        designDocContent={designDocMdx}
+        hasDesign={hasDesignDoc(locale, slug)}
+        slug={slug}
+      />
+    </>
   );
 }
 

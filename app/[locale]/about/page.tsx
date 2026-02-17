@@ -1,9 +1,32 @@
+import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { useTranslations } from "next-intl";
 import { compileMDX } from "next-mdx-remote/rsc";
 import { getAboutContent } from "@/lib/content";
+import { buildPageMeta, buildPersonJsonLd } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import { CTASection } from "@/components/cta-section";
 import type { ExperienceEntry } from "@/lib/types";
+
+const titles: Record<string, string> = { en: "About", ko: "소개" };
+const descriptions: Record<string, string> = {
+  en: "Full-stack developer and solopreneur. Learn about my background, experience, and what drives me.",
+  ko: "풀스택 개발자이자 1인 개발자. 경험과 배경을 소개합니다.",
+};
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return buildPageMeta({
+    locale,
+    pathname: "/about",
+    title: titles[locale] ?? titles.en,
+    description: descriptions[locale] ?? descriptions.en,
+  });
+}
 
 export default async function AboutPage({
   params,
@@ -24,10 +47,13 @@ export default async function AboutPage({
     : null;
 
   return (
-    <AboutPageContent
-      content={mdxContent}
-      experience={about?.experience ?? []}
-    />
+    <>
+      <JsonLd data={buildPersonJsonLd()} />
+      <AboutPageContent
+        content={mdxContent}
+        experience={about?.experience ?? []}
+      />
+    </>
   );
 }
 

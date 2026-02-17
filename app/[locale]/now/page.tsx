@@ -1,7 +1,29 @@
+import type { Metadata } from "next";
 import { useTranslations } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
+import { buildPageMeta } from "@/lib/seo";
 import { AvailabilityBadge } from "@/components/availability-badge";
 import { CTASection } from "@/components/cta-section";
+
+const titles: Record<string, string> = { en: "Now", ko: "현재" };
+const descriptions: Record<string, string> = {
+  en: "What I'm currently working on, learning, and available for.",
+  ko: "지금 하고 있는 것, 배우는 것, 가능한 일.",
+};
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return buildPageMeta({
+    locale,
+    pathname: "/now",
+    title: titles[locale] ?? titles.en,
+    description: descriptions[locale] ?? descriptions.en,
+  });
+}
 
 export default async function NowPage({
   params,

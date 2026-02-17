@@ -1,0 +1,29 @@
+# zzoo.dev
+
+## Identity
+- Name: zzoo
+- Role: Full-stack Developer & Solopreneur
+- Website: https://zzoo.dev
+
+## Expertise
+- Full-stack web development (React, Next.js, TypeScript)
+- AI-assisted development workflows
+- Scalable web applications and technical architecture
+- Cloudflare Workers deployment
+- Solo product development from idea to launch
+
+## Contact
+- Email: zzoo.origin@gmail.com
+- GitHub: https://github.com/zzoohub
+- LinkedIn: https://linkedin.com/in/zzoo
+
+## Content
+- Blog: https://zzoo.dev/en/blog
+- Projects: https://zzoo.dev/en/projects
+- About: https://zzoo.dev/en/about
+- RSS: https://zzoo.dev/rss.xml
+- Sitemap: https://zzoo.dev/sitemap.xml
+
+## Languages
+- English: https://zzoo.dev/en
+- Korean: https://zzoo.dev/ko

@@ -1,7 +1,9 @@
+import type { Metadata } from "next";
 import { Fragment } from "react";
 import { useTranslations } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { siteConfig } from "@/lib/site-config";
+import { buildPageMeta } from "@/lib/seo";
 import { AvailabilityBadge } from "@/components/availability-badge";
 import { CopyButton } from "@/components/copy-button";
 import { Mail, Github, Linkedin, ArrowUpRight } from "lucide-react";
@@ -10,6 +12,26 @@ const channels = [
   { href: siteConfig.social.github, label: "GitHub", icon: Github },
   { href: siteConfig.social.linkedin, label: "LinkedIn", icon: Linkedin },
 ];
+
+const titles: Record<string, string> = { en: "Contact", ko: "연락" };
+const descriptions: Record<string, string> = {
+  en: "Get in touch. Email works best.",
+  ko: "연락해요. 이메일이 제일 빨라요.",
+};
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return buildPageMeta({
+    locale,
+    pathname: "/contact",
+    title: titles[locale] ?? titles.en,
+    description: descriptions[locale] ?? descriptions.en,
+  });
+}
 
 export default async function ContactPage({
   params,
