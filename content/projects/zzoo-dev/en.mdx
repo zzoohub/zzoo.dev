@@ -1,6 +1,6 @@
 ---
 title: "zzoo.dev — Personal Branding Site"
-description: "A bilingual personal branding site that builds trust through project experience and technical writing, designed to be discoverable by both human visitors and AI search engines."
+description: "A bilingual personal branding site optimized for SEO, AEO, and GEO — built to be discovered by both traditional search engines and AI-powered answer engines in the AI era."
 clientType: "Personal Product"
 status: "active"
 techStack:
@@ -11,24 +11,38 @@ techStack:
   - MDX
   - next-intl
   - D2
-  - Cloudflare Pages
+  - Cloudflare Workers
   - shadcn/ui
 featured: true
 launchDate: "2026-01-01"
-links:  
+links:
   github: "https://github.com/zzoohub/zzoo.dev"
 ---
 
-As a solo developer, I realized that traditional portfolio sites have clear limitations. Listing tech stacks and pasting screenshots isn't enough to build trust with potential clients, nor is it sufficient for AI search engines to understand and recommend my expertise.
+How people discover experts has fundamentally changed. Traditional search engines still matter, but now ChatGPT, Perplexity, and Gemini are answering questions like "who can build my app?" directly. A developer's site needs to work for all of these channels — or risk being invisible.
 
-zzoo.dev is a personal branding site built to address both of these. It shows what problems I've actually solved through project experience, and shares my thought process through technical blog posts. The site supports both English and Korean, and uses machine-readable metadata like `llms.txt` and JSON-LD so AI systems can accurately index the content.
+zzoo.dev is a personal branding site built for this reality. It's optimized across three discovery pillars: SEO for traditional search, AEO for AI answer engines, and GEO for generative AI — so my expertise is found no matter how someone searches.
+
+## Three Pillars of Search Visibility
+
+### SEO — Traditional Search Foundation
+
+The technical basics done right. Every page is statically generated and served from Cloudflare's global edge, hitting sub-second load times. Semantic HTML, proper heading hierarchy, XML sitemap with hreflang alternates for EN/KO, and a canonical URL strategy ensure search engines crawl and index the site cleanly.
+
+### AEO — Answer Engine Optimization
+
+When AI systems like Google's AI Overviews or Perplexity pull answers, they rely on structured data. The site embeds JSON-LD schemas — `WebSite`, `Person`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList` — giving answer engines machine-readable context about who I am, what I've built, and what I've written. RSS feeds provide a real-time content pipeline for indexing.
+
+### GEO — Generative Engine Optimization
+
+For large language models that power ChatGPT or Claude, the site serves `llms.txt` — a plain-text file that describes the site's purpose, structure, and key content in a format LLMs can directly consume. Combined with clean, well-structured MDX content and bilingual coverage, generative engines can accurately represent my work when users ask about relevant topics.
 
 ## Site Structure
 
-The site is designed so visitors naturally build trust as they browse. From the home page they flow into project write-ups and blog posts, and interested visitors move on to the about page and contact.
+Each page is designed to serve both human visitors and machine readers. Visitors naturally build trust as they browse, while every route outputs the structured data AI engines need.
 
-- **Home** — A landing page that showcases core expertise and featured projects at a glance
-- **Products** — Write-ups covering the background, approach, and technical architecture of each project
-- **Blog** — Posts sharing technical decisions and experiences
-- **About** — Career background and bio
-- **Contact** — Simple email-based contact
+- **Home** — Landing page with featured projects, core expertise, and `Person` + `WebSite` JSON-LD
+- **Projects** — Case studies with problem/approach/architecture narratives, each with `SoftwareApplication` schema
+- **Blog** — Technical posts with `BlogPosting` schema, tag-based filtering, and RSS feed integration
+- **About** — Career background with structured bio data
+- **Contact** — Simple email-based contact for human visitors who found me through any channel

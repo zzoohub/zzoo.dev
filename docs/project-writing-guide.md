@@ -66,15 +66,22 @@ title: "Project Name — Engineering Design Doc"
 
 ### Recommended sections
 
-| Section | Required? | Description |
-|---------|-----------|-------------|
-| Architecture | Recommended | System components and how they connect |
-| Tech Stack (Deep Dive) | Recommended | Table with technology choices and reasoning |
-| Data Model | Optional | Key entities and relationships |
-| API Design | Optional | Notable endpoints or patterns |
-| Infrastructure | Optional | Deployment, CI/CD, monitoring |
-| Performance | Optional | Benchmarks, optimizations |
-| Security | Optional | Auth, data handling, threat model |
+
+| # | Section | Required? | Description |
+|---|---------|-----------|-------------|
+| 1 | [Overview / Problem Statement](#1-overview--problem-statement) | Required | Why this system is needed and what problem it solves |
+| 2 | [Goals & Non-Goals](#2-goals--non-goals) | Required | Scope of the document — Non-Goals are especially important |
+| 3 | [Architecture](#3-architecture) | Required | System components and how they connect |
+| 4 | [Tech Stack](#4-tech-stack) | Recommended | Technology choices and reasoning |
+| 5 | [Database Design](#5-database-design) | Recommended | Schema design, normalization, indexing, and query optimization |
+| 6 | [API Design](#6-api-design) | Recommended | Endpoints, contracts, and patterns |
+| 7 | [Security](#7-security) | Recommended | Auth, data handling, and threat model |
+| 8 | [Infrastructure](#8-infrastructure) | Optional | Deployment, CI/CD, and monitoring |
+| 9 | [Performance](#9-performance) | Optional | Benchmarks and optimization strategies |
+| 10 | [Trade-offs & Alternatives](#10-trade-offs--alternatives) | Optional | Why other approaches were not chosen |
+| 11 | [Risks & Open Questions](#11-risks--open-questions) | Optional | Unresolved decisions and known risks |
+| 12 | [Milestones / Rollout Plan](#12-milestones--rollout-plan) | Optional | Phased rollout plan and timeline |
+
 
 D2 diagrams referenced by the `d2Diagram` frontmatter field will be rendered at the bottom of the Design Doc tab automatically.
 

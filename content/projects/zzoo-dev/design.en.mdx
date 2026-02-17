@@ -19,5 +19,30 @@ The UI is built with Tailwind CSS v4 and shadcn/ui. The CSS variable-based themi
 | Content | MDX + gray-matter | React components inside markdown |
 | i18n | next-intl | Battle-tested i18n with static export support |
 | Diagrams | D2 | Version-controllable declarative diagrams |
-| Hosting | Cloudflare Pages | Global edge CDN, free tier is more than enough |
+| Hosting | Cloudflare Workers | Global edge CDN, free tier is more than enough |
 | Testing | Vitest + Testing Library | Fast unit tests |
+
+## Search Visibility Strategy
+
+The site implements a layered approach to search visibility, targeting three distinct discovery channels.
+
+### SEO Layer
+
+- **SSG + Edge delivery** — Every page is pre-rendered at build time and served from Cloudflare's edge network, achieving sub-second FCP
+- **Semantic HTML** — Proper heading hierarchy (`h1` → `h2` → `h3`), landmark roles, and accessible markup
+- **Hreflang alternates** — XML sitemap and `<link rel="alternate">` tags for EN/KO, so search engines serve the right language
+- **Canonical URLs** — Each page declares its canonical URL to prevent duplicate content issues across locales
+- **Performance** — Lighthouse 95+ target, initial JS < 100KB gzipped
+
+### AEO Layer
+
+- **JSON-LD schemas** — `WebSite`, `Person`, `BlogPosting`, `SoftwareApplication`, and `BreadcrumbList` are embedded on relevant pages via `<script type="application/ld+json">`
+- **RSS feed** — Auto-generated from EN blog posts at build time, giving answer engines a real-time content pipeline
+- **`robots.txt`** — Generated via Next.js route handler, allowing all major crawlers
+- **Open Graph + Twitter Cards** — Every page has OG metadata with a default 1200x630 image
+
+### GEO Layer
+
+- **`llms.txt`** — A plain-text file at `/llms.txt` describing the site's purpose, author, structure, and content inventory in a format optimized for LLM consumption
+- **Clean MDX content** — Blog posts and case studies are written in well-structured MDX with clear headings, making it easy for generative models to extract and cite
+- **Bilingual coverage** — EN and KO versions of all content double the surface area for language-specific AI queries

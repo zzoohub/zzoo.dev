@@ -7,6 +7,7 @@ import {
   getTestimonials,
   hasDesignDoc,
   getDesignDoc,
+  getAboutContent,
 } from "./content";
 
 // Mock fs module
@@ -990,6 +991,242 @@ Content`;
       expect(result?.meta.links).toEqual({
         live: "https://example.com",
         github: "https://github.com/example/repo",
+      });
+    });
+  });
+
+  describe("getAboutContent", () => {
+    it("returns null when file does not exist", () => {
+      mockFs.existsSync.mockReturnValue(false);
+      const result = getAboutContent("en");
+      expect(result).toBeNull();
+      expect(mockFs.existsSync).toHaveBeenCalledWith(
+        expect.stringContaining("content/about/en.mdx")
+      );
+    });
+
+    it("returns about data with content when file exists", () => {
+      mockFs.existsSync.mockReturnValue(true);
+      mockFs.readFileSync.mockReturnValue(
+        `---
+experience:
+  - company: Tech Corp
+    role: Senior Developer
+    period: 2020-2023
+  - company: Startup Inc
+    role: Developer
+    period: 2018-2020
+---
+About me content here`
+      );
+
+      const result = getAboutContent("en");
+      expect(result).not.toBeNull();
+      expect(result?.experience).toEqual([
+        {
+          company: "Tech Corp",
+          role: "Senior Developer",
+          period: "2020-2023",
+        },
+        {
+          company: "Startup Inc",
+          role: "Developer",
+          period: "2018-2020",
+        },
+      ]);
+      expect(result?.content).toBe("About me content here");
+    });
+
+    it("handles missing experience field with default empty array", () => {
+      mockFs.existsSync.mockReturnValue(true);
+      mockFs.readFileSync.mockReturnValue(
+        "---\n---\nAbout content without experience"
+      );
+
+      const result = getAboutContent("en");
+      expect(result?.experience).toEqual([]);
+      expect(result?.content).toBe("About content without experience");
+    });
+
+    it("checks correct file path for ko locale", () => {
+      mockFs.existsSync.mockReturnValue(false);
+      getAboutContent("ko");
+      expect(mockFs.existsSync).toHaveBeenCalledWith(
+        expect.stringContaining("content/about/ko.mdx")
+      );
+    });
+
+    it("handles empty experience array", () => {
+      mockFs.existsSync.mockReturnValue(true);
+      mockFs.readFileSync.mockReturnValue(
+        "---\nexperience: []\n---\nContent"
+      );
+
+      const result = getAboutContent("en");
+      expect(result?.experience).toEqual([]);
+    });
+  });
+
+  describe("sanitizeLinks edge cases", () => {
+    it("handles invalid URL that throws during URL construction", () => {
+      mockFs.existsSync.mockReturnValue(true);
+      mockFs.readdirSync.mockReturnValue(["project"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
+      mockFs.readFileSync.mockReturnValue(
+        `---
+title: Project
+description: Desc
+clientType: Test
+status: active
+launchDate: 2024-01-01
+links:
+  live: "not a valid url at all"
+  github: "://malformed"
+---
+Content`
+      );
+
+      const studies = getAllCaseStudies("en");
+      expect(studies[0].links).toBeUndefined();
+    });
+
+    it("filters out non-http/https protocols", () => {
+      mockFs.existsSync.mockReturnValue(true);
+      mockFs.readdirSync.mockReturnValue(["project"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
+      mockFs.readFileSync.mockReturnValue(
+        `---
+title: Project
+description: Desc
+clientType: Test
+status: active
+launchDate: 2024-01-01
+links:
+  live: "ftp://example.com"
+  github: "file:///etc/passwd"
+  docs: "javascript:alert(1)"
+---
+Content`
+      );
+
+      const studies = getAllCaseStudies("en");
+      expect(studies[0].links).toBeUndefined();
+    });
+
+    it("handles non-string link values", () => {
+      mockFs.existsSync.mockReturnValue(true);
+      mockFs.readdirSync.mockReturnValue(["project"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
+      mockFs.readFileSync.mockReturnValue(
+        `---
+title: Project
+description: Desc
+clientType: Test
+status: active
+launchDate: 2024-01-01
+links:
+  live: 12345
+  github: true
+  docs: null
+---
+Content`
+      );
+
+      const studies = getAllCaseStudies("en");
+      expect(studies[0].links).toBeUndefined();
+    });
+
+    it("handles null links field", () => {
+      mockFs.existsSync.mockReturnValue(true);
+      mockFs.readdirSync.mockReturnValue(["project"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
+      mockFs.readFileSync.mockReturnValue(
+        `---
+title: Project
+description: Desc
+clientType: Test
+status: active
+launchDate: 2024-01-01
+links: null
+---
+Content`
+      );
+
+      const studies = getAllCaseStudies("en");
+      expect(studies[0].links).toBeUndefined();
+    });
+
+    it("accepts valid https URLs", () => {
+      mockFs.existsSync.mockReturnValue(true);
+      mockFs.readdirSync.mockReturnValue(["project"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
+      mockFs.readFileSync.mockReturnValue(
+        `---
+title: Project
+description: Desc
+clientType: Test
+status: active
+launchDate: 2024-01-01
+links:
+  live: https://example.com
+  github: https://github.com/user/repo
+---
+Content`
+      );
+
+      const studies = getAllCaseStudies("en");
+      expect(studies[0].links).toEqual({
+        live: "https://example.com",
+        github: "https://github.com/user/repo",
+      });
+    });
+
+    it("accepts valid http URLs", () => {
+      mockFs.existsSync.mockReturnValue(true);
+      mockFs.readdirSync.mockReturnValue(["project"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
+      mockFs.readFileSync.mockReturnValue(
+        `---
+title: Project
+description: Desc
+clientType: Test
+status: active
+launchDate: 2024-01-01
+links:
+  live: http://example.com
+---
+Content`
+      );
+
+      const studies = getAllCaseStudies("en");
+      expect(studies[0].links).toEqual({
+        live: "http://example.com",
+      });
+    });
+
+    it("handles mixed valid and invalid links", () => {
+      mockFs.existsSync.mockReturnValue(true);
+      mockFs.readdirSync.mockReturnValue(["project"] as unknown as fs.Dirent[]);
+      mockFs.statSync.mockReturnValue({ isDirectory: () => true });
+      mockFs.readFileSync.mockReturnValue(
+        `---
+title: Project
+description: Desc
+clientType: Test
+status: active
+launchDate: 2024-01-01
+links:
+  live: https://example.com
+  github: "not a url"
+  docs: https://docs.example.com
+---
+Content`
+      );
+
+      const studies = getAllCaseStudies("en");
+      expect(studies[0].links).toEqual({
+        live: "https://example.com",
+        docs: "https://docs.example.com",
       });
     });
   });

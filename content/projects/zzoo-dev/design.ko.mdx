@@ -19,5 +19,30 @@ UI는 Tailwind CSS v4와 shadcn/ui로 구성했습니다. CSS 변수 기반 테�
 | 콘텐츠 | MDX + gray-matter | 마크다운 안에서 React 컴포넌트 사용 가능 |
 | 다국어 | next-intl | 정적 내보내기를 지원하는 검증된 i18n |
 | 다이어그램 | D2 | 버전 관리 가능한 선언적 다이어그램 |
-| 호스팅 | Cloudflare Pages | 글로벌 엣지 CDN, 무료 티어로 충분 |
+| 호스팅 | Cloudflare Workers | 글로벌 엣지 CDN, 무료 티어로 충분 |
 | 테스팅 | Vitest + Testing Library | 빠른 유닛 테스트 |
+
+## 검색 가시성 전략
+
+사이트는 세 가지 발견 채널을 타겟으로 계층화된 검색 가시성 전략을 구현합니다.
+
+### SEO 레이어
+
+- **SSG + 엣지 서빙** — 모든 페이지가 빌드 타임에 사전 렌더링되고 Cloudflare 엣지 네트워크에서 서빙되어, 1초 미만의 FCP를 달성
+- **시맨틱 HTML** — 올바른 헤딩 구조(`h1` → `h2` → `h3`), 랜드마크 역할, 접근성 있는 마크업
+- **Hreflang 대체 링크** — XML 사이트맵과 `<link rel="alternate">` 태그로 EN/KO를 명시하여, 검색 엔진이 올바른 언어를 제공
+- **캐노니컬 URL** — 각 페이지가 캐노니컬 URL을 선언하여 로케일 간 중복 콘텐츠 문제를 방지
+- **성능** — Lighthouse 95+ 목표, 초기 JS 100KB gzip 이하
+
+### AEO 레이어
+
+- **JSON-LD 스키마** — `WebSite`, `Person`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList`를 관련 페이지에 `<script type="application/ld+json">`으로 삽입
+- **RSS 피드** — EN 블로그 포스트로부터 빌드 타임에 자동 생성되어, 답변 엔진에 실시간 콘텐츠 파이프라인 제공
+- **`robots.txt`** — Next.js 라우트 핸들러로 생성, 주요 크롤러를 모두 허용
+- **Open Graph + Twitter Cards** — 모든 페이지에 기본 1200x630 이미지를 포함한 OG 메타데이터 적용
+
+### GEO 레이어
+
+- **`llms.txt`** — `/llms.txt`에 위치한 일반 텍스트 파일로, LLM 소비에 최적화된 포맷으로 사이트의 목적, 저자, 구조, 콘텐츠 목록을 기술
+- **깔끔한 MDX 콘텐츠** — 블로그 포스트와 케이스 스터디가 명확한 헤딩 구조의 MDX로 작성되어, 생성형 모델이 추출하고 인용하기 용이
+- **이중 언어 지원** — 모든 콘텐츠의 EN/KO 버전이 언어별 AI 쿼리에 대한 노출 면적을 두 배로 확장
