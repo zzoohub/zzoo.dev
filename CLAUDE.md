@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Personal branding website for a solopreneur developer. Bilingual (EN/KO), statically generated, deployed to Cloudflare Pages. See `docs/PRD.md` for full product requirements.
+Personal branding website for a solopreneur developer. Bilingual (EN/KO), statically generated, deployed to Cloudflare Workers. See `docs/PRD.md` for full product requirements.
 
 ## Principles (MUST CONFORM TO)
 
@@ -16,14 +16,15 @@ Personal branding website for a solopreneur developer. Bilingual (EN/KO), static
    - Run a **z-tester** sub-agent for testing only changed code → fix
 3. Bilingual (EN/KO) based on user language preference
 4. Mobile-first responsive design
-5. SEO + GEO optimization Use **z-seo-geo** skill
+5. SEO/GEO/AEO optimization Use **z-search-visibility** skill
 
 ## Commands
 
 ```bash
 bun dev                          # Start dev server (port 3000)
-bun run build                    # Production build (SSG, includes prebuild:diagrams)
+bun run build                    # Production build (SSG, prebuild runs diagrams + RSS)
 bun run build:diagrams           # Compile .d2 files to SVG (light + dark)
+bun run build:rss                # Generate public/rss.xml from EN blog posts
 bun run lint                     # ESLint (Next.js + TypeScript presets)
 bun test                         # Run tests with vitest (watch mode)
 bunx vitest run                  # Run tests once (CI mode)
@@ -92,7 +93,6 @@ Projects can have an optional design doc (`design.en.mdx`/`design.ko.mdx`) rende
 /[locale]/                        # Home (featured projects, testimonials)
 /[locale]/projects/               # Projects listing
 /[locale]/projects/[slug]         # Case study detail (MDX)
-/[locale]/projects/[slug]/prd     # Optional PRD document
 /[locale]/blog/                   # Blog listing (client-side tag filtering)
 /[locale]/blog/[slug]             # Blog post detail (MDX)
 /[locale]/about                   # About/Resume with timeline
@@ -109,6 +109,16 @@ Projects can have an optional design doc (`design.en.mdx`/`design.ko.mdx`) rende
 - **Site config**: `lib/site-config.ts` holds availability status, social links, email, cal link
 - **Dark mode**: `next-themes` with `.dark` class; CSS variables in `app/globals.css`
 - **Styling util**: use `cn()` from `@/lib/utils` (clsx + tailwind-merge)
+
+### SEO / Metadata
+
+- `lib/seo.ts` — central module for all SEO utilities: `buildCanonicalUrl()`, `buildAlternates()`, `buildPageMeta()`, and JSON-LD schema builders (WebSite, Person, BlogPosting, SoftwareApplication, BreadcrumbList)
+- Every page has a `generateMetadata()` function (not static `export const metadata`) that uses `buildPageMeta()` for OG, Twitter card, canonical, and hreflang alternates
+- `components/json-ld.tsx` — `<JsonLd data={...} />` renders `<script type="application/ld+json">` (data is from trusted internal config, safe)
+- `app/robots.ts` → `/robots.txt`, `app/sitemap.ts` → `/sitemap.xml` with hreflang alternates per locale
+- `scripts/generate-rss.ts` → `public/rss.xml` (EN blog posts, runs at prebuild)
+- `public/llms.txt` — static AI discoverability file
+- `public/og-default.png` — 1200x630 default OG image (generated via `scripts/generate-og-image.ts` using sharp)
 
 ### Testing
 
