@@ -11,13 +11,14 @@ export function ProjectCard({ project, showThumbnail = true }: { project: CaseSt
     >
       <article className={thumbnail ? "flex flex-col gap-6 sm:flex-row" : undefined}>
         {thumbnail && (
-          <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden rounded-lg sm:w-48 md:w-56">
+          <div className="h-24 min-w-24 max-w-[calc(6rem*16/9)] shrink-0 overflow-hidden rounded-lg sm:h-28 sm:min-w-28 sm:max-w-[calc(7rem*16/9)] md:h-32 md:min-w-32 md:max-w-[calc(8rem*16/9)]">
             <Image
               src={thumbnail}
               alt={project.title}
-              fill
-              className="object-cover transition-transform duration-150 group-hover:scale-[1.02]"
-              sizes="(max-width: 640px) 100vw, 224px"
+              width={0}
+              height={0}
+              sizes="224px"
+              className="h-full w-auto transition-transform duration-150 group-hover:scale-[1.02]"
             />
           </div>
         )}
