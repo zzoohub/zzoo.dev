@@ -22,6 +22,8 @@ export interface CaseStudyMeta {
   techStack: string[];
   featured?: boolean;
   launchDate: string;
+  thumbnail?: string;
+  images?: string[];
   d2Diagram?: string;
   links?: {
     live?: string;

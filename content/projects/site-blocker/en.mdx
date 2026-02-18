@@ -1,0 +1,62 @@
+---
+title: "Permanent Site Blocker — Chrome Extension"
+description: "A Chrome extension that blocks distracting websites at the network level with no unblock button. Built on the philosophy that irreversibility is the feature, not a limitation."
+clientType: "Personal Product"
+status: "active"
+techStack:
+  - Chrome Extension
+  - Manifest V3
+  - JavaScript
+  - declarativeNetRequest API
+  - Chrome Storage Sync
+featured: false
+launchDate: "2026-02-18"
+links:
+  github: "https://github.com/zzoohub/site-blocker"
+---
+
+## Problem
+
+Every site blocker I tried had the same fatal flaw: an unblock button. Scheduled blocking, password protection, cooldown timers — they all assume willpower at the moment of temptation. But that's exactly when willpower fails. The procrastinator who blocked Twitter at 9am is the same person who clicks "disable for 5 minutes" at 2pm.
+
+I needed a blocker that respected one truth: **if you can undo it, you will**.
+
+## Solution
+
+Permanent Site Blocker is a Chrome extension built around a single, radical design decision — **there is no unblock**. Once a site is blocked, the only way to remove it is to reinstall the extension entirely. No password bypass, no timer, no exceptions.
+
+### Dual-Layer Blocking Architecture
+
+A single blocking mechanism leaves gaps. Network-level rules don't catch cached pages; tab monitoring misses preloaded content. So the extension uses two independent layers:
+
+- **Layer 1: Network-level blocking** — Uses Chrome's `declarativeNetRequest` API to kill requests before they reach the server. Zero latency, works even if the service worker is inactive.
+- **Layer 2: Tab monitoring** — A `tabs.onUpdated` listener catches anything that slips through: cached pages, pre-rendered content, direct navigation from the address bar.
+
+Each layer fails independently. If one breaks, the other still blocks.
+
+### Flexible Pattern Matching
+
+Simple domain blocking covers most cases, but real distraction is more nuanced. YouTube itself isn't the problem — YouTube Shorts is. So the extension supports three blocking modes:
+
+- **Domain blocking** — `twitter.com` blocks the entire site (including `www.` variants)
+- **Path-specific blocking** — `youtube.com/shorts` blocks only Shorts while keeping the rest of YouTube accessible
+- **Regex patterns** — `youtube\.com.*[가-힣]` blocks Korean-language YouTube content using RE2 syntax
+
+### Privacy-First, Zero Dependencies
+
+No build system. No npm packages. No analytics. No external servers. The entire extension is vanilla JavaScript — about 300 lines of code that do exactly one thing well. Blocked sites sync across devices through Chrome's built-in storage sync, keeping all data within Chrome's own infrastructure.
+
+## Key Design Decisions
+
+- **No unblock is intentional** — Irreversibility is the core value proposition, not a missing feature. Every bypass mechanism (passwords, timers, cooldowns) is a door that willpower will eventually open.
+- **Vanilla JS, no build step** — For a ~300-line extension, a bundler adds complexity without value. The codebase stays auditable and instantly deployable.
+- **2 rules per domain** — Each standard entry generates rules for both `example.com` and `www.example.com`, eliminating a common bypass where users simply add or remove `www.`.
+- **Silent regex failure** — Invalid regex patterns are skipped silently rather than crashing the service worker. One bad pattern shouldn't disable blocking for everything else.
+
+## Results
+
+- **Dual-layer blocking** with zero known bypass paths
+- **Sub-millisecond blocking** via network-level rule interception
+- **Cross-device sync** through Chrome's native storage infrastructure
+- **Zero external dependencies** — no build step, no npm, no analytics
+- **~300 lines** of auditable vanilla JavaScript

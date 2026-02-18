@@ -21,6 +21,7 @@ import { D2Diagram } from "@/components/d2-diagram";
 import { ProjectDetailTabs } from "@/components/project-detail-tabs";
 import { compileMDX } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
+import { ProjectImageGallery } from "@/components/project-image-gallery";
 import { ExternalLink, Github, FileText } from "lucide-react";
 
 const mdxOptions = {
@@ -207,6 +208,15 @@ function ProjectDetailContent({
             ))}
           </div>
         </header>
+
+        {/* Image Gallery */}
+        {meta.images && meta.images.length > 0 && (
+          <div className="mt-10 -mx-4 sm:-mx-6 lg:-mx-8">
+            <div className="px-4 sm:px-6 lg:px-8">
+              <ProjectImageGallery images={meta.images} alt={meta.title} />
+            </div>
+          </div>
+        )}
 
         {/* Divider */}
         <div className="mt-10" />

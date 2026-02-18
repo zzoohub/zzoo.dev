@@ -33,6 +33,12 @@ function sanitizeLinks(
   return Object.keys(result).length > 0 ? result : undefined;
 }
 
+function sanitizeImages(images: unknown): string[] | undefined {
+  if (!Array.isArray(images)) return undefined;
+  const valid = images.filter((v): v is string => typeof v === "string" && v.length > 0);
+  return valid.length > 0 ? valid : undefined;
+}
+
 function toDateString(value: unknown): string {
   if (value instanceof Date) {
     return value.toISOString().split("T")[0];
@@ -132,6 +138,8 @@ export function getAllCaseStudies(locale: string): CaseStudyMeta[] {
         techStack: data.techStack ?? [],
         featured: data.featured ?? false,
         launchDate: toDateString(data.launchDate),
+        thumbnail: typeof data.thumbnail === "string" ? data.thumbnail : undefined,
+        images: sanitizeImages(data.images),
         d2Diagram: data.d2Diagram ?? undefined,
         links: sanitizeLinks(data.links),
       } satisfies CaseStudyMeta;
@@ -164,6 +172,8 @@ export function getCaseStudy(
       techStack: data.techStack ?? [],
       featured: data.featured ?? false,
       launchDate: toDateString(data.launchDate),
+      thumbnail: typeof data.thumbnail === "string" ? data.thumbnail : undefined,
+      images: sanitizeImages(data.images),
       d2Diagram: data.d2Diagram ?? undefined,
       links: sanitizeLinks(data.links),
     },
