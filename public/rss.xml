@@ -7,15 +7,25 @@
     <language>en</language>
     <atom:link href="https://zzoo.dev/rss.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>How I Use Claude Code as a Solo Developer</title>
-      <link>https://zzoo.dev/en/blog/how-i-use-claude-code-as-a-solo-developer</link>
-      <guid isPermaLink="true">https://zzoo.dev/en/blog/how-i-use-claude-code-as-a-solo-developer</guid>
-      <description>21 custom skills, 7 specialized agents, and a CLAUDE.md system that turns AI pair programming into a repeatable workflow. Here&apos;s the setup behind every project I ship.</description>
+      <title>Developers Who Matter in the AI Era</title>
+      <link>https://zzoo.dev/en/blog/developers-who-matter-in-the-ai-era</link>
+      <guid isPermaLink="true">https://zzoo.dev/en/blog/developers-who-matter-in-the-ai-era</guid>
+      <description>The cost of writing code is converging to zero. Coding skill is no longer scarce. So which developers survive?</description>
+      <pubDate>Thu, 19 Feb 2026 00:00:00 GMT</pubDate>
+      <category>ai</category>
+      <category>career</category>
+      <category>opinion</category>
+    </item>
+    <item>
+      <title>My Claude Code Setup</title>
+      <link>https://zzoo.dev/en/blog/my-claude-code-setup</link>
+      <guid isPermaLink="true">https://zzoo.dev/en/blog/my-claude-code-setup</guid>
+      <description>CLAUDE.md, 21 skills, 7 agents, 8 MCP servers. The complete Claude Code setup a solo developer uses to maintain team-level quality without a team.</description>
       <pubDate>Tue, 17 Feb 2026 00:00:00 GMT</pubDate>
       <category>claude-code</category>
       <category>ai</category>
       <category>solo-developer</category>
-      <category>workflow</category>
+      <category>setup</category>
     </item>
     <item>
       <title>Why I Chose This Infra Stack as a Solo Developer</title>
