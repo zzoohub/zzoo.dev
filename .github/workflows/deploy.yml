@@ -28,6 +28,9 @@ jobs:
       - name: Install D2 CLI
         run: curl -fsSL https://d2lang.com/install.sh | sh -s --
 
+      - name: Copy project images
+        run: bun run build:images
+
       - name: Build diagrams
         run: bun run build:diagrams
 

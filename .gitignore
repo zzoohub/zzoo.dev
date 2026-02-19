@@ -42,6 +42,9 @@ yarn-error.log*
 # generated diagrams (rebuilt from content/diagrams/*.d2)
 /public/diagrams/
 
+# generated project images (copied from content/projects/*/images/)
+/public/images/projects/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

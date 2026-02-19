@@ -39,6 +39,11 @@ function sanitizeImages(images: unknown): string[] | undefined {
   return valid.length > 0 ? valid : undefined;
 }
 
+function resolveProjectImage(value: string, slug: string): string {
+  if (value.startsWith("/")) return value;
+  return `/images/projects/${slug}/${value}`;
+}
+
 function toDateString(value: unknown): string {
   if (value instanceof Date) {
     return value.toISOString().split("T")[0];
@@ -138,8 +143,8 @@ export function getAllCaseStudies(locale: string): CaseStudyMeta[] {
         techStack: data.techStack ?? [],
         featured: data.featured ?? false,
         launchDate: toDateString(data.launchDate),
-        thumbnail: typeof data.thumbnail === "string" ? data.thumbnail : undefined,
-        images: sanitizeImages(data.images),
+        thumbnail: typeof data.thumbnail === "string" ? resolveProjectImage(data.thumbnail, slug) : undefined,
+        images: sanitizeImages(data.images)?.map((img) => resolveProjectImage(img, slug)),
         d2Diagram: data.d2Diagram ?? undefined,
         links: sanitizeLinks(data.links),
       } satisfies CaseStudyMeta;
