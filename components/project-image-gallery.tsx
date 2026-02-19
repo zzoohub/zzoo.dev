@@ -57,15 +57,14 @@ export function ProjectImageGallery({
         {images.map((src, i) => (
           <div
             key={src}
-            className="h-64 shrink-0 overflow-hidden rounded-lg border border-border sm:h-80 md:h-96"
+            className="relative aspect-4/3 w-[min(100%,24rem)] shrink-0 overflow-hidden rounded-lg border border-border bg-muted"
           >
             <Image
               src={src}
               alt={`${alt} — ${i + 1}`}
-              width={0}
-              height={0}
-              sizes="auto"
-              className="h-full w-auto"
+              fill
+              sizes="(max-width: 640px) 100vw, 24rem"
+              className="object-contain"
             />
           </div>
         ))}
