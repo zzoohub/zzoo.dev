@@ -1,0 +1,394 @@
+---
+title: "From Idea to Product with Claude Code Alone"
+description: "Vibe coding isn't code generation. It's orchestrating AI through the entire product lifecycle — planning, architecture, implementation, quality, and operations. A solo developer's step-by-step breakdown of turning ideas into products with nothing but Claude Code."
+date: "2026-02-20"
+tags:
+  - vibe-coding
+  - claude-code
+  - ai
+  - solo-developer
+  - product
+draft: false
+---
+
+When people hear "vibe coding," most picture telling AI "make me a login page." That's wrong. At least, that's not what I do.
+
+My vibe coding starts with a single idea and runs through product briefs, PRDs, architecture design, database schemas, UX flows, implementation, testing, security audits, and deployment. **Writing code is just one step in that pipeline.**
+
+In a previous post I said "live as a builder" and shared my Claude Code setup. This post shows how those tools actually combine to turn an idea into a product — step by step.
+
+## The Full Pipeline
+
+```
+Idea
+  ↓
+Step 1. Product Brief — Problem definition, hypotheses, success criteria
+  ↓
+Step 2. PRD — Detailed requirements, P0/P1/P2 priorities
+  ↓
+Step 3. Software Architecture — System design, ADRs, trade-offs
+  ↓
+Step 4. Database Design — Schema, indexes, migrations
+  ↓
+Step 5. UX Design — User flows, screen specs, cognitive principles
+  ↓
+Step 6. UI Prototyping — Wireframes, visual scaffolds
+  ↓
+Step 7. Implementation — Skill-driven development
+  ↓
+Step 8. Quality Gate — [Security audit + Testing] in parallel
+  ↓
+Step 9. Deploy & Operations
+```
+
+More than half these steps produce zero lines of code. That's the real leverage of vibe coding. Let me walk through each.
+
+## Step 1. Product Brief — "Why Are We Building This?"
+
+When I have an idea, the first thing I do is not open a code editor. I run `/product-brief`.
+
+This skill operates on Marty Cagan's (SVPG) **Four Risks Framework**. When I say "I want to build a meal tracking app," the skill asks about four risks:
+
+| Risk | Question | Validation |
+|------|----------|------------|
+| **Value** | Will users actually use this? | User interviews, competitive analysis |
+| **Usability** | Can users figure it out? | Prototype testing |
+| **Feasibility** | Can we build it? | Technical spike |
+| **Viability** | Does it work as a business? | Revenue model, legal review |
+
+The core principle is **start with the problem, not the solution**. Not "let's build a meal tracking app" but "people don't log their meals because input is too tedious." The skill enforces this direction.
+
+The output is a 1-2 page document:
+
+- **Problem** — Who's in pain, what's the pain, what's the evidence
+- **Hypotheses & Risks** — Assumptions listed explicitly with validation plans
+- **Proposed Direction** — The direction (not feature lists, but experiences)
+- **Non-Goals** — What this is NOT (prevents scope creep)
+- **Success Criteria** — 2-4 measurable outcomes
+- **Open Questions** — Things we don't know yet
+
+That last section matters most. Writing down what you don't know. Most projects fail not because of wrong answers but because of unasked questions. The product brief's greatest value is surfacing uncertainty early.
+
+At this point there's zero code. But what to build, why, for whom, and where to stop is clear. Without this, coding with AI is just autocomplete.
+
+## Step 2. PRD — "What Exactly Are We Building?"
+
+Once the Brief sets direction, the `prd-craft` skill creates a detailed requirements document. If the Brief is "why," the PRD is "what."
+
+The skill starts with a **Discovery Interview**. This can't be skipped. Based on the Brief, it asks what's missing:
+
+- What are the specific user personas and usage contexts?
+- How do users currently solve this problem? What's painful?
+- How will we measure success? Specific numbers?
+- What's explicitly out of scope?
+
+Then it writes the PRD:
+
+**Problem / Opportunity** — The most critical section. "We need a notification system" is not a problem. "23% of users miss time-sensitive updates because they only check the app once daily" is. The skill enforces this distinction — there's a checklist: "don't state a solution as the problem."
+
+**Functional Requirements** — Features classified as P0 (must-have for launch), P1 (should-have), P2 (nice-to-have). Each requirement maps to a **user journey**, not a technical component. "User can reset password via email" — functional. "Create B-tree index on PostgreSQL" — implementation detail that doesn't belong here.
+
+**Success Metrics** — Each goal has exactly one primary metric with specific numbers and timeframes. No "improve" language. "Onboarding completion rate from 60% to 80%, within 3 months post-launch."
+
+**Critical User Journeys** — Six journeys systematically reviewed: first-time experience (onboarding), core usage loop, returning user experience, management/maintenance, edge cases and error states, off-boarding/data export. The last two are frequently missed — the skill forces them in.
+
+At this point two planning documents exist. Product Brief (strategic direction) and PRD (detailed requirements). 10-15 pages combined. Still zero lines of code.
+
+## Step 3. Software Architecture — "What's the Structure?"
+
+The PRD goes to the `software-architect` skill. It reads the PRD and produces a **Software Architecture Design Document (SADD)**.
+
+First it asks questions the PRD can't answer:
+
+- Expected users, requests/sec, data volume?
+- Which paths are latency-critical?
+- Where is strong consistency required? Where is eventual consistency okay?
+- Real-time features needed? (WebSocket, SSE, polling)
+- Cost sensitivity? (solopreneur vs enterprise)
+
+Then it writes the design document. The key insight is that architecture decisions are split into **two independent axes**:
+
+**Axis 1: System Architecture** — How services communicate. Request-response, event-driven, CQRS, event sourcing, or modular monolith.
+
+**Axis 2: Code Structure** — How each service is organized internally. Hexagonal (ports & adapters), clean, or layered.
+
+These compose freely. Most of my solo projects land on "modular monolith + hexagonal." I can't afford microservice operational complexity alone, and hexagonal makes testing and adapter swapping easy.
+
+Every technology choice gets an **ADR (Architecture Decision Record)**. Not just "we use Axum" but:
+
+> **ADR-1: Backend Language & Framework**
+> - Context: Solo developer, B2C service, cost-sensitive
+> - Decision: Rust + Axum
+> - Alternatives: Python/FastAPI (rejected — runtime overhead, higher memory) / Go/Gin (rejected — weaker type system)
+> - Consequences: (+) Sub-ms response, 10-30MB memory, compile-time verification / (-) Compile times, smaller ecosystem
+
+The skill has built-in infrastructure preference references for the solopreneur context:
+- Database: Neon (serverless, scale-to-zero, branching)
+- Backend compute: GCP Cloud Run (container-based, auto-scaling, generous free tier)
+- Frontend: Cloudflare Workers + Next.js (edge SSR, predictable pricing)
+- Mobile: Expo (React Native)
+- Object storage: Cloudflare R2 (zero egress fees)
+- IaC: Pulumi (TypeScript-native)
+- Error tracking: Sentry / Analytics: PostHog
+
+These defaults exist so I don't deliberate from scratch every time. When project requirements differ from defaults, only then do I record the deviation and rationale as an ADR.
+
+For my Mealio project: Expo (mobile) + Axum (API) + Neon (DB) + GCP Cloud Run (compute) + Cloudflare R2 (photo storage) + Pulumi (infrastructure). This combination was decided in the SADD, with rationale documented for each choice.
+
+## Step 4. Database Design — "How Do We Store Data?"
+
+Once architecture is set, the `database-design` skill designs the schema. This skill has seven reference files:
+
+| Reference | Purpose |
+|-----------|---------|
+| `acid-transactions.md` | Transaction isolation levels, locking strategies, deadlock prevention |
+| `data-types-guide.md` | PostgreSQL type selection guide |
+| `design-patterns.md` | Table inheritance, soft delete, audit trails, temporal data |
+| `indexing-strategy.md` | Index types, selectivity calculation, partial indexes |
+| `migration-patterns.md` | Zero-downtime migrations, rollback scripts |
+| `normalization-guide.md` | Normalization/denormalization decision criteria |
+| `performance-patterns.md` | Query pattern optimization, column ordering, partitioning |
+
+The workflow is systematic:
+
+**Step 1 — Gather requirements.** If a SADD exists, extract domain entities, data flows, storage strategy, and consistency model. Follow system-level decisions from the SADD (DB platform, architecture pattern), but independently evaluate DB-domain decisions (normalization level, partitioning strategy, index design, transaction isolation levels).
+
+**Step 2 — Schema design.** Identify core entities, normalize to at least 3NF, evaluate denormalization needs, choose appropriate data types, define constraints (PK, FK, UNIQUE, CHECK, NOT NULL). Order columns largest-to-smallest to minimize alignment padding waste.
+
+**Step 3 — Transaction & concurrency design.** Identify operations needing explicit transaction design: payments, inventory, multi-step workflows, high-contention resources. For each, decide isolation level, locking strategy, retry logic.
+
+**Step 4 — Write DDL.** PostgreSQL CREATE TABLE, INDEX, COMMENT.
+
+**Step 5 — Index strategy.** PostgreSQL does NOT auto-index FK columns — a common oversight the skill catches automatically. Identify columns in frequent WHERE, JOIN, ORDER BY. Calculate selectivity. Choose appropriate index types: Partial, Expression, Covering (INCLUDE), GIN/GiST/BRIN.
+
+**Step 6 — Performance review.** Verify execution plans with EXPLAIN ANALYZE. Evaluate connection pooling and partitioning needs.
+
+**Step 7 — Migration plan.** Version-controlled migration scripts with mandatory rollback scripts. Zero-downtime strategies.
+
+The Neon MCP shines here. Design the schema, run migrations, and verify results in the same session. Zero context switching.
+
+Hard-coded rules: never use FLOAT for monetary values (use NUMERIC), always use TIMESTAMPTZ, include created_at/updated_at on every table, always create indexes on FK columns. The skill enforces these so I don't have to remember.
+
+## Step 5. UX Design — "How Do Users Experience This?"
+
+The `ux-designer` agent handles user experience design. Unlike other agents, this one sits in the **planning** category and uses the Opus model. Design requires deep reasoning.
+
+The agent's first action is loading three reference files:
+
+**`cognitive-principles.md`** — Hick's Law (more choices = slower decisions), Fitts's Law (smaller/farther targets = harder interaction), Cognitive Load theory, Goal Gradient (motivation increases near completion), Peak-End Rule (memory of experience is dominated by peak and end moments). Every design decision gets tagged with these principles.
+
+**`design-process.md`** — 5-step process: Define → Map → Design → Remove → Validate. Steps can't be skipped or reordered.
+
+**`ergonomics.md`** — Touch targets 44px+, color contrast 4.5:1 (text), 3:1 (UI), focus outline 2px+, mobile thumb zone placement. Specific numeric thresholds.
+
+Every task starts with the **First Principles Checklist**:
+
+1. What is the user's **ONE goal**? (Not features, not business metrics — their actual intent)
+2. What's the **minimum needed** to achieve it? (Information, actions, screens)
+3. What **can be removed**? (If removing it doesn't block the goal, remove it)
+
+The third point is key. Adding features is easy. Removing them is hard. The agent applies "does this help the user's goal?" to every element. Fails the test? Removed.
+
+Outputs:
+
+- **User Flow** — Entry point to goal completion, decision points with recommended defaults, error and edge case handling
+- **Screen Specifications** — One primary action per screen (visually dominant), only information needed for current decision, secondary actions (visually subdued), feedback mechanisms
+- **Accessibility Notes** — Contrast, focus states, keyboard nav, screen reader
+- **Design Rationale** — Which cognitive principle justifies each decision
+
+Anti-pattern list: marketing copy, hero sections with vague value props, decorative sections, unnecessary onboarding, confirmation dialogs for non-destructive actions, elements that exist "because other apps have it." All forbidden.
+
+## Step 6. UI Prototyping — "What Does It Look Like?"
+
+With UX specs ready, the `ui-engineer` agent creates visual scaffolds. This agent's core rule: **zero business logic**.
+
+For web, it defaults to shadcn/ui. Components it can't cover get built custom following the `design-system` skill. For mobile, platform-native patterns.
+
+Outputs are pure UI components:
+- No `useState`, `useEffect`
+- No data fetching
+- No business logic in event handlers
+- Props for visual control only
+
+```tsx
+// What the ui-engineer produces: pure UI scaffold
+export function LoginPage() {
+  return (
+    <Card>
+      <Card.Header>
+        <Card.Title>Login</Card.Title>
+      </Card.Header>
+      <Card.Content className="flex flex-col gap-4">
+        <FormField label="Email">
+          <Input type="email" placeholder="email@example.com" />
+        </FormField>
+        <FormField label="Password">
+          <Input type="password" />
+        </FormField>
+      </Card.Content>
+      <Card.Footer>
+        <Button variant="primary" fullWidth>Sign In</Button>
+      </Card.Footer>
+    </Card>
+  );
+}
+
+// Added later by me (or another agent):
+// - const [email, setEmail] = useState('')
+// - const { mutate: login } = useLogin()
+// - onSubmit handler
+// - error states
+// - redirect after success
+```
+
+Why this separation? When UI and logic boundaries are clear, design changes don't touch logic and logic changes don't touch UI. In practice, this separation makes a huge difference in maintenance.
+
+The agent runs a self-review after completion by loading the `frontend-design` skill. Checks for hardcoded values, all visual states defined, accessibility compliance.
+
+## Step 7. Implementation — "Skills Enforce Conventions"
+
+Finally, code gets written. But not freely.
+
+**CLAUDE.md forces the right skills for each project.** Every project root has a CLAUDE.md file with "all implementation must use designated skills" as a hard rule.
+
+- Next.js project → `nextjs` skill + `vercel-react-best-practices` + `vercel-composition-patterns`
+- Rust API → `axum` skill + `postgresql` skill
+- React Native app → `react-native` skill + `vercel-react-native-skills`
+- Hexagonal architecture → `axum-hexagonal` or `fastapi-hexagonal` skill
+
+What each skill concretely does:
+
+**`axum` skill** — Loads production patterns for Axum 0.8+. Router composition, handler signatures, error handling, middleware stacks, SQLx usage. The reference file alone is 14,000+ characters of code examples.
+
+**`axum-hexagonal` skill** — Guides hexagonal architecture boundaries (domain, ports, adapters) with concrete Rust code. Three reference files: domain examples, adapter examples, bootstrap examples. Combined 18,000+ characters.
+
+**`vercel-react-best-practices`** — An official skill from Vercel. 45 rules across 8 categories. Waterfall prevention, bundle optimization, server-side patterns, re-render prevention — all CRITICAL priority. The people who built the framework encoded "use it this way."
+
+**MCP servers accelerate implementation:**
+- **Context7** — Fetches latest library docs in real-time. Prevents stale API usage
+- **Neon MCP** — Run migrations, inspect schemas, tune queries in the same session
+- **D2 MCP** — Write architecture diagrams in D2 language, compile to light/dark theme SVGs
+- **Playwright MCP** — Browser automation for rendering verification, screenshots
+- **Sentry MCP** — Production errors flow directly into debugging sessions
+- **PostHog MCP** — Query analytics data within code context
+
+**LSP plugins** — TypeScript LSP, Pyright LSP, Rust Analyzer LSP. Claude Code gets real-time type checking and autocomplete as it writes. Rust Analyzer catches compile errors at editor level before they hit the terminal.
+
+Zero context switching. One Claude Code session handles code, DB migrations, documentation lookup, and diagram generation.
+
+## Step 8. Quality Gate — "No Compromises"
+
+After implementation, **two agents run in parallel.** This is hard-coded in CLAUDE.md. Every implementation, every change, no exceptions.
+
+### Tester Agent
+
+**Goal: 100% coverage.** Lines, branches, functions, statements — all of them.
+
+Process:
+1. **Analyze** — Map every file, function, and branch in changed code
+2. **Run existing tests** — Find coverage gaps
+3. **Plan** — List every uncovered line, branch, function
+4. **Write** — Create tests for every gap (priority: critical paths → business logic → integration points → CRUD → UI → utilities → error paths)
+5. **Run** — With coverage reporting
+6. **Iterate** — Until 100%. 99% is not 100%
+
+Branch coverage checklist: if/else both sides, switch/match every case + default, try/catch success and failure, ternaries both outcomes, logical short-circuits both evaluated and skipped, null/optional present and absent, early returns triggered and not triggered, loops zero/one/many iterations.
+
+**Core rule: this agent never modifies application code.** It only writes test files. If it finds a code problem, it reports to me.
+
+### Security Reviewer Agent
+
+**Assume breach mentality** — every input is malicious, every dependency is compromised.
+
+Process:
+1. **Quick Scan** — Hardcoded secrets, .env exposure, debug mode, dangerous patterns
+2. **Domain Analysis** — Based on `security-checklists` skill's four checklists: Auth, API, Business Logic, Supply Chain
+3. **Severity Classification** — Critical / High / Medium
+
+| Auto-Fail Pattern | Risk |
+|--------------------|------|
+| Secrets in code or logs | Credential exposure |
+| User input in query string concatenation | SQL Injection |
+| User input in shell/system calls | Command Injection |
+| User input in eval/exec | Remote Code Execution |
+| Raw user content in HTML output | XSS |
+| Full request body passed to model update | Mass Assignment |
+
+**Escalation rules** — Payment/financial logic, authentication system changes, cryptographic implementations, sensitive third-party integrations, compliance (GDPR, PCI-DSS) — all escalated to me unconditionally. AI should not make solo judgments in these areas.
+
+The two agents run in parallel because they're independent tasks. Running them sequentially wastes time. One writes tests while the other scans for vulnerabilities. Both find issues? Fix and re-run. Until everything passes.
+
+## Step 9. Deploy & Operations — "Ship It"
+
+Code passes the quality gate, time to deploy. Infrastructure was already decided in Step 3.
+
+**Pulumi** manages infrastructure as code. TypeScript defines GCP Cloud Run, Secret Manager, Artifact Registry, Cloudflare R2, and Neon. No HCL to learn. The `pulumi-authoring` plugin guides ComponentResource authoring, Output handling, and secrets management patterns.
+
+Post-deployment:
+- **Sentry MCP** — Production errors inspected and debugged directly from Claude Code sessions
+- **PostHog MCP** — User behavior data queried in code context. Funnel analysis, event tracking, A/B tests
+- **Cloudflare MCP** — Manage Workers, KV, R2, D1
+
+Issues discovered in production go back through the pipeline. Even bug fixes load skills, and tester + security-reviewer run in parallel after implementation. No exceptions.
+
+## Documents Stay Alive
+
+In my workflow, documentation isn't overhead — it's **part of development**. Two rules:
+
+**1. When requirements change, all related documents update.** If a feature drops from the PRD, the SADD, DB design, and UX specs all update. The moment documents drift from reality, AI trusts wrong documents and writes wrong code.
+
+**2. After major development units, CLAUDE.md updates.** When a new module appears, folder structure, conventions, and dependency relationships are reflected in CLAUDE.md. Next session, Claude Code reads this file and starts with complete understanding of the project's current state.
+
+Look at Mealio's CLAUDE.md to see this in action. Mobile's Feature-Sliced Design structure, dual-mode architecture (auth/guest), upload queue behavior, AI analysis trigger-and-poll pattern, TanStack Query key management, Jest testing gotchas — all documented. A 189-line living document.
+
+The `claude-md-management` plugin helps. `/revise-claude-md` reflects learnings from the current session into CLAUDE.md.
+
+## One Person, Many Roles
+
+With this pipeline, one person moves between multiple roles:
+
+| Step | Role | Skill/Agent |
+|------|------|-------------|
+| 1. Product Brief | PM | `product-brief` skill |
+| 2. PRD | Product Manager | `prd-craft` skill |
+| 3. Architecture | Software Architect | `software-architect` skill |
+| 4. Database | DBA | `database-design` + `postgresql` skills |
+| 5. UX Design | UX Designer | `ux-designer` agent |
+| 6. UI Prototype | UI Engineer | `ui-engineer` agent |
+| 7. Implementation | Developer | `axum`, `nextjs`, `react-native`, etc. |
+| 8. Quality Gate | QA + Security Engineer | `tester` + `security-reviewer` agents |
+| 9. Deploy | DevOps | Pulumi + Cloudflare + GCP |
+
+Before, each of these roles was a different person. Now, the right skill loads for each role, applying that role's frameworks and constraints. I don't need to be an expert in each domain — the expert's thinking is encoded in the skill.
+
+## Limitations
+
+Let me be honest. This system has limits.
+
+**Domain taste can't be replaced.** Skills guide "define the problem with evidence" but which problem truly hurts, where the money is, what users actually want — that's my judgment. AI writes the Product Brief, but the insights that go into it come from observing users.
+
+**UX taste is the same.** Cognitive principle-based design prevents bad decisions, but creating genuinely natural, delightful experiences ultimately comes from using the product yourself and feeling it.
+
+**Skill quality is everything.** Badly written skills propagate bad patterns across every project. Skills need regular review and updates.
+
+But these limits aren't bugs in the system — they're the design. AI provides frameworks, I provide the ingredients. Division of labor.
+
+## The Compound Effect
+
+The real value of this system appears over time.
+
+Skills and agents created for the first project carry directly to the second. CLAUDE.md patterns improved in the second project apply to the third. New patterns discovered during security reviews get added to skills and automatically checked in every future project.
+
+Setting up 21 skills, 7 agents, 8 MCP servers, and 20 plugins took time. Writing detailed CLAUDE.md files for each project takes time too. But this investment compounds. Every new project starts with all previously accumulated knowledge applied automatically.
+
+## What Vibe Coding Really Means
+
+Vibe coding isn't extracting code from AI. It's **directing AI through the entire process of building a product.**
+
+Starting from an idea, defining the problem (Product Brief), specifying requirements (PRD), designing structure (SADD), modeling data (DB Design), mapping user experience (UX), creating visual scaffolds (UI), implementing code (Skills), and verifying quality (Tester + Security). At each step, expert-level frameworks load, and I set direction and make judgments.
+
+Not a typist. A director.
+
+In a previous post I said "live as a builder." This pipeline is the builder's infrastructure. All you need is the idea — the system scaffolds the rest.
+
+Vibes are good. The pipeline has your back.
