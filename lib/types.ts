@@ -30,6 +30,31 @@ export interface CaseStudyMeta {
     github?: string;
     docs?: string;
   };
+
+  // Marketing fields
+  tagline?: string;
+  category?: "mobile-app" | "chrome-extension" | "web" | "cli";
+  keywords?: {
+    primary?: string[];
+    longTail?: string[];
+  };
+  competitors?: Array<{
+    name: string;
+    differentiator: string;
+  }>;
+  cta?: {
+    primary?: { label: string; url: string };
+    secondary?: { label: string; url: string };
+  };
+  features?: Array<{
+    title: string;
+    description: string;
+    icon?: string;
+  }>;
+
+  // Extended media
+  heroImage?: string;
+  video?: string;
 }
 
 export interface CaseStudy extends CaseStudyMeta {

@@ -35,12 +35,96 @@ function sanitizeLinks(
 
 function sanitizeImages(images: unknown): string[] | undefined {
   if (!Array.isArray(images)) return undefined;
-  const valid = images.filter((v): v is string => typeof v === "string" && v.length > 0);
+  const valid = images.filter(
+    (v): v is string =>
+      typeof v === "string" &&
+      v.length > 0 &&
+      !v.includes("..") &&
+      !v.startsWith("//")
+  );
   return valid.length > 0 ? valid : undefined;
 }
 
+function isYouTubeEmbedUrl(url: unknown): url is string {
+  if (typeof url !== "string") return false;
+  try {
+    const parsed = new URL(url);
+    return (
+      (parsed.hostname === "www.youtube.com" || parsed.hostname === "youtube.com") &&
+      parsed.pathname.startsWith("/embed/")
+    );
+  } catch {
+    return false;
+  }
+}
+
+function sanitizeCta(
+  cta: unknown
+): { primary?: { label: string; url: string }; secondary?: { label: string; url: string } } | undefined {
+  if (!cta || typeof cta !== "object") return undefined;
+  const raw = cta as Record<string, unknown>;
+  const result: { primary?: { label: string; url: string }; secondary?: { label: string; url: string } } = {};
+
+  for (const key of ["primary", "secondary"] as const) {
+    const entry = raw[key];
+    if (entry && typeof entry === "object") {
+      const e = entry as Record<string, unknown>;
+      if (typeof e.label === "string" && isValidUrl(e.url)) {
+        result[key] = { label: e.label, url: e.url };
+      }
+    }
+  }
+
+  return Object.keys(result).length > 0 ? result : undefined;
+}
+
+function sanitizeCompetitors(
+  competitors: unknown
+): Array<{ name: string; differentiator: string }> | undefined {
+  if (!Array.isArray(competitors)) return undefined;
+  const valid = competitors.filter(
+    (c): c is { name: string; differentiator: string } =>
+      c && typeof c === "object" && typeof c.name === "string" && typeof c.differentiator === "string"
+  );
+  return valid.length > 0 ? valid : undefined;
+}
+
+function sanitizeFeatures(
+  features: unknown
+): Array<{ title: string; description: string; icon?: string }> | undefined {
+  if (!Array.isArray(features)) return undefined;
+  const valid = features
+    .filter(
+      (f): f is { title: string; description: string; icon?: string } =>
+        f && typeof f === "object" && typeof f.title === "string" && typeof f.description === "string"
+    )
+    .map((f) => ({
+      title: f.title,
+      description: f.description,
+      ...(typeof f.icon === "string" ? { icon: f.icon } : {}),
+    }));
+  return valid.length > 0 ? valid : undefined;
+}
+
+function sanitizeKeywords(
+  keywords: unknown
+): { primary?: string[]; longTail?: string[] } | undefined {
+  if (!keywords || typeof keywords !== "object") return undefined;
+  const raw = keywords as Record<string, unknown>;
+  const result: { primary?: string[]; longTail?: string[] } = {};
+  if (Array.isArray(raw.primary)) {
+    result.primary = raw.primary.filter((v): v is string => typeof v === "string");
+  }
+  if (Array.isArray(raw.longTail)) {
+    result.longTail = raw.longTail.filter((v): v is string => typeof v === "string");
+  }
+  return Object.keys(result).length > 0 ? result : undefined;
+}
+
 function resolveProjectImage(value: string, slug: string): string {
+  if (value.startsWith("//")) return "";
   if (value.startsWith("/")) return value;
+  if (value.includes("..")) return "";
   return `/images/projects/${slug}/${value}`;
 }
 
@@ -119,6 +203,36 @@ export function getBlogPost(
   };
 }
 
+function parseCaseStudyMeta(data: Record<string, unknown>, slug: string): CaseStudyMeta {
+  const VALID_CATEGORIES = ["mobile-app", "chrome-extension", "web", "cli"] as const;
+  const category = typeof data.category === "string" && (VALID_CATEGORIES as readonly string[]).includes(data.category)
+    ? (data.category as CaseStudyMeta["category"])
+    : undefined;
+
+  return {
+    slug,
+    title: data.title as string,
+    description: data.description as string,
+    clientType: data.clientType as string,
+    status: data.status as CaseStudyMeta["status"],
+    techStack: (data.techStack as string[]) ?? [],
+    featured: (data.featured as boolean) ?? false,
+    launchDate: toDateString(data.launchDate),
+    thumbnail: typeof data.thumbnail === "string" ? resolveProjectImage(data.thumbnail, slug) : undefined,
+    images: sanitizeImages(data.images)?.map((img) => resolveProjectImage(img, slug)),
+    d2Diagram: (data.d2Diagram as string) ?? undefined,
+    links: sanitizeLinks(data.links),
+    tagline: typeof data.tagline === "string" ? data.tagline : undefined,
+    category,
+    keywords: sanitizeKeywords(data.keywords),
+    competitors: sanitizeCompetitors(data.competitors),
+    cta: sanitizeCta(data.cta),
+    features: sanitizeFeatures(data.features),
+    heroImage: typeof data.heroImage === "string" ? resolveProjectImage(data.heroImage, slug) : undefined,
+    video: isYouTubeEmbedUrl(data.video) ? data.video : undefined,
+  };
+}
+
 export function getAllCaseStudies(locale: string): CaseStudyMeta[] {
   const dir = path.join(contentDir, "projects");
   if (!fs.existsSync(dir)) return [];
@@ -134,20 +248,7 @@ export function getAllCaseStudies(locale: string): CaseStudyMeta[] {
       if (!fs.existsSync(filePath)) return null;
       const raw = fs.readFileSync(filePath, "utf-8");
       const { data } = matter(raw);
-      return {
-        slug,
-        title: data.title,
-        description: data.description,
-        clientType: data.clientType,
-        status: data.status,
-        techStack: data.techStack ?? [],
-        featured: data.featured ?? false,
-        launchDate: toDateString(data.launchDate),
-        thumbnail: typeof data.thumbnail === "string" ? resolveProjectImage(data.thumbnail, slug) : undefined,
-        images: sanitizeImages(data.images)?.map((img) => resolveProjectImage(img, slug)),
-        d2Diagram: data.d2Diagram ?? undefined,
-        links: sanitizeLinks(data.links),
-      } satisfies CaseStudyMeta;
+      return parseCaseStudyMeta(data, slug);
     })
     .filter(Boolean) as CaseStudyMeta[];
 
@@ -168,20 +269,43 @@ export function getCaseStudy(
   const { data, content } = matter(raw);
 
   return {
-    meta: {
-      slug,
-      title: data.title,
-      description: data.description,
-      clientType: data.clientType,
-      status: data.status,
-      techStack: data.techStack ?? [],
-      featured: data.featured ?? false,
-      launchDate: toDateString(data.launchDate),
-      thumbnail: typeof data.thumbnail === "string" ? resolveProjectImage(data.thumbnail, slug) : undefined,
-      images: sanitizeImages(data.images)?.map((img) => resolveProjectImage(img, slug)),
-      d2Diagram: data.d2Diagram ?? undefined,
-      links: sanitizeLinks(data.links),
-    },
+    meta: parseCaseStudyMeta(data, slug),
+    content,
+  };
+}
+
+export function hasCaseStudy(locale: string, slug: string): boolean {
+  if (!isValidSlug(slug)) return false;
+  const filePath = path.join(
+    contentDir,
+    "projects",
+    slug,
+    `casestudy.${locale}.mdx`
+  );
+  return fs.existsSync(filePath);
+}
+
+export function getCaseStudyContent(
+  locale: string,
+  slug: string
+): { meta: CaseStudyMeta; content: string } | null {
+  if (!isValidSlug(slug)) return null;
+  const filePath = path.join(
+    contentDir,
+    "projects",
+    slug,
+    `casestudy.${locale}.mdx`
+  );
+  if (!fs.existsSync(filePath)) return null;
+
+  const raw = fs.readFileSync(filePath, "utf-8");
+  const { content } = matter(raw);
+
+  const parentStudy = getCaseStudy(locale, slug);
+  if (!parentStudy) return null;
+
+  return {
+    meta: parentStudy.meta,
     content,
   };
 }

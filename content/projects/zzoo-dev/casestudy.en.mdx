@@ -1,0 +1,31 @@
+---
+title: "zzoo.dev — Case Study"
+---
+
+How people discover experts has fundamentally changed. Traditional search engines still matter, but now ChatGPT, Perplexity, and Gemini are answering questions like "who can build my app?" directly. A developer's site needs to work for all of these channels — or risk being invisible.
+
+zzoo.dev is a personal branding site built for this reality. It's optimized across three discovery pillars: SEO for traditional search, AEO for AI answer engines, and GEO for generative AI — so my expertise is found no matter how someone searches.
+
+## Three Pillars of Search Visibility
+
+### SEO — Traditional Search Foundation
+
+The technical basics done right. Every page is statically generated and served from Cloudflare's global edge, hitting sub-second load times. Semantic HTML, proper heading hierarchy, XML sitemap with hreflang alternates for EN/KO, and a canonical URL strategy ensure search engines crawl and index the site cleanly.
+
+### AEO — Answer Engine Optimization
+
+When AI systems like Google's AI Overviews or Perplexity pull answers, they rely on structured data. The site embeds JSON-LD schemas — `WebSite`, `Person`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList` — giving answer engines machine-readable context about who I am, what I've built, and what I've written. RSS feeds provide a real-time content pipeline for indexing.
+
+### GEO — Generative Engine Optimization
+
+For large language models that power ChatGPT or Claude, the site serves `llms.txt` — a plain-text file that describes the site's purpose, structure, and key content in a format LLMs can directly consume. Combined with clean, well-structured MDX content and bilingual coverage, generative engines can accurately represent my work when users ask about relevant topics.
+
+## Site Structure
+
+Each page is designed to serve both human visitors and machine readers. Visitors naturally build trust as they browse, while every route outputs the structured data AI engines need.
+
+- **Home** — Landing page with featured projects, core expertise, and `Person` + `WebSite` JSON-LD
+- **Projects** — Case studies with problem/approach/architecture narratives, each with `SoftwareApplication` schema
+- **Blog** — Technical posts with `BlogPosting` schema, tag-based filtering, and RSS feed integration
+- **About** — Career background with structured bio data
+- **Contact** — Simple email-based contact for human visitors who found me through any channel

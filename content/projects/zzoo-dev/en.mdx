@@ -1,6 +1,6 @@
 ---
 title: "zzoo.dev — Personal Branding Site"
-description: "A bilingual personal branding site optimized for SEO, AEO, and GEO — built to be discovered by both traditional search engines and AI-powered answer engines in the AI era."
+description: "A developer portfolio built for humans and AI engines alike. SEO + AEO + GEO optimized, bilingual, statically generated, and open source."
 clientType: "Personal Product"
 status: "active"
 techStack:
@@ -17,32 +17,55 @@ featured: true
 launchDate: "2026-01-01"
 links:
   github: "https://github.com/zzoohub/zzoo.dev"
+
+tagline: "A developer portfolio built for humans and AI engines alike."
+category: "web"
+keywords:
+  primary:
+    - "developer portfolio SEO"
+    - "personal branding site for developers"
+  longTail:
+    - "nextjs developer portfolio template with SEO"
+    - "how to make developer portfolio discoverable by AI"
+competitors:
+  - name: "Generic portfolio templates"
+    differentiator: "Most templates look nice but score poorly on SEO — this one is optimized for search, AI answer engines, and generative AI from day one"
+  - name: "WordPress portfolios"
+    differentiator: "WordPress is heavy and slow — this is statically generated, served from the edge, and scores 95+ on Lighthouse"
+  - name: "Notion portfolios"
+    differentiator: "Notion can't be customized for SEO or structured data — this site has JSON-LD schemas, llms.txt, and full i18n"
+cta:
+  primary:
+    label: "View Source on GitHub"
+    url: "https://github.com/zzoohub/zzoo.dev"
+features:
+  - title: "SEO + AEO + GEO"
+    description: "Optimized for traditional search, AI answer engines, and generative AI simultaneously"
+    icon: "globe"
+  - title: "Edge-Served SSG"
+    description: "Every page statically generated, served from Cloudflare's global edge. Lighthouse 95+."
+    icon: "zap"
+  - title: "Bilingual (EN/KO)"
+    description: "Full i18n with next-intl. Hreflang alternates, per-locale content, automatic routing."
+    icon: "globe"
 ---
 
-How people discover experts has fundamentally changed. Traditional search engines still matter, but now ChatGPT, Perplexity, and Gemini are answering questions like "who can build my app?" directly. A developer's site needs to work for all of these channels — or risk being invisible.
+## The invisible developer problem
 
-zzoo.dev is a personal branding site built for this reality. It's optimized across three discovery pillars: SEO for traditional search, AEO for AI answer engines, and GEO for generative AI — so my expertise is found no matter how someone searches.
+You build great things but nobody finds you. Your portfolio gets a dozen visits a month — all from people who already have your URL. Meanwhile, potential clients and hiring managers are searching Google, asking ChatGPT, or browsing Perplexity for developers just like you.
 
-## Three Pillars of Search Visibility
+If your site isn't optimized for these channels, you're invisible to 99% of the people looking for your skills.
 
-### SEO — Traditional Search Foundation
+## Built for three discovery channels
 
-The technical basics done right. Every page is statically generated and served from Cloudflare's global edge, hitting sub-second load times. Semantic HTML, proper heading hierarchy, XML sitemap with hreflang alternates for EN/KO, and a canonical URL strategy ensure search engines crawl and index the site cleanly.
+zzoo.dev isn't just a pretty portfolio. It's engineered to be discovered:
 
-### AEO — Answer Engine Optimization
+**SEO** — Statically generated pages, semantic HTML, XML sitemap with hreflang, canonical URLs. The technical foundation that gets you indexed.
 
-When AI systems like Google's AI Overviews or Perplexity pull answers, they rely on structured data. The site embeds JSON-LD schemas — `WebSite`, `Person`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList` — giving answer engines machine-readable context about who I am, what I've built, and what I've written. RSS feeds provide a real-time content pipeline for indexing.
+**AEO** — JSON-LD schemas (`Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList`) give AI answer engines structured context about your expertise.
 
-### GEO — Generative Engine Optimization
+**GEO** — `llms.txt` and clean MDX content let generative AI engines accurately represent your work when someone asks "who can build my app?"
 
-For large language models that power ChatGPT or Claude, the site serves `llms.txt` — a plain-text file that describes the site's purpose, structure, and key content in a format LLMs can directly consume. Combined with clean, well-structured MDX content and bilingual coverage, generative engines can accurately represent my work when users ask about relevant topics.
+## Open source, fork-friendly
 
-## Site Structure
-
-Each page is designed to serve both human visitors and machine readers. Visitors naturally build trust as they browse, while every route outputs the structured data AI engines need.
-
-- **Home** — Landing page with featured projects, core expertise, and `Person` + `WebSite` JSON-LD
-- **Projects** — Case studies with problem/approach/architecture narratives, each with `SoftwareApplication` schema
-- **Blog** — Technical posts with `BlogPosting` schema, tag-based filtering, and RSS feed integration
-- **About** — Career background with structured bio data
-- **Contact** — Simple email-based contact for human visitors who found me through any channel
+The entire codebase is open source. It's built with Next.js 16, React 19, TypeScript, Tailwind CSS v4, and deployed to Cloudflare Workers. Clone it, customize it, ship your own version.

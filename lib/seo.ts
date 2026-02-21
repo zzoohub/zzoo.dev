@@ -160,7 +160,23 @@ interface ProjectJsonLdOptions {
   url: string;
   datePublished: string;
   techStack?: string[];
+  keywords?: string[];
+  category?: string;
 }
+
+const categoryToOS: Record<string, string> = {
+  "mobile-app": "iOS, Android",
+  "chrome-extension": "Chrome",
+  web: "All",
+  cli: "Windows, macOS, Linux",
+};
+
+const categoryToAppCategory: Record<string, string> = {
+  "mobile-app": "HealthApplication",
+  "chrome-extension": "BrowserApplication",
+  web: "WebApplication",
+  cli: "DeveloperApplication",
+};
 
 export function buildProjectJsonLd(options: ProjectJsonLdOptions) {
   return {
@@ -175,9 +191,43 @@ export function buildProjectJsonLd(options: ProjectJsonLdOptions) {
       name: "zzoo",
       url: siteConfig.url,
     },
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
     ...(options.techStack?.length
       ? { applicationCategory: options.techStack.join(", ") }
       : {}),
+    ...(options.keywords?.length
+      ? { keywords: options.keywords.join(", ") }
+      : {}),
+    ...(options.category && categoryToOS[options.category]
+      ? { operatingSystem: categoryToOS[options.category] }
+      : {}),
+    ...(options.category && categoryToAppCategory[options.category]
+      ? { applicationCategory: categoryToAppCategory[options.category] }
+      : {}),
+  };
+}
+
+interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+export function buildFAQJsonLd(items: FAQItem[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
   };
 }
 

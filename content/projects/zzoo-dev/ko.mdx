@@ -1,6 +1,6 @@
 ---
 title: "zzoo.dev — 개인 브랜딩 사이트"
-description: "SEO, AEO, GEO에 최적화된 이중 언어 개인 브랜딩 사이트 — AI 시대에 전통 검색 엔진과 AI 답변 엔진 모두에서 발견될 수 있도록 설계했습니다."
+description: "사람과 AI 엔진 모두를 위해 만든 개발자 포트폴리오. SEO + AEO + GEO 최적화, 이중 언어, 정적 생성, 오픈 소스."
 clientType: "개인 프로젝트"
 status: "active"
 techStack:
@@ -17,32 +17,55 @@ featured: true
 launchDate: "2026-01-01"
 links:
   github: "https://github.com/zzoohub/zzoo.dev"
+
+tagline: "사람과 AI 엔진 모두를 위해 만든 개발자 포트폴리오"
+category: "web"
+keywords:
+  primary:
+    - "개발자 포트폴리오 SEO"
+    - "개발자 개인 브랜딩 사이트"
+  longTail:
+    - "Next.js 포트폴리오 만들기"
+    - "AI에 발견되는 개발자 사이트"
+competitors:
+  - name: "일반 포트폴리오 템플릿"
+    differentiator: "대부분의 템플릿은 멋지지만 SEO 점수가 낮음 — 이 사이트는 검색, AI 답변 엔진, 생성형 AI 모두에 처음부터 최적화"
+  - name: "WordPress 포트폴리오"
+    differentiator: "WordPress는 무겁고 느림 — 정적 생성, 엣지 서빙, Lighthouse 95+"
+  - name: "Notion 포트폴리오"
+    differentiator: "Notion은 SEO나 구조화 데이터 커스텀이 불가 — JSON-LD 스키마, llms.txt, 완전한 i18n 지원"
+cta:
+  primary:
+    label: "GitHub에서 소스 보기"
+    url: "https://github.com/zzoohub/zzoo.dev"
+features:
+  - title: "SEO + AEO + GEO"
+    description: "전통 검색, AI 답변 엔진, 생성형 AI 모두에 동시 최적화"
+    icon: "globe"
+  - title: "엣지 서빙 SSG"
+    description: "모든 페이지 정적 생성, Cloudflare 글로벌 엣지 서빙. Lighthouse 95+."
+    icon: "zap"
+  - title: "이중 언어 (EN/KO)"
+    description: "next-intl 기반 완전한 i18n. Hreflang 대체 링크, 로케일별 콘텐츠, 자동 라우팅."
+    icon: "globe"
 ---
 
-사람들이 전문가를 찾는 방식이 근본적으로 바뀌었습니다. 전통적인 검색 엔진은 여전히 중요하지만, 이제 ChatGPT, Perplexity, Gemini가 "앱을 만들어줄 개발자가 누구인가요?" 같은 질문에 직접 답하고 있습니다. 개발자의 사이트는 이 모든 채널에서 작동해야 합니다. 그렇지 않으면 보이지 않게 됩니다.
+## 보이지 않는 개발자 문제
 
-zzoo.dev는 이 현실을 위해 만든 개인 브랜딩 사이트입니다. 전통 검색을 위한 SEO, AI 답변 엔진을 위한 AEO, 생성형 AI를 위한 GEO — 세 가지 발견 채널 모두에 최적화되어, 어떤 방식으로 검색하든 제 전문성이 발견됩니다.
+멋진 것들을 만들지만 아무도 당신을 찾지 못합니다. 포트폴리오는 한 달에 방문자 열몇 명 — 전부 이미 URL을 알고 있는 사람들. 그 사이 잠재 고객과 채용 담당자들은 구글에서 검색하고, ChatGPT에 물어보고, Perplexity에서 당신 같은 개발자를 찾고 있습니다.
 
-## 검색 가시성의 세 가지 축
+이 채널들에 최적화되지 않으면, 당신의 스킬을 찾는 사람들의 99%에게 보이지 않습니다.
 
-### SEO — 전통 검색의 기본기
+## 세 가지 발견 채널에 맞춰 설계
 
-기술적 기본기를 확실히 했습니다. 모든 페이지는 정적 생성되어 Cloudflare의 글로벌 엣지에서 서빙되며, 1초 미만의 로딩 속도를 달성합니다. 시맨틱 HTML, 올바른 헤딩 구조, EN/KO hreflang 대체 링크가 포함된 XML 사이트맵, 그리고 캐노니컬 URL 전략으로 검색 엔진이 사이트를 깔끔하게 크롤링하고 인덱싱합니다.
+zzoo.dev는 그냥 예쁜 포트폴리오가 아닙니다. 발견되도록 엔지니어링되었습니다:
 
-### AEO — 답변 엔진 최적화
+**SEO** — 정적 생성 페이지, 시맨틱 HTML, hreflang이 포함된 XML 사이트맵, 캐노니컬 URL. 인덱싱의 기술적 기본기.
 
-Google AI Overview나 Perplexity 같은 AI 시스템이 답변을 추출할 때 구조화된 데이터에 의존합니다. 사이트에는 `WebSite`, `Person`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList` JSON-LD 스키마가 임베딩되어 있어서, 답변 엔진이 제가 누구인지, 무엇을 만들었는지, 무엇을 썼는지 기계 판독 가능한 맥락으로 이해할 수 있습니다. RSS 피드는 인덱싱을 위한 실시간 콘텐츠 파이프라인을 제공합니다.
+**AEO** — JSON-LD 스키마(`Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList`)가 AI 답변 엔진에 전문성에 대한 구조화된 맥락을 제공.
 
-### GEO — 생성형 엔진 최적화
+**GEO** — `llms.txt`와 깔끔한 MDX 콘텐츠로 "앱을 만들어줄 개발자가 누구?" 질문에 생성형 AI가 정확하게 답할 수 있도록.
 
-ChatGPT나 Claude를 구동하는 대규모 언어 모델을 위해 사이트는 `llms.txt`를 제공합니다. 사이트의 목적, 구조, 핵심 콘텐츠를 LLM이 직접 소비할 수 있는 포맷으로 기술한 일반 텍스트 파일입니다. 깔끔하고 잘 구조화된 MDX 콘텐츠와 이중 언어 지원이 결합되어, 사용자가 관련 주제를 물었을 때 생성형 엔진이 제 작업을 정확하게 표현할 수 있습니다.
+## 오픈소스, 포크 환영
 
-## 사이트 구조
-
-각 페이지는 사람과 기계 모두를 위해 설계했습니다. 방문자는 자연스럽게 신뢰를 쌓아가고, 모든 라우트는 AI 엔진이 필요로 하는 구조화된 데이터를 출력합니다.
-
-- **홈** — 대표 프로젝트, 핵심 역량, `Person` + `WebSite` JSON-LD가 포함된 랜딩 페이지
-- **프로젝트** — 문제/접근/아키텍처를 서술하는 케이스 스터디, 각각 `SoftwareApplication` 스키마 포함
-- **블로그** — `BlogPosting` 스키마, 태그 기반 필터링, RSS 피드가 통합된 기술 포스트
-- **소개** — 구조화된 바이오 데이터가 포함된 경력 배경
-- **연락처** — 어떤 채널을 통해 저를 발견했든 연락할 수 있는 이메일 기반 수단
+전체 코드베이스가 오픈소스입니다. Next.js 16, React 19, TypeScript, Tailwind CSS v4로 구축되어 Cloudflare Workers에 배포됩니다. 클론하고, 커스텀하고, 자신만의 버전을 배포하세요.

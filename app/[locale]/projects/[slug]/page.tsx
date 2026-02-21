@@ -6,6 +6,8 @@ import { Link } from "@/i18n/navigation";
 import {
   getAllCaseStudies,
   getCaseStudy,
+  getCaseStudyContent,
+  hasCaseStudy,
   getDesignDoc,
   hasDesignDoc,
 } from "@/lib/content";
@@ -19,10 +21,16 @@ import { siteConfig } from "@/lib/site-config";
 import { JsonLd } from "@/components/json-ld";
 import { D2Diagram } from "@/components/d2-diagram";
 import { ProjectDetailTabs } from "@/components/project-detail-tabs";
+import { ProjectImageGallery } from "@/components/project-image-gallery";
+import { ProductHero } from "@/components/product-hero";
+import { FeatureGrid } from "@/components/feature-grid";
+import { CompetitorComparison } from "@/components/competitor-comparison";
+import { ProductCTA } from "@/components/product-cta";
+import { VideoEmbed } from "@/components/video-embed";
 import { compileMDX } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
-import { ProjectImageGallery } from "@/components/project-image-gallery";
 import { ExternalLink, Github, FileText } from "lucide-react";
+import type { CaseStudyMeta } from "@/lib/types";
 
 const mdxOptions = {
   parseFrontmatter: false,
@@ -46,12 +54,21 @@ export async function generateMetadata({
   const { slug, locale } = await params;
   const study = getCaseStudy(locale, slug);
   if (!study) return {};
-  return buildPageMeta({
-    locale,
-    pathname: `/projects/${slug}`,
-    title: study.meta.title,
-    description: study.meta.description,
-  });
+
+  const allKeywords = [
+    ...(study.meta.keywords?.primary ?? []),
+    ...(study.meta.keywords?.longTail ?? []),
+  ];
+
+  return {
+    ...buildPageMeta({
+      locale,
+      pathname: `/projects/${slug}`,
+      title: study.meta.title,
+      description: study.meta.description,
+    }),
+    ...(allKeywords.length > 0 ? { keywords: allKeywords } : {}),
+  };
 }
 
 export default async function ProjectDetailPage({
@@ -65,11 +82,24 @@ export default async function ProjectDetailPage({
 
   if (!study) notFound();
 
-  const { content: overviewMdx } = await compileMDX({
+  // Compile main marketing content (en.mdx / ko.mdx)
+  const { content: productMdx } = await compileMDX({
     source: study.content,
     options: mdxOptions,
   });
 
+  // Compile case study content (casestudy.en.mdx / casestudy.ko.mdx)
+  const caseStudyDoc = getCaseStudyContent(locale, slug);
+  let caseStudyMdx: React.ReactNode = null;
+  if (caseStudyDoc) {
+    const { content: compiled } = await compileMDX({
+      source: caseStudyDoc.content,
+      options: mdxOptions,
+    });
+    caseStudyMdx = compiled;
+  }
+
+  // Compile design doc (design.en.mdx / design.ko.mdx)
   const designDoc = getDesignDoc(locale, slug);
   let designDocMdx: React.ReactNode = null;
   if (designDoc) {
@@ -83,17 +113,22 @@ export default async function ProjectDetailPage({
   const pageUrl = buildCanonicalUrl(locale, `/projects/${slug}`);
   const breadcrumbLabel = locale === "ko" ? "프로젝트" : "Projects";
 
+  const projectJsonLd = buildProjectJsonLd({
+    title: study.meta.title,
+    description: study.meta.description,
+    url: pageUrl,
+    datePublished: study.meta.launchDate,
+    techStack: study.meta.techStack,
+    keywords: [
+      ...(study.meta.keywords?.primary ?? []),
+      ...(study.meta.keywords?.longTail ?? []),
+    ],
+    category: study.meta.category,
+  });
+
   return (
     <>
-      <JsonLd
-        data={buildProjectJsonLd({
-          title: study.meta.title,
-          description: study.meta.description,
-          url: pageUrl,
-          datePublished: study.meta.launchDate,
-          techStack: study.meta.techStack,
-        })}
-      />
+      <JsonLd data={projectJsonLd} />
       <JsonLd
         data={buildBreadcrumbJsonLd([
           { name: "Home", url: siteConfig.url },
@@ -103,8 +138,10 @@ export default async function ProjectDetailPage({
       />
       <ProjectDetailContent
         meta={study.meta}
-        overviewContent={overviewMdx}
+        productContent={productMdx}
+        caseStudyContent={caseStudyMdx}
         designDocContent={designDocMdx}
+        hasCaseStudyContent={hasCaseStudy(locale, slug)}
         hasDesign={hasDesignDoc(locale, slug)}
         slug={slug}
       />
@@ -114,17 +151,71 @@ export default async function ProjectDetailPage({
 
 function ProjectDetailContent({
   meta,
-  overviewContent,
+  productContent,
+  caseStudyContent,
   designDocContent,
+  hasCaseStudyContent,
   hasDesign,
 }: {
-  meta: NonNullable<ReturnType<typeof getCaseStudy>>["meta"];
-  overviewContent: React.ReactNode;
+  meta: CaseStudyMeta;
+  productContent: React.ReactNode;
+  caseStudyContent: React.ReactNode;
   designDocContent: React.ReactNode;
+  hasCaseStudyContent: boolean;
   hasDesign: boolean;
   slug: string;
 }) {
   const t = useTranslations("project");
+
+  const hasMultipleTabs = hasCaseStudyContent || hasDesign;
+
+  const proseClassName =
+    "prose prose-lg prose-neutral dark:prose-invert prose-custom prose-headings:tracking-tight prose-h2:text-xl prose-h2:sm:text-2xl prose-p:text-base prose-p:leading-relaxed prose-a:text-primary prose-a:underline-offset-4 prose-a:decoration-primary/30 hover:prose-a:decoration-primary";
+
+  // Build the full product tab content with marketing components
+  const fullProductContent = (
+    <div className="space-y-12">
+      {/* Hero: tagline + CTA + hero image */}
+      {meta.tagline && (
+        <ProductHero
+          tagline={meta.tagline}
+          heroImage={meta.heroImage}
+          title={meta.title}
+          ctaPrimary={meta.cta?.primary}
+          ctaSecondary={meta.cta?.secondary}
+        />
+      )}
+
+      {/* MDX body */}
+      <div className={proseClassName}>{productContent}</div>
+
+      {/* Feature grid */}
+      {meta.features && meta.features.length > 0 && (
+        <FeatureGrid features={meta.features} heading={t("features")} />
+      )}
+
+      {/* Competitor comparison */}
+      {meta.competitors && meta.competitors.length > 0 && (
+        <CompetitorComparison
+          competitors={meta.competitors}
+          heading={t("how_its_different")}
+          vsLabel={t("vs")}
+        />
+      )}
+
+      {/* Video embed */}
+      {meta.video && <VideoEmbed url={meta.video} title={meta.title} />}
+
+      {/* Bottom CTA */}
+      {meta.cta && (
+        <ProductCTA
+          primary={meta.cta.primary}
+          secondary={meta.cta.secondary}
+          heading={t("get_started")}
+        />
+      )}
+    </div>
+  );
 
   return (
     <section className="py-10 md:py-16">
@@ -157,8 +248,8 @@ function ProjectDetailContent({
             {meta.description}
           </p>
 
-          {/* Product Links */}
-          {meta.links && (
+          {/* Product Links (shown when no tagline/CTA — fallback for legacy) */}
+          {!meta.tagline && meta.links && (
             <div className="mt-6 flex flex-wrap gap-3">
               {meta.links.live && (
                 <a
@@ -221,12 +312,14 @@ function ProjectDetailContent({
         {/* Divider */}
         <div className="mt-10" />
 
-        {/* Content — tabs if design doc exists, otherwise just overview */}
-        {hasDesign && designDocContent ? (
+        {/* Content — tabs if case study or design doc exists, otherwise just product content */}
+        {hasMultipleTabs ? (
           <ProjectDetailTabs
-            overviewLabel={t("tab_overview")}
+            productLabel={t("tab_product")}
+            caseStudyLabel={t("tab_case_study")}
             designDocLabel={t("tab_design_doc")}
-            overviewContent={overviewContent}
+            productContent={fullProductContent}
+            caseStudyContent={caseStudyContent}
             designDocContent={
               <>
                 {designDocContent}
@@ -242,11 +335,11 @@ function ProjectDetailContent({
                 )}
               </>
             }
+            hasCaseStudy={hasCaseStudyContent}
+            hasDesignDoc={hasDesign}
           />
         ) : (
-          <div className="prose prose-lg prose-neutral dark:prose-invert prose-custom prose-headings:tracking-tight prose-h2:text-xl prose-h2:sm:text-2xl prose-p:text-base prose-p:leading-relaxed prose-a:text-primary prose-a:underline-offset-4 prose-a:decoration-primary/30 hover:prose-a:decoration-primary">
-            {overviewContent}
-          </div>
+          fullProductContent
         )}
       </div>
     </section>

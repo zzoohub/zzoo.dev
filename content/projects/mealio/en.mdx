@@ -1,6 +1,6 @@
 ---
 title: "Mealio — Photo-First Meal Tracking App"
-description: "A cross-platform mobile app that replaces tedious food logging with camera-based meal capture. Built with React Native/Expo and a Rust API, deployed to App Store, Play Store, and GCP Cloud Run."
+description: "Log meals in 15 seconds with just a photo. No calorie databases, no manual input. The easiest meal tracking app for people who gave up on food diaries."
 clientType: "Personal Product"
 status: "active"
 techStack:
@@ -21,27 +21,61 @@ d2Diagram: "mealio-architecture-simplified"
 links:
   live: "https://mealio.zzooapp.com"
   github: "https://github.com/zzoohub/mealio"
+
+tagline: "Log meals in 15 seconds. Just take a photo."
+category: "mobile-app"
+keywords:
+  primary:
+    - "meal tracking app"
+    - "food photo diary"
+  longTail:
+    - "meal tracker without calorie counting"
+    - "photo-based food diary app"
+competitors:
+  - name: "MyFitnessPal"
+    differentiator: "No calorie database to search — just snap a photo and you're done in 15 seconds"
+  - name: "Lose It!"
+    differentiator: "No manual text input required — the camera is your primary interface"
+  - name: "Diet Camera AI"
+    differentiator: "No AI guessing your food — your photo IS the record, simple and honest"
+cta:
+  primary:
+    label: "App Store"
+    url: "https://mealio.zzooapp.com"
+  secondary:
+    label: "View Source"
+    url: "https://github.com/zzoohub/mealio"
+features:
+  - title: "15-Second Capture"
+    description: "From camera tap to saved — consistently under 15 seconds"
+    icon: "camera"
+  - title: "No Calorie Lookup"
+    description: "Skip the database search. Your photo is the record."
+    icon: "search-x"
+  - title: "Guest Mode"
+    description: "Try instantly with local storage. No signup required."
+    icon: "user"
 ---
 
-## Problem
+## Tried tracking meals before?
 
-Most meal tracking apps demand tedious manual input — searching databases, weighing portions, typing descriptions. The friction is so high that users abandon logging within days. I wanted a meal tracker that felt as natural as taking a photo: snap, tag, done.
+You probably lasted about 3 days. Most meal tracking apps make you search a calorie database, weigh portions, and type descriptions. By day 3, you're logging "lunch" with no details — or not logging at all.
 
-## Solution
+The problem isn't you. The problem is friction.
 
-Mealio is a photo-first meal tracking app designed around a single principle: **log a meal in under 15 seconds**. The camera is the primary interface. Users snap a photo, add optional nutrition details, and build a visual food diary over time.
+## Photo first, everything else optional
 
-### Key Design Decisions
+Mealio flips the script: **your camera is the input**. Take a photo of your meal, add a quick tag if you want, and move on. Your visual food diary builds itself over time.
 
-- **Camera-centric UX** — The capture flow is the core experience. Photo first, details optional. This dramatically lowers the barrier to consistent logging.
-- **Dual-mode architecture** — Guest mode (local storage, max 10 entries) lets users try the app instantly. Authenticated mode unlocks cloud sync, unlimited entries, and statistics.
-- **Feature-Sliced Design** — The mobile codebase follows strict layer boundaries (`app → widgets → features → entities → shared`) for maintainable growth.
-- **Rust API** — Chose Axum over Node.js for type safety, performance, and memory efficiency on Cloud Run's autoscaling (0–3 instances).
+No calorie databases. No portion sizes. No guilt about missing details. Just an honest record of what you actually ate.
 
-## Results
+## How it works
 
-- **15-second capture flow** — From camera tap to saved entry, consistently under 15 seconds
-- **Cross-platform** — Single codebase serving both iOS (App Store) and Android (Play Store)
-- **Zero-to-three autoscaling** — Cloud Run scales to zero when idle, keeping costs minimal
-- **9 database migrations** — Stable schema evolution without downtime
-- **4 CI/CD pipelines** — Automated API deploy, mobile CI, EAS builds, and OTA updates
+1. **Tap the camera** — it's the main button, right where your thumb lands
+2. **Snap your meal** — one photo, that's all it takes
+3. **Add details (optional)** — tags, notes, nutrition info if you want
+4. **Done in 15 seconds** — your meal is logged with a timestamped photo
+
+## Try before you sign up
+
+Guest mode gives you 10 free entries stored locally on your device. No email, no password, no credit card. Just open the app and start logging. When you're ready for cloud sync, unlimited entries, and stats — sign up takes 30 seconds.

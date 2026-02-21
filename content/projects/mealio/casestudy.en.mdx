@@ -1,0 +1,26 @@
+---
+title: "Mealio — Case Study"
+---
+
+## Problem
+
+Most meal tracking apps demand tedious manual input — searching databases, weighing portions, typing descriptions. The friction is so high that users abandon logging within days. I wanted a meal tracker that felt as natural as taking a photo: snap, tag, done.
+
+## Solution
+
+Mealio is a photo-first meal tracking app designed around a single principle: **log a meal in under 15 seconds**. The camera is the primary interface. Users snap a photo, add optional nutrition details, and build a visual food diary over time.
+
+### Key Design Decisions
+
+- **Camera-centric UX** — The capture flow is the core experience. Photo first, details optional. This dramatically lowers the barrier to consistent logging.
+- **Dual-mode architecture** — Guest mode (local storage, max 10 entries) lets users try the app instantly. Authenticated mode unlocks cloud sync, unlimited entries, and statistics.
+- **Feature-Sliced Design** — The mobile codebase follows strict layer boundaries (`app → widgets → features → entities → shared`) for maintainable growth.
+- **Rust API** — Chose Axum over Node.js for type safety, performance, and memory efficiency on Cloud Run's autoscaling (0–3 instances).
+
+## Results
+
+- **15-second capture flow** — From camera tap to saved entry, consistently under 15 seconds
+- **Cross-platform** — Single codebase serving both iOS (App Store) and Android (Play Store)
+- **Zero-to-three autoscaling** — Cloud Run scales to zero when idle, keeping costs minimal
+- **9 database migrations** — Stable schema evolution without downtime
+- **4 CI/CD pipelines** — Automated API deploy, mobile CI, EAS builds, and OTA updates

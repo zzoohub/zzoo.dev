@@ -8,6 +8,7 @@ import {
   buildArticleJsonLd,
   buildProjectJsonLd,
   buildBreadcrumbJsonLd,
+  buildFAQJsonLd,
 } from "./seo";
 import { siteConfig } from "./site-config";
 
@@ -667,6 +668,240 @@ describe("seo", () => {
         techStack: ["React"],
       });
       expect(result.applicationCategory).toBe("React");
+    });
+
+    it("includes keywords when keywords array provided", () => {
+      const result = buildProjectJsonLd({
+        title: "Test",
+        description: "Description",
+        url: "https://zzoo.dev/en/projects/test",
+        datePublished: "2024-01-01T00:00:00Z",
+        keywords: ["web app", "developer tool", "react"],
+      });
+      expect(result.keywords).toBe("web app, developer tool, react");
+    });
+
+    it("excludes keywords when keywords is empty array", () => {
+      const result = buildProjectJsonLd({
+        title: "Test",
+        description: "Description",
+        url: "https://zzoo.dev/en/projects/test",
+        datePublished: "2024-01-01T00:00:00Z",
+        keywords: [],
+      });
+      expect(result).not.toHaveProperty("keywords");
+    });
+
+    it("excludes keywords when keywords is undefined", () => {
+      const result = buildProjectJsonLd({
+        title: "Test",
+        description: "Description",
+        url: "https://zzoo.dev/en/projects/test",
+        datePublished: "2024-01-01T00:00:00Z",
+      });
+      expect(result).not.toHaveProperty("keywords");
+    });
+
+    it("includes operatingSystem for mobile-app category", () => {
+      const result = buildProjectJsonLd({
+        title: "Test",
+        description: "Description",
+        url: "https://zzoo.dev/en/projects/test",
+        datePublished: "2024-01-01T00:00:00Z",
+        category: "mobile-app",
+      });
+      expect(result.operatingSystem).toBe("iOS, Android");
+    });
+
+    it("includes applicationCategory for mobile-app category from categoryToAppCategory", () => {
+      const result = buildProjectJsonLd({
+        title: "Test",
+        description: "Description",
+        url: "https://zzoo.dev/en/projects/test",
+        datePublished: "2024-01-01T00:00:00Z",
+        category: "mobile-app",
+      });
+      // categoryToAppCategory overrides techStack-based applicationCategory
+      expect(result.applicationCategory).toBe("HealthApplication");
+    });
+
+    it("includes operatingSystem for chrome-extension category", () => {
+      const result = buildProjectJsonLd({
+        title: "Test",
+        description: "Description",
+        url: "https://zzoo.dev/en/projects/test",
+        datePublished: "2024-01-01T00:00:00Z",
+        category: "chrome-extension",
+      });
+      expect(result.operatingSystem).toBe("Chrome");
+      expect(result.applicationCategory).toBe("BrowserApplication");
+    });
+
+    it("includes operatingSystem for web category", () => {
+      const result = buildProjectJsonLd({
+        title: "Test",
+        description: "Description",
+        url: "https://zzoo.dev/en/projects/test",
+        datePublished: "2024-01-01T00:00:00Z",
+        category: "web",
+      });
+      expect(result.operatingSystem).toBe("All");
+      expect(result.applicationCategory).toBe("WebApplication");
+    });
+
+    it("includes operatingSystem for cli category", () => {
+      const result = buildProjectJsonLd({
+        title: "Test",
+        description: "Description",
+        url: "https://zzoo.dev/en/projects/test",
+        datePublished: "2024-01-01T00:00:00Z",
+        category: "cli",
+      });
+      expect(result.operatingSystem).toBe("Windows, macOS, Linux");
+      expect(result.applicationCategory).toBe("DeveloperApplication");
+    });
+
+    it("excludes operatingSystem when category is undefined", () => {
+      const result = buildProjectJsonLd({
+        title: "Test",
+        description: "Description",
+        url: "https://zzoo.dev/en/projects/test",
+        datePublished: "2024-01-01T00:00:00Z",
+      });
+      expect(result).not.toHaveProperty("operatingSystem");
+    });
+
+    it("excludes operatingSystem for unknown category", () => {
+      const result = buildProjectJsonLd({
+        title: "Test",
+        description: "Description",
+        url: "https://zzoo.dev/en/projects/test",
+        datePublished: "2024-01-01T00:00:00Z",
+        category: "unknown-category",
+      });
+      expect(result).not.toHaveProperty("operatingSystem");
+    });
+
+    it("includes offers with free price by default", () => {
+      const result = buildProjectJsonLd({
+        title: "Test",
+        description: "Description",
+        url: "https://zzoo.dev/en/projects/test",
+        datePublished: "2024-01-01T00:00:00Z",
+      });
+      expect(result.offers).toEqual({
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD",
+      });
+    });
+
+    it("category applicationCategory overrides techStack applicationCategory", () => {
+      const result = buildProjectJsonLd({
+        title: "Test",
+        description: "Description",
+        url: "https://zzoo.dev/en/projects/test",
+        datePublished: "2024-01-01T00:00:00Z",
+        techStack: ["React", "Next.js"],
+        category: "web",
+      });
+      // category mapping takes precedence via spread order
+      expect(result.applicationCategory).toBe("WebApplication");
+    });
+  });
+
+  describe("buildFAQJsonLd", () => {
+    it("returns FAQPage schema type", () => {
+      const result = buildFAQJsonLd([
+        { question: "What is this?", answer: "A great tool." },
+      ]);
+      expect(result["@type"]).toBe("FAQPage");
+    });
+
+    it("includes schema.org context", () => {
+      const result = buildFAQJsonLd([
+        { question: "What is this?", answer: "A great tool." },
+      ]);
+      expect(result["@context"]).toBe("https://schema.org");
+    });
+
+    it("maps items to mainEntity array of Question objects", () => {
+      const result = buildFAQJsonLd([
+        { question: "How does it work?", answer: "It works like magic." },
+        { question: "Is it free?", answer: "Yes, completely free." },
+      ]);
+      expect(result.mainEntity).toHaveLength(2);
+    });
+
+    it("each mainEntity item has Question type", () => {
+      const result = buildFAQJsonLd([
+        { question: "Q1?", answer: "A1." },
+        { question: "Q2?", answer: "A2." },
+      ]);
+      expect(result.mainEntity[0]["@type"]).toBe("Question");
+      expect(result.mainEntity[1]["@type"]).toBe("Question");
+    });
+
+    it("each mainEntity item has correct name (question)", () => {
+      const result = buildFAQJsonLd([
+        { question: "What is the price?", answer: "Free." },
+      ]);
+      expect(result.mainEntity[0].name).toBe("What is the price?");
+    });
+
+    it("each mainEntity item has acceptedAnswer with Answer type", () => {
+      const result = buildFAQJsonLd([
+        { question: "How to start?", answer: "Just sign up." },
+      ]);
+      expect(result.mainEntity[0].acceptedAnswer["@type"]).toBe("Answer");
+    });
+
+    it("each mainEntity item has acceptedAnswer with correct text", () => {
+      const result = buildFAQJsonLd([
+        { question: "Is it secure?", answer: "Absolutely, end-to-end encrypted." },
+      ]);
+      expect(result.mainEntity[0].acceptedAnswer.text).toBe(
+        "Absolutely, end-to-end encrypted."
+      );
+    });
+
+    it("handles empty items array", () => {
+      const result = buildFAQJsonLd([]);
+      expect(result.mainEntity).toHaveLength(0);
+      expect(Array.isArray(result.mainEntity)).toBe(true);
+    });
+
+    it("handles single FAQ item", () => {
+      const result = buildFAQJsonLd([
+        { question: "Only question?", answer: "Only answer." },
+      ]);
+      expect(result.mainEntity).toHaveLength(1);
+      expect(result.mainEntity[0].name).toBe("Only question?");
+      expect(result.mainEntity[0].acceptedAnswer.text).toBe("Only answer.");
+    });
+
+    it("handles multiple FAQ items correctly", () => {
+      const items = [
+        { question: "Q1?", answer: "A1." },
+        { question: "Q2?", answer: "A2." },
+        { question: "Q3?", answer: "A3." },
+      ];
+      const result = buildFAQJsonLd(items);
+      expect(result.mainEntity[0].name).toBe("Q1?");
+      expect(result.mainEntity[1].name).toBe("Q2?");
+      expect(result.mainEntity[2].name).toBe("Q3?");
+      expect(result.mainEntity[0].acceptedAnswer.text).toBe("A1.");
+      expect(result.mainEntity[2].acceptedAnswer.text).toBe("A3.");
+    });
+
+    it("preserves order of FAQ items", () => {
+      const items = [
+        { question: "First?", answer: "First answer." },
+        { question: "Second?", answer: "Second answer." },
+      ];
+      const result = buildFAQJsonLd(items);
+      expect(result.mainEntity[0].name).toBe("First?");
+      expect(result.mainEntity[1].name).toBe("Second?");
     });
   });
 

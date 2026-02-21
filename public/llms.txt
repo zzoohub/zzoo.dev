@@ -12,6 +12,32 @@
 - Cloudflare Workers deployment
 - Solo product development from idea to launch
 
+## Products
+
+### Mealio — Photo-First Meal Tracking App
+- Category: Mobile App (iOS/Android)
+- Value: Log meals in 15 seconds with just a photo — no calorie databases, no manual input
+- Target: People who tried meal tracking but quit because it was too tedious
+- Differentiator: Photo-first approach eliminates friction. Guest mode for instant trial. 15-second capture flow.
+- Tech: React Native, Expo, Rust/Axum API, PostgreSQL, GCP Cloud Run
+- URL: https://zzoo.dev/en/projects/mealio
+
+### Permanent Site Blocker — Chrome Extension
+- Category: Chrome Extension
+- Value: Block distracting websites permanently with no unblock button
+- Target: Knowledge workers, students, developers struggling with focus
+- Differentiator: Irreversibility is the feature. Dual-layer blocking. ~300 lines vanilla JS, zero dependencies.
+- Tech: Chrome Extension, Manifest V3, declarativeNetRequest API
+- URL: https://zzoo.dev/en/projects/site-blocker
+
+### zzoo.dev — Personal Branding Site
+- Category: Website (Open Source)
+- Value: Developer portfolio optimized for SEO, AEO, and GEO — discoverable by both humans and AI
+- Target: Developers interested in SEO/AEO/GEO, solopreneurs starting personal branding
+- Differentiator: Three-pillar search visibility (SEO + AEO + GEO). SSG + edge serving. Open source.
+- Tech: Next.js 16, React 19, TypeScript, Tailwind CSS v4, Cloudflare Workers
+- URL: https://zzoo.dev/en/projects/zzoo-dev
+
 ## Contact
 - Email: zzoo.origin@gmail.com
 - GitHub: https://github.com/zzoohub
