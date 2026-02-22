@@ -3,7 +3,11 @@ import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { getAllCaseStudies, getTestimonials } from "@/lib/content";
 import { setRequestLocale } from "next-intl/server";
-import { buildPageMeta, buildWebSiteJsonLd, buildPersonJsonLd } from "@/lib/seo";
+import {
+  buildPageMeta,
+  buildWebSiteJsonLd,
+  buildPersonJsonLd,
+} from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
 import { AvailabilityBadge } from "@/components/availability-badge";
 import { Section } from "@/components/section";
@@ -12,8 +16,8 @@ import { Testimonial } from "@/components/testimonial";
 import { CTASection } from "@/components/cta-section";
 
 const descriptions: Record<string, string> = {
-  en: "Full-stack developer and solopreneur shipping scalable web apps, solo.",
-  ko: "확장 가능한 웹 앱을 혼자서 만드는 풀스택 1인 개발자.",
+  en: "Vibe Builder. Build the Whole Damn Thing — from idea to deployment.",
+  ko: "Vibe Builder. 아이디어부터 배포까지 빠르게.",
 };
 
 export async function generateMetadata({
@@ -25,7 +29,7 @@ export async function generateMetadata({
   return buildPageMeta({
     locale,
     pathname: "/",
-    title: "zzoo.dev — Solopreneur Developer",
+    title: "zzoo.dev — Vibe Builder",
     description: descriptions[locale] ?? descriptions.en,
   });
 }
@@ -100,7 +104,11 @@ function HomeContent({
         >
           <div className="grid gap-6 md:grid-cols-2">
             {projects.map((project) => (
-              <ProjectCard key={project.slug} project={project} showThumbnail={false} />
+              <ProjectCard
+                key={project.slug}
+                project={project}
+                showThumbnail={false}
+              />
             ))}
           </div>
         </Section>

@@ -18,7 +18,8 @@ export function buildAlternates(pathname: string): Metadata["alternates"] {
     const clean = pathname === "/" ? "" : pathname;
     languages[loc] = `${siteConfig.url}/${loc}${clean}`;
   }
-  languages["x-default"] = `${siteConfig.url}/en${pathname === "/" ? "" : pathname}`;
+  languages["x-default"] =
+    `${siteConfig.url}/en${pathname === "/" ? "" : pathname}`;
 
   return {
     canonical: languages["en"],
@@ -75,9 +76,7 @@ export function buildPageMeta(options: PageMetaOptions): Metadata {
           alt: title,
         },
       ],
-      ...(type === "article" && publishedTime
-        ? { publishedTime, tags }
-        : {}),
+      ...(type === "article" && publishedTime ? { publishedTime, tags } : {}),
     },
     twitter: {
       card: "summary_large_image",
@@ -99,7 +98,7 @@ export function buildWebSiteJsonLd() {
     name: siteConfig.name,
     url: siteConfig.url,
     description:
-      "Full-stack developer and solopreneur specializing in scalable web applications and technical architecture.",
+      "Vibe Builder. Build the Whole Damn Thing — from idea to deployment.",
     inLanguage: ["en", "ko"],
   };
 }
@@ -112,14 +111,15 @@ export function buildPersonJsonLd() {
     url: siteConfig.url,
     email: siteConfig.email,
     sameAs: [siteConfig.social.github, siteConfig.social.linkedin],
-    jobTitle: "Full-stack Developer & Solopreneur",
+    jobTitle: "Vibe Builder",
     knowsAbout: [
       "Full-stack Development",
       "React",
       "Next.js",
       "TypeScript",
-      "AI-assisted Development",
+      "AI-powered Development",
       "Cloudflare Workers",
+      "Solo Product Development",
     ],
   };
 }
@@ -231,9 +231,7 @@ export function buildFAQJsonLd(items: FAQItem[]) {
   };
 }
 
-export function buildBreadcrumbJsonLd(
-  items: { name: string; url: string }[]
-) {
+export function buildBreadcrumbJsonLd(items: { name: string; url: string }[]) {
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",

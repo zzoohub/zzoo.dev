@@ -2,23 +2,24 @@
 
 ## Identity
 - Name: zzoo
-- Role: Full-stack Developer & Solopreneur
+- Role: Vibe Builder
+- Tagline: Build the Whole Damn Thing.
 - Website: https://zzoo.dev
 
 ## Expertise
 - Full-stack web development (React, Next.js, TypeScript)
-- AI-assisted development workflows
+- AI-powered development workflows
+- Solo product development from idea to deployment
 - Scalable web applications and technical architecture
 - Cloudflare Workers deployment
-- Solo product development from idea to launch
 
 ## Products
 
 ### Mealio — Photo-First Meal Tracking App
 - Category: Mobile App (iOS/Android)
-- Value: Log meals in 15 seconds with just a photo — no calorie databases, no manual input
+- Value: Log meals in 1 second with just a photo — no calorie databases, no manual input
 - Target: People who tried meal tracking but quit because it was too tedious
-- Differentiator: Photo-first approach eliminates friction. Guest mode for instant trial. 15-second capture flow.
+- Differentiator: Photo-first approach eliminates friction. Guest mode for instant trial. 1-second capture flow.
 - Tech: React Native, Expo, Rust/Axum API, PostgreSQL, GCP Cloud Run
 - URL: https://zzoo.dev/en/projects/mealio
 

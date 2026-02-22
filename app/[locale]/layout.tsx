@@ -24,8 +24,8 @@ const geistMono = Geist_Mono({
 });
 
 const descriptions: Record<string, string> = {
-  en: "Full-stack developer and solopreneur specializing in scalable web applications and technical architecture.",
-  ko: "확장 가능한 웹 애플리케이션과 기술 아키텍처를 전문으로 하는 풀스택 개발자이자 1인 개발자입니다.",
+  en: "Vibe Builder. Build the Whole Damn Thing — from idea to deployment.",
+  ko: "Vibe Builder. 아이디어부터 배포까지 빠르게.",
 };
 
 export async function generateMetadata({
@@ -37,7 +37,7 @@ export async function generateMetadata({
   return {
     metadataBase: new URL(siteConfig.url),
     title: {
-      default: "zzoo.dev — Solopreneur Developer",
+      default: "zzoo.dev — Vibe Builder",
       template: "%s | zzoo.dev",
     },
     description: descriptions[locale] ?? descriptions.en,
