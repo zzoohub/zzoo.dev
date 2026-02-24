@@ -14,6 +14,7 @@ import { JsonLd } from "@/components/json-ld";
 import { compileMDX } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import { siteConfig } from "@/lib/site-config";
+import { Comments } from "@/components/comments";
 
 export async function generateStaticParams() {
   const enPosts = getAllBlogPosts("en");
@@ -192,6 +193,9 @@ function BlogPostContent({
               </Link>
             )}
           </nav>
+
+          {/* Comments */}
+          <Comments />
         </div>
       </article>
 

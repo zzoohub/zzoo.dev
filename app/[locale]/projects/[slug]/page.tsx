@@ -31,6 +31,7 @@ import { compileMDX } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import { ExternalLink, Github, FileText } from "lucide-react";
 import type { CaseStudyMeta } from "@/lib/types";
+import { Comments } from "@/components/comments";
 
 const mdxOptions = {
   parseFrontmatter: false,
@@ -341,6 +342,9 @@ function ProjectDetailContent({
         ) : (
           fullProductContent
         )}
+
+        {/* Comments */}
+        <Comments />
       </div>
     </section>
   );
