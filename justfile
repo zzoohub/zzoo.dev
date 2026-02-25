@@ -1,5 +1,12 @@
-default:
-    echo "just running"
+set dotenv-load := false
 
-push name:
-    git add . && git commit -m "{{name}}" && git push origin main
+default:
+    @just --list
+
+# ─── Git ──────────────────────────────────────────────────────────────────────
+
+log:
+    git log --graph --oneline --all --decorate --color -20
+
+push branch="main" msg="update":
+    git add . && git commit -m "{{ msg }}" && git push origin {{ branch }}

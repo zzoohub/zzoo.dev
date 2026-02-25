@@ -14,7 +14,7 @@ Personal branding website for a solopreneur developer. Bilingual (EN/KO), static
    - Use **z-search-visibility** skill
 2. Once the implementation is complete, run the two sub-agents below in parallel:
    - Run a **z-security-reviewer** sub-agent for security audit → fix
-   - Run a **z-tester** sub-agent for testing only changed code → fix
+   - Run a **z-verifier** sub-agent for verifying changes (run tests, E2E, browser verify)
 3. Bilingual (EN/KO) based on user language preference
 4. Mobile-first responsive design
 
