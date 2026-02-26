@@ -1,5 +1,7 @@
+import type { Locale } from "next-intl";
+
+export type { Locale };
 export type AvailabilityStatus = "available" | "limited" | "booked";
-export type Locale = "en" | "ko";
 
 export const siteConfig = {
   name: "zzoo.dev",

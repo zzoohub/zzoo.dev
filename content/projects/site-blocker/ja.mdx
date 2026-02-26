@@ -1,0 +1,75 @@
+---
+title: "Permanent Site Blocker — Chrome拡張機能"
+description: "気が散るサイトを永久にブロック。解除ボタンなし、パスワード回避なし、タイマーなし。集中に本気な人のためのChrome拡張機能。"
+clientType: "Personal Product"
+status: "active"
+techStack:
+  - Chrome Extension
+  - Manifest V3
+  - JavaScript
+  - declarativeNetRequest API
+  - Chrome Storage Sync
+featured: false
+launchDate: "2026-01-04"
+thumbnail: "thumbnail.png"
+images:
+  - "screen.png"
+  - "popup.png"
+links:
+  github: "https://github.com/zzoohub/site-blocker"
+
+tagline: "気が散るサイトをブロック。解除ボタンなし。永遠に。"
+category: "chrome-extension"
+keywords:
+  primary:
+    - "site blocker chrome extension"
+    - "permanent website blocker"
+  longTail:
+    - "website blocker without unblock button"
+    - "chrome extension block youtube shorts"
+competitors:
+  - name: "BlockSite"
+    differentiator: "BlockSiteはいつでもブロックを解除できる — それでは意味がない"
+  - name: "Cold Turkey"
+    differentiator: "Cold Turkeyは有料で複雑 — こちらは無料、オープンソース、コード約300行"
+  - name: "StayFocusd"
+    differentiator: "StayFocusdは意志力に頼るタイマー方式 — こちらは選択肢そのものを排除"
+cta:
+  primary:
+    label: "GitHubで見る"
+    url: "https://github.com/zzoohub/site-blocker"
+features:
+  - title: "解除ボタンなし"
+    description: "一度ブロックしたら、唯一の解除方法は拡張機能の再インストール。それが狙いです。"
+    icon: "lock"
+  - title: "二重レイヤーブロック"
+    description: "ネットワークレベルのルール＋タブ監視。独立した2層構造で、隙間ゼロ。"
+    icon: "layers"
+  - title: "スマートパターン"
+    description: "ドメイン全体、/shortsなどの特定パス、正規表現パターンでブロック。"
+    icon: "code"
+---
+
+## こんな経験ありませんか？
+
+サイトブロッカーをインストールする。Twitter、YouTube Shorts、Redditを追加する。2時間くらい生産的な気分になる。そして「5分だけ無効にする」をクリックして、午後が丸ごと消える。
+
+どのブロッカーにも抜け道がある。パスワード、タイマー、クールダウン — どれも誘惑のその瞬間に抵抗できると想定している。でもまさにその瞬間こそ、抵抗できないのだ。
+
+## 過激な解決策：逃げ道なし
+
+Permanent Site Blockerには解除ボタンがない。パスワード回避なし。タイマーなし。「あと5分だけ」なし。
+
+一度サイトをブロックしたら、ブロックを解除する唯一の方法は**拡張機能を完全に再インストールすること** — つまりブロックリスト全体を失い、ゼロからやり直すことになる。この摩擦こそが機能なのだ。
+
+## 本当に気が散るものだけをブロック
+
+YouTubeのすべてが時間の無駄ではない。Shortsがそうだ。Redditのすべてが悪いわけではない。トップページの沼だけだ。この拡張機能なら精密にブロックできる：
+
+- **ドメイン全体** — `twitter.com` ですべてをブロック（`www.`を含む）
+- **特定のパス** — `youtube.com/shorts` でShortsだけをブロック
+- **正規表現パターン** — `youtube\.com.*[가-힣]` で韓国語のYouTubeコンテンツをブロック
+
+## データはブラウザの外に出ない
+
+アナリティクスゼロ。外部サーバーゼロ。npm依存ゼロ。拡張機能全体が約300行のバニラJavaScript。ブロックリストはChromeの内蔵ストレージ同期を使ってChrome端末間で同期される。それ以外はデータに一切触れない。

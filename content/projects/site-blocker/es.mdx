@@ -1,0 +1,75 @@
+---
+title: "Permanent Site Blocker — Extensión de Chrome"
+description: "Bloquea sitios web distractores permanentemente. Sin botón de desbloqueo, sin bypass de contraseña, sin temporizador. La extensión de Chrome para personas que van en serio con el enfoque."
+clientType: "Producto Personal"
+status: "active"
+techStack:
+  - Chrome Extension
+  - Manifest V3
+  - JavaScript
+  - declarativeNetRequest API
+  - Chrome Storage Sync
+featured: false
+launchDate: "2026-01-04"
+thumbnail: "thumbnail.png"
+images:
+  - "screen.png"
+  - "popup.png"
+links:
+  github: "https://github.com/zzoohub/site-blocker"
+
+tagline: "Bloquea sitios distractores. Sin botón de desbloqueo. Nunca."
+category: "chrome-extension"
+keywords:
+  primary:
+    - "extensión de chrome bloqueador de sitios"
+    - "bloqueador de sitios web permanente"
+  longTail:
+    - "bloqueador de sitios web sin botón de desbloqueo"
+    - "extensión de chrome bloquear youtube shorts"
+competitors:
+  - name: "BlockSite"
+    differentiator: "BlockSite te permite desactivar el bloqueo en cualquier momento — lo cual anula todo el propósito"
+  - name: "Cold Turkey"
+    differentiator: "Cold Turkey es de pago y complejo — esto es gratis, open-source y ~300 líneas de código"
+  - name: "StayFocusd"
+    differentiator: "StayFocusd usa temporizadores que dependen de la fuerza de voluntad — nosotros eliminamos la elección por completo"
+cta:
+  primary:
+    label: "Ver en GitHub"
+    url: "https://github.com/zzoohub/site-blocker"
+features:
+  - title: "Sin Botón de Desbloqueo"
+    description: "Una vez bloqueado, la única salida es reinstalar la extensión. Ese es el punto."
+    icon: "lock"
+  - title: "Bloqueo en Dos Capas"
+    description: "Reglas a nivel de red + monitoreo de pestañas. Dos capas independientes, cero huecos."
+    icon: "layers"
+  - title: "Patrones Inteligentes"
+    description: "Bloquea dominios completos, rutas específicas como /shorts, o patrones regex."
+    icon: "code"
+---
+
+## ¿Te suena familiar?
+
+Instalas un bloqueador de sitios. Agregas Twitter, YouTube Shorts, Reddit. Te sientes productivo por unas 2 horas. Luego haces clic en "desactivar por 5 minutos" y la tarde entera desaparece.
+
+Cada bloqueador te da una salida de escape. Contraseñas, temporizadores, períodos de enfriamiento — todos asumen que vas a resistir la tentación en el momento. Pero es exactamente cuando no lo harás.
+
+## La solución radical: sin escape
+
+Permanent Site Blocker no tiene botón de desbloqueo. Sin bypass de contraseña. Sin temporizador. Sin "solo 5 minutos más."
+
+Una vez que un sitio está bloqueado, la única forma de quitar el bloqueo es **reinstalar completamente la extensión** — lo cual significa que pierdes toda tu lista de bloqueos y empiezas de cero. Esa fricción es la feature.
+
+## Bloquea lo que realmente te distrae
+
+No todo YouTube es un sumidero de tiempo. Shorts sí lo es. No todo Reddit es malo. Solo la madriguera de la página principal. La extensión te permite ser preciso:
+
+- **Dominio completo** — `twitter.com` bloquea todo (incluyendo `www.`)
+- **Rutas específicas** — `youtube.com/shorts` bloquea solo Shorts
+- **Patrones regex** — `youtube\.com.*[가-힣]` bloquea contenido coreano de YouTube
+
+## Ningún dato sale de tu navegador
+
+Cero analytics. Cero servidores externos. Cero dependencias de npm. La extensión completa es ~300 líneas de JavaScript vanilla. Tu lista de bloqueos se sincroniza entre dispositivos Chrome usando la infraestructura de almacenamiento propia de Chrome. Nada más toca tus datos.

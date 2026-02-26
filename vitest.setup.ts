@@ -15,6 +15,13 @@ vi.mock("next-intl", () => ({
     }
     return key;
   },
+  hasLocale: (locales: string[], locale: string | undefined) =>
+    locale != null && locales.includes(locale),
+}));
+
+// Mock next-intl/routing
+vi.mock("next-intl/routing", () => ({
+  defineRouting: (config: Record<string, unknown>) => config,
 }));
 
 // Mock next-themes

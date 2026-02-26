@@ -1,0 +1,150 @@
+---
+title: "Por Que Escolhi Esse Stack de Infra Como Desenvolvedor Solo"
+description: "GCP Cloud Run, Neon, Cloudflare e Pulumi — um stack de infraestrutura pragmático construído para times de uma pessoa que publicam muitos projetos."
+date: "2026-02-08"
+tags:
+  - infrastructure
+  - devops
+  - solo-developer
+  - pulumi
+  - cloudflare
+  - gcp
+  - neon
+draft: false
+---
+
+Como desenvolvedor solo, eu rodo múltiplos projetos simultaneamente. Cada um precisa ser barato para operar, fácil de fazer deploy e — essa é a parte que ninguém fala — fácil de **desmontar** quando chega a hora de seguir em frente.
+
+Depois de iterar por várias combinações, eu cheguei a um stack que agora uso em projetos como [Mealio](https://github.com/zzoohub/mealio), um app de rastreamento de refeições com foco em fotos. Aqui vai o porquê de cada peça ter conquistado seu lugar.
+
+## GCP Cloud Run — O Servidor Que Não Custa Nada Quando Ocioso
+
+Cloud Run é uma plataforma de containers totalmente gerenciada que escala até zero. Essa última parte é crítica para um desenvolvedor solo.
+
+A maioria dos meus projetos tem tráfego irregular. Alguns dias recebem centenas de requisições, outros dias não recebem nenhuma. Com Cloud Run, não pago nada durante períodos ociosos. No momento em que uma requisição chega, um container sobe em segundos.
+
+Para a API Rust/Axum do Mealio, minha configuração do Cloud Run é assim:
+
+- **0–3 instâncias** com auto-scaling (escala até zero)
+- **1 CPU, 512Mi de memória** por instância
+- **80 requisições concorrentes máximas** por instância
+- Health checks para startup e liveness
+
+Comparado a rodar um VPS de $5/mês que fica ocioso 90% do tempo, Cloud Run me permite fazer deploy de serviços de produção com auto-scaling real, TLS e health checks — e só pagar pelo uso efetivo. Para um side project com pouco tráfego, isso muitas vezes significa centavos por mês.
+
+O modelo baseado em containers também significa que não estou preso a nenhum runtime. Faço deploy de binários Rust hoje, mas se quiser mudar para Go ou Node.js amanhã, a história de deploy continua a mesma: construir uma imagem Docker, fazer push, pronto.
+
+## Neon — PostgreSQL Gerenciado Sem a Complexidade
+
+Escolhi [Neon](https://neon.tech) como minha camada de banco de dados. É PostgreSQL serverless — o banco escala baseado no uso, e você ganha branching de graça.
+
+### Por que não Supabase?
+
+Supabase é um ótimo produto, e eu consideraria seriamente se seus usuários estão concentrados na Ásia. **Neon ainda não suporta a região de Seul**, o que importa se você está construindo para um público coreano. Supabase suporta, e vem com auth, storage e features de tempo real que de outra forma precisariam de serviços separados.
+
+Mas para meu caso de uso, Neon ganha por alguns motivos:
+
+1. **PostgreSQL puro** — sem camada de abstração extra. Uso SQLx com queries verificadas em tempo de compilação no Rust, e quero que o banco de dados seja simplesmente PostgreSQL.
+2. **Branching** — Posso criar um branch do banco de dados para testar migrações antes de aplicá-las em produção. Isso é incrivelmente útil quando você não tem um ambiente de staging dedicado.
+3. **Compute scale-to-zero** — similar ao Cloud Run, Neon suspende compute ocioso. Meus branches de desenvolvimento custam essencialmente nada.
+4. **Free tier generoso** — mais que suficiente para side projects e produtos em estágio inicial.
+
+No meu setup Pulumi, criar um projeto Neon são poucas linhas de código:
+
+```typescript
+const neonProject = new neon.Project("mealio", {
+  name: "mealio",
+  regionId: "aws-us-east-1",
+  pgVersion: 18,
+  historyRetentionSeconds: 21600,
+});
+```
+
+## Cloudflare — Rede Edge Por Menos
+
+Uso Cloudflare intensamente: Workers para hospedar frontend, R2 para armazenamento de objetos e a rede edge para distribuição global.
+
+### Por que não Vercel?
+
+Vercel é o padrão para deploys de Next.js, e é um produto polido. Mas como desenvolvedor solo rodando múltiplos projetos, o custo acumula rápido.
+
+O pricing da Cloudflare é dramaticamente mais generoso:
+
+- **Workers**: 100.000 requisições/dia no free tier. O free tier da Vercel é 100GB de bandwidth/mês com limites de função mais restritos.
+- **R2**: Zero taxas de egress. Isso é um diferencial gigante para apps que servem imagens ou arquivos. Custos de egress S3 podem te surpreender em escala.
+- **Distribuição global**: Cloudflare roda em 300+ data centers pelo mundo. Todo deploy está instantaneamente disponível em todo lugar, não apenas em algumas regiões.
+
+Para o Mealio, uso R2 para armazenar fotos de refeições enviadas pelos usuários. Com zero taxas de egress, nunca preciso me preocupar com um momento viral virando uma conta surpresa.
+
+A contrapartida? A experiência de desenvolvedor da Cloudflare é menos polida que a da Vercel para Next.js especificamente. Você precisa do `@cloudflare/next-on-pages` e ocasionalmente bate em edges de compatibilidade. Mas a economia de custo e performance global fazem valer a pena para quem está pagando do próprio bolso.
+
+## Pulumi — Porque Desmontar É Tão Importante Quanto Montar
+
+Essa é a peça do stack sobre a qual tenho mais opinião, e a que a maioria dos desenvolvedores solo ignora.
+
+**Como desenvolvedor solo, você vai matar mais projetos do que publicar.** Isso é normal e saudável. Você experimenta, valida ideias, segue em frente. Mas todo projeto abandonado deixa um rastro de infraestrutura: bancos de dados, buckets de armazenamento na nuvem, IAM roles, registries de containers, registros DNS, secrets.
+
+Deletar tudo isso manualmente é tedioso, propenso a erros e desmotivador. Você inevitavelmente vai esquecer algo e continuar pagando por um banco de dados que ninguém usa.
+
+Pulumi resolve isso com um comando:
+
+```bash
+pulumi destroy
+```
+
+Tudo desaparece. O serviço Cloud Run, o banco Neon, o bucket R2, os bindings de IAM, os secrets — tudo, removido de forma limpa na ordem correta de dependências.
+
+### Por que Pulumi em vez de Terraform?
+
+Ambos são ferramentas sólidas de IaC, mas Pulumi me permite escrever infraestrutura em TypeScript — a mesma linguagem que já uso diariamente. Sem HCL para aprender, sem troca de contexto. Tenho type safety, autocomplete no IDE e a capacidade de usar loops, condicionais e abstrações naturalmente.
+
+Aqui está uma versão simplificada do entry point de infraestrutura do Mealio:
+
+```typescript
+import { cloudRunService } from "./src/gcp-cloudrun";
+import { neonProject } from "./src/neon";
+import { r2Bucket } from "./src/cloudflare";
+import { secrets } from "./src/gcp-secrets";
+import { registry } from "./src/gcp-registry";
+import { wif } from "./src/gcp-iam";
+```
+
+Cada módulo é um arquivo TypeScript focado. Quando começo um novo projeto, copio a estrutura, ajusto os nomes e configs, e rodo `pulumi up`. Quando o projeto acaba, `pulumi destroy`. Sem recursos sobrando, sem contas esquecidas.
+
+### A flag protect
+
+Para recursos de produção que devem sobreviver a um destroy acidental, Pulumi tem uma opção `protect`:
+
+```typescript
+const db = new neon.Project("my-db", { ... }, { protect: true });
+```
+
+Isso me dá confiança para rodar `pulumi destroy` sabendo que recursos críticos não serão removidos acidentalmente, enquanto ainda limpa todo o resto.
+
+## O Quadro Completo
+
+Aqui está como essas peças se encaixam para um projeto típico:
+
+| Camada | Serviço | Por quê |
+|--------|---------|---------|
+| **Servidor** | GCP Cloud Run | Scale-to-zero, baseado em container, pay-per-use |
+| **Banco de Dados** | Neon | PostgreSQL serverless, branching, scale-to-zero |
+| **Frontend / CDN** | Cloudflare Workers | Edge global, zero egress, free tier generoso |
+| **Storage** | Cloudflare R2 | Compatível com S3, zero taxas de egress |
+| **Secrets** | GCP Secret Manager | Integração nativa com Cloud Run |
+| **CI/CD** | GitHub Actions | Grátis para repos públicos, autenticação WIF com GCP |
+| **IaC** | Pulumi | TypeScript, teardown fácil, proteção de recursos |
+
+## Para Que Esse Stack Otimiza
+
+Esse não é o stack para uma startup com um time de 10 engenheiros e venture capital. Esse é um stack para um desenvolvedor solo que:
+
+- **Roda múltiplos projetos** e precisa que cada um seja barato em repouso
+- **Publica rápido** sem gerenciar Kubernetes ou VMs
+- **Pensa no ciclo completo** — incluindo encerramento gracioso
+- **Paga do próprio bolso** e quer custos previsíveis baseados em uso
+- **Valoriza simplicidade** mais que ter todo serviço gerenciado de um único fornecedor
+
+O fio comum em todas essas escolhas é **economia scale-to-zero e simplicidade operacional**. Quando um projeto está ativo, a infraestrutura escala para dar conta. Quando não está, custa quase nada. E quando chega a hora de dizer adeus, um comando limpa tudo.
+
+Essa é a liberdade de infraestrutura que um desenvolvedor solo realmente precisa.

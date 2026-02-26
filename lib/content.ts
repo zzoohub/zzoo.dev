@@ -2,13 +2,46 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import type { AboutData, BlogPostMeta, CaseStudyMeta, Testimonial } from "./types";
+import { routing } from "@/i18n/routing";
 
 const contentDir = path.join(process.cwd(), "content");
+const FALLBACK_LOCALE = "en";
+const ALLOWED_LOCALES = new Set<string>(routing.locales);
 
 const SAFE_SLUG = /^[a-zA-Z0-9_-]+$/;
 
 function isValidSlug(slug: string): boolean {
   return SAFE_SLUG.test(slug);
+}
+
+function safeLocale(locale: string): string {
+  return ALLOWED_LOCALES.has(locale) ? locale : FALLBACK_LOCALE;
+}
+
+/** Resolve a content file path, falling back to FALLBACK_LOCALE if the requested locale file doesn't exist. */
+function resolveContentPath(dir: string, locale: string, filename?: string): string | null {
+  const loc = safeLocale(locale);
+  const name = filename ?? `${loc}.mdx`;
+  const primary = path.join(dir, name);
+  if (fs.existsSync(primary)) return primary;
+
+  if (loc !== FALLBACK_LOCALE) {
+    const fallbackName = filename
+      ? filename.replace(new RegExp(`\\.${loc}\\.mdx$`), `.${FALLBACK_LOCALE}.mdx`)
+      : `${FALLBACK_LOCALE}.mdx`;
+    const fallback = path.join(dir, fallbackName);
+    if (fs.existsSync(fallback)) return fallback;
+  }
+
+  return null;
+}
+
+/** Resolve the effective locale for a content file — returns the requested locale if its file exists, otherwise FALLBACK_LOCALE. */
+function resolveContentLocale(dir: string, locale: string): string {
+  const loc = safeLocale(locale);
+  const primary = path.join(dir, `${loc}.mdx`);
+  if (fs.existsSync(primary)) return loc;
+  return FALLBACK_LOCALE;
 }
 
 function isValidUrl(url: unknown): url is string {
@@ -33,14 +66,14 @@ function sanitizeLinks(
   return Object.keys(result).length > 0 ? result : undefined;
 }
 
+const SAFE_IMAGE_PATH = /^[a-zA-Z0-9._-]+\.(png|jpg|jpeg|gif|webp|svg|avif)$/i;
+
 function sanitizeImages(images: unknown): string[] | undefined {
   if (!Array.isArray(images)) return undefined;
   const valid = images.filter(
     (v): v is string =>
       typeof v === "string" &&
-      v.length > 0 &&
-      !v.includes("..") &&
-      !v.startsWith("//")
+      (v.startsWith("/") ? !v.includes("..") && !v.startsWith("//") : SAFE_IMAGE_PATH.test(v))
   );
   return valid.length > 0 ? valid : undefined;
 }
@@ -135,8 +168,10 @@ function toDateString(value: unknown): string {
   return String(value);
 }
 
+const CJK_LOCALES = new Set(["ko", "ja"]);
+
 function calculateReadingTime(content: string, locale: string): number {
-  if (locale === "ko") {
+  if (CJK_LOCALES.has(locale)) {
     return Math.ceil(content.length / 300);
   }
   const words = content.trim().split(/\s+/).filter(Boolean).length;
@@ -152,10 +187,15 @@ export function getAllBlogPosts(locale: string): BlogPostMeta[] {
     return fs.statSync(entryPath).isDirectory();
   });
 
+  const seen = new Set<string>();
   const posts = slugDirs
     .map((slug) => {
-      const filePath = path.join(dir, slug, `${locale}.mdx`);
+      const slugDir = path.join(dir, slug);
+      const effectiveLocale = resolveContentLocale(slugDir, locale);
+      const filePath = path.join(slugDir, `${effectiveLocale}.mdx`);
       if (!fs.existsSync(filePath)) return null;
+      if (seen.has(slug)) return null;
+      seen.add(slug);
       const raw = fs.readFileSync(filePath, "utf-8");
       const { data, content } = matter(raw);
       if (data.draft) return null;
@@ -165,9 +205,9 @@ export function getAllBlogPosts(locale: string): BlogPostMeta[] {
         description: data.description,
         date: toDateString(data.date),
         tags: data.tags ?? [],
-        locale: locale as "en" | "ko",
+        locale: effectiveLocale,
         draft: data.draft ?? false,
-        readingTime: calculateReadingTime(content, locale),
+        readingTime: calculateReadingTime(content, effectiveLocale),
       } satisfies BlogPostMeta;
     })
     .filter(Boolean) as BlogPostMeta[];
@@ -182,7 +222,9 @@ export function getBlogPost(
   slug: string
 ): { meta: BlogPostMeta; content: string } | null {
   if (!isValidSlug(slug)) return null;
-  const filePath = path.join(contentDir, "blog", slug, `${locale}.mdx`);
+  const slugDir = path.join(contentDir, "blog", slug);
+  const effectiveLocale = resolveContentLocale(slugDir, locale);
+  const filePath = path.join(slugDir, `${effectiveLocale}.mdx`);
   if (!fs.existsSync(filePath)) return null;
 
   const raw = fs.readFileSync(filePath, "utf-8");
@@ -195,9 +237,9 @@ export function getBlogPost(
       description: data.description,
       date: toDateString(data.date),
       tags: data.tags ?? [],
-      locale: locale as "en" | "ko",
+      locale: effectiveLocale,
       draft: data.draft ?? false,
-      readingTime: calculateReadingTime(content, locale),
+      readingTime: calculateReadingTime(content, effectiveLocale),
     },
     content,
   };
@@ -242,10 +284,15 @@ export function getAllCaseStudies(locale: string): CaseStudyMeta[] {
     return fs.statSync(entryPath).isDirectory();
   });
 
+  const seen = new Set<string>();
   const studies = slugDirs
     .map((slug) => {
-      const filePath = path.join(dir, slug, `${locale}.mdx`);
+      const slugDir = path.join(dir, slug);
+      const effectiveLocale = resolveContentLocale(slugDir, locale);
+      const filePath = path.join(slugDir, `${effectiveLocale}.mdx`);
       if (!fs.existsSync(filePath)) return null;
+      if (seen.has(slug)) return null;
+      seen.add(slug);
       const raw = fs.readFileSync(filePath, "utf-8");
       const { data } = matter(raw);
       return parseCaseStudyMeta(data, slug);
@@ -262,7 +309,9 @@ export function getCaseStudy(
   slug: string
 ): { meta: CaseStudyMeta; content: string } | null {
   if (!isValidSlug(slug)) return null;
-  const filePath = path.join(contentDir, "projects", slug, `${locale}.mdx`);
+  const slugDir = path.join(contentDir, "projects", slug);
+  const effectiveLocale = resolveContentLocale(slugDir, locale);
+  const filePath = path.join(slugDir, `${effectiveLocale}.mdx`);
   if (!fs.existsSync(filePath)) return null;
 
   const raw = fs.readFileSync(filePath, "utf-8");
@@ -276,13 +325,8 @@ export function getCaseStudy(
 
 export function hasCaseStudy(locale: string, slug: string): boolean {
   if (!isValidSlug(slug)) return false;
-  const filePath = path.join(
-    contentDir,
-    "projects",
-    slug,
-    `casestudy.${locale}.mdx`
-  );
-  return fs.existsSync(filePath);
+  const dir = path.join(contentDir, "projects", slug);
+  return resolveContentPath(dir, locale, `casestudy.${locale}.mdx`) !== null;
 }
 
 export function getCaseStudyContent(
@@ -290,13 +334,9 @@ export function getCaseStudyContent(
   slug: string
 ): { meta: CaseStudyMeta; content: string } | null {
   if (!isValidSlug(slug)) return null;
-  const filePath = path.join(
-    contentDir,
-    "projects",
-    slug,
-    `casestudy.${locale}.mdx`
-  );
-  if (!fs.existsSync(filePath)) return null;
+  const dir = path.join(contentDir, "projects", slug);
+  const filePath = resolveContentPath(dir, locale, `casestudy.${locale}.mdx`);
+  if (!filePath) return null;
 
   const raw = fs.readFileSync(filePath, "utf-8");
   const { content } = matter(raw);
@@ -312,13 +352,8 @@ export function getCaseStudyContent(
 
 export function hasDesignDoc(locale: string, slug: string): boolean {
   if (!isValidSlug(slug)) return false;
-  const filePath = path.join(
-    contentDir,
-    "projects",
-    slug,
-    `design.${locale}.mdx`
-  );
-  return fs.existsSync(filePath);
+  const dir = path.join(contentDir, "projects", slug);
+  return resolveContentPath(dir, locale, `design.${locale}.mdx`) !== null;
 }
 
 export function getDesignDoc(
@@ -326,13 +361,9 @@ export function getDesignDoc(
   slug: string
 ): { meta: CaseStudyMeta; content: string } | null {
   if (!isValidSlug(slug)) return null;
-  const filePath = path.join(
-    contentDir,
-    "projects",
-    slug,
-    `design.${locale}.mdx`
-  );
-  if (!fs.existsSync(filePath)) return null;
+  const dir = path.join(contentDir, "projects", slug);
+  const filePath = resolveContentPath(dir, locale, `design.${locale}.mdx`);
+  if (!filePath) return null;
 
   const raw = fs.readFileSync(filePath, "utf-8");
   const { content } = matter(raw);
@@ -347,7 +378,9 @@ export function getDesignDoc(
 }
 
 export function getAboutContent(locale: string): AboutData | null {
-  const filePath = path.join(contentDir, "about", `${locale}.mdx`);
+  const dir = path.join(contentDir, "about");
+  const effectiveLocale = resolveContentLocale(dir, locale);
+  const filePath = path.join(dir, `${effectiveLocale}.mdx`);
   if (!fs.existsSync(filePath)) return null;
 
   const raw = fs.readFileSync(filePath, "utf-8");

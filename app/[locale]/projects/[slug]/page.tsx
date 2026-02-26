@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
-import { useTranslations } from "next-intl";
+import { hasLocale, useTranslations } from "next-intl";
+import { routing } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
 import {
   getAllCaseStudies,
@@ -39,12 +40,9 @@ const mdxOptions = {
 };
 
 export async function generateStaticParams() {
-  const enStudies = getAllCaseStudies("en");
-  const koStudies = getAllCaseStudies("ko");
-  return [
-    ...enStudies.map((s) => ({ slug: s.slug })),
-    ...koStudies.map((s) => ({ slug: s.slug })),
-  ];
+  return routing.locales.flatMap((locale) =>
+    getAllCaseStudies(locale).map((s) => ({ slug: s.slug }))
+  );
 }
 
 export async function generateMetadata({
@@ -78,6 +76,7 @@ export default async function ProjectDetailPage({
   params: Promise<{ slug: string; locale: string }>;
 }) {
   const { slug, locale } = await params;
+  if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
   const study = getCaseStudy(locale, slug);
 

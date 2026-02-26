@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Link } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { hasLocale, useTranslations } from "next-intl";
 import { getAllCaseStudies, getTestimonials } from "@/lib/content";
 import { setRequestLocale } from "next-intl/server";
+import { notFound } from "next/navigation";
+import { routing } from "@/i18n/routing";
 import {
   buildPageMeta,
   buildWebSiteJsonLd,
@@ -40,6 +42,7 @@ export default async function HomePage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
   const projects = getAllCaseStudies(locale).filter((p) => p.featured);
   const testimonials = getTestimonials().filter((t) => t.featured);

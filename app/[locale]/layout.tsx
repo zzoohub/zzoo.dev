@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
-import { NextIntlClientProvider } from "next-intl";
+import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
@@ -25,6 +25,10 @@ const geistMono = Geist_Mono({
 
 const descriptions: Record<string, string> = {
   en: "Vibe Builder. Build the Whole Damn Thing — from idea to deployment.",
+  es: "Vibe Builder. Construye todo — de la idea al despliegue.",
+  "pt-BR": "Vibe Builder. Construa tudo — da ideia ao deploy.",
+  id: "Vibe Builder. Bangun semuanya — dari ide sampai deployment.",
+  ja: "Vibe Builder. アイデアからデプロイまで、全部つくる。",
   ko: "Vibe Builder. 아이디어부터 배포까지 빠르게.",
 };
 
@@ -58,7 +62,7 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
 
-  if (!routing.locales.includes(locale as "en" | "ko")) {
+  if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
 

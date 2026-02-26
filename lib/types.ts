@@ -4,7 +4,7 @@ export interface BlogPostMeta {
   description: string;
   date: string;
   tags: string[];
-  locale: "en" | "ko";
+  locale: string;
   draft?: boolean;
   readingTime: number;
 }

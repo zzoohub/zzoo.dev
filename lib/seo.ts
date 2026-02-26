@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { siteConfig } from "./site-config";
+import { routing } from "@/i18n/routing";
 
-const locales = ["en", "ko"] as const;
+const locales = routing.locales;
 
 // ---------------------------------------------------------------------------
 // URL helpers
@@ -29,6 +30,15 @@ export function buildAlternates(pathname: string): Metadata["alternates"] {
     },
   };
 }
+
+const ogLocaleMap: Record<string, string> = {
+  en: "en_US",
+  es: "es_ES",
+  "pt-BR": "pt_BR",
+  id: "id_ID",
+  ja: "ja_JP",
+  ko: "ko_KR",
+};
 
 // ---------------------------------------------------------------------------
 // Page metadata builder
@@ -66,7 +76,7 @@ export function buildPageMeta(options: PageMetaOptions): Metadata {
       description,
       url,
       siteName: siteConfig.name,
-      locale: locale === "ko" ? "ko_KR" : "en_US",
+      locale: ogLocaleMap[locale] ?? "en_US",
       type: type === "article" ? "article" : "website",
       images: [
         {
@@ -99,7 +109,7 @@ export function buildWebSiteJsonLd() {
     url: siteConfig.url,
     description:
       "Vibe Builder. Build the Whole Damn Thing — from idea to deployment.",
-    inLanguage: ["en", "ko"],
+    inLanguage: [...routing.locales],
   };
 }
 

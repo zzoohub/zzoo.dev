@@ -1,0 +1,48 @@
+---
+title: "zzoo.dev — Documento de Diseño de Ingeniería"
+---
+
+## Enfoque Técnico
+
+Cada página está generada estáticamente (SSG) en tiempo de build. Sin server-side rendering ni API routes, las páginas se sirven directamente desde la red edge global de Cloudflare Pages — rápido sin importar desde dónde se conecten los visitantes.
+
+El contenido se gestiona como archivos MDX. Cada pieza se divide en `content/[type]/[slug]/en.mdx` y `ko.mdx`, manteniendo las traducciones independientes. Los diagramas de arquitectura escritos en D2 se compilan automáticamente a SVGs en variantes de tema claro y oscuro en tiempo de build.
+
+La UI está construida con Tailwind CSS v4 y shadcn/ui. El sistema de temas basado en variables CSS hace que las transiciones de modo oscuro sean fluidas, y los componentes construidos sobre primitivas de Radix aseguran accesibilidad por defecto.
+
+## Tech Stack
+
+| Capa | Tecnología | Por Qué |
+|------|-----------|---------|
+| Framework | Next.js 16 (App Router) | Soporte de React 19, ecosistema optimizado para generación estática |
+| Estilos | Tailwind CSS v4 + shadcn/ui | Utility-first + componentes accesibles |
+| Contenido | MDX + gray-matter | Componentes React dentro de markdown |
+| i18n | next-intl | i18n probado en batalla con soporte de export estático |
+| Diagramas | D2 | Diagramas declarativos versionables |
+| Hosting | Cloudflare Workers | CDN edge global, el free tier es más que suficiente |
+| Testing | Vitest + Testing Library | Tests unitarios rápidos |
+
+## Estrategia de Visibilidad en Búsquedas
+
+El sitio implementa un enfoque por capas para la visibilidad en búsquedas, apuntando a tres canales de descubrimiento distintos.
+
+### Capa SEO
+
+- **SSG + entrega Edge** — Cada página se pre-renderiza en tiempo de build y se sirve desde la red edge de Cloudflare, logrando FCP por debajo del segundo
+- **HTML semántico** — Jerarquía de encabezados correcta (`h1` → `h2` → `h3`), roles landmark y markup accesible
+- **Alternates hreflang** — Sitemap XML y tags `<link rel="alternate">` para EN/KO, para que los motores de búsqueda sirvan el idioma correcto
+- **URLs canónicas** — Cada página declara su URL canónica para prevenir problemas de contenido duplicado entre locales
+- **Performance** — Objetivo de Lighthouse 95+, JS inicial < 100KB gzipped
+
+### Capa AEO
+
+- **Schemas JSON-LD** — `WebSite`, `Person`, `BlogPosting`, `SoftwareApplication`, y `BreadcrumbList` se incorporan en las páginas relevantes via `<script type="application/ld+json">`
+- **Feed RSS** — Auto-generado a partir de posts del blog en EN en tiempo de build, dando a los motores de respuesta un pipeline de contenido en tiempo real
+- **`robots.txt`** — Generado via route handler de Next.js, permitiendo todos los crawlers principales
+- **Open Graph + Twitter Cards** — Cada página tiene metadata OG con una imagen predeterminada de 1200x630
+
+### Capa GEO
+
+- **`llms.txt`** — Un archivo de texto plano en `/llms.txt` describiendo el propósito, autor, estructura e inventario de contenido del sitio en un formato optimizado para consumo de LLMs
+- **Contenido MDX limpio** — Los posts del blog y casos de estudio están escritos en MDX bien estructurado con encabezados claros, facilitando que los modelos generativos extraigan y citen
+- **Cobertura bilingüe** — Las versiones EN y KO de todo el contenido duplican el área de superficie para consultas de IA específicas por idioma

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
-import { useTranslations } from "next-intl";
+import { hasLocale, useTranslations } from "next-intl";
+import { notFound } from "next/navigation";
+import { routing } from "@/i18n/routing";
 import { compileMDX } from "next-mdx-remote/rsc";
 import { getAboutContent } from "@/lib/content";
 import { buildPageMeta, buildPersonJsonLd } from "@/lib/seo";
@@ -34,6 +36,7 @@ export default async function AboutPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
   const about = getAboutContent(locale);
 

@@ -1,8 +1,9 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/lib/site-config";
 import { getAllBlogPosts, getAllCaseStudies } from "@/lib/content";
+import { routing } from "@/i18n/routing";
 
-const locales = ["en", "ko"] as const;
+const locales = routing.locales;
 
 function entry(
   pathname: string,

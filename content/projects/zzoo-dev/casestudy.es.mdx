@@ -1,0 +1,31 @@
+---
+title: "zzoo.dev — Caso de Estudio"
+---
+
+La forma en que las personas descubren expertos ha cambiado fundamentalmente. Los motores de búsqueda tradicionales todavía importan, pero ahora ChatGPT, Perplexity y Gemini están respondiendo preguntas como "¿quién puede construir mi app?" directamente. El sitio de un desarrollador necesita funcionar para todos estos canales — o arriesgarse a ser invisible.
+
+zzoo.dev es un sitio de marca personal construido para esta realidad. Está optimizado en tres pilares de descubrimiento: SEO para búsqueda tradicional, AEO para motores de respuesta de IA, y GEO para IA generativa — para que mi expertise se encuentre sin importar cómo alguien busque.
+
+## Tres Pilares de Visibilidad en Búsquedas
+
+### SEO — La Base de Búsqueda Tradicional
+
+Los fundamentos técnicos bien hechos. Cada página está generada estáticamente y servida desde el edge global de Cloudflare, logrando tiempos de carga por debajo del segundo. HTML semántico, jerarquía de encabezados correcta, sitemap XML con alternates hreflang para EN/KO, y una estrategia de URL canónica aseguran que los motores de búsqueda rastreen e indexen el sitio limpiamente.
+
+### AEO — Optimización para Motores de Respuesta
+
+Cuando sistemas de IA como AI Overviews de Google o Perplexity extraen respuestas, dependen de datos estructurados. El sitio incorpora schemas JSON-LD — `WebSite`, `Person`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList` — dando a los motores de respuesta contexto legible por máquina sobre quién soy, qué he construido y qué he escrito. Los feeds RSS proporcionan un pipeline de contenido en tiempo real para la indexación.
+
+### GEO — Optimización para Motores Generativos
+
+Para los modelos de lenguaje grandes que alimentan ChatGPT o Claude, el sitio sirve `llms.txt` — un archivo de texto plano que describe el propósito, estructura y contenido clave del sitio en un formato que los LLMs pueden consumir directamente. Combinado con contenido MDX limpio y bien estructurado y cobertura bilingüe, los motores generativos pueden representar mi trabajo con precisión cuando los usuarios preguntan sobre temas relevantes.
+
+## Estructura del Sitio
+
+Cada página está diseñada para servir tanto a visitantes humanos como a lectores máquina. Los visitantes construyen confianza naturalmente mientras navegan, mientras que cada ruta emite los datos estructurados que los motores de IA necesitan.
+
+- **Home** — Landing page con proyectos destacados, expertise central, y JSON-LD de `Person` + `WebSite`
+- **Proyectos** — Casos de estudio con narrativas de problema/enfoque/arquitectura, cada uno con schema `SoftwareApplication`
+- **Blog** — Posts técnicos con schema `BlogPosting`, filtrado por tags, e integración de feed RSS
+- **Sobre** — Trayectoria profesional con datos biográficos estructurados
+- **Contacto** — Contacto simple por email para visitantes humanos que me encontraron a través de cualquier canal

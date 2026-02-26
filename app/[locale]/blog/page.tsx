@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import { hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
+import { notFound } from "next/navigation";
+import { routing } from "@/i18n/routing";
 import { getAllBlogPosts } from "@/lib/content";
 import { buildPageMeta } from "@/lib/seo";
 import { BlogListClient } from "./blog-list-client";
@@ -30,6 +33,7 @@ export default async function BlogPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
   const posts = getAllBlogPosts(locale);
   const allTags = [...new Set(posts.flatMap((p) => p.tags))];

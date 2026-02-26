@@ -1,0 +1,75 @@
+---
+title: "Permanent Site Blocker — Ekstensi Chrome"
+description: "Blokir situs pengganggu secara permanen. Tanpa tombol buka blokir, tanpa bypass password, tanpa timer. Ekstensi Chrome untuk kamu yang serius soal fokus."
+clientType: "Personal Product"
+status: "active"
+techStack:
+  - Chrome Extension
+  - Manifest V3
+  - JavaScript
+  - declarativeNetRequest API
+  - Chrome Storage Sync
+featured: false
+launchDate: "2026-01-04"
+thumbnail: "thumbnail.png"
+images:
+  - "screen.png"
+  - "popup.png"
+links:
+  github: "https://github.com/zzoohub/site-blocker"
+
+tagline: "Blokir situs pengganggu. Tanpa tombol buka blokir. Selamanya."
+category: "chrome-extension"
+keywords:
+  primary:
+    - "site blocker chrome extension"
+    - "permanent website blocker"
+  longTail:
+    - "website blocker without unblock button"
+    - "chrome extension block youtube shorts"
+competitors:
+  - name: "BlockSite"
+    differentiator: "BlockSite memungkinkan kamu menonaktifkan pemblokiran kapan saja — yang justru menggagalkan tujuannya"
+  - name: "Cold Turkey"
+    differentiator: "Cold Turkey berbayar dan rumit — yang ini gratis, open-source, dan cuma ~300 baris kode"
+  - name: "StayFocusd"
+    differentiator: "StayFocusd pakai timer yang mengandalkan kemauan — kami menghilangkan pilihannya sama sekali"
+cta:
+  primary:
+    label: "Lihat di GitHub"
+    url: "https://github.com/zzoohub/site-blocker"
+features:
+  - title: "Tanpa Tombol Buka Blokir"
+    description: "Sekali diblokir, satu-satunya jalan keluar adalah menginstal ulang ekstensi. Itulah intinya."
+    icon: "lock"
+  - title: "Pemblokiran Dua Lapis"
+    description: "Aturan level jaringan + pemantauan tab. Dua lapisan independen, tanpa celah."
+    icon: "layers"
+  - title: "Pola Cerdas"
+    description: "Blokir seluruh domain, path spesifik seperti /shorts, atau pola regex."
+    icon: "code"
+---
+
+## Pernah ngalamin ini?
+
+Kamu instal pemblokir situs. Tambahin Twitter, YouTube Shorts, Reddit. Merasa produktif selama sekitar 2 jam. Lalu kamu klik "nonaktifkan 5 menit" dan seluruh sore hari menghilang.
+
+Setiap pemblokir kasih kamu jalan keluar. Password, timer, cooldown — semuanya mengasumsikan kamu akan menahan godaan di saat itu. Tapi justru saat itulah kamu nggak akan bisa.
+
+## Solusi radikal: tanpa jalan keluar
+
+Permanent Site Blocker nggak punya tombol buka blokir. Tanpa bypass password. Tanpa timer. Tanpa "cuma 5 menit lagi."
+
+Begitu situs diblokir, satu-satunya cara menghapus blokir adalah **menginstal ulang ekstensi sepenuhnya** — yang berarti kamu kehilangan seluruh blocklist dan mulai dari nol. Gesekan itulah fiturnya.
+
+## Blokir yang benar-benar mengganggu
+
+Nggak semua YouTube itu buang-buang waktu. Shorts iya. Nggak semua Reddit itu buruk. Cuma rabbit hole halaman utama. Ekstensi ini memungkinkan kamu jadi presisi:
+
+- **Seluruh domain** — `twitter.com` memblokir semuanya (termasuk `www.`)
+- **Path spesifik** — `youtube.com/shorts` hanya memblokir Shorts
+- **Pola regex** — `youtube\.com.*[가-힣]` memblokir konten YouTube berbahasa Korea
+
+## Data nggak keluar dari browsermu
+
+Tanpa analytics. Tanpa server eksternal. Tanpa dependensi npm. Seluruh ekstensi cuma ~300 baris vanilla JavaScript. Blocklist-mu tersinkronisasi antar perangkat Chrome menggunakan infrastruktur penyimpanan bawaan Chrome. Nggak ada yang lain menyentuh datamu.

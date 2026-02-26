@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import { useTranslations } from "next-intl";
+import { hasLocale, useTranslations } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
+import { notFound } from "next/navigation";
+import { routing } from "@/i18n/routing";
 import { getAllCaseStudies } from "@/lib/content";
 import { buildPageMeta } from "@/lib/seo";
 import { ProjectCard } from "@/components/project-card";
@@ -31,6 +33,7 @@ export default async function ProjectsPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
   const projects = getAllCaseStudies(locale);
 

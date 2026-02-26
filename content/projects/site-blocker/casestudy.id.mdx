@@ -1,0 +1,49 @@
+---
+title: "Permanent Site Blocker — Studi Kasus"
+---
+
+## Masalah
+
+Setiap pemblokir situs yang saya coba punya kelemahan fatal yang sama: tombol buka blokir. Pemblokiran terjadwal, proteksi password, timer cooldown — semuanya mengasumsikan kemauan kuat di saat godaan datang. Tapi justru saat itulah kemauan gagal. Si prokrastinator yang memblokir Twitter jam 9 pagi adalah orang yang sama yang mengklik "nonaktifkan 5 menit" jam 2 siang.
+
+Saya butuh pemblokir yang menghormati satu kebenaran: **kalau bisa dibatalkan, pasti akan dibatalkan**.
+
+## Solusi
+
+Permanent Site Blocker adalah ekstensi Chrome yang dibangun dengan satu keputusan desain radikal — **nggak ada pembukaan blokir**. Begitu situs diblokir, satu-satunya cara menghapusnya adalah menginstal ulang ekstensi sepenuhnya. Tanpa bypass password, tanpa timer, tanpa pengecualian.
+
+### Arsitektur Pemblokiran Dua Lapis
+
+Satu mekanisme pemblokiran saja menyisakan celah. Aturan level jaringan nggak menangkap halaman yang di-cache; pemantauan tab melewatkan konten yang sudah di-preload. Jadi ekstensi ini pakai dua lapisan independen:
+
+- **Lapisan 1: Pemblokiran level jaringan** — Pakai API `declarativeNetRequest` Chrome untuk menghentikan request sebelum sampai ke server. Latensi nol, bekerja bahkan saat service worker nggak aktif.
+- **Lapisan 2: Pemantauan tab** — Listener `tabs.onUpdated` menangkap apapun yang lolos: halaman cache, konten pra-render, navigasi langsung dari address bar.
+
+Setiap lapisan gagal secara independen. Kalau satu rusak, yang lain tetap memblokir.
+
+### Pencocokan Pola Fleksibel
+
+Pemblokiran domain simpel mencakup kebanyakan kasus, tapi distraksi nyata lebih bernuansa. YouTube sendiri bukan masalahnya — YouTube Shorts yang jadi masalah. Jadi ekstensi ini mendukung tiga mode pemblokiran:
+
+- **Pemblokiran domain** — `twitter.com` memblokir seluruh situs (termasuk varian `www.`)
+- **Pemblokiran path spesifik** — `youtube.com/shorts` hanya memblokir Shorts sambil tetap membiarkan YouTube lainnya bisa diakses
+- **Pola regex** — `youtube\.com.*[가-힣]` memblokir konten YouTube berbahasa Korea menggunakan sintaks RE2
+
+### Privasi Utama, Tanpa Dependensi
+
+Tanpa build system. Tanpa paket npm. Tanpa analytics. Tanpa server eksternal. Seluruh ekstensi adalah vanilla JavaScript — sekitar 300 baris kode yang melakukan tepat satu hal dengan baik. Situs yang diblokir tersinkronisasi antar perangkat melalui sync penyimpanan bawaan Chrome, menjaga semua data dalam infrastruktur Chrome sendiri.
+
+## Keputusan Desain Utama
+
+- **Tanpa buka blokir itu disengaja** — Irreversibilitas adalah value proposition inti, bukan fitur yang hilang. Setiap mekanisme pelarian (password, timer, cooldown) adalah pintu yang pada akhirnya akan dibuka oleh kemauan.
+- **Vanilla JS, tanpa build step** — Untuk ekstensi ~300 baris, bundler menambah kompleksitas tanpa nilai. Codebase tetap bisa diaudit dan langsung di-deploy.
+- **2 aturan per domain** — Setiap entri standar menghasilkan aturan untuk `example.com` dan `www.example.com`, menghilangkan bypass umum di mana pengguna cukup menambah atau menghapus `www.`.
+- **Kegagalan regex senyap** — Pola regex yang invalid dilewati secara diam-diam alih-alih membuat service worker crash. Satu pola buruk nggak seharusnya menonaktifkan pemblokiran untuk yang lainnya.
+
+## Hasil
+
+- **Pemblokiran dua lapis** tanpa jalur bypass yang diketahui
+- **Pemblokiran sub-milidetik** via intersepsi aturan level jaringan
+- **Sinkronisasi lintas perangkat** melalui infrastruktur penyimpanan bawaan Chrome
+- **Tanpa dependensi eksternal** — tanpa build, tanpa npm, tanpa analytics
+- **~300 baris** vanilla JavaScript yang bisa diaudit

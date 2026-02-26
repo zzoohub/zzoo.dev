@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Fragment } from "react";
-import { useTranslations } from "next-intl";
+import { hasLocale, useTranslations } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
+import { notFound } from "next/navigation";
+import { routing } from "@/i18n/routing";
 import { siteConfig } from "@/lib/site-config";
 import { buildPageMeta } from "@/lib/seo";
 import { AvailabilityBadge } from "@/components/availability-badge";
@@ -39,6 +41,7 @@ export default async function ContactPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
 
   return <ContactPageContent />;

@@ -53,31 +53,27 @@ describe("seo", () => {
   describe("buildAlternates", () => {
     it("returns alternates for root path", () => {
       const result = buildAlternates("/");
-      expect(result).toEqual({
-        canonical: "https://zzoo.dev/en",
-        languages: {
-          en: "https://zzoo.dev/en",
-          ko: "https://zzoo.dev/ko",
-          "x-default": "https://zzoo.dev/en",
-        },
-        types: {
-          "application/rss+xml": "https://zzoo.dev/rss.xml",
-        },
+      expect(result?.canonical).toBe("https://zzoo.dev/en");
+      expect(result?.languages?.en).toBe("https://zzoo.dev/en");
+      expect(result?.languages?.ko).toBe("https://zzoo.dev/ko");
+      expect(result?.languages?.es).toBe("https://zzoo.dev/es");
+      expect(result?.languages?.["pt-BR"]).toBe("https://zzoo.dev/pt-BR");
+      expect(result?.languages?.id).toBe("https://zzoo.dev/id");
+      expect(result?.languages?.ja).toBe("https://zzoo.dev/ja");
+      expect(result?.languages?.["x-default"]).toBe("https://zzoo.dev/en");
+      expect(result?.types).toEqual({
+        "application/rss+xml": "https://zzoo.dev/rss.xml",
       });
     });
 
     it("returns alternates for non-root path", () => {
       const result = buildAlternates("/blog");
-      expect(result).toEqual({
-        canonical: "https://zzoo.dev/en/blog",
-        languages: {
-          en: "https://zzoo.dev/en/blog",
-          ko: "https://zzoo.dev/ko/blog",
-          "x-default": "https://zzoo.dev/en/blog",
-        },
-        types: {
-          "application/rss+xml": "https://zzoo.dev/rss.xml",
-        },
+      expect(result?.canonical).toBe("https://zzoo.dev/en/blog");
+      expect(result?.languages?.en).toBe("https://zzoo.dev/en/blog");
+      expect(result?.languages?.ko).toBe("https://zzoo.dev/ko/blog");
+      expect(result?.languages?.["x-default"]).toBe("https://zzoo.dev/en/blog");
+      expect(result?.types).toEqual({
+        "application/rss+xml": "https://zzoo.dev/rss.xml",
       });
     });
 
@@ -89,6 +85,10 @@ describe("seo", () => {
     it("includes all locales in languages", () => {
       const result = buildAlternates("/projects");
       expect(result?.languages).toHaveProperty("en");
+      expect(result?.languages).toHaveProperty("es");
+      expect(result?.languages).toHaveProperty("pt-BR");
+      expect(result?.languages).toHaveProperty("id");
+      expect(result?.languages).toHaveProperty("ja");
       expect(result?.languages).toHaveProperty("ko");
     });
 
@@ -364,9 +364,9 @@ describe("seo", () => {
       expect(result.description.length).toBeGreaterThan(0);
     });
 
-    it("includes both languages", () => {
+    it("includes all supported languages", () => {
       const result = buildWebSiteJsonLd();
-      expect(result.inLanguage).toEqual(["en", "ko"]);
+      expect(result.inLanguage).toEqual(["en", "es", "pt-BR", "id", "ja", "ko"]);
     });
   });
 

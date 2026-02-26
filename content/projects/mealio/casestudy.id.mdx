@@ -1,0 +1,26 @@
+---
+title: "Mealio — Studi Kasus"
+---
+
+## Masalah
+
+Kebanyakan aplikasi meal tracking menuntut input manual yang membosankan — mencari database, menimbang porsi, mengetik deskripsi. Gesekannya begitu tinggi sehingga pengguna meninggalkan pencatatan dalam hitungan hari. Saya ingin meal tracker yang terasa sealami mengambil foto: jepret, tag, selesai.
+
+## Solusi
+
+Mealio adalah aplikasi meal tracking berbasis foto yang dirancang dengan satu prinsip: **catat makanan dalam waktu kurang dari 1 detik**. Kamera adalah antarmuka utama. Pengguna jepret foto, tambahkan detail nutrisi opsional, dan membangun food diary visual seiring waktu.
+
+### Keputusan Desain Utama
+
+- **UX berpusat kamera** — Alur capture adalah pengalaman inti. Foto dulu, detail opsional. Ini secara drastis menurunkan hambatan untuk pencatatan yang konsisten.
+- **Arsitektur dual-mode** — Mode tamu (penyimpanan lokal, maks 10 entri) memungkinkan pengguna mencoba aplikasi langsung. Mode terautentikasi membuka cloud sync, entri unlimited, dan statistik.
+- **Feature-Sliced Design** — Codebase mobile mengikuti batasan layer yang ketat (`app → widgets → features → entities → shared`) untuk pertumbuhan yang maintainable.
+- **API Rust** — Memilih Axum daripada Node.js untuk type safety, performa, dan efisiensi memori di autoscaling Cloud Run (0–3 instance).
+
+## Hasil
+
+- **Alur capture 1 detik** — Dari tap kamera sampai entri tersimpan, konsisten di bawah 1 detik
+- **Cross-platform** — Satu codebase melayani iOS (App Store) dan Android (Play Store)
+- **Autoscaling nol ke tiga** — Cloud Run scale ke nol saat idle, menjaga biaya minimal
+- **9 migrasi database** — Evolusi skema yang stabil tanpa downtime
+- **4 pipeline CI/CD** — Deploy API otomatis, CI mobile, build EAS, dan update OTA

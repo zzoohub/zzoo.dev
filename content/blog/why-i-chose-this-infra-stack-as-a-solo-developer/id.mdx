@@ -1,0 +1,150 @@
+---
+title: "Kenapa Saya Pilih Stack Infrastruktur Ini sebagai Solo Developer"
+description: "GCP Cloud Run, Neon, Cloudflare, dan Pulumi — stack infrastruktur pragmatis yang dibangun untuk tim satu orang yang shipping banyak proyek."
+date: "2026-02-08"
+tags:
+  - infrastructure
+  - devops
+  - solo-developer
+  - pulumi
+  - cloudflare
+  - gcp
+  - neon
+draft: false
+---
+
+Sebagai solo developer, saya menjalankan beberapa proyek secara bersamaan. Masing-masing harus murah operasionalnya, mudah di-deploy, dan — ini bagian yang nggak pernah dibahas orang — mudah untuk **dihancurkan** ketika saatnya move on.
+
+Setelah iterasi melewati beberapa kombinasi, saya memilih stack yang sekarang saya pakai di seluruh proyek seperti [Mealio](https://github.com/zzoohub/mealio), aplikasi meal tracking berbasis foto. Ini kenapa setiap bagiannya layak ada.
+
+## GCP Cloud Run — Server yang Gratis Saat Idle
+
+Cloud Run adalah platform container yang fully managed dan bisa scale ke nol. Bagian terakhir itu krusial buat solo developer.
+
+Kebanyakan proyek saya punya traffic yang nggak teratur. Ada hari yang dapat ratusan request, ada hari yang nggak ada sama sekali. Dengan Cloud Run, saya nggak bayar apa-apa selama periode idle. Begitu ada request masuk, container menyala dalam hitungan detik.
+
+Untuk API Rust/Axum Mealio, konfigurasi Cloud Run saya seperti ini:
+
+- **0–3 instance** dengan auto-scaling (scale ke nol)
+- **1 CPU, 512Mi memory** per instance
+- **80 max concurrent request** per instance
+- Health check untuk startup dan liveness
+
+Dibandingkan menjalankan VPS $5/bulan yang idle 90% waktu, Cloud Run memungkinkan saya men-deploy layanan production dengan auto-scaling nyata, TLS, dan health check — dan cuma bayar untuk penggunaan aktual. Untuk side project dengan traffic rendah, itu sering berarti biaya satu digit dolar per bulan.
+
+Model berbasis container juga berarti saya nggak terkunci ke runtime manapun. Saya deploy binary Rust hari ini, tapi kalau mau pindah ke Go atau Node.js besok, cerita deployment-nya tetap sama: build Docker image, push, selesai.
+
+## Neon — Managed PostgreSQL Tanpa Overhead
+
+Saya memilih [Neon](https://neon.tech) sebagai layer database. Ini serverless PostgreSQL — database scale berdasarkan penggunaan, dan kamu dapat branching gratis.
+
+### Kenapa bukan Supabase?
+
+Supabase produk yang bagus, dan saya akan serius mempertimbangkannya kalau penggunamu terkonsentrasi di Asia. **Neon belum support region Seoul**, yang penting kalau kamu membangun untuk audiens Korea. Supabase sudah, dan sudah bundle auth, storage, dan fitur real-time yang kalau nggak butuh layanan terpisah.
+
+Tapi untuk use case saya, Neon menang karena beberapa alasan:
+
+1. **PostgreSQL murni** — tanpa layer abstraksi tambahan. Saya pakai SQLx dengan compile-time checked query di Rust, dan saya mau database-nya cukup jadi PostgreSQL.
+2. **Branching** — Saya bisa membuat branch database untuk testing migrasi sebelum menerapkannya ke production. Ini sangat berguna kalau kamu nggak punya staging environment khusus.
+3. **Scale-to-zero compute** — mirip Cloud Run, Neon menangguhkan compute yang idle. Branch development saya biayanya hampir nol.
+4. **Free tier yang murah hati** — lebih dari cukup untuk side project dan produk tahap awal.
+
+Di setup Pulumi saya, membuat proyek Neon cuma beberapa baris kode:
+
+```typescript
+const neonProject = new neon.Project("mealio", {
+  name: "mealio",
+  regionId: "aws-us-east-1",
+  pgVersion: 18,
+  historyRetentionSeconds: 21600,
+});
+```
+
+## Cloudflare — Edge Network dengan Biaya Lebih Murah
+
+Saya pakai Cloudflare secara intensif: Workers untuk hosting frontend, R2 untuk object storage, dan edge network mereka untuk distribusi global.
+
+### Kenapa bukan Vercel?
+
+Vercel adalah default untuk deployment Next.js, dan produknya polished. Tapi sebagai solo developer yang menjalankan banyak proyek, biayanya cepat menumpuk.
+
+Pricing Cloudflare jauh lebih murah hati:
+
+- **Workers**: 100.000 request/hari di free tier. Free tier Vercel 100GB bandwidth/bulan dengan limit function yang lebih ketat.
+- **R2**: Nol biaya egress. Ini deal besar untuk aplikasi yang menyajikan gambar atau file. Biaya egress S3 bisa mengejutkan di scale besar.
+- **Distribusi global**: Cloudflare berjalan di 300+ data center di seluruh dunia. Setiap deployment langsung tersedia di mana-mana, bukan cuma di beberapa region.
+
+Untuk Mealio, saya pakai R2 untuk menyimpan foto makanan yang diupload pengguna. Dengan nol biaya egress, saya nggak perlu khawatir momen viral berubah jadi tagihan mengejutkan.
+
+Trade-off-nya? Developer experience Cloudflare kurang polished dibanding Vercel untuk Next.js secara spesifik. Kamu butuh `@cloudflare/next-on-pages` dan kadang menemui edge kompatibilitas. Tapi penghematan biaya dan performa global membuatnya worth it untuk seseorang yang bayar dari kantong sendiri.
+
+## Pulumi — Karena Menghancurkan Sama Pentingnya dengan Membangun
+
+Ini bagian dari stack yang paling opinionated menurut saya, dan yang paling sering dilewatkan solo developer.
+
+**Sebagai solo developer, kamu akan membunuh lebih banyak proyek daripada yang kamu shipping.** Ini normal dan sehat. Kamu bereksperimen, kamu memvalidasi ide, kamu move on. Tapi setiap proyek yang ditinggalkan meninggalkan jejak infrastruktur: database, bucket cloud storage, IAM role, container registry, DNS record, secret.
+
+Menghapus semua ini secara manual itu membosankan, rawan error, dan melelahkan mental. Kamu pasti akan lupa sesuatu dan terus bayar database yang nggak ada yang pakai.
+
+Pulumi menyelesaikan ini dengan satu perintah:
+
+```bash
+pulumi destroy
+```
+
+Semuanya hilang. Layanan Cloud Run, database Neon, bucket R2, IAM binding, secret — semuanya, dibersihkan dengan rapi dalam urutan dependency yang benar.
+
+### Kenapa Pulumi daripada Terraform?
+
+Keduanya tool IaC yang solid, tapi Pulumi memungkinkan saya menulis infrastruktur dalam TypeScript — bahasa yang sama yang sudah saya pakai sehari-hari. Nggak perlu belajar HCL, nggak ada context switching. Saya dapat type safety, IDE autocomplete, dan kemampuan menggunakan loop, conditional, dan abstraksi secara natural.
+
+Ini versi sederhana dari entry point infrastruktur Mealio saya:
+
+```typescript
+import { cloudRunService } from "./src/gcp-cloudrun";
+import { neonProject } from "./src/neon";
+import { r2Bucket } from "./src/cloudflare";
+import { secrets } from "./src/gcp-secrets";
+import { registry } from "./src/gcp-registry";
+import { wif } from "./src/gcp-iam";
+```
+
+Setiap modul adalah file TypeScript yang fokus. Ketika saya mulai proyek baru, saya copy strukturnya, sesuaikan nama dan config, dan `pulumi up`. Ketika proyek selesai, `pulumi destroy`. Tanpa resource sisa, tanpa tagihan terlupa.
+
+### Flag protect
+
+Untuk resource production yang harus bertahan dari destroy yang nggak sengaja, Pulumi punya opsi `protect`:
+
+```typescript
+const db = new neon.Project("my-db", { ... }, { protect: true });
+```
+
+Ini memberi saya kepercayaan diri untuk menjalankan `pulumi destroy` dengan tahu bahwa resource kritis nggak akan terhapus secara nggak sengaja, sambil tetap membersihkan yang lainnya.
+
+## Gambaran Lengkap
+
+Ini cara semua bagian ini cocok bersama untuk proyek tipikal:
+
+| Layer | Layanan | Kenapa |
+|-------|---------|--------|
+| **Server** | GCP Cloud Run | Scale-to-zero, berbasis container, bayar per penggunaan |
+| **Database** | Neon | Serverless PostgreSQL, branching, scale-to-zero |
+| **Frontend / CDN** | Cloudflare Workers | Global edge, nol egress, free tier murah hati |
+| **Storage** | Cloudflare R2 | Kompatibel S3, nol biaya egress |
+| **Secret** | GCP Secret Manager | Integrasi native Cloud Run |
+| **CI/CD** | GitHub Actions | Gratis untuk repo publik, WIF auth dengan GCP |
+| **IaC** | Pulumi | TypeScript, teardown mudah, proteksi resource |
+
+## Yang Dioptimalkan Stack Ini
+
+Ini bukan stack untuk startup dengan tim 10 engineer dan pendanaan venture. Ini stack untuk solo developer yang:
+
+- **Menjalankan banyak proyek** dan butuh masing-masing murah saat istirahat
+- **Shipping cepat** tanpa mengelola Kubernetes atau VM
+- **Memikirkan siklus hidup penuh** — termasuk shutdown yang anggun
+- **Bayar dari kantong sendiri** dan mau biaya yang predictable berbasis penggunaan
+- **Menghargai kesederhanaan** daripada punya setiap managed service di bawah satu vendor
+
+Benang merah dari semua pilihan ini adalah **ekonomi scale-to-zero dan kesederhanaan operasional**. Ketika proyek aktif, infrastruktur scale up untuk menanganinya. Ketika nggak, biayanya mendekati nol. Dan ketika saatnya pamit, satu perintah membersihkan semuanya.
+
+Itulah kebebasan infrastruktur yang benar-benar dibutuhkan solo developer.

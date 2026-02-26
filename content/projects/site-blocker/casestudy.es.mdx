@@ -1,0 +1,49 @@
+---
+title: "Permanent Site Blocker — Caso de Estudio"
+---
+
+## Problema
+
+Cada bloqueador de sitios que probé tenía el mismo defecto fatal: un botón de desbloqueo. Bloqueo programado, protección por contraseña, temporizadores de enfriamiento — todos asumen fuerza de voluntad en el momento de la tentación. Pero es exactamente cuando la fuerza de voluntad falla. El procrastinador que bloqueó Twitter a las 9am es la misma persona que hace clic en "desactivar por 5 minutos" a las 2pm.
+
+Necesitaba un bloqueador que respetara una verdad: **si puedes deshacerlo, lo harás**.
+
+## Solución
+
+Permanent Site Blocker es una extensión de Chrome construida alrededor de una sola decisión de diseño radical — **no hay desbloqueo**. Una vez que un sitio está bloqueado, la única forma de quitarlo es reinstalar la extensión por completo. Sin bypass de contraseña, sin temporizador, sin excepciones.
+
+### Arquitectura de Bloqueo en Dos Capas
+
+Un solo mecanismo de bloqueo deja huecos. Las reglas a nivel de red no atrapan páginas cacheadas; el monitoreo de pestañas se pierde contenido precargado. Así que la extensión usa dos capas independientes:
+
+- **Capa 1: Bloqueo a nivel de red** — Usa la API `declarativeNetRequest` de Chrome para matar requests antes de que lleguen al servidor. Cero latencia, funciona incluso si el service worker está inactivo.
+- **Capa 2: Monitoreo de pestañas** — Un listener `tabs.onUpdated` atrapa cualquier cosa que se escape: páginas cacheadas, contenido pre-renderizado, navegación directa desde la barra de direcciones.
+
+Cada capa falla independientemente. Si una se rompe, la otra sigue bloqueando.
+
+### Coincidencia de Patrones Flexible
+
+El bloqueo simple de dominios cubre la mayoría de los casos, pero la distracción real es más matizada. YouTube en sí no es el problema — YouTube Shorts sí. Así que la extensión soporta tres modos de bloqueo:
+
+- **Bloqueo de dominio** — `twitter.com` bloquea el sitio completo (incluyendo variantes `www.`)
+- **Bloqueo por ruta específica** — `youtube.com/shorts` bloquea solo Shorts mientras mantiene el resto de YouTube accesible
+- **Patrones regex** — `youtube\.com.*[가-힣]` bloquea contenido de YouTube en coreano usando sintaxis RE2
+
+### Privacidad Primero, Cero Dependencias
+
+Sin sistema de build. Sin paquetes npm. Sin analytics. Sin servidores externos. La extensión completa es JavaScript vanilla — unas 300 líneas de código que hacen exactamente una cosa bien. Los sitios bloqueados se sincronizan entre dispositivos a través del sync de almacenamiento integrado de Chrome, manteniendo todos los datos dentro de la infraestructura propia de Chrome.
+
+## Decisiones Clave de Diseño
+
+- **Sin desbloqueo es intencional** — La irreversibilidad es la propuesta de valor central, no una feature faltante. Cada mecanismo de bypass (contraseñas, temporizadores, períodos de enfriamiento) es una puerta que la fuerza de voluntad eventualmente abrirá.
+- **Vanilla JS, sin paso de build** — Para una extensión de ~300 líneas, un bundler agrega complejidad sin valor. El codebase se mantiene auditable y desplegable al instante.
+- **2 reglas por dominio** — Cada entrada estándar genera reglas tanto para `example.com` como para `www.example.com`, eliminando un bypass común donde los usuarios simplemente agregan o quitan `www.`.
+- **Fallo silencioso de regex** — Los patrones regex inválidos se omiten silenciosamente en lugar de crashear el service worker. Un patrón malo no debería desactivar el bloqueo de todo lo demás.
+
+## Resultados
+
+- **Bloqueo en dos capas** sin rutas de bypass conocidas
+- **Bloqueo en sub-milisegundos** via intercepción de reglas a nivel de red
+- **Sincronización entre dispositivos** a través de la infraestructura de almacenamiento nativa de Chrome
+- **Cero dependencias externas** — sin paso de build, sin npm, sin analytics
+- **~300 líneas** de JavaScript vanilla auditable

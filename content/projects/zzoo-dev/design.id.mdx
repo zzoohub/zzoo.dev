@@ -1,0 +1,48 @@
+---
+title: "zzoo.dev — Dokumen Desain Engineering"
+---
+
+## Pendekatan Teknis
+
+Setiap halaman statically generated (SSG) saat build time. Tanpa server-side rendering atau API route, halaman disajikan langsung dari jaringan edge global Cloudflare Pages — cepat dari manapun pengunjung terhubung.
+
+Konten dikelola sebagai file MDX. Setiap konten dibagi menjadi `content/[type]/[slug]/en.mdx` dan `ko.mdx`, menjaga terjemahan tetap independen. Diagram arsitektur yang ditulis dalam D2 secara otomatis dikompilasi menjadi SVG dalam varian tema terang dan gelap saat build time.
+
+UI dibangun dengan Tailwind CSS v4 dan shadcn/ui. Sistem theming berbasis CSS variable membuat transisi dark mode mulus, dan komponen yang dibangun di atas primitif Radix memastikan aksesibilitas secara default.
+
+## Tech Stack
+
+| Layer | Teknologi | Kenapa |
+|-------|-----------|--------|
+| Framework | Next.js 16 (App Router) | Dukungan React 19, ekosistem yang dioptimalkan untuk static generation |
+| Styling | Tailwind CSS v4 + shadcn/ui | Utility-first + komponen yang aksesibel |
+| Konten | MDX + gray-matter | Komponen React di dalam markdown |
+| i18n | next-intl | i18n yang battle-tested dengan dukungan static export |
+| Diagram | D2 | Diagram deklaratif yang bisa di-version control |
+| Hosting | Cloudflare Workers | CDN edge global, free tier lebih dari cukup |
+| Testing | Vitest + Testing Library | Unit test yang cepat |
+
+## Strategi Visibilitas Pencarian
+
+Situs ini mengimplementasikan pendekatan berlapis untuk visibilitas pencarian, menargetkan tiga kanal penemuan yang berbeda.
+
+### Layer SEO
+
+- **SSG + pengiriman Edge** — Setiap halaman di-pre-render saat build time dan disajikan dari jaringan edge Cloudflare, mencapai FCP di bawah satu detik
+- **HTML semantik** — Hierarki heading yang tepat (`h1` → `h2` → `h3`), landmark role, dan markup yang aksesibel
+- **Hreflang alternate** — XML sitemap dan tag `<link rel="alternate">` untuk EN/KO, supaya mesin pencari menyajikan bahasa yang tepat
+- **URL kanonikal** — Setiap halaman mendeklarasikan URL kanonikalnya untuk mencegah masalah konten duplikat antar locale
+- **Performa** — Target Lighthouse 95+, JS awal < 100KB gzipped
+
+### Layer AEO
+
+- **Schema JSON-LD** — `WebSite`, `Person`, `BlogPosting`, `SoftwareApplication`, dan `BreadcrumbList` disematkan di halaman yang relevan via `<script type="application/ld+json">`
+- **Feed RSS** — Di-generate otomatis dari post blog EN saat build time, memberikan mesin jawaban pipeline konten real-time untuk pengindeksan
+- **`robots.txt`** — Di-generate via route handler Next.js, mengizinkan semua crawler utama
+- **Open Graph + Twitter Cards** — Setiap halaman punya metadata OG dengan gambar default 1200x630
+
+### Layer GEO
+
+- **`llms.txt`** — File teks biasa di `/llms.txt` yang menjelaskan tujuan situs, penulis, struktur, dan inventaris konten dalam format yang dioptimalkan untuk konsumsi LLM
+- **Konten MDX yang bersih** — Post blog dan studi kasus ditulis dalam MDX yang terstruktur dengan heading yang jelas, memudahkan model generatif untuk mengekstrak dan mengutip
+- **Cakupan bilingual** — Versi EN dan KO dari semua konten menggandakan luas permukaan untuk query AI yang spesifik bahasa

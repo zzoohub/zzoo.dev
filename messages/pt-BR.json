@@ -1,0 +1,108 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "projects": "Projetos",
+    "blog": "Blog",
+    "about": "Sobre",
+    "now": "Agora",
+    "contact": "Contato"
+  },
+  "hero": {
+    "badge": "Vibe Builder",
+    "title": "Build the Whole Damn Thing.",
+    "subtitle": "Fuço, construo, lanço.",
+    "cta_primary": "Ver o que construi",
+    "cta_secondary": "Mandar oi"
+  },
+  "home": {
+    "featured_label": "Builds recentes",
+    "featured_title": "O que eu lancei",
+    "testimonial_label": "Coisas legais que falaram",
+    "bottom_cta_title": "Quer construir algo junto?",
+    "bottom_cta_subtitle": "Sempre a fim de trocar ideia sobre coisas malucas.",
+    "bottom_cta_button": "Fala comigo"
+  },
+  "projects": {
+    "title": "Projetos",
+    "subtitle": "Ideias que virei produto.",
+    "read_case_study": "Ler mais",
+    "bottom_cta_title": "Tem uma ideia legal?",
+    "bottom_cta_button": "Bora conversar"
+  },
+  "project": {
+    "overview": "Resumo",
+    "problem": "O problema",
+    "solution": "Como resolvi",
+    "tech_stack": "Tech Stack",
+    "architecture": "Arquitetura",
+    "view_live": "Ver ao vivo",
+    "view_source": "Ver codigo",
+    "documentation": "Docs",
+    "breadcrumb_projects": "Projetos",
+    "tab_product": "Produto",
+    "tab_case_study": "Estudo de caso",
+    "tab_design_doc": "Doc de design",
+    "get_started": "Comecar",
+    "features": "Funcionalidades",
+    "how_its_different": "O que tem de diferente",
+    "vs": "vs",
+    "bottom_cta_title": "Trabalhando em algo parecido?",
+    "bottom_cta_subtitle": "Ajudo times a lançar rapido sem o overhead de uma agencia grande.",
+    "bottom_cta_button": "Bora trocar ideia"
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Notas sobre construir, quebrar e lançar mesmo assim.",
+    "all": "Todos",
+    "min_read": "min de leitura",
+    "bottom_cta_title": "Quer colaborar?",
+    "bottom_cta_button": "Fala comigo"
+  },
+  "about": {
+    "title": "Sobre",
+    "bio_1": "",
+    "bio_2": "",
+    "bio_3": "",
+    "experience": "Minha jornada",
+    "bottom_cta_title": "Manda mensagem quando quiser.",
+    "bottom_cta_button": "Contato"
+  },
+  "now": {
+    "title": "Agora",
+    "last_updated": "Ultima atualizacao",
+    "working_on": "Construindo",
+    "learning": "Aprendendo",
+    "reading": "Lendo",
+    "available_for": "Aberto pra",
+    "bottom_cta_title": "Curtiu?",
+    "bottom_cta_subtitle": "Vamos ver se rola.",
+    "bottom_cta_button": "Mandar oi"
+  },
+  "contact": {
+    "title": "Vamos conversar",
+    "subtitle": "Me manda uma mensagem. Email funciona melhor.",
+    "email_label": "EMAIL",
+    "send_email": "Enviar email",
+    "copy_address": "Copiar endereco",
+    "copied": "Copiado!",
+    "connect": "ME ENCONTRE",
+    "response_time": "Costumo responder em um dia",
+    "github_description": "Onde o codigo mora",
+    "linkedin_description": "O profissional"
+  },
+  "footer": {
+    "navigation": "Navegacao",
+    "connect": "Conectar",
+    "available": "Disponivel",
+    "limited": "Limitado",
+    "booked": "Ocupado"
+  },
+  "availability": {
+    "available": "Construindo algo novo",
+    "limited": "Meio ocupado",
+    "booked": "Ocupado ate {date}"
+  },
+  "common": {
+    "skip_to_main": "Ir para o conteudo principal"
+  }
+}

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import { useTranslations } from "next-intl";
+import { hasLocale, useTranslations } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
+import { notFound } from "next/navigation";
+import { routing } from "@/i18n/routing";
 import { buildPageMeta } from "@/lib/seo";
 import { AvailabilityBadge } from "@/components/availability-badge";
 import { CTASection } from "@/components/cta-section";
@@ -31,6 +33,7 @@ export default async function NowPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
 
   return <NowPageContent />;
