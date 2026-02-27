@@ -1,7 +1,7 @@
 ---
-title: "Da Ideia ao Produto Apenas com Claude Code"
-description: "Vibe coding não é geração de código. É orquestrar IA por todo o ciclo de vida do produto — planejamento, arquitetura, implementação, qualidade e operações. O passo a passo de um desenvolvedor solo transformando ideias em produtos com nada além de Claude Code."
-date: "2026-02-20"
+title: "Vibe coding não é sobre código"
+description: "Todo mundo acha que vibe coding é a IA escrevendo seu código. Essa é a parte menos interessante. A verdadeira mudança é que uma pessoa consegue operar uma empresa inteira."
+date: "2026-02-27"
 tags:
   - vibe-coding
   - claude-code
@@ -11,384 +11,48 @@ tags:
 draft: false
 ---
 
-Quando as pessoas ouvem "vibe coding," a maioria imagina dizer pra IA "faz uma página de login." Isso tá errado. Pelo menos, não é o que eu faço.
+Existe uma coisa curiosa sobre o nome "vibe coding." Ele faz todo mundo olhar na direção errada. As pessoas ouvem "coding" e assumem que é sobre gerar código. Como se o ponto fosse descrever o que você quer e a IA cuspir as linhas. Isso funciona, claro. Mas é como dizer que a imprensa de Gutenberg serve para copiar coisas. Tecnicamente correto, e completamente ao lado do ponto.
 
-Meu vibe coding começa com uma única ideia e passa por briefs de produto, PRDs, design de arquitetura, schemas de banco de dados, fluxos de UX, implementação, testes, auditorias de segurança e deploy. **Escrever código é apenas uma etapa nesse pipeline.**
+O que mudou minha forma de pensar não foi escrever mais código mais rápido. Foi perceber quanta coisa que eu preciso fazer para lançar um produto não envolve uma única linha de código.
 
-Em um post anterior eu disse "viva como um construtor" e compartilhei meu setup do Claude Code. Este post mostra como essas ferramentas realmente se combinam para transformar uma ideia em produto — passo a passo.
+Pensa comigo. Um produto precisa de validação, design, arquitetura, código, deploy, lançamento, métricas, crescimento. Código domina em duas dessas etapas. Talvez três se você for generoso. O resto é estratégia, copywriting, analytics, marketing, jurídico. Tudo aquilo que um dev solo sabe que precisa fazer mas raramente faz bem. Se a IA consegue executar com qualidade de especialista em um domínio, a pergunta óbvia é: por que limitar ao código?
 
-## O Pipeline Completo
+Escrevi antes sobre [meu setup com Claude Code](/pt-BR/blog/my-claude-code-setup) -- skills, agentes, servidores MCP. Aquele post era sobre o pipeline de build. Mas o build é talvez um terço de entregar um produto. O resto é tudo que cerca o código. E acontece que a IA serve pra isso também.
 
-```
-Ideia
-  ↓
-Etapa 1. Product Brief — Definição do problema, hipóteses, critérios de sucesso
-  ↓
-Etapa 2. PRD — Requisitos detalhados, prioridades P0/P1/P2
-  ↓
-Etapa 3. Arquitetura de Software — Design do sistema, ADRs, trade-offs
-  ↓
-Etapa 4. Design do Banco de Dados — Schema, índices, migrações
-  ↓
-Etapa 5. Design de UX — Fluxos de usuário, specs de tela, princípios cognitivos
-  ↓
-Etapa 6. Prototipagem de UI — Wireframes, scaffolds visuais
-  ↓
-Etapa 7. Implementação — Desenvolvimento guiado por skills
-  ↓
-Etapa 8. Portão de Qualidade — [Auditoria de segurança + Testes] em paralelo
-  ↓
-Etapa 9. Deploy & Operações
-```
+O momento que virou a chave foi concreto. Eu tinha um projeto paralelo com o código pronto em dois dias. Funcional, testado, no ar. Aí percebi que não tinha plano de lançamento. Não tinha analytics. Não tinha estratégia de preço. Não tinha termos de uso. A história clássica do dev solo: você constrói a coisa e depois fica olhando pra ela, se perguntando por que ninguém aparece. Eu tinha automatizado a parte fácil e deixado a parte difícil no manual.
 
-Mais da metade dessas etapas produz zero linhas de código. Essa é a verdadeira alavancagem do vibe coding. Vou passar por cada uma.
+Então comecei a perguntar: e se eu tratasse cada fase do mesmo jeito que trato código? Carrego a expertise certa, dou contexto, deixo a IA executar enquanto eu tomo as decisões. Testei. E funciona. Não perfeitamente, mas muito melhor do que eu esperava.
 
-## Etapa 1. Product Brief — "Por Que Estamos Construindo Isso?"
+A melhor metáfora que encontrei é a do diretor de cinema. Você não opera a câmera. Não escreve o roteiro. Não edita o som. Você dirige. Decide qual take funciona e qual precisa ser refeito. Tem visão, gosto e julgamento. A equipe executa. A diferença é que agora a "equipe" são agentes de IA especializados, e você pode invocá-los sem contratar ninguém.
 
-Quando tenho uma ideia, a primeira coisa que faço não é abrir um editor de código. Eu rodo `/product-brief`.
+O ciclo que eu rodo agora tem sete fases. Validar a ideia. Desenhar o produto. Arquitetar e construir. Fazer deploy. Lançar. Medir. Crescer. O código domina em duas delas. O resto é o tipo de trabalho que faz um dev solo sentir que precisa contratar cinco pessoas.
 
-Essa skill opera no **Framework dos Quatro Riscos** de Marty Cagan (SVPG). Quando digo "quero construir um app de rastreamento de refeições," a skill pergunta sobre quatro riscos:
+Validação vem primeiro, e é a coisa mais importante que eu adicionei ao processo. Eu costumava pular direto pro build -- escrevia um brief de produto e começava a codar. Agora me obrigo a escrever uma hipótese e testá-la antes de escrever uma única spec. O teste é simples: construir o mínimo em horas, colocar na frente de pessoas reais, e procurar tração orgânica. As pessoas voltam sem ser convidadas? Contam pra outras? Se eu não encontro esse sinal depois de dois ou três pivôs, mato o projeto. Parece óbvio. Mas eu desperdicei meses construindo coisas que ninguém queria antes de transformar isso em regra.
 
-| Risco | Pergunta | Validação |
-|-------|----------|-----------|
-| **Valor** | Os usuários vão realmente usar isso? | Entrevistas com usuários, análise competitiva |
-| **Usabilidade** | Os usuários conseguem entender? | Teste de protótipo |
-| **Viabilidade** | Conseguimos construir isso? | Spike técnico |
-| **Viabilidade de negócio** | Funciona como negócio? | Modelo de receita, revisão legal |
+Na fase de produto e design, eu não desenho a experiência do usuário. Descrevo o problema e o usuário, e um agente de UX produz fluxos e especificações de tela. Não escrevo copy de marketing. Um agente de copywriting gera variações com sugestões de teste A/B. Não crio mockups de interface. Um servidor MCP conectado a uma ferramenta de design gera mockups visuais enquanto o agente de UX trabalha nos fluxos. Tudo roda em paralelo. Meu trabalho é olhar os outputs e fazer chamadas de julgamento. Essa tela tem informação demais. Aquele fluxo tem passos demais. O copy desse botão tá esperto demais -- faz ele óbvio.
 
-O princípio central é **comece pelo problema, não pela solução**. Não "vamos construir um app de rastreamento de refeições" mas "as pessoas não registram suas refeições porque o input é tedioso demais." A skill direciona nesse sentido.
+Isso é o que parece genuinamente novo. Eu não estou fazendo o trabalho de cinco especialistas. Estou revisando o trabalho de cinco especialistas. A diferença importa porque revisar é uma habilidade fundamentalmente diferente de executar. Você não precisa ser um grande copywriter pra saber quando o copy tá ruim. Não precisa ser pesquisador de UX pra notar quando um fluxo confunde. Você precisa de gosto e julgamento, que são exatamente as coisas difíceis de automatizar.
 
-O output é um documento de 1-2 páginas:
+Arquitetura e build funcionam do jeito que sempre funcionaram, com uma adição importante: o plano de analytics é desenhado em paralelo com a arquitetura. Tracking não é algo que eu colo depois do lançamento. A pergunta "por que estamos rastreando este evento?" é respondida ao mesmo tempo que "qual o schema do banco?" Isso importa porque medição é o que torna possível tudo depois do lançamento. Se você não instrumenta o produto desde o início, tá voando às cegas quando mais precisa de dados.
 
-- **Problema** — Quem está sofrendo, qual é a dor, qual é a evidência
-- **Hipóteses & Riscos** — Suposições listadas explicitamente com planos de validação
-- **Direção Proposta** — A direção (não listas de features, mas experiências)
-- **Não-Objetivos** — O que isso NÃO é (previne scope creep)
-- **Critérios de Sucesso** — 2-4 resultados mensuráveis
-- **Perguntas em Aberto** — Coisas que ainda não sabemos
+Deploy é deploy. Mas eu redefiní o que "deployed" significa. Não é "o código tá rodando num servidor." É "a infraestrutura de medição funciona." Eventos estão disparando pra plataforma de analytics. Error tracking tá conectado. O evento chave de ativação funciona ponta a ponta. Se eu não consigo medir, não tá deployed.
 
-Essa última seção é a mais importante. Escrever o que você não sabe. A maioria dos projetos falha não por respostas erradas, mas por perguntas não feitas. O maior valor do product brief é trazer incerteza à tona cedo.
+Lançamento é onde fica realmente interessante, porque é a fase que a maioria dos devs finge que não existe. Posicionamento. Segmentação de público. Estratégia de canal. Preço. Sequências de email. SEO. Materiais de lançamento pra Product Hunt, Hacker News, Reddit. Termos de uso. Política de privacidade. Cada uma dessas coisas era algo que eu pulava ou levava dias improvisando. Agora um agente de marketing orquestra tudo, delegando pra skills especializadas de preço, email, visibilidade em busca, e jurídico. Eu reviso e aprovo. O pacote de lançamento inteiro se monta em horas no lugar de semanas.
 
-Neste ponto há zero código. Mas o que construir, por quê, para quem e onde parar está claro. Sem isso, programar com IA é apenas autocomplete.
+Depois do lançamento vem a medição, e é aí que vive o framework de matar/manter/escalar. Primeira semana: observo. Respondo feedback. Não otimizo nada. Segunda semana: avalio contra os critérios que defini durante a arquitetura. Depois disso, avaliação semanal até a decisão ficar clara. A prioridade pra correções é sempre retenção primeiro, depois ativação, depois aquisição. Confirme que os usuários que existem ficam antes de gastar energia trazendo novos.
 
-## Etapa 2. PRD — "O Que Exatamente Estamos Construindo?"
+Matar significa post-mortem, arquivar, e seguir em frente no mesmo dia. Manter significa voltar pra produto ou build e corrigir o maior problema. Escalar significa ir pra crescimento. Parece simples, mas ter isso explícito e forçado mudou meu comportamento. Antes eu mantinha projetos zumbi vivos por meses porque tinha investido demais pra desistir. Agora os dados fazem a chamada, e eu faço rápido.
 
-Uma vez que o Brief define a direção, a skill `prd-craft` cria um documento detalhado de requisitos. Se o Brief é "por quê," o PRD é "o quê."
+Crescimento só acontece depois da decisão de escalar. Não faça crescer um produto furado. Essa fase traz experimentos de conversão, loops de referência, prevenção de churn, recuperação de pagamento falhado. É também quando eu adiciono testes end-to-end pela primeira vez. O produto sobreviveu -- agora os fluxos principais valem a pena proteger.
 
-A skill começa com uma **Entrevista de Descoberta**. Isso não pode ser pulado. Baseado no Brief, ela pergunta o que está faltando:
+O sistema inteiro é templatizado. Tenho um projeto scaffold que copio pra começar qualquer coisa nova. Contém a definição do workflow, os mapeamentos de skills, a estrutura de documentos tanto pra planejamento quanto pra negócio. Claude Code lê isso na primeira sessão e conhece o pipeline inteiro. Docs e código vivem no mesmo repositório, então a IA sempre tem contexto atualizado.
 
-- Quais são as personas específicas e contextos de uso?
-- Como os usuários resolvem esse problema hoje? O que é doloroso?
-- Como vamos medir sucesso? Números específicos?
-- O que está explicitamente fora do escopo?
+O que faz isso reproduzível não é nenhuma ferramenta individual. É a combinação de três coisas. Skills carregam conhecimento de especialista -- não como documentação que você talvez leia, mas como restrições que a IA precisa seguir. Agentes rodam tarefas especializadas em paralelo, tipo um revisor de segurança e um escritor de testes trabalhando ao mesmo tempo. Servidores MCP conectam a serviços externos -- plataformas de analytics, error tracking, ferramentas de design, infraestrutura de deploy -- pra que a IA aja no mundo real, não só gere texto.
 
-Então ela escreve o PRD:
+A metáfora do diretor é a melhor que encontrei. Eu defino a direção. Faço as chamadas de julgamento. Decido o que construir, o que matar, o que crescer. A IA cuida da execução no nível de especialista em cada domínio. Não é delegação no sentido de gestão, onde você se preocupa se o trabalho vai sair bem. É mais como reger. Você não toca os instrumentos. Você dá forma à performance.
 
-**Problema / Oportunidade** — A seção mais crítica. "Precisamos de um sistema de notificações" não é um problema. "23% dos usuários perdem atualizações sensíveis ao tempo porque só checam o app uma vez por dia" é. A skill reforça essa distinção — há um checklist: "não declare uma solução como o problema."
+A implicação desconfortável é que vibe coding, levado a sério, não é uma técnica de programação. É um jeito de operar uma empresa. A parte do "coding" é quase um acidente histórico -- só foi o primeiro domínio onde a execução com IA ficou boa o suficiente pras pessoas perceberem. Mas o mesmo padrão funciona pra marketing, analytics, jurídico, crescimento, e tudo mais que um produto precisa. A parte difícil nunca foi escrever o código. Foi fazer todo o resto bem o suficiente pra fazer diferença.
 
-**Requisitos Funcionais** — Features classificadas como P0 (obrigatório para lançamento), P1 (deveria ter), P2 (bom ter). Cada requisito mapeia para uma **jornada do usuário**, não um componente técnico. "Usuário pode resetar senha por email" — funcional. "Criar índice B-tree no PostgreSQL" — detalhe de implementação que não pertence aqui.
+Acho que a gente tá no comecinho de entender o que isso significa. Agora parece um hack de produtividade pra devs. Dá uns dois anos e vai parecer um tipo novo de empresa -- uma onde uma pessoa com bom julgamento consegue operar numa escala que antes precisava de um time. Não porque trabalha mais, mas porque o gargalo mudou da execução pra a direção.
 
-**Métricas de Sucesso** — Cada objetivo tem exatamente uma métrica primária com números e prazos específicos. Nada de linguagem "melhorar". "Taxa de conclusão de onboarding de 60% para 80%, dentro de 3 meses após o lançamento."
-
-**Jornadas Críticas do Usuário** — Seis jornadas sistematicamente revisadas: primeira experiência (onboarding), loop de uso central, experiência do usuário que retorna, gestão/manutenção, casos extremos e estados de erro, off-boarding/exportação de dados. As últimas duas são frequentemente esquecidas — a skill força a inclusão delas.
-
-Neste ponto existem dois documentos de planejamento. Product Brief (direção estratégica) e PRD (requisitos detalhados). 10-15 páginas combinadas. Ainda zero linhas de código.
-
-## Etapa 3. Arquitetura de Software — "Qual é a Estrutura?"
-
-O PRD vai para a skill `software-architect`. Ela lê o PRD e produz um **Documento de Design de Arquitetura de Software (SADD)**.
-
-Primeiro ela faz perguntas que o PRD não consegue responder:
-
-- Usuários esperados, requisições/seg, volume de dados?
-- Quais caminhos são críticos em latência?
-- Onde é necessária consistência forte? Onde consistência eventual é ok?
-- Features em tempo real necessárias? (WebSocket, SSE, polling)
-- Sensibilidade a custo? (solopreneur vs empresa)
-
-Então ela escreve o documento de design. O insight chave é que decisões de arquitetura são divididas em **dois eixos independentes**:
-
-**Eixo 1: Arquitetura do Sistema** — Como os serviços se comunicam. Request-response, orientado a eventos, CQRS, event sourcing, ou monólito modular.
-
-**Eixo 2: Estrutura do Código** — Como cada serviço é organizado internamente. Hexagonal (ports & adapters), clean, ou em camadas.
-
-Esses se compõem livremente. A maioria dos meus projetos solo fica em "monólito modular + hexagonal." Não consigo arcar com a complexidade operacional de microserviços sozinho, e hexagonal facilita testes e troca de adapters.
-
-Cada escolha de tecnologia recebe um **ADR (Architecture Decision Record)**. Não apenas "usamos Axum" mas:
-
-> **ADR-1: Linguagem & Framework do Backend**
-> - Contexto: Desenvolvedor solo, serviço B2C, sensível a custo
-> - Decisão: Rust + Axum
-> - Alternativas: Python/FastAPI (rejeitado — overhead de runtime, maior consumo de memória) / Go/Gin (rejeitado — sistema de tipos mais fraco)
-> - Consequências: (+) Resposta sub-ms, 10-30MB de memória, verificação em tempo de compilação / (-) Tempos de compilação, ecossistema menor
-
-A skill tem referências de preferência de infraestrutura embutidas para o contexto solopreneur:
-- Banco de dados: Neon (serverless, scale-to-zero, branching)
-- Compute do backend: GCP Cloud Run (baseado em container, auto-scaling, free tier generoso)
-- Frontend: Cloudflare Workers + Next.js (SSR na edge, precificação previsível)
-- Mobile: Expo (React Native)
-- Armazenamento de objetos: Cloudflare R2 (zero taxas de egress)
-- IaC: Pulumi (nativo em TypeScript)
-- Rastreamento de erros: Sentry / Analytics: PostHog
-
-Esses defaults existem para que eu não delibere do zero toda vez. Quando requisitos do projeto diferem dos defaults, só então eu registro o desvio e a justificativa como um ADR.
-
-Para meu projeto Mealio: Expo (mobile) + Axum (API) + Neon (DB) + GCP Cloud Run (compute) + Cloudflare R2 (armazenamento de fotos) + Pulumi (infraestrutura). Essa combinação foi decidida no SADD, com justificativa documentada para cada escolha.
-
-## Etapa 4. Design do Banco de Dados — "Como Armazenamos os Dados?"
-
-Uma vez que a arquitetura está definida, a skill `database-design` projeta o schema. Essa skill tem sete arquivos de referência:
-
-| Referência | Propósito |
-|------------|-----------|
-| `acid-transactions.md` | Níveis de isolamento de transação, estratégias de locking, prevenção de deadlock |
-| `data-types-guide.md` | Guia de seleção de tipos PostgreSQL |
-| `design-patterns.md` | Herança de tabelas, soft delete, trilhas de auditoria, dados temporais |
-| `indexing-strategy.md` | Tipos de índice, cálculo de seletividade, índices parciais |
-| `migration-patterns.md` | Migrações zero-downtime, scripts de rollback |
-| `normalization-guide.md` | Critérios de decisão de normalização/desnormalização |
-| `performance-patterns.md` | Otimização de padrões de query, ordenação de colunas, particionamento |
-
-O fluxo de trabalho é sistemático:
-
-**Passo 1 — Levantar requisitos.** Se um SADD existe, extrair entidades de domínio, fluxos de dados, estratégia de armazenamento e modelo de consistência. Seguir decisões de nível de sistema do SADD (plataforma de DB, padrão de arquitetura), mas avaliar independentemente decisões de domínio de DB (nível de normalização, estratégia de particionamento, design de índices, níveis de isolamento de transação).
-
-**Passo 2 — Design do schema.** Identificar entidades centrais, normalizar até pelo menos 3NF, avaliar necessidades de desnormalização, escolher tipos de dados apropriados, definir constraints (PK, FK, UNIQUE, CHECK, NOT NULL). Ordenar colunas do maior para o menor para minimizar desperdício de alinhamento.
-
-**Passo 3 — Design de transação & concorrência.** Identificar operações que precisam de design explícito de transação: pagamentos, inventário, workflows multi-etapa, recursos de alta contenção. Para cada um, decidir nível de isolamento, estratégia de locking, lógica de retry.
-
-**Passo 4 — Escrever DDL.** PostgreSQL CREATE TABLE, INDEX, COMMENT.
-
-**Passo 5 — Estratégia de índices.** PostgreSQL NÃO cria índices automaticamente em colunas FK — um descuido comum que a skill captura automaticamente. Identificar colunas em WHERE, JOIN, ORDER BY frequentes. Calcular seletividade. Escolher tipos de índice apropriados: Partial, Expression, Covering (INCLUDE), GIN/GiST/BRIN.
-
-**Passo 6 — Revisão de performance.** Verificar planos de execução com EXPLAIN ANALYZE. Avaliar necessidades de connection pooling e particionamento.
-
-**Passo 7 — Plano de migração.** Scripts de migração versionados com scripts de rollback obrigatórios. Estratégias zero-downtime.
-
-O Neon MCP brilha aqui. Projetar o schema, rodar migrações e verificar resultados na mesma sessão. Zero troca de contexto.
-
-Regras fixas: nunca usar FLOAT para valores monetários (usar NUMERIC), sempre usar TIMESTAMPTZ, incluir created_at/updated_at em toda tabela, sempre criar índices em colunas FK. A skill garante isso para que eu não precise lembrar.
-
-## Etapa 5. Design de UX — "Como os Usuários Experienciam Isso?"
-
-O agente `ux-designer` cuida do design de experiência do usuário. Diferente de outros agentes, este fica na categoria de **planejamento** e usa o modelo Opus. Design requer raciocínio profundo.
-
-A primeira ação do agente é carregar três arquivos de referência:
-
-**`cognitive-principles.md`** — Lei de Hick (mais escolhas = decisões mais lentas), Lei de Fitts (alvos menores/mais distantes = interação mais difícil), teoria de Carga Cognitiva, Gradiente de Meta (motivação aumenta perto da conclusão), Regra do Pico-Fim (a memória da experiência é dominada pelos momentos de pico e fim). Toda decisão de design é marcada com esses princípios.
-
-**`design-process.md`** — Processo de 5 etapas: Definir → Mapear → Projetar → Remover → Validar. Etapas não podem ser puladas ou reordenadas.
-
-**`ergonomics.md`** — Alvos de toque 44px+, contraste de cor 4.5:1 (texto), 3:1 (UI), contorno de foco 2px+, posicionamento na zona do polegar mobile. Limites numéricos específicos.
-
-Toda tarefa começa com o **Checklist de Primeiros Princípios**:
-
-1. Qual é o **ÚNICO objetivo** do usuário? (Não features, não métricas de negócio — a intenção real dele)
-2. Qual é o **mínimo necessário** para alcançá-lo? (Informação, ações, telas)
-3. O que **pode ser removido**? (Se remover não bloqueia o objetivo, remova)
-
-O terceiro ponto é crucial. Adicionar features é fácil. Remover é difícil. O agente aplica "isso ajuda o objetivo do usuário?" a cada elemento. Não passa no teste? Removido.
-
-Outputs:
-
-- **Fluxo do Usuário** — Ponto de entrada até conclusão do objetivo, pontos de decisão com defaults recomendados, tratamento de erros e casos extremos
-- **Especificações de Tela** — Uma ação primária por tela (visualmente dominante), apenas informação necessária para a decisão atual, ações secundárias (visualmente discretas), mecanismos de feedback
-- **Notas de Acessibilidade** — Contraste, estados de foco, navegação por teclado, leitor de tela
-- **Justificativa de Design** — Qual princípio cognitivo justifica cada decisão
-
-Lista de anti-padrões: texto de marketing, hero sections com propostas de valor vagas, seções decorativas, onboarding desnecessário, diálogos de confirmação para ações não destrutivas, elementos que existem "porque outros apps têm." Todos proibidos.
-
-## Etapa 6. Prototipagem de UI — "Como Fica Visualmente?"
-
-Com as specs de UX prontas, o agente `ui-engineer` cria scaffolds visuais. A regra central deste agente: **zero lógica de negócio**.
-
-Para web, o default é shadcn/ui. Componentes que não consegue cobrir são construídos custom seguindo a skill `design-system`. Para mobile, padrões nativos da plataforma.
-
-Outputs são componentes de UI puros:
-- Sem `useState`, `useEffect`
-- Sem fetch de dados
-- Sem lógica de negócio em event handlers
-- Props apenas para controle visual
-
-```tsx
-// O que o ui-engineer produz: scaffold de UI puro
-export function LoginPage() {
-  return (
-    <Card>
-      <Card.Header>
-        <Card.Title>Login</Card.Title>
-      </Card.Header>
-      <Card.Content className="flex flex-col gap-4">
-        <FormField label="Email">
-          <Input type="email" placeholder="email@example.com" />
-        </FormField>
-        <FormField label="Senha">
-          <Input type="password" />
-        </FormField>
-      </Card.Content>
-      <Card.Footer>
-        <Button variant="primary" fullWidth>Entrar</Button>
-      </Card.Footer>
-    </Card>
-  );
-}
-
-// Adicionado depois por mim (ou outro agente):
-// - const [email, setEmail] = useState('')
-// - const { mutate: login } = useLogin()
-// - onSubmit handler
-// - estados de erro
-// - redirect após sucesso
-```
-
-Por que essa separação? Quando os limites de UI e lógica estão claros, mudanças de design não tocam na lógica e mudanças de lógica não tocam na UI. Na prática, essa separação faz uma diferença enorme na manutenção.
-
-O agente roda um auto-review após a conclusão carregando a skill `frontend-design`. Verifica valores hardcoded, todos os estados visuais definidos, compliance de acessibilidade.
-
-## Etapa 7. Implementação — "Skills Garantem Convenções"
-
-Finalmente, código é escrito. Mas não livremente.
-
-**CLAUDE.md força as skills certas para cada projeto.** Todo projeto raiz tem um arquivo CLAUDE.md com "toda implementação deve usar skills designadas" como regra fixa.
-
-- Projeto Next.js → skill `nextjs` + `vercel-react-best-practices` + `vercel-composition-patterns`
-- API Rust → skill `axum` + skill `postgresql`
-- App React Native → skill `react-native` + `vercel-react-native-skills`
-- Arquitetura hexagonal → skill `axum-hexagonal` ou `fastapi-hexagonal`
-
-O que cada skill faz concretamente:
-
-**Skill `axum`** — Carrega padrões de produção para Axum 0.8+. Composição de routers, assinaturas de handlers, tratamento de erros, stacks de middleware, uso de SQLx. Só o arquivo de referência tem 14.000+ caracteres de exemplos de código.
-
-**Skill `axum-hexagonal`** — Guia fronteiras de arquitetura hexagonal (domínio, portas, adaptadores) com código Rust concreto. Três arquivos de referência: exemplos de domínio, exemplos de adaptadores, exemplos de bootstrap. 18.000+ caracteres combinados.
-
-**`vercel-react-best-practices`** — Uma skill oficial da Vercel. 45 regras em 8 categorias. Prevenção de waterfall, otimização de bundle, padrões server-side, prevenção de re-render — todos com prioridade CRITICAL. As pessoas que construíram o framework codificaram "use assim."
-
-**Servidores MCP aceleram a implementação:**
-- **Context7** — Busca docs de bibliotecas mais recentes em tempo real. Previne uso de API desatualizada
-- **Neon MCP** — Roda migrações, inspeciona schemas, otimiza queries na mesma sessão
-- **D2 MCP** — Escreve diagramas de arquitetura em linguagem D2, compila para SVGs com tema claro/escuro
-- **Playwright MCP** — Automação de navegador para verificação de renderização, screenshots
-- **Sentry MCP** — Erros de produção fluem diretamente para sessões de debugging
-- **PostHog MCP** — Consulta dados de analytics dentro do contexto de código
-
-**Plugins LSP** — TypeScript LSP, Pyright LSP, Rust Analyzer LSP. Claude Code recebe type checking e autocomplete em tempo real enquanto escreve. Rust Analyzer captura erros de compilação no nível do editor antes de chegarem ao terminal.
-
-Zero troca de contexto. Uma sessão do Claude Code lida com código, migrações de DB, lookup de documentação e geração de diagramas.
-
-## Etapa 8. Portão de Qualidade — "Sem Compromissos"
-
-Após a implementação, **dois agentes rodam em paralelo.** Isso está fixo no CLAUDE.md. Toda implementação, toda mudança, sem exceções.
-
-### Agente Tester
-
-**Objetivo: 100% de cobertura.** Linhas, branches, funções, statements — todos.
-
-Processo:
-1. **Analisar** — Mapear todo arquivo, função e branch no código alterado
-2. **Rodar testes existentes** — Encontrar gaps de cobertura
-3. **Planejar** — Listar toda linha, branch, função não coberta
-4. **Escrever** — Criar testes para todo gap (prioridade: caminhos críticos → lógica de negócio → pontos de integração → CRUD → UI → utilitários → caminhos de erro)
-5. **Rodar** — Com relatório de cobertura
-6. **Iterar** — Até 100%. 99% não é 100%
-
-Checklist de cobertura de branch: if/else ambos os lados, switch/match cada caso + default, try/catch sucesso e falha, ternários ambos os resultados, short-circuits lógicos ambos avaliados e pulados, null/optional presente e ausente, early returns acionados e não acionados, loops zero/uma/muitas iterações.
-
-**Regra central: este agente nunca modifica código da aplicação.** Ele só escreve arquivos de teste. Se encontra um problema no código, reporta para mim.
-
-### Agente Security Reviewer
-
-**Mentalidade de assume breach** — todo input é malicioso, toda dependência está comprometida.
-
-Processo:
-1. **Scan rápido** — Secrets hardcoded, exposição de .env, modo debug, padrões perigosos
-2. **Análise de domínio** — Baseado nos quatro checklists da skill `security-checklists`: Auth, API, Lógica de Negócio, Supply Chain
-3. **Classificação de severidade** — Critical / High / Medium
-
-| Padrão de Auto-Falha | Risco |
-|-----------------------|-------|
-| Secrets em código ou logs | Exposição de credenciais |
-| Input do usuário em concatenação de query string | SQL Injection |
-| Input do usuário em chamadas shell/system | Command Injection |
-| Input do usuário em eval/exec | Remote Code Execution |
-| Conteúdo cru do usuário em output HTML | XSS |
-| Request body completo passado para model update | Mass Assignment |
-
-**Regras de escalação** — Lógica de pagamento/financeira, mudanças no sistema de autenticação, implementações criptográficas, integrações sensíveis com terceiros, compliance (GDPR, PCI-DSS) — todos escalados para mim incondicionalmente. IA não deveria fazer julgamentos solo nessas áreas.
-
-Os dois agentes rodam em paralelo porque são tarefas independentes. Rodá-los sequencialmente desperdiça tempo. Um escreve testes enquanto o outro escaneia vulnerabilidades. Ambos encontram problemas? Corrige e re-roda. Até tudo passar.
-
-## Etapa 9. Deploy & Operações — "Manda Ver"
-
-Código passa no portão de qualidade, hora de fazer deploy. A infraestrutura já foi decidida na Etapa 3.
-
-**Pulumi** gerencia infraestrutura como código. TypeScript define GCP Cloud Run, Secret Manager, Artifact Registry, Cloudflare R2 e Neon. Sem HCL para aprender. O plugin `pulumi-authoring` guia authoring de ComponentResource, manipulação de Output e padrões de gestão de secrets.
-
-Pós-deploy:
-- **Sentry MCP** — Erros de produção inspecionados e debugados diretamente de sessões do Claude Code
-- **PostHog MCP** — Dados de comportamento do usuário consultados no contexto de código. Análise de funil, rastreamento de eventos, testes A/B
-- **Cloudflare MCP** — Gerenciar Workers, KV, R2, D1
-
-Problemas descobertos em produção voltam pelo pipeline. Até bug fixes carregam skills, e tester + security-reviewer rodam em paralelo após a implementação. Sem exceções.
-
-## Documentos Ficam Vivos
-
-No meu fluxo de trabalho, documentação não é overhead — é **parte do desenvolvimento**. Duas regras:
-
-**1. Quando requisitos mudam, todos os documentos relacionados atualizam.** Se uma feature sai do PRD, o SADD, design do DB e specs de UX todos atualizam. No momento em que documentos divergem da realidade, a IA confia em documentos errados e escreve código errado.
-
-**2. Após unidades de desenvolvimento maiores, o CLAUDE.md atualiza.** Quando um novo módulo aparece, estrutura de pastas, convenções e relacionamentos de dependência são refletidos no CLAUDE.md. Na próxima sessão, Claude Code lê esse arquivo e começa com entendimento completo do estado atual do projeto.
-
-Olhe o CLAUDE.md do Mealio para ver isso em ação. A estrutura Feature-Sliced Design do mobile, arquitetura dual-mode (auth/guest), comportamento da fila de upload, padrão trigger-and-poll de análise com IA, gestão de chaves do TanStack Query, gotchas de teste com Jest — tudo documentado. Um documento vivo de 189 linhas.
-
-O plugin `claude-md-management` ajuda. `/revise-claude-md` reflete aprendizados da sessão atual no CLAUDE.md.
-
-## Uma Pessoa, Múltiplos Papéis
-
-Com esse pipeline, uma pessoa transita entre múltiplos papéis:
-
-| Etapa | Papel | Skill/Agente |
-|-------|-------|--------------|
-| 1. Product Brief | PM | skill `product-brief` |
-| 2. PRD | Product Manager | skill `prd-craft` |
-| 3. Arquitetura | Arquiteto de Software | skill `software-architect` |
-| 4. Banco de Dados | DBA | skills `database-design` + `postgresql` |
-| 5. Design de UX | Designer de UX | agente `ux-designer` |
-| 6. Protótipo de UI | Engenheiro de UI | agente `ui-engineer` |
-| 7. Implementação | Desenvolvedor | `axum`, `nextjs`, `react-native`, etc. |
-| 8. Portão de Qualidade | QA + Engenheiro de Segurança | agentes `tester` + `security-reviewer` |
-| 9. Deploy | DevOps | Pulumi + Cloudflare + GCP |
-
-Antes, cada um desses papéis era uma pessoa diferente. Agora, a skill certa carrega para cada papel, aplicando os frameworks e restrições daquele papel. Não preciso ser expert em cada domínio — o pensamento do expert está codificado na skill.
-
-## Limitações
-
-Vou ser honesto. Esse sistema tem limites.
-
-**Gosto de domínio não pode ser substituído.** Skills guiam "defina o problema com evidências" mas qual problema realmente dói, onde está o dinheiro, o que os usuários realmente querem — isso é julgamento meu. A IA escreve o Product Brief, mas os insights que vão nele vêm de observar usuários.
-
-**Gosto de UX é igual.** Design baseado em princípios cognitivos previne decisões ruins, mas criar experiências genuinamente naturais e prazerosas no final vem de usar o produto você mesmo e sentir.
-
-**Qualidade da skill é tudo.** Skills mal escritas propagam padrões ruins em todo projeto. Skills precisam de revisão e atualizações regulares.
-
-Mas esses limites não são bugs do sistema — são o design. IA fornece frameworks, eu forneço os ingredientes. Divisão de trabalho.
-
-## O Efeito Composto
-
-O valor real desse sistema aparece com o tempo.
-
-Skills e agentes criados para o primeiro projeto servem diretamente para o segundo. Padrões de CLAUDE.md melhorados no segundo projeto se aplicam ao terceiro. Novos padrões descobertos durante revisões de segurança são adicionados às skills e automaticamente verificados em todo projeto futuro.
-
-Configurar 21 skills, 7 agentes, 8 servidores MCP e 20 plugins levou tempo. Escrever arquivos CLAUDE.md detalhados para cada projeto também. Mas esse investimento compõe. Todo novo projeto começa com todo o conhecimento previamente acumulado aplicado automaticamente.
-
-## O Que Vibe Coding Realmente Significa
-
-Vibe coding não é extrair código da IA. É **direcionar IA por todo o processo de construir um produto.**
-
-Começando de uma ideia, definindo o problema (Product Brief), especificando requisitos (PRD), projetando a estrutura (SADD), modelando dados (DB Design), mapeando experiência do usuário (UX), criando scaffolds visuais (UI), implementando código (Skills) e verificando qualidade (Tester + Security). Em cada etapa, frameworks de nível expert carregam, e eu defino a direção e faço os julgamentos.
-
-Não um digitador. Um diretor.
-
-Em um post anterior eu disse "viva como um construtor." Esse pipeline é a infraestrutura do construtor. Tudo que você precisa é a ideia — o sistema estrutura o resto.
-
-As vibes são boas. O pipeline te protege.
+O gargalo é você. Seu gosto, seu julgamento, sua capacidade de decidir o que importa. Todo o resto é execução. E execução é exatamente no que a IA tá ficando boa.
