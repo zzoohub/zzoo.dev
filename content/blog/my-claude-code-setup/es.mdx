@@ -1,6 +1,6 @@
 ---
-title: "Mi Setup de Claude Code"
-description: "CLAUDE.md, 21 skills, 7 agentes, 8 servidores MCP. El setup completo de Claude Code que un desarrollador solo usa para mantener calidad de equipo sin tener equipo."
+title: "Un equipo de uno"
+description: "Lo que realmente quieres de un equipo no son más personas. Son más perspectivas."
 date: "2026-02-17"
 tags:
   - claude-code
@@ -10,126 +10,79 @@ tags:
 draft: false
 ---
 
-Cuando usé Claude Code por primera vez, era solo un autocompletado inteligente. Ya no. Sigue las convenciones del proyecto, ejecuta revisiones de seguridad, escribe tests al 100% de cobertura y revisa schemas de bases de datos como un DBA senior. Cada proyecto recibe el mismo estándar de calidad, aplicado automáticamente.
+Hay una pregunta que nadie se molesta en hacer porque la respuesta parece obvia. ¿Puede una sola persona tener un equipo?
 
-No es que la herramienta sea excepcional. El setup es diferente. Aquí está mi configuración completa de Claude Code.
+La respuesta automática es no. Un equipo son varias personas. Contratas a alguien de seguridad, a alguien de bases de datos, a alguien de testing. Cada uno mira tu código desde un ángulo que tú no puedes mantener. La ingeniera de seguridad ve inyecciones SQL donde tú ves formularios. El DBA ve índices faltantes donde tú ves features terminadas. Un desarrollador solo puede ser bueno, pero no puede ser cinco personas a la vez.
 
-## El Sistema CLAUDE.md
+Yo pensaba exactamente eso. Hasta que me di cuenta de que la palabra "equipo" apuntaba a algo más preciso de lo que creíamos. Lo que realmente quieres de un equipo no son más personas. Son más perspectivas aplicadas de manera consistente. Tu ingeniera de seguridad no es valiosa porque ocupa una silla extra. Es valiosa porque mira cada cambio a través de un lente que tú no tienes, y lo hace siempre, no solo cuando está de humor.
 
-Cada proyecto tiene un archivo `CLAUDE.md` en su raíz. Piénsalo como una constitución para el comportamiento de la IA en ese codebase. Define el tech stack, patrones de arquitectura, constraints clave y — lo más importante — **qué skills y agentes deben usarse**.
+Esa distinción importa porque abre una puerta. Si lo que necesitas son perspectivas consistentes, ¿realmente necesitas personas para eso?
 
-El patrón crítico en todos mis proyectos:
+Desarrollo varios productos como desarrollador solo. Hace un año, el problema más difícil no era escribir código. Era cambiar de modo mental. Estás profundo en una feature, pensando en estados de React y transiciones de UI, y de repente se supone que deberías estar pensando como un DBA. ¿Tiene esta tabla las foreign keys correctas? ¿Va a sobrevivir este schema cuando haya cien mil registros? Puedes aprender esas habilidades, pero no puedes activarlas todas al mismo tiempo. Cuando estás construyendo, estás construyendo. Tu cerebro no se detiene espontáneamente a hacer una auditoría de seguridad. El de nadie lo hace. Por eso existen los equipos.
+
+Mi configuración de Claude Code cambió esto de una manera que no esperaba. No me hizo más rápido escribiendo código. Creó algo que genuinamente se siente como colegas con expertise específico. Y la sorpresa no es que la IA pueda ayudarte a programar. La sorpresa es que la configuración correcta crea algo cualitativamente diferente de "un tú más rápido."
+
+Déjame explicar las piezas, porque cada una es simple. Es la composición la que produce algo inesperado.
+
+## La constitución
+
+Todo proyecto empieza con un archivo llamado `CLAUDE.md` en la raíz. Lo pienso como una constitución: las reglas fundamentales de cómo la IA se comporta en ese código. Define el stack tecnológico, los patrones de arquitectura, las restricciones, y lo más crítico, qué skills y agentes deben usarse en cada cambio. El patrón central que aparece en todos mis proyectos dice algo así:
 
 ```
 1. Toda implementación DEBE usar los skills especificados
-2. Después de la implementación, ejecutar DOS agentes EN PARALELO:
-   - security-reviewer → auditoría → corrección
-   - tester → testear código modificado → corrección
+2. Después de implementar, ejecutar DOS agentes EN PARALELO:
+   - security-reviewer -> auditoría -> corrección
+   - tester -> probar código cambiado -> corrección
 ```
 
-Esto no es una sugerencia. Es una regla dura. Cada feature, cada bug fix, cada refactor pasa por este pipeline. El archivo `CLAUDE.md` lo hace automático — Claude Code lo lee al inicio de cada sesión y sigue el flujo sin que se lo pidan.
+Esto no es una sugerencia. Es una regla dura. Claude Code lee este archivo al inicio de cada sesión. No necesita que se lo recuerden. Cada feature, cada fix, cada refactor pasa por el mismo pipeline. La constitución lo impone.
 
-Para mi sitio Next.js, el CLAUDE.md exige los skills `vercel-react-best-practices` y `vercel-composition-patterns`. Para mi API en Rust, es `axum` y `postgresql`. Para la app React Native, `react-native` y `vercel-react-native-skills`. La expertise correcta se carga antes de que se escriba la primera línea de código.
+Proyectos distintos reciben constituciones distintas. Mi sitio Next.js exige el skill de React best practices de Vercel. Mi API en Rust exige skills de `axum` y `postgresql`. Pero el pase paralelo de seguridad y testing es universal. Sin excepciones. Sin "agrego tests después."
 
-## 21 Skills: Expertise Codificada
+El efecto de esto es sutil pero profundo. Yo era de esos desarrolladores que escribían tests cuando les daba la gana y hacían revisiones de seguridad cuando se acordaban. Ahora el sistema no me da esa opción. La consistencia dejó de ser cuestión de disciplina. Se volvió estructura.
 
-Los skills son archivos de conocimiento que Claude Code carga bajo demanda. Algunos los escribí yo, y otros vienen de fuentes oficiales. Uso 21 en siete dominios:
+## Skills como restricciones
 
-**Arquitectura y Diseño** — `data-modeling`, `api-design`, `ux-design`, `design-system`. Estos codifican cómo pienso sobre diseño de sistemas: extracción de entidades, convenciones REST, ergonomía cognitiva, design tokens.
+Tengo 21 skills distribuidos en siete dominios: arquitectura, frameworks web, móvil, backend, bases de datos, IA/ML y calidad. Algunos los escribí yo. Otros vienen directamente de los creadores de frameworks, y ahí es donde la cosa se pone interesante.
 
-**Frameworks Web** — `vercel-react-best-practices` (45 reglas en 8 categorías), `vercel-composition-patterns`, `nextjs`. Los skills con prefijo `vercel-*` son **proporcionados oficialmente por Vercel** — no algo que yo escribí. Solo el skill de mejores prácticas de React cubre prevención de waterfall, optimización de bundle, patrones server-side, prevención de re-renders y estrategias de renderizado. Que los vendors de frameworks publiquen skills como estos es un game changer: la gente que construyó el framework codifica exactamente cómo quieren que lo uses. `nextjs` es un skill custom que escribí para llenar los vacíos que los oficiales no cubren.
+Vercel distribuye skills oficiales de Claude Code para mejores prácticas de React. Cuarenta y cinco reglas en ocho categorías. Prevención de cascada, optimización de bundles, patrones server-side, prevención de re-renders. Las personas que construyeron el framework codificaron exactamente cómo quieren que lo uses.
 
-**Móvil** — `react-native`, `vercel-react-native-skills` (también oficial de Vercel). Performance de listas, animaciones, patrones de gestión de estado específicos para React Native.
+Piensa en lo que eso significa. Durante años, las mejores prácticas vivieron en documentación que los desarrolladores podían o no leer. Blog posts que se volvían obsoletos. Charlas de conferencias medio recordadas. Ahora los autores de frameworks están distribuyendo restricciones legibles por máquina que la IA debe seguir. No guías que podrías leer. Barandillas que no puedes ignorar.
 
-**Backend** — `axum`, `axum-hexagonal`, `fastapi`, `fastapi-hexagonal`. Tanto stacks de Rust como Python con patrones de arquitectura hexagonal integrados.
+La diferencia clave entre skills y documentación es que la documentación describe. Los skills restringen. Cuando Claude Code carga un skill de seguridad, no simplemente sabe sobre OWASP top 10. Está obligado a verificar cada punto. Cuando carga el skill de base de datos, no simplemente sabe sobre queries N+1. Tiene que buscarlos. La diferencia entre saber y estar obligado es la diferencia entre un libro de texto y un colega que no firma hasta que el trabajo cumple su estándar.
 
-**Base de Datos** — `postgresql`, `sqlite`, `neon-postgres`. Patrones de resolución de problemas para paginación, búsqueda full-text, queries N+1, migraciones sin downtime, particionamiento.
+## El equipo virtual
 
-**AI/ML** — `langgraph`. Agentes ReAct, sistemas multi-agente, patrones human-in-the-loop.
+Aquí es donde realmente emerge la sensación de "equipo." Ejecuto siete agentes, sub-procesos especializados que manejan tareas específicas de forma autónoma.
 
-**Calidad** — `security-checklists`, `web-vitals-checklist`, `i18n-patterns`, `web-design-guidelines`.
+El revisor de seguridad se ejecuta después de cada implementación. Escanea inyecciones, exposición de secretos, condiciones de carrera, IDOR. Clasifica hallazgos por severidad. Cualquier cosa que toque lógica de pagos o autenticación me la escala directamente, porque hay decisiones que no deberían automatizarse. Este agente tiene la disposición del ingeniero de seguridad más paranoico con el que hayas trabajado, excepto que nunca se cansa de ser paranoico.
 
-La idea clave: los skills no son documentación. Son **constraints**. Cuando Claude Code carga `vercel-react-best-practices`, no solo conoce patrones de React — está obligado a seguir 45 reglas específicas. La prevención de waterfall tiene prioridad CRITICAL. La optimización del tamaño del bundle es CRITICAL. Estas no son guías; son barandillas.
+El tester apunta a cobertura completa: líneas, ramas, funciones, statements. Analiza qué cambió, planea una estrategia de testing, escribe tests, los ejecuta y itera hasta completar la cobertura. Una regla estricta: nunca modifica código de aplicación. Solo archivos de test. Esto importa porque significa que el tester tiene que trabajar con lo que la implementación le da, igual que un QA real que no puede "simplemente arreglar el código para hacerlo testeable."
 
-Espero que esto se convierta en una tendencia mayor. A medida que más autores de frameworks y vendors de herramientas publiquen skills oficiales, la calidad base del código generado por IA subirá en todos los ámbitos. Imagina que cada librería importante lance un skill que codifique sus mejores prácticas — no como docs que podrías leer, sino como constraints que la IA debe seguir. Los skills custom que escribí llenan los vacíos hoy, pero los oficiales ya son mejores para los dominios que cubren.
+El revisor de base de datos toma la perspectiva de un DBA senior. Su pregunta central: "¿Va a sobrevivir este schema la realidad?" Foreign keys faltantes, estrategias mixtas de IDs, desnormalización sin documentar, el anti-patrón de todo-nullable. Las migraciones multi-tabla se escalan. Los cambios de estrategia de primary key se escalan. Hace las preguntas que yo olvidaría cuando estoy enfocado en features.
 
-## 7 Agentes: Un Equipo Virtual
+Después está el ingeniero de UI, el auditor de web vitals, el diseñador UX y el copywriter. Cada uno con su lente. Lo que me sorprende es que cada agente encarna una perspectiva que yo teóricamente tengo pero no puedo mantener simultáneamente. Sé que la seguridad importa. Sé que la cobertura importa. Sé que el diseño de schema importa. Pero cuando estoy profundo construyendo algo, estoy pensando en lo que estoy construyendo. Estos agentes no tienen ese problema. Solo piensan en su cosa, y lo hacen cada vez.
 
-Los agentes son sub-procesos especializados que manejan tareas específicas de forma autónoma. Tengo siete, divididos entre desarrollo y planificación:
+## El tejido conectivo
 
-### Agentes de Desarrollo
+Skills y agentes serían útiles solos. Lo que los hace sentir como equipo es el tejido conectivo: los MCP servers que conectan Claude Code con los sistemas reales.
 
-**security-reviewer** — Ejecuta una auditoría de seguridad después de cada implementación. Escanea OWASP top 10, verifica exposición de secrets, SQL injection, command injection, XSS, IDOR, race conditions. Clasifica hallazgos por severidad. Me escala a mí para lógica de pagos, cambios de auth, criptografía o código relacionado con cumplimiento.
+Context7 le da documentación actualizada de cualquier librería. Playwright le permite manejar un navegador para testing y verificación. Sentry canaliza errores de producción directamente a sesiones de debugging, así que cuando algo se rompe a las 2 de la mañana, el contexto ya está ahí cuando me siento a trabajar en la mañana. Neon le permite ejecutar migraciones e inspeccionar schemas sin que yo copie y pegue entre terminales. GitHub le da acceso completo a PRs, issues y búsqueda de código. Cloudflare le permite gestionar Workers, KV stores y bases de datos D1.
 
-**tester** — Apunta a 100% de cobertura de tests en métricas de línea, branch, función y statement. Analiza el código modificado, planifica la estrategia de testing, escribe tests, los ejecuta e itera hasta que la cobertura esté completa. Regla importante: nunca modifica código de aplicación, solo archivos de test.
+Cada conexión es individualmente simple. Pero juntas significan que Claude Code opera con el mismo contexto que tendría un miembro humano del equipo. No trabaja aislado, adivinando sobre la base de datos de producción o las tasas de error más recientes. Está conectado al sistema vivo.
 
-**database-reviewer** — Toma la perspectiva de un DBA senior. Hace las preguntas que importan: "¿Este schema sobrevivirá la realidad?" Verifica foreign key constraints faltantes, estrategias de ID mixtas, desnormalización sin documentar, anti-patrones de nullable-everything. Escala migraciones multi-tabla y cambios de estrategia de PK.
+## El efecto compuesto
 
-**ui-engineer** — Construye componentes de UI puros con cero lógica de negocio. En web, usa shadcn/ui o componentes custom siguiendo el skill de design system. En móvil, usa el skill `design-system` con patrones nativos de la plataforma. Límite estricto: sin gestión de estado, sin data fetching, sin routing.
+Esto es lo que no esperaba. Cada pieza, individualmente, es modesta. Una checklist de seguridad. Un conjunto de reglas de React. Un proceso de revisión de DBA. Una integración de error tracking. Si miraras cualquiera de ellas sola, pensarías: está bien, pero es solo una checklist.
 
-**web-vitals-auditor** — Auditoría automatizada de performance. Construye y sirve la app, ejecuta Lighthouse en desktop y móvil, verifica contra objetivos: LCP < 2.5s, INP < 200ms, CLS < 0.1, TTFB < 800ms, FCP < 1.8s. Genera un reporte con scores, análisis de bundle y recomendaciones accionables.
+El efecto compuesto es lo que sorprende. Cuando el revisor de seguridad corre en paralelo con el tester, y ambos tienen acceso al análisis de schema del revisor de base de datos, y todos operan bajo las restricciones de skills específicos del framework, y todo eso está conectado a datos de producción en vivo a través de MCP servers, el resultado no es la suma de las partes. Es algo cualitativamente diferente. Es un nivel de calidad que se mantiene consistente en cada cambio, en cada proyecto, sin importar si estoy energizado o agotado, enfocado o disperso.
 
-### Agentes de Planificación
+Esto es, de hecho, más consistente que la mayoría de equipos humanos en los que he trabajado. Los equipos humanos tienen días malos. La gente corta esquinas bajo presión de deadlines. El ingeniero senior que normalmente lo atrapa todo está distraído porque está entrevistando para otro trabajo. El nivel de calidad fluctúa. El de mi equipo de agentes no fluctúa porque es estructural, no motivacional.
 
-**ux-designer** — Diseña desde primeros principios. Proceso de cinco pasos: Definir el problema → Mapear user journeys → Diseñar interacciones → Eliminar fricción → Validar accesibilidad. Genera flujos de usuario, specs de pantalla con acciones primarias y jerarquía de información.
+La inversión fue real. Construir 21 skills, configurar 7 agentes, escribir constituciones detalladas para cada proyecto. Eso tomó semanas. Pero la inversión fue en el sistema, no en ningún proyecto individual. Ahora cada proyecto nuevo, cada feature nueva, se beneficia automáticamente de la expertise acumulada. El costo marginal de mantener calidad de equipo en un proyecto nuevo es cercano a cero.
 
-**copywriter** — Copy de producto y microcopy de UX con seis principios de persuasión: un solo mensaje, la certeza vence a la recompensa máxima, la novedad es suficiente, especificar acción concreta, poder de la agregación, escribir como un solo mensaje. Entrega 2–3 variaciones con conteo de caracteres y sugerencias de A/B test.
+Vuelvo a la pregunta original. ¿Puede una sola persona tener un equipo? Lo que tengo no es un equipo en el sentido humano. Es algo nuevo que todavía no tiene un buen nombre. Es un conjunto de perspectivas persistentes, especializadas y consistentes que se involucran con cada pieza de trabajo que produzco. No puede tener la intuición que viene de la experiencia de vida completamente diferente de un colega humano. No puede cuestionar la dirección del producto. No puede decirme que estoy resolviendo el problema equivocado.
 
-El diseñador de UX y el copywriter trabajan como pipeline: el diseñador crea el flujo, luego pasa al copywriter para texto persuasivo, CTAs, copy de onboarding y mensajes de error.
+Pero para el trabajo específico de mantener calidad en múltiples dimensiones simultáneamente, en cada cambio, sin excepción, mientras una sola persona hace el trabajo creativo y estratégico, nada de lo que he experimentado se le acerca.
 
-## Pipelines de Trabajo
-
-El poder real no está en las herramientas individuales — está en cómo se componen en flujos repetibles:
-
-**Desarrollo Estándar:**
-```
-Implementación (con skills) → [security-reviewer + tester] (paralelo) → Corrección → Listo
-```
-
-**Modelado de Datos:**
-```
-skill data-modeling → agente database-reviewer → skill api-design → implementación
-```
-
-**Frontend:**
-```
-skill nextjs → implementación → vercel-react-best-practices (review)
-```
-
-**Diseño UX:**
-```
-agente ux-designer → agente copywriter (solo texto persuasivo)
-```
-
-Cada proyecto aplica el mismo flujo de desarrollo a través de CLAUDE.md. El pipeline de revisión de schema se ejecuta automáticamente cuando hay cambios en la base de datos. El pase paralelo de seguridad-y-testing ocurre en cada cambio. Sin excepciones.
-
-## Servidores MCP: Integraciones Externas
-
-Claude Code se conecta a servicios externos a través de servidores MCP (Model Context Protocol). Mi setup incluye:
-
-- **Context7** — Consulta de documentación en tiempo real para cualquier librería
-- **Playwright** — Automatización de navegador para testing y capturas de pantalla
-- **Sentry** — Integración de error tracking para debugging de issues en producción
-- **Neon** — Operaciones directas de base de datos y gestión de schemas
-- **Notion** — Integración de workspace para gestión de proyectos
-- **GitHub** — Flujo completo de GitHub (PRs, issues, búsqueda de código)
-- **D2** — Generación de diagramas de arquitectura (compilados a SVGs con temas)
-- **Cloudflare** — Gestión de Workers, KV, R2, D1
-
-Estos no son solo nice-to-haves. El MCP de Neon significa que Claude Code puede correr migraciones, inspeccionar schemas y optimizar queries sin que yo cambie de contexto. El MCP de Sentry significa que los errores de producción alimentan directamente las sesiones de debugging. El MCP de D2 genera diagramas de arquitectura que se envían como parte de la documentación del proyecto.
-
-## Cómo Se Ve Esto en la Práctica
-
-Una sesión típica: describo un feature en lenguaje natural. Claude Code lee el CLAUDE.md, carga los skills requeridos y empieza a implementar. Cuando termina, dos agentes arrancan en paralelo — el security reviewer escaneando vulnerabilidades, el tester escribiendo tests al 100% de cobertura. Si alguno encuentra problemas, se corrigen. Luego yo reviso y lanzo.
-
-No ejecuto linters manualmente. No escribo tests de boilerplate. No hago checklists de seguridad de memoria. El sistema lo maneja.
-
-La inversión fue construir los 21 skills, configurar los 7 agentes y escribir archivos CLAUDE.md detallados para cada proyecto. Eso tomó tiempo. Pero ahora cada nueva feature, en cada proyecto, se beneficia de ese conocimiento acumulado — automáticamente.
-
-## El Efecto Compuesto
-
-Cada skill, agente y archivo CLAUDE.md es individualmente simple. Un checklist de seguridad. Un set de reglas de React. Un proceso de revisión de DBA. Pero compuestos juntos, crean algo que se siente como tener un equipo: un arquitecto que conoce mis patrones, un ingeniero de seguridad que nunca duerme, un líder de QA que insiste en 100% de cobertura, y un DBA que pregunta "¿esto sobrevivirá la realidad?"
-
-Para un desarrollador solo lanzando múltiples productos, esa es la diferencia entre quemarse y escalar.
-
-Las vibes son buenas. Los agentes me cubren las espaldas.
+La configuración es la inversión. Los retornos se componen a partir de ahí.

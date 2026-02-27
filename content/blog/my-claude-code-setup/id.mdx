@@ -1,6 +1,6 @@
 ---
-title: "Setup Claude Code Saya"
-description: "CLAUDE.md, 21 skill, 7 agent, 8 MCP server. Setup Claude Code lengkap yang dipakai solo developer untuk menjaga kualitas setara tim tanpa tim."
+title: "Tim Satu Orang"
+description: "Yang sebenarnya kamu butuhkan dari sebuah tim bukan lebih banyak orang. Tapi lebih banyak perspektif yang diterapkan secara konsisten."
 date: "2026-02-17"
 tags:
   - claude-code
@@ -10,126 +10,79 @@ tags:
 draft: false
 ---
 
-Pertama kali pakai Claude Code, dia cuma autocomplete yang pintar. Sekarang nggak lagi. Dia mengikuti konvensi proyek, menjalankan security review, menulis test sampai 100% coverage, dan mereview skema database seperti DBA senior. Setiap proyek dapat standar kualitas yang sama, ditegakkan secara otomatis.
+Bagian tersulit dari menjadi solo developer bukan yang orang-orang kira. Bukan soal beban kerja. Bukan soal kesepian. Masalahnya adalah kamu cuma bisa berpikir dengan satu cara pada satu waktu.
 
-Bukan karena tool-nya luar biasa. Setup-nya yang berbeda. Ini konfigurasi Claude Code lengkap saya.
+Saat kamu tenggelam dalam sebuah feature, memikirkan state management dan flow UI, kamu tidak spontan berhenti untuk berpikir seperti DBA. "Apakah tabel ini punya foreign key yang benar? Apakah schema ini akan bertahan saat datanya seratus ribu baris?" Kamu tahu pertanyaan-pertanyaan itu penting. Kamu bahkan tahu jawabannya, dalam banyak kasus. Tapi saat kamu sedang membangun, ya kamu sedang membangun. Otakmu tidak melakukan audit keamanan dengan sendirinya. Otak siapapun tidak. Itulah mengapa tim ada.
 
-## Sistem CLAUDE.md
+Setidaknya, itulah yang dulu kupikir. Bahwa tim ada supaya ada lebih banyak orang. Tapi sepertinya kata "tim" menunjuk ke sesuatu yang lebih spesifik dari yang kita sadari. Yang sebenarnya kamu mau dari sebuah tim bukan lebih banyak badan di kursi. Yang kamu mau adalah lebih banyak perspektif yang diterapkan secara konsisten. Engineer keamanan bukan berharga karena dia orang kedua di ruangan. Dia berharga karena melihat setiap perubahan kode melalui lensa yang kamu tidak punya, dan melakukannya setiap saat, bukan cuma saat dia sedang mood.
 
-Setiap proyek punya file `CLAUDE.md` di root-nya. Anggap saja konstitusi untuk perilaku AI di codebase itu. File ini mendefinisikan tech stack, pola arsitektur, constraint utama, dan — paling penting — **skill dan agent mana yang harus dipakai**.
+Pembedaan ini penting karena membuka pertanyaan nyata: kalau yang kamu butuhkan adalah perspektif yang konsisten, apakah kamu benar-benar butuh manusia untuk itu?
 
-Pola kritis di semua proyek saya:
+Aku menjalankan beberapa produk sebagai developer solo. Setup Claude Code-ku mengubah cara kerjaku dengan cara yang tidak kuduga. Bukan membuatku lebih cepat menulis kode. Tapi menciptakan sesuatu yang benar-benar terasa seperti punya rekan kerja dengan keahlian spesifik. Kejutannya bukan bahwa AI bisa bantu coding. Kejutannya adalah bahwa konfigurasi yang tepat menghasilkan sesuatu yang secara kualitatif berbeda dari "kamu yang lebih cepat."
+
+Biar kujelaskan bagian-bagiannya. Masing-masing sederhana. Komposisinya yang menghasilkan sesuatu tak terduga.
+
+## Konstitusi
+
+Setiap proyek dimulai dengan file bernama `CLAUDE.md` di root. Aku menganggapnya sebagai konstitusi: aturan fundamental tentang bagaimana AI berperilaku di codebase itu. File ini mendefinisikan tech stack, pola arsitektur, batasan, dan yang paling krusial, skill dan agent mana yang harus digunakan di setiap perubahan.
+
+Pola inti yang muncul di semua proyekku:
 
 ```
 1. Semua implementasi HARUS menggunakan skill yang ditentukan
 2. Setelah implementasi, jalankan DUA agent SECARA PARALEL:
-   - security-reviewer → audit → perbaiki
-   - tester → test kode yang berubah → perbaiki
+   - security-reviewer -> audit -> perbaikan
+   - tester -> tes kode yang berubah -> perbaikan
 ```
 
-Ini bukan saran. Ini aturan keras. Setiap fitur, setiap bug fix, setiap refactor melewati pipeline ini. File `CLAUDE.md` membuatnya otomatis — Claude Code membacanya di awal setiap sesi dan mengikuti workflow tanpa diminta.
+Ini bukan saran. Ini aturan keras. Claude Code membaca file ini di awal setiap sesi. Tidak perlu diingatkan. Setiap feature, setiap fix, setiap refactor melewati pipeline yang sama. Konstitusi yang memaksanya.
 
-Untuk website Next.js saya, CLAUDE.md mewajibkan skill `vercel-react-best-practices` dan `vercel-composition-patterns`. Untuk API Rust saya, `axum` dan `postgresql`. Untuk aplikasi React Native, `react-native` dan `vercel-react-native-skills`. Keahlian yang tepat dimuat sebelum baris kode pertama ditulis.
+Proyek berbeda mendapat konstitusi berbeda. Situs Next.js-ku mewajibkan skill React best practices resmi dari Vercel. API Rust-ku mewajibkan skill `axum` dan `postgresql`. Tapi pass paralel keamanan-dan-testing bersifat universal. Tanpa pengecualian. Tanpa "nanti saja tesnya."
 
-## 21 Skill: Keahlian yang Terenkode
+Efeknya halus tapi mendalam. Dulu aku tipe developer yang menulis test kalau lagi rajin dan melakukan review keamanan kalau ingat. Sekarang sistemnya tidak memberi opsi itu. Konsistensi bukan lagi soal disiplin. Ini soal struktur.
 
-Skill adalah file pengetahuan yang dimuat Claude Code sesuai kebutuhan. Beberapa saya tulis sendiri, beberapa dari sumber resmi. Saya menggunakan 21 di tujuh domain:
+## Skill sebagai batasan
 
-**Arsitektur & Desain** — `data-modeling`, `api-design`, `ux-design`, `design-system`. Ini mengenkode cara saya berpikir tentang desain sistem: ekstraksi entitas, konvensi REST, ergonomi kognitif, design token.
+Aku punya 21 skill di tujuh domain: arsitektur, web framework, mobile, backend, database, AI/ML, dan kualitas. Beberapa kutulis sendiri. Beberapa datang dari pembuat framework.
 
-**Framework Web** — `vercel-react-best-practices` (45 aturan di 8 kategori), `vercel-composition-patterns`, `nextjs`. Skill berprefiks `vercel-*` **disediakan resmi oleh Vercel** — bukan sesuatu yang saya tulis. Skill React best practices saja mencakup pencegahan waterfall, optimasi bundle, pola server-side, pencegahan re-render, dan strategi rendering. Framework vendor yang mengirimkan skill seperti ini adalah game changer: orang yang membangun framework mengenkode persis bagaimana mereka ingin kamu memakainya. `nextjs` adalah skill custom yang saya tulis untuk mengisi celah yang nggak dicover skill resmi.
+Vercel mendistribusikan skill resmi Claude Code untuk React best practices. Empat puluh lima aturan dalam delapan kategori. Pencegahan waterfall, optimisasi bundle, pola server-side, pencegahan re-render. Orang-orang yang membangun framework-nya mengkodekan persis bagaimana mereka ingin kamu menggunakannya.
 
-**Mobile** — `react-native`, `vercel-react-native-skills` (juga resmi dari Vercel). Performa list, animasi, pola state management khusus React Native.
+Pikir tentang apa artinya itu. Bertahun-tahun, best practice tinggal di dokumentasi yang developer mungkin atau mungkin tidak baca. Post blog yang kedaluwarsa. Talk konferensi yang setengah diingat. Sekarang pembuat framework mendistribusikan batasan yang bisa dibaca mesin, yang wajib diikuti AI. Bukan panduan yang mungkin kamu baca. Guardrail yang tidak bisa kamu abaikan.
 
-**Backend** — `axum`, `axum-hexagonal`, `fastapi`, `fastapi-hexagonal`. Stack Rust dan Python dengan pola hexagonal architecture yang sudah tertanam.
+Perbedaan kunci antara skill dan dokumentasi: dokumentasi mendeskripsikan. Skill membatasi. Saat Claude Code memuat skill checklist keamanan, dia tidak sekadar tahu tentang OWASP top 10. Dia dipaksa memeriksa setiap item. Saat memuat skill database, tidak sekadar tahu tentang query N+1. Dia wajib mencarinya. Perbedaan antara tahu dan dipaksa adalah perbedaan antara buku teks dan rekan kerja yang tidak mau approve sampai pekerjaannya memenuhi standarnya.
 
-**Database** — `postgresql`, `sqlite`, `neon-postgres`. Pola problem-solving untuk paginasi, full-text search, query N+1, migrasi zero-downtime, partisi.
+## Tim virtual
 
-**AI/ML** — `langgraph`. ReAct agent, sistem multi-agent, pola human-in-the-loop.
+Di sinilah perasaan "tim" benar-benar muncul. Aku menjalankan tujuh agent: sub-proses terspesialisasi yang menangani tugas spesifik secara otonom.
 
-**Kualitas** — `security-checklists`, `web-vitals-checklist`, `i18n-patterns`, `web-design-guidelines`.
+Reviewer keamanan berjalan setelah setiap implementasi. Memindai injeksi, kebocoran secret, race condition, IDOR. Mengklasifikasikan temuan berdasarkan severity. Apa pun yang menyentuh logika pembayaran atau autentikasi di-eskalasi langsung ke aku, karena ada keputusan yang tidak boleh diotomatisasi. Agent ini punya disposisi engineer keamanan paling paranoid yang pernah kamu temui, kecuali dia tidak pernah lelah paranoid.
 
-Insight kuncinya: skill bukan dokumentasi. Mereka adalah **constraint**. Ketika Claude Code memuat `vercel-react-best-practices`, dia nggak cuma tahu pola React — dia dipaksa mengikuti 45 aturan spesifik. Pencegahan waterfall ditandai prioritas CRITICAL. Optimasi ukuran bundle CRITICAL. Ini bukan guideline; ini guardrail.
+Tester menargetkan cakupan penuh: baris, branch, fungsi, statement. Menganalisis apa yang berubah, merencanakan strategi test, menulis test, menjalankannya, dan iterasi sampai cakupan lengkap. Satu aturan ketat: tidak pernah memodifikasi kode aplikasi. Hanya file test. Batasan ini penting karena artinya tester harus bekerja dengan apa pun yang diberikan implementasi, sama seperti QA asli yang tidak bisa "perbaiki saja kodenya biar bisa dites."
 
-Saya berharap ini jadi tren besar. Semakin banyak author framework dan vendor tool mempublikasikan skill resmi, baseline kualitas kode yang dihasilkan AI akan naik secara menyeluruh. Bayangkan setiap library besar mengirimkan skill yang mengenkode best practice-nya — bukan sebagai dokumentasi yang mungkin kamu baca, tapi sebagai constraint yang harus diikuti AI. Skill custom yang saya tulis mengisi celah hari ini, tapi yang resmi sudah lebih bagus untuk domain yang mereka cover.
+Reviewer database mengambil perspektif DBA senior. Pertanyaan intinya: "Apakah schema ini akan bertahan menghadapi kenyataan?" Foreign key yang hilang, strategi ID yang campur aduk, denormalisasi tanpa dokumentasi, anti-pattern serba-nullable. Migrasi multi-tabel di-eskalasi. Perubahan strategi primary key di-eskalasi. Dia mengajukan pertanyaan yang akan kulupakan saat aku fokus pada feature.
 
-## 7 Agent: Tim Virtual
+Lalu ada engineer UI, auditor web vitals, desainer UX, dan copywriter. Masing-masing dengan lensanya sendiri. Yang mengejutkanku adalah setiap agent mewujudkan perspektif yang secara teori aku punya tapi tidak bisa kupertahankan secara bersamaan. Aku tahu keamanan penting. Aku tahu cakupan test penting. Aku tahu desain schema penting. Tapi saat aku tenggelam membangun sesuatu, aku memikirkan apa yang sedang kubangun. Agent-agent ini tidak punya masalah itu. Mereka cuma memikirkan satu hal mereka, dan mereka melakukannya setiap kali.
 
-Agent adalah sub-proses khusus yang menangani tugas tertentu secara otonom. Saya punya tujuh, terbagi antara pengembangan dan perencanaan:
+## Jaringan penghubung
 
-### Agent Pengembangan
+Skill dan agent akan berguna sendirian. Yang membuat mereka terasa seperti tim adalah jaringan penghubung: MCP server yang menghubungkan Claude Code ke sistem nyata yang kugunakan.
 
-**security-reviewer** — Menjalankan audit keamanan setelah setiap implementasi. Memindai OWASP top 10, memeriksa exposure secret, SQL injection, command injection, XSS, IDOR, race condition. Mengklasifikasikan temuan berdasarkan severity. Eskalasi ke saya untuk logika pembayaran, perubahan auth, kriptografi, atau kode terkait compliance.
+Context7 memberinya dokumentasi terkini dari library mana pun, jadi tidak pernah bekerja dari pengetahuan basi. Playwright membuatnya bisa mengendalikan browser untuk testing dan verifikasi. Sentry menyalurkan error produksi langsung ke sesi debugging, jadi saat sesuatu rusak jam 2 pagi, konteksnya sudah ada saat aku duduk di depan komputer pagi harinya. Neon membuatnya bisa menjalankan migrasi, menginspeksi schema, dan mengoptimalkan query tanpa aku copy-paste antar terminal. GitHub memberi akses penuh ke PR, issue, dan code search. Cloudflare membuatnya bisa mengelola Workers, KV store, dan database D1.
 
-**tester** — Menargetkan 100% test coverage di metrik line, branch, function, dan statement. Menganalisis kode yang berubah, merencanakan strategi test, menulis test, menjalankannya, iterasi sampai coverage lengkap. Aturan penting: dia nggak pernah memodifikasi kode aplikasi, cuma file test.
+Setiap koneksi secara individual sederhana. Tapi bersama-sama artinya Claude Code beroperasi dengan konteks yang sama seperti yang dimiliki anggota tim manusia. Tidak bekerja terisolasi, menebak-nebak soal database produksi atau rate error terbaru. Terhubung ke sistem yang hidup.
 
-**database-reviewer** — Mengambil perspektif DBA senior. Mengajukan pertanyaan yang penting: "Apakah skema ini bertahan menghadapi kenyataan?" Memeriksa constraint foreign key yang hilang, strategi ID yang campur aduk, denormalisasi tanpa dokumentasi, anti-pattern nullable-everything. Eskalasi migrasi multi-tabel dan perubahan strategi PK.
+## Efek compound
 
-**ui-engineer** — Membangun komponen UI murni tanpa business logic. Di web, menggunakan shadcn/ui atau komponen custom mengikuti skill design system. Di mobile, menggunakan skill design-system dengan pola platform-native. Batasan ketat: tanpa state management, tanpa data fetching, tanpa routing.
+Inilah yang tidak kuduga. Setiap bagian, secara individual, modest. Checklist keamanan. Seperangkat aturan React. Proses review DBA. Integrasi error tracking. Kalau kamu lihat salah satunya saja, kamu akan pikir: oke, tapi itu cuma checklist.
 
-**web-vitals-auditor** — Audit performa otomatis. Build dan serve aplikasi, menjalankan Lighthouse di desktop dan mobile, memeriksa terhadap target: LCP < 2.5s, INP < 200ms, CLS < 0.1, TTFB < 800ms, FCP < 1.8s. Output berupa laporan dengan skor, analisis bundle, dan rekomendasi yang actionable.
+Efek compound-nya yang mengejutkan. Saat reviewer keamanan berjalan paralel dengan tester, dan keduanya punya akses ke analisis schema dari reviewer database, dan semuanya beroperasi di bawah batasan skill spesifik framework, dan semua itu terhubung ke data produksi secara real-time via MCP server, hasilnya bukan jumlah bagian-bagiannya. Ini sesuatu yang secara kualitatif berbeda. Ini standar kualitas yang tetap konsisten di setiap perubahan, di setiap proyek, tidak peduli aku sedang bersemangat atau kelelahan, fokus atau buyar.
 
-### Agent Perencanaan
+Ini sebenarnya lebih konsisten daripada kebanyakan tim manusia yang pernah kutempati. Tim manusia punya hari buruk. Orang memotong jalan di bawah tekanan deadline. Engineer senior yang biasanya menangkap semuanya sedang distraksi karena lagi interview di tempat lain. Standar kualitas berfluktuasi. Standar tim agent-ku tidak berfluktuasi karena bersifat struktural, bukan motivasional.
 
-**ux-designer** — Mendesain dari first principles. Proses 5 langkah: Definisikan masalah → Petakan user journey → Desain interaksi → Hilangkan gesekan → Validasi aksesibilitas. Output berupa user flow, spesifikasi layar dengan aksi utama dan hirarki informasi.
+Investasinya nyata. Membangun 21 skill, mengonfigurasi 7 agent, menulis konstitusi detail untuk setiap proyek. Butuh berminggu-minggu. Tapi investasinya di sistem, bukan di proyek individual mana pun. Sekarang setiap proyek baru, setiap feature baru, otomatis mendapat manfaat dari keahlian yang terakumulasi. Biaya marginal untuk mempertahankan kualitas setingkat tim di proyek baru mendekati nol.
 
-**copywriter** — Copy produk dan UX microcopy dengan enam prinsip persuasi: satu pesan saja, kepastian mengalahkan reward maksimum, novelty sudah cukup, spesifikasikan aksi konkret, kekuatan agregasi, tulis sebagai satu pesan. Menghasilkan 2–3 variasi dengan jumlah karakter dan saran A/B test.
+Kembali ke pertanyaan awal. Bisakah satu orang punya tim? Yang kupunya bukan tim dalam pengertian manusia. Ini sesuatu baru yang belum punya nama bagus. Ini sekumpulan perspektif yang persisten, terspesialisasi, dan konsisten yang terlibat dengan setiap karya yang kuhasilkan. Dia tidak bisa punya intuisi yang datang dari pengalaman hidup yang benar-benar berbeda dari rekan kerja manusia. Tidak bisa mempertanyakan arah produk itu sendiri. Tidak bisa memberitahuku bahwa aku sedang menyelesaikan masalah yang salah.
 
-UX designer dan copywriter bekerja sebagai pipeline: designer membuat flow, lalu menyerahkan ke copywriter untuk teks persuasif, CTA, copy onboarding, dan pesan error.
+Tapi untuk pekerjaan spesifik mempertahankan kualitas di berbagai dimensi secara bersamaan, di setiap perubahan, tanpa pengecualian, sementara satu orang melakukan pekerjaan kreatif dan strategis, tidak ada yang pernah kualami yang mendekati ini.
 
-## Pipeline Workflow
-
-Kekuatan sebenarnya bukan tool individual — tapi bagaimana mereka menyusun menjadi workflow yang bisa diulang:
-
-**Pengembangan Standar:**
-```
-Implementasi (dengan skill) → [security-reviewer + tester] (paralel) → Perbaiki → Selesai
-```
-
-**Data Modeling:**
-```
-skill data-modeling → agent database-reviewer → skill api-design → implementasi
-```
-
-**Frontend:**
-```
-skill nextjs → implementasi → vercel-react-best-practices (review)
-```
-
-**Desain UX:**
-```
-agent ux-designer → agent copywriter (teks persuasif saja)
-```
-
-Setiap proyek menegakkan workflow pengembangan yang sama melalui CLAUDE.md. Pipeline review skema berjalan otomatis ketika ada perubahan database. Pass paralel security-and-testing terjadi di setiap perubahan. Tanpa pengecualian.
-
-## MCP Server: Integrasi Eksternal
-
-Claude Code terhubung ke layanan eksternal melalui MCP (Model Context Protocol) server. Setup saya meliputi:
-
-- **Context7** — Lookup dokumentasi real-time untuk library apapun
-- **Playwright** — Automasi browser untuk testing dan screenshot
-- **Sentry** — Integrasi error tracking untuk debugging masalah production
-- **Neon** — Operasi database langsung dan manajemen skema
-- **Notion** — Integrasi workspace untuk manajemen proyek
-- **GitHub** — Workflow GitHub lengkap (PR, issue, code search)
-- **D2** — Pembuatan diagram arsitektur (dikompilasi ke SVG bertema)
-- **Cloudflare** — Manajemen Workers, KV, R2, D1
-
-Ini bukan cuma nice-to-have. MCP Neon berarti Claude Code bisa menjalankan migrasi, menginspeksi skema, dan tuning query tanpa saya context-switching. MCP Sentry berarti error production langsung masuk ke sesi debugging. MCP D2 menghasilkan diagram arsitektur yang menjadi bagian dokumentasi proyek.
-
-## Seperti Apa Sebenarnya
-
-Sesi tipikal: Saya mendeskripsikan fitur dalam bahasa natural. Claude Code membaca CLAUDE.md, memuat skill yang diperlukan, dan mulai mengimplementasi. Setelah selesai, dua agent berjalan paralel — security reviewer memindai kerentanan, tester menulis test sampai 100% coverage. Kalau ada yang menemukan masalah, diperbaiki. Lalu saya review dan ship.
-
-Saya nggak menjalankan linter secara manual. Saya nggak menulis test boilerplate. Saya nggak mengerjakan security checklist dari ingatan. Sistem yang menangani.
-
-Investasinya adalah membangun 21 skill, mengkonfigurasi 7 agent, dan menulis file CLAUDE.md yang detail untuk setiap proyek. Itu butuh waktu. Tapi sekarang setiap fitur baru, di setiap proyek, mendapat manfaat dari pengetahuan yang terakumulasi itu — secara otomatis.
-
-## Efek Compound
-
-Setiap skill, agent, dan file CLAUDE.md secara individual sederhana. Security checklist. Sekumpulan aturan React. Proses review DBA. Tapi disusun bersama, mereka menciptakan sesuatu yang terasa seperti punya tim: arsitek yang tahu pola-pola saya, security engineer yang nggak pernah tidur, QA lead yang menuntut 100% coverage, dan DBA yang bertanya "apakah ini bertahan menghadapi kenyataan?"
-
-Untuk solo developer yang shipping banyak produk, itulah perbedaan antara burnout dan scaling up.
-
-Vibes-nya bagus. Agent-agent menjaga saya.
+Setup-nya adalah investasi. Return-nya ber-compound dari sana.

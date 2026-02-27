@@ -1,7 +1,7 @@
 ---
-title: "Dari Ide ke Produk dengan Claude Code Saja"
-description: "Vibe coding bukan code generation. Ini mengorkestrasi AI melalui seluruh siklus hidup produk — perencanaan, arsitektur, implementasi, kualitas, dan operasional. Panduan langkah demi langkah solo developer mengubah ide menjadi produk hanya dengan Claude Code."
-date: "2026-02-20"
+title: "Vibe Coding Bukan Soal Kode"
+description: "Semua orang mengira vibe coding artinya AI menulis kode kamu. Itu bagian yang paling tidak menarik. Pergeseran sebenarnya: satu orang sekarang bisa menjalankan seluruh perusahaan."
+date: "2026-02-27"
 tags:
   - vibe-coding
   - claude-code
@@ -11,384 +11,46 @@ tags:
 draft: false
 ---
 
-Ketika orang dengar "vibe coding," kebanyakan membayangkan bilang ke AI "buatkan saya halaman login." Itu salah. Setidaknya, bukan itu yang saya lakukan.
+Ada hal aneh tentang kata "vibe coding." Kata itu membuat semua orang melihat ke arah yang salah. Orang dengar "coding" dan langsung mengasumsikan ini soal generate kode. Seakan-akan intinya adalah mendeskripsikan apa yang kamu mau, lalu AI mengeluarkan baris-barisnya. Itu benar, tapi seperti bilang mesin cetak Gutenberg berguna untuk menyalin dokumen. Secara teknis tepat, dan sepenuhnya meleset dari intinya.
 
-Vibe coding saya dimulai dari satu ide dan berjalan melalui product brief, PRD, desain arsitektur, skema database, UX flow, implementasi, testing, audit keamanan, dan deployment. **Menulis kode cuma satu langkah dalam pipeline itu.**
+Yang mengubah cara berpikir saya bukan menulis lebih banyak kode lebih cepat. Yang mengubah saya adalah menyadari betapa banyak pekerjaan yang saya lakukan untuk meluncurkan produk yang sama sekali tidak melibatkan kode.
 
-Di post sebelumnya saya bilang "hiduplah sebagai builder" dan membagikan setup Claude Code saya. Post ini menunjukkan bagaimana tool-tool itu sebenarnya bergabung untuk mengubah ide menjadi produk — langkah demi langkah.
+Coba pikirkan. Sebuah produk butuh validasi, desain, arsitektur, kode, deploy, peluncuran, pengukuran, pertumbuhan. Kode mendominasi di dua fase itu. Mungkin tiga kalau kamu murah hati. Sisanya adalah strategi, copywriting, analytics, marketing, legal. Semua hal yang membuat developer solo merasa perlu menyewa lima orang. Kalau AI bisa mengeksekusi di level ahli dalam satu domain, pertanyaan yang jelas adalah: kenapa membatasinya hanya pada kode?
 
-## Pipeline Lengkap
+Saya pernah menulis tentang [setup Claude Code saya](/id/blog/my-claude-code-setup) -- skill, agent, MCP server. Post itu tentang pipeline build. Tapi build mungkin cuma sepertiga dari mengirimkan produk. Sisanya adalah segala hal di sekitar kode: memvalidasi apakah ada orang yang menginginkan benda ini, mendesain pengalamannya, meluncurkannya, mengukur apakah berhasil, dan memutuskan apa selanjutnya. Lebih dari separuh pekerjaan dalam siklus hidup produk menghasilkan nol baris kode. Dan di situlah tepatnya vibe coding jadi menarik.
 
-```
-Ide
-  ↓
-Langkah 1. Product Brief — Definisi masalah, hipotesis, kriteria sukses
-  ↓
-Langkah 2. PRD — Requirement detail, prioritas P0/P1/P2
-  ↓
-Langkah 3. Arsitektur Software — Desain sistem, ADR, trade-off
-  ↓
-Langkah 4. Desain Database — Skema, index, migrasi
-  ↓
-Langkah 5. Desain UX — User flow, spesifikasi layar, prinsip kognitif
-  ↓
-Langkah 6. Prototyping UI — Wireframe, scaffold visual
-  ↓
-Langkah 7. Implementasi — Pengembangan berbasis skill
-  ↓
-Langkah 8. Quality Gate — [Audit keamanan + Testing] secara paralel
-  ↓
-Langkah 9. Deploy & Operasional
-```
+Begini yang mengubah pikiran saya. Saya sedang mengerjakan proyek sampingan dan kodenya selesai dalam beberapa hari. Fungsional, teruji, terdeploy. Lalu saya sadar saya tidak punya rencana peluncuran, tidak punya analytics, tidak punya strategi harga, tidak punya terms of service. Cerita klasik developer solo: kamu membangun benda itu lalu menatapnya, bertanya-tanya kenapa tidak ada yang datang. Saya sudah mengotomasi bagian mudahnya dan membiarkan bagian sulitnya manual.
 
-Lebih dari setengah langkah ini menghasilkan nol baris kode. Itulah leverage sebenarnya dari vibe coding. Mari saya jelaskan satu per satu.
+Jadi saya mulai bertanya: bagaimana kalau saya memperlakukan setiap fase sama seperti saya memperlakukan kode? Muat keahlian yang tepat, beri konteks, biarkan AI mengeksekusi sementara saya membuat keputusan. Ternyata ini berhasil. Tidak sempurna, tapi jauh lebih baik dari yang saya duga.
 
-## Langkah 1. Product Brief — "Kenapa Kita Membangun Ini?"
+Siklus yang saya jalankan sekarang punya tujuh fase. Validasi ide. Desain produk. Arsitektur dan build. Deploy. Peluncuran. Pengukuran. Pertumbuhan. Hal pertama yang perlu diperhatikan: kode hanya mendominasi dua dari fase-fase itu. Sisanya adalah strategi, desain, copywriting, analytics, marketing, legal. Semua hal yang membuat developer solo merasa butuh menyewa lima orang.
 
-Ketika saya punya ide, hal pertama yang saya lakukan bukan membuka code editor. Saya menjalankan `/product-brief`.
+Validasi datang pertama, dan ini hal terpenting yang saya tambahkan. Dulu saya langsung lompat ke build -- tulis product brief, mulai coding. Sekarang saya memaksa diri menulis satu hipotesis dan mengujinya sebelum menulis satu spec pun. Tesnya sederhana: bangun hal minimum dalam hitungan jam, taruh di depan orang sungguhan, dan cari tarikan organik. Apakah orang kembali tanpa diminta? Apakah mereka cerita ke orang lain? Kalau saya tidak menemukan sinyal itu setelah dua atau tiga pivot, saya matikan proyeknya. Kedengarannya jelas. Tapi saya membuang berbulan-bulan membangun hal yang tidak ada yang mau sebelum menjadikan ini aturan keras.
 
-Skill ini beroperasi dengan **Four Risks Framework** dari Marty Cagan (SVPG). Ketika saya bilang "saya mau bikin aplikasi meal tracking," skill ini bertanya tentang empat risiko:
+Fase produk dan desain adalah tempat metafora sutradara mulai masuk akal. Saya tidak mendesain UX. Saya mendeskripsikan masalah dan penggunanya, dan agent desain UX menghasilkan flow dan spesifikasi layar. Saya tidak menulis copy marketing. Agent copywriting menghasilkan variasi dengan saran A/B test. Saya tidak membuat mockup antarmuka. MCP server yang terhubung ke tool desain menghasilkan mockup visual sementara agent UX mengerjakan flow. Semuanya berjalan paralel. Tugas saya adalah melihat output dan membuat keputusan. Layar ini terlalu penuh. Flow itu terlalu banyak langkah. Copy untuk CTA ini terlalu cerdik -- buat yang jelas.
 
-| Risiko | Pertanyaan | Validasi |
-|--------|------------|----------|
-| **Value** | Apakah pengguna benar-benar akan pakai? | Wawancara pengguna, analisis kompetitor |
-| **Usability** | Bisakah pengguna memahaminya? | Testing prototype |
-| **Feasibility** | Bisakah kita membangunnya? | Technical spike |
-| **Viability** | Apakah bisa jadi bisnis? | Model pendapatan, review legal |
+Ini bagian yang terasa benar-benar baru. Saya tidak melakukan pekerjaan lima spesialis. Saya me-review pekerjaan lima spesialis. Perbedaan ini penting karena me-review adalah keahlian yang secara fundamental berbeda dari mengeksekusi. Kamu tidak perlu jadi copywriter hebat untuk tahu kapan copy jelek. Tidak perlu jadi UX researcher untuk menyadari kapan sebuah flow membingungkan. Kamu butuh selera dan penilaian, yang justru hal-hal yang sulit diotomasi.
 
-Prinsip intinya adalah **mulai dari masalah, bukan solusi**. Bukan "ayo bikin aplikasi meal tracking" tapi "orang nggak mencatat makanan mereka karena input-nya terlalu membosankan." Skill ini memaksa arah ini.
+Arsitektur dan build berjalan seperti biasa, dengan satu tambahan penting: rencana analytics didesain bersamaan dengan arsitektur. Tracking bukan sesuatu yang saya tempelkan setelah peluncuran. Pertanyaan "kenapa kita tracking event ini?" dijawab bersamaan dengan "apa schema database-nya?" Ini penting karena pengukuran adalah yang membuat segalanya setelah peluncuran menjadi mungkin. Kalau kamu tidak menginstrumentasi produkmu dari awal, kamu terbang buta saat paling butuh data.
 
-Output-nya dokumen 1-2 halaman:
+Deploy ya deploy. Tapi saya mendefinisikan ulang apa artinya "terdeploy." Bukan "kodenya jalan di server." Tapi "infrastruktur pengukurannya berfungsi." Event-event menyala ke platform analytics. Error tracking terhubung. Event aktivasi kunci bekerja end to end. Kalau saya tidak bisa mengukurnya, berarti belum terdeploy.
 
-- **Masalah** — Siapa yang sakit, apa sakitnya, apa buktinya
-- **Hipotesis & Risiko** — Asumsi dicantumkan eksplisit dengan rencana validasi
-- **Arah yang Diusulkan** — Arahnya (bukan daftar fitur, tapi pengalaman)
-- **Non-Goals** — Apa yang BUKAN ini (mencegah scope creep)
-- **Kriteria Sukses** — 2-4 outcome yang terukur
-- **Pertanyaan Terbuka** — Hal-hal yang belum kita tahu
+Peluncuran adalah tempat hal-hal jadi sangat menarik, karena ini fase yang kebanyakan developer pura-pura tidak ada. Positioning. Target audiens. Strategi channel. Harga. Urutan email. SEO. Materi peluncuran untuk Product Hunt, Hacker News, Reddit. Terms of service. Privacy policy. Setiap hal ini dulu adalah sesuatu yang saya lewati atau habiskan berhari-hari meraba-raba. Sekarang agent marketing mengorkestrasi semuanya, mendelegasikan ke skill khusus untuk harga, email, visibilitas pencarian, dan legal. Saya review dan approve. Seluruh paket peluncuran jadi dalam hitungan jam, bukan minggu.
 
-Bagian terakhir itu yang paling penting. Menuliskan apa yang belum kamu tahu. Kebanyakan proyek gagal bukan karena jawaban yang salah tapi karena pertanyaan yang nggak diajukan. Nilai terbesar product brief adalah memunculkan ketidakpastian sejak awal.
+Setelah peluncuran datang pengukuran, dan di sinilah framework kill/keep/scale tinggal. Minggu pertama: amati. Respons feedback. Jangan optimasi apa-apa. Minggu kedua: evaluasi terhadap kriteria kill yang saya definisikan saat arsitektur. Setelah itu, evaluasi mingguan sampai keputusannya jelas. Prioritas perbaikan selalu retensi dulu, lalu aktivasi, lalu akuisisi. Konfirmasi bahwa pengguna yang sudah ada bertahan sebelum mengeluarkan energi membawa yang baru.
 
-Di titik ini nggak ada kode sama sekali. Tapi apa yang harus dibangun, kenapa, untuk siapa, dan di mana berhenti sudah jelas. Tanpa ini, coding dengan AI cuma autocomplete.
+Kill artinya post-mortem, arsipkan, dan lanjut di hari yang sama. Keep artinya kembali ke produk atau build dan perbaiki masalah terbesar. Scale artinya lanjut ke pertumbuhan. Framework ini kedengarannya sederhana, tapi memilikinya secara eksplisit dan dipaksakan mengubah perilaku saya. Sebelumnya, saya mempertahankan proyek zombie hidup berbulan-bulan karena sudah terlalu banyak investasi untuk berhenti. Sekarang data yang memutuskan, dan saya memutuskan cepat.
 
-## Langkah 2. PRD — "Apa Tepatnya yang Kita Bangun?"
+Pertumbuhan hanya terjadi setelah keputusan scale. Jangan kembangkan produk yang bocor. Fase ini membawa eksperimen konversi, loop referral, pencegahan churn, pemulihan pembayaran gagal. Ini juga saat saya menambahkan end-to-end test untuk pertama kalinya. Produknya bertahan -- sekarang flow utamanya layak dilindungi.
 
-Setelah Brief menetapkan arah, skill `prd-craft` membuat dokumen requirement yang detail. Kalau Brief adalah "kenapa," PRD adalah "apa."
+Seluruh sistem sudah jadi template. Saya punya proyek scaffold yang saya salin untuk memulai apa pun yang baru. Isinya definisi workflow, pemetaan skill, struktur dokumen untuk perencanaan dan bisnis. Claude Code membaca ini di sesi pertama dan langsung tahu seluruh pipeline. Dokumen dan kode tinggal di repositori yang sama, jadi AI selalu punya konteks terkini.
 
-Skill ini dimulai dengan **Discovery Interview**. Ini nggak bisa dilewati. Berdasarkan Brief, dia bertanya apa yang kurang:
+Yang membuat ini bisa direproduksi bukan satu tool individual. Ini kombinasi dari tiga hal. Skill memuat pengetahuan ahli -- bukan sebagai dokumentasi yang mungkin kamu baca, tapi sebagai batasan yang harus diikuti AI. Agent menjalankan tugas khusus secara paralel, seperti security reviewer dan penulis test bekerja bersamaan. MCP server terhubung ke layanan eksternal -- platform analytics, error tracking, tool desain, infrastruktur deploy -- sehingga AI bisa bertindak di dunia nyata, bukan hanya menghasilkan teks.
 
-- Apa persona pengguna spesifik dan konteks penggunaannya?
-- Bagaimana pengguna saat ini menyelesaikan masalah ini? Apa yang menyakitkan?
-- Bagaimana kita mengukur sukses? Angka spesifik?
-- Apa yang secara eksplisit di luar scope?
+Metafora sutradara adalah yang terbaik yang saya temukan. Saya menetapkan arah. Saya membuat keputusan penilaian. Saya memutuskan apa yang akan dibangun, apa yang akan dimatikan, apa yang akan dikembangkan. AI menangani eksekusi level ahli di setiap domain. Ini bukan delegasi dalam pengertian manajemen, di mana kamu khawatir apakah pekerjaannya benar. Ini lebih seperti memimpin orkestra. Kamu tidak memainkan instrumennya. Kamu membentuk penampilannya.
 
-Lalu dia menulis PRD:
+Implikasi yang tidak nyaman adalah bahwa vibe coding, kalau diambil serius, sama sekali bukan teknik pemrograman. Ini cara menjalankan perusahaan. Bagian "coding"-nya hampir kecelakaan sejarah -- itu cuma domain pertama di mana eksekusi AI jadi cukup bagus sehingga orang sadar. Tapi pola yang sama berlaku untuk marketing, analytics, legal, pertumbuhan, dan semua hal lain yang dibutuhkan produk. Bagian yang sulit tidak pernah menulis kode. Yang sulit adalah melakukan semua hal lainnya cukup baik supaya berarti.
 
-**Problem / Opportunity** — Bagian paling kritis. "Kita butuh sistem notifikasi" bukan masalah. "23% pengguna melewatkan update yang sensitif waktu karena mereka cuma cek aplikasi sekali sehari" itu masalah. Skill ini menegakkan pembedaan ini — ada checklist: "jangan nyatakan solusi sebagai masalah."
+Saya rasa kita baru di awal-awal memahami apa artinya ini. Sekarang kelihatannya seperti productivity hack untuk developer. Tunggu beberapa tahun dan ini akan terlihat seperti jenis perusahaan baru -- di mana satu orang dengan penilaian yang baik bisa beroperasi di skala yang dulu butuh tim. Bukan karena mereka bekerja lebih keras, tapi karena bottleneck-nya bergeser dari eksekusi ke arah.
 
-**Functional Requirement** — Fitur diklasifikasikan sebagai P0 (wajib ada untuk launch), P1 (sebaiknya ada), P2 (bagus kalau ada). Setiap requirement dipetakan ke **user journey**, bukan komponen teknis. "Pengguna bisa reset password via email" — fungsional. "Buat B-tree index di PostgreSQL" — detail implementasi yang nggak termasuk di sini.
-
-**Success Metrics** — Setiap goal punya tepat satu metrik utama dengan angka dan timeframe spesifik. Tanpa bahasa "improve". "Completion rate onboarding dari 60% ke 80%, dalam 3 bulan pasca-launch."
-
-**Critical User Journey** — Enam journey direview secara sistematis: pengalaman pertama kali (onboarding), loop penggunaan inti, pengalaman pengguna yang kembali, manajemen/pemeliharaan, edge case dan error state, off-boarding/ekspor data. Dua yang terakhir sering terlewat — skill ini memaksa mereka masuk.
-
-Di titik ini dua dokumen perencanaan sudah ada. Product Brief (arah strategis) dan PRD (requirement detail). 10-15 halaman gabungan. Masih nol baris kode.
-
-## Langkah 3. Arsitektur Software — "Apa Strukturnya?"
-
-PRD masuk ke skill `software-architect`. Dia membaca PRD dan menghasilkan **Software Architecture Design Document (SADD)**.
-
-Pertama dia mengajukan pertanyaan yang nggak bisa dijawab PRD:
-
-- Perkiraan pengguna, request/detik, volume data?
-- Path mana yang kritis terhadap latensi?
-- Di mana strong consistency diperlukan? Di mana eventual consistency oke?
-- Fitur real-time dibutuhkan? (WebSocket, SSE, polling)
-- Sensitivitas biaya? (solopreneur vs enterprise)
-
-Lalu dia menulis dokumen desain. Insight kuncinya adalah keputusan arsitektur dibagi ke **dua sumbu independen**:
-
-**Sumbu 1: Arsitektur Sistem** — Bagaimana layanan berkomunikasi. Request-response, event-driven, CQRS, event sourcing, atau modular monolith.
-
-**Sumbu 2: Struktur Kode** — Bagaimana setiap layanan diorganisasi secara internal. Hexagonal (ports & adapters), clean, atau layered.
-
-Keduanya bisa dikombinasikan bebas. Kebanyakan proyek solo saya mendarat di "modular monolith + hexagonal." Saya nggak mampu menanggung kompleksitas operasional microservice sendirian, dan hexagonal membuat testing dan penggantian adapter mudah.
-
-Setiap pilihan teknologi mendapat **ADR (Architecture Decision Record)**. Bukan cuma "kita pakai Axum" tapi:
-
-> **ADR-1: Bahasa & Framework Backend**
-> - Konteks: Solo developer, layanan B2C, sensitif biaya
-> - Keputusan: Rust + Axum
-> - Alternatif: Python/FastAPI (ditolak — overhead runtime, memori lebih tinggi) / Go/Gin (ditolak — type system lebih lemah)
-> - Konsekuensi: (+) Respons sub-ms, memori 10-30MB, verifikasi compile-time / (-) Waktu kompilasi, ekosistem lebih kecil
-
-Skill ini punya referensi preferensi infrastruktur bawaan untuk konteks solopreneur:
-- Database: Neon (serverless, scale-to-zero, branching)
-- Backend compute: GCP Cloud Run (berbasis container, auto-scaling, free tier murah hati)
-- Frontend: Cloudflare Workers + Next.js (edge SSR, pricing yang predictable)
-- Mobile: Expo (React Native)
-- Object storage: Cloudflare R2 (nol biaya egress)
-- IaC: Pulumi (native TypeScript)
-- Error tracking: Sentry / Analytics: PostHog
-
-Default ini ada supaya saya nggak perlu deliberasi dari nol setiap kali. Ketika requirement proyek berbeda dari default, baru saya mencatat deviasi dan alasannya sebagai ADR.
-
-Untuk proyek Mealio saya: Expo (mobile) + Axum (API) + Neon (DB) + GCP Cloud Run (compute) + Cloudflare R2 (penyimpanan foto) + Pulumi (infrastruktur). Kombinasi ini diputuskan di SADD, dengan alasan terdokumentasi untuk setiap pilihan.
-
-## Langkah 4. Desain Database — "Bagaimana Kita Menyimpan Data?"
-
-Setelah arsitektur ditetapkan, skill `database-design` mendesain skema. Skill ini punya tujuh file referensi:
-
-| Referensi | Tujuan |
-|-----------|--------|
-| `acid-transactions.md` | Level isolasi transaksi, strategi locking, pencegahan deadlock |
-| `data-types-guide.md` | Panduan pemilihan tipe PostgreSQL |
-| `design-patterns.md` | Inheritance tabel, soft delete, audit trail, data temporal |
-| `indexing-strategy.md` | Tipe index, kalkulasi selektivitas, partial index |
-| `migration-patterns.md` | Migrasi zero-downtime, script rollback |
-| `normalization-guide.md` | Kriteria keputusan normalisasi/denormalisasi |
-| `performance-patterns.md` | Optimasi pola query, pengurutan kolom, partisi |
-
-Workflow-nya sistematis:
-
-**Langkah 1 — Kumpulkan requirement.** Kalau SADD ada, ekstrak domain entity, data flow, strategi storage, dan model konsistensi. Ikuti keputusan level sistem dari SADD (platform DB, pola arsitektur), tapi evaluasi secara independen keputusan domain DB (level normalisasi, strategi partisi, desain index, level isolasi transaksi).
-
-**Langkah 2 — Desain skema.** Identifikasi entitas inti, normalisasi minimal 3NF, evaluasi kebutuhan denormalisasi, pilih tipe data yang tepat, definisikan constraint (PK, FK, UNIQUE, CHECK, NOT NULL). Urutkan kolom terbesar ke terkecil untuk meminimalkan pemborosan alignment padding.
-
-**Langkah 3 — Desain transaksi & concurrency.** Identifikasi operasi yang butuh desain transaksi eksplisit: pembayaran, inventori, workflow multi-langkah, resource dengan contention tinggi. Untuk masing-masing, putuskan level isolasi, strategi locking, logika retry.
-
-**Langkah 4 — Tulis DDL.** PostgreSQL CREATE TABLE, INDEX, COMMENT.
-
-**Langkah 5 — Strategi index.** PostgreSQL TIDAK auto-index kolom FK — kesalahan umum yang otomatis ditangkap skill ini. Identifikasi kolom di WHERE, JOIN, ORDER BY yang sering. Hitung selektivitas. Pilih tipe index yang tepat: Partial, Expression, Covering (INCLUDE), GIN/GiST/BRIN.
-
-**Langkah 6 — Review performa.** Verifikasi execution plan dengan EXPLAIN ANALYZE. Evaluasi kebutuhan connection pooling dan partisi.
-
-**Langkah 7 — Rencana migrasi.** Script migrasi version-controlled dengan script rollback yang wajib. Strategi zero-downtime.
-
-MCP Neon bersinar di sini. Desain skema, jalankan migrasi, dan verifikasi hasil di sesi yang sama. Nol context switching.
-
-Aturan hard-coded: jangan pernah pakai FLOAT untuk nilai moneter (pakai NUMERIC), selalu pakai TIMESTAMPTZ, sertakan created_at/updated_at di setiap tabel, selalu buat index di kolom FK. Skill ini menegakkan ini supaya saya nggak perlu ingat.
-
-## Langkah 5. Desain UX — "Bagaimana Pengguna Mengalami Ini?"
-
-Agent `ux-designer` menangani desain pengalaman pengguna. Berbeda dari agent lain, yang ini ada di kategori **perencanaan** dan menggunakan model Opus. Desain butuh penalaran mendalam.
-
-Aksi pertama agent ini adalah memuat tiga file referensi:
-
-**`cognitive-principles.md`** — Hick's Law (lebih banyak pilihan = keputusan lebih lambat), Fitts's Law (target lebih kecil/jauh = interaksi lebih sulit), teori Cognitive Load, Goal Gradient (motivasi meningkat mendekati penyelesaian), Peak-End Rule (ingatan tentang pengalaman didominasi oleh momen puncak dan akhir). Setiap keputusan desain ditandai dengan prinsip-prinsip ini.
-
-**`design-process.md`** — Proses 5 langkah: Define → Map → Design → Remove → Validate. Langkah-langkah nggak bisa dilewati atau diubah urutannya.
-
-**`ergonomics.md`** — Target sentuh 44px+, kontras warna 4.5:1 (teks), 3:1 (UI), focus outline 2px+, penempatan zona ibu jari mobile. Ambang batas numerik spesifik.
-
-Setiap tugas dimulai dengan **First Principles Checklist**:
-
-1. Apa **SATU tujuan** pengguna? (Bukan fitur, bukan metrik bisnis — niat aktual mereka)
-2. Apa **minimum yang dibutuhkan** untuk mencapainya? (Informasi, aksi, layar)
-3. Apa yang **bisa dihilangkan**? (Kalau menghilangkannya nggak menghalangi tujuan, hilangkan)
-
-Poin ketiga itu kunci. Menambah fitur itu mudah. Menghilangkannya itu sulit. Agent ini menerapkan "apakah ini membantu tujuan pengguna?" ke setiap elemen. Nggak lolos tes? Dihilangkan.
-
-Output:
-
-- **User Flow** — Entry point ke penyelesaian tujuan, titik keputusan dengan default yang direkomendasikan, penanganan error dan edge case
-- **Spesifikasi Layar** — Satu aksi utama per layar (secara visual dominan), hanya informasi yang dibutuhkan untuk keputusan saat ini, aksi sekunder (secara visual subdued), mekanisme feedback
-- **Catatan Aksesibilitas** — Kontras, focus state, navigasi keyboard, screen reader
-- **Alasan Desain** — Prinsip kognitif mana yang membenarkan setiap keputusan
-
-Daftar anti-pattern: copy marketing, hero section dengan value prop yang samar, bagian dekoratif, onboarding yang nggak perlu, dialog konfirmasi untuk aksi non-destruktif, elemen yang ada "karena aplikasi lain punya." Semua dilarang.
-
-## Langkah 6. Prototyping UI — "Seperti Apa Tampilannya?"
-
-Dengan spek UX siap, agent `ui-engineer` membuat scaffold visual. Aturan inti agent ini: **nol business logic**.
-
-Untuk web, default-nya shadcn/ui. Komponen yang nggak bisa di-cover dibuat custom mengikuti skill `design-system`. Untuk mobile, pola platform-native.
-
-Output-nya komponen UI murni:
-- Tanpa `useState`, `useEffect`
-- Tanpa data fetching
-- Tanpa business logic di event handler
-- Props untuk kontrol visual saja
-
-```tsx
-// Yang dihasilkan ui-engineer: scaffold UI murni
-export function LoginPage() {
-  return (
-    <Card>
-      <Card.Header>
-        <Card.Title>Login</Card.Title>
-      </Card.Header>
-      <Card.Content className="flex flex-col gap-4">
-        <FormField label="Email">
-          <Input type="email" placeholder="email@example.com" />
-        </FormField>
-        <FormField label="Password">
-          <Input type="password" />
-        </FormField>
-      </Card.Content>
-      <Card.Footer>
-        <Button variant="primary" fullWidth>Sign In</Button>
-      </Card.Footer>
-    </Card>
-  );
-}
-
-// Ditambahkan nanti oleh saya (atau agent lain):
-// - const [email, setEmail] = useState('')
-// - const { mutate: login } = useLogin()
-// - onSubmit handler
-// - error states
-// - redirect after success
-```
-
-Kenapa pemisahan ini? Ketika batas UI dan logika jelas, perubahan desain nggak menyentuh logika dan perubahan logika nggak menyentuh UI. Dalam praktik, pemisahan ini membuat perbedaan besar dalam maintenance.
-
-Agent ini menjalankan self-review setelah selesai dengan memuat skill `frontend-design`. Memeriksa hardcoded value, semua visual state terdefinisi, kepatuhan aksesibilitas.
-
-## Langkah 7. Implementasi — "Skill Menegakkan Konvensi"
-
-Akhirnya, kode ditulis. Tapi nggak sembarangan.
-
-**CLAUDE.md memaksa skill yang tepat untuk setiap proyek.** Setiap root proyek punya file CLAUDE.md dengan "semua implementasi harus menggunakan skill yang ditentukan" sebagai aturan keras.
-
-- Proyek Next.js → skill `nextjs` + `vercel-react-best-practices` + `vercel-composition-patterns`
-- API Rust → skill `axum` + skill `postgresql`
-- Aplikasi React Native → skill `react-native` + `vercel-react-native-skills`
-- Hexagonal architecture → skill `axum-hexagonal` atau `fastapi-hexagonal`
-
-Apa yang dilakukan setiap skill secara konkret:
-
-**Skill `axum`** — Memuat pola production untuk Axum 0.8+. Komposisi router, signature handler, penanganan error, stack middleware, penggunaan SQLx. File referensinya saja 14.000+ karakter contoh kode.
-
-**Skill `axum-hexagonal`** — Memandu batasan hexagonal architecture (domain, port, adapter) dengan kode Rust konkret. Tiga file referensi: contoh domain, contoh adapter, contoh bootstrap. Gabungan 18.000+ karakter.
-
-**`vercel-react-best-practices`** — Skill resmi dari Vercel. 45 aturan di 8 kategori. Pencegahan waterfall, optimasi bundle, pola server-side, pencegahan re-render — semua prioritas CRITICAL. Orang yang membangun framework mengenkode "pakai seperti ini."
-
-**MCP server mempercepat implementasi:**
-- **Context7** — Mengambil dokumentasi library terbaru secara real-time. Mencegah penggunaan API yang basi
-- **Neon MCP** — Jalankan migrasi, inspeksi skema, tuning query di sesi yang sama
-- **D2 MCP** — Tulis diagram arsitektur dalam bahasa D2, compile ke SVG tema terang/gelap
-- **Playwright MCP** — Automasi browser untuk verifikasi rendering, screenshot
-- **Sentry MCP** — Error production langsung masuk ke sesi debugging
-- **PostHog MCP** — Query data analytics dalam konteks kode
-
-**Plugin LSP** — TypeScript LSP, Pyright LSP, Rust Analyzer LSP. Claude Code mendapat type checking real-time dan autocomplete saat menulis. Rust Analyzer menangkap error kompilasi di level editor sebelum sampai terminal.
-
-Nol context switching. Satu sesi Claude Code menangani kode, migrasi DB, pencarian dokumentasi, dan pembuatan diagram.
-
-## Langkah 8. Quality Gate — "Tanpa Kompromi"
-
-Setelah implementasi, **dua agent berjalan secara paralel.** Ini hard-coded di CLAUDE.md. Setiap implementasi, setiap perubahan, tanpa pengecualian.
-
-### Agent Tester
-
-**Tujuan: 100% coverage.** Line, branch, function, statement — semuanya.
-
-Proses:
-1. **Analisis** — Petakan setiap file, fungsi, dan branch di kode yang berubah
-2. **Jalankan test yang ada** — Temukan celah coverage
-3. **Rencanakan** — Daftar setiap baris, branch, fungsi yang belum ter-cover
-4. **Tulis** — Buat test untuk setiap celah (prioritas: critical path → business logic → integration point → CRUD → UI → utility → error path)
-5. **Jalankan** — Dengan pelaporan coverage
-6. **Iterasi** — Sampai 100%. 99% bukan 100%
-
-Checklist branch coverage: if/else kedua sisi, switch/match setiap case + default, try/catch sukses dan gagal, ternary kedua outcome, logical short-circuit baik dievaluasi maupun dilewati, null/optional ada dan nggak ada, early return dipicu dan nggak dipicu, loop nol/satu/banyak iterasi.
-
-**Aturan inti: agent ini nggak pernah memodifikasi kode aplikasi.** Dia cuma menulis file test. Kalau menemukan masalah kode, dia melaporkan ke saya.
-
-### Agent Security Reviewer
-
-**Assume breach mentality** — setiap input itu berbahaya, setiap dependency itu compromised.
-
-Proses:
-1. **Quick Scan** — Secret hardcoded, exposure .env, mode debug, pola berbahaya
-2. **Analisis Domain** — Berdasarkan empat checklist skill `security-checklists`: Auth, API, Business Logic, Supply Chain
-3. **Klasifikasi Severity** — Critical / High / Medium
-
-| Pola Auto-Fail | Risiko |
-|-----------------|--------|
-| Secret di kode atau log | Exposure kredensial |
-| Input pengguna di string concatenation query | SQL Injection |
-| Input pengguna di shell/system call | Command Injection |
-| Input pengguna di eval/exec | Remote Code Execution |
-| Konten pengguna mentah di output HTML | XSS |
-| Full request body diteruskan ke model update | Mass Assignment |
-
-**Aturan eskalasi** — Logika pembayaran/keuangan, perubahan sistem autentikasi, implementasi kriptografi, integrasi pihak ketiga sensitif, compliance (GDPR, PCI-DSS) — semua dieskalasi ke saya tanpa syarat. AI tidak boleh membuat penilaian solo di area-area ini.
-
-Dua agent berjalan paralel karena mereka adalah tugas independen. Menjalankannya secara sekuensial membuang waktu. Satu menulis test sementara yang lain memindai kerentanan. Keduanya menemukan masalah? Perbaiki dan jalankan ulang. Sampai semuanya lolos.
-
-## Langkah 9. Deploy & Operasional — "Kirim!"
-
-Kode lolos quality gate, saatnya deploy. Infrastruktur sudah diputuskan di Langkah 3.
-
-**Pulumi** mengelola infrastruktur sebagai kode. TypeScript mendefinisikan GCP Cloud Run, Secret Manager, Artifact Registry, Cloudflare R2, dan Neon. Nggak perlu belajar HCL. Plugin `pulumi-authoring` memandu authoring ComponentResource, penanganan Output, dan pola manajemen secret.
-
-Pasca-deployment:
-- **Sentry MCP** — Error production diinspeksi dan didebug langsung dari sesi Claude Code
-- **PostHog MCP** — Data perilaku pengguna di-query dalam konteks kode. Analisis funnel, event tracking, A/B test
-- **Cloudflare MCP** — Kelola Workers, KV, R2, D1
-
-Masalah yang ditemukan di production kembali melalui pipeline. Bahkan bug fix memuat skill, dan tester + security-reviewer berjalan paralel setelah implementasi. Tanpa pengecualian.
-
-## Dokumen Tetap Hidup
-
-Dalam workflow saya, dokumentasi bukan overhead — ini **bagian dari pengembangan**. Dua aturan:
-
-**1. Ketika requirement berubah, semua dokumen terkait ikut update.** Kalau fitur dihapus dari PRD, SADD, desain DB, dan spek UX semua ikut update. Begitu dokumen melenceng dari kenyataan, AI percaya dokumen yang salah dan menulis kode yang salah.
-
-**2. Setelah unit pengembangan besar, CLAUDE.md diupdate.** Ketika modul baru muncul, struktur folder, konvensi, dan hubungan dependency direfleksikan di CLAUDE.md. Sesi berikutnya, Claude Code membaca file ini dan memulai dengan pemahaman lengkap tentang state proyek saat ini.
-
-Lihat CLAUDE.md Mealio untuk melihat ini beraksi. Struktur Feature-Sliced Design mobile, arsitektur dual-mode (auth/guest), perilaku upload queue, pola trigger-and-poll analisis AI, manajemen key TanStack Query, gotcha testing Jest — semua terdokumentasi. Dokumen hidup 189 baris.
-
-Plugin `claude-md-management` membantu. `/revise-claude-md` merefleksikan pembelajaran dari sesi saat ini ke CLAUDE.md.
-
-## Satu Orang, Banyak Peran
-
-Dengan pipeline ini, satu orang berpindah antar banyak peran:
-
-| Langkah | Peran | Skill/Agent |
-|---------|-------|-------------|
-| 1. Product Brief | PM | skill `product-brief` |
-| 2. PRD | Product Manager | skill `prd-craft` |
-| 3. Arsitektur | Software Architect | skill `software-architect` |
-| 4. Database | DBA | skill `database-design` + `postgresql` |
-| 5. Desain UX | UX Designer | agent `ux-designer` |
-| 6. Prototipe UI | UI Engineer | agent `ui-engineer` |
-| 7. Implementasi | Developer | `axum`, `nextjs`, `react-native`, dll. |
-| 8. Quality Gate | QA + Security Engineer | agent `tester` + `security-reviewer` |
-| 9. Deploy | DevOps | Pulumi + Cloudflare + GCP |
-
-Dulu, setiap peran ini adalah orang berbeda. Sekarang, skill yang tepat dimuat untuk setiap peran, menerapkan framework dan constraint peran tersebut. Saya nggak perlu jadi ahli di setiap domain — pemikiran ahlinya terenkode di skill.
-
-## Keterbatasan
-
-Jujur. Sistem ini punya limit.
-
-**Selera domain nggak bisa digantikan.** Skill memandu "definisikan masalah dengan bukti" tapi masalah mana yang benar-benar sakit, di mana uangnya, apa yang sebenarnya diinginkan pengguna — itu penilaian saya. AI menulis Product Brief, tapi insight yang masuk ke dalamnya datang dari mengamati pengguna.
-
-**Selera UX sama.** Desain berbasis prinsip kognitif mencegah keputusan buruk, tapi menciptakan pengalaman yang benar-benar natural dan menyenangkan pada akhirnya datang dari menggunakan produk sendiri dan merasakannya.
-
-**Kualitas skill adalah segalanya.** Skill yang ditulis buruk menyebarkan pola buruk ke setiap proyek. Skill butuh review dan update berkala.
-
-Tapi keterbatasan ini bukan bug dalam sistem — ini desainnya. AI menyediakan framework, saya menyediakan bahan. Pembagian kerja.
-
-## Efek Compound
-
-Nilai sebenarnya dari sistem ini muncul seiring waktu.
-
-Skill dan agent yang dibuat untuk proyek pertama langsung berlaku ke proyek kedua. Pola CLAUDE.md yang diperbaiki di proyek kedua berlaku ke proyek ketiga. Pola baru yang ditemukan selama security review ditambahkan ke skill dan otomatis dicek di setiap proyek masa depan.
-
-Membangun 21 skill, 7 agent, 8 MCP server, dan 20 plugin butuh waktu. Menulis file CLAUDE.md yang detail untuk setiap proyek juga butuh waktu. Tapi investasi ini compound. Setiap proyek baru dimulai dengan semua pengetahuan yang terakumulasi sebelumnya diterapkan secara otomatis.
-
-## Apa Arti Sebenarnya Vibe Coding
-
-Vibe coding bukan mengekstrak kode dari AI. Ini **mengarahkan AI melalui seluruh proses membangun produk.**
-
-Dimulai dari ide, mendefinisikan masalah (Product Brief), menspesifikasikan requirement (PRD), mendesain struktur (SADD), memodelkan data (DB Design), memetakan pengalaman pengguna (UX), membuat scaffold visual (UI), mengimplementasi kode (Skill), dan memverifikasi kualitas (Tester + Security). Di setiap langkah, framework level ahli dimuat, dan saya menetapkan arah dan membuat penilaian.
-
-Bukan juru ketik. Sutradara.
-
-Di post sebelumnya saya bilang "hiduplah sebagai builder." Pipeline ini adalah infrastruktur sang builder. Yang kamu butuhkan cuma ide — sistem menyediakan scaffold sisanya.
-
-Vibes-nya bagus. Pipeline menjagamu.
+Bottleneck-nya adalah kamu. Seleramu, penilaianmu, kemampuanmu memutuskan apa yang penting. Semua sisanya adalah eksekusi. Dan eksekusi adalah persis hal yang AI makin pandai melakukannya.
