@@ -8,7 +8,7 @@
     "contact": "連絡"
   },
   "hero": {
-    "badge": "Indie Builder",
+    "badge": "Builder",
     "title": "Build the Whole Damn Thing.",
     "subtitle": "いじる、つくる、出す。",
     "cta_primary": "つくったものを見る",
@@ -48,7 +48,7 @@
     "vs": "vs",
     "built_with": "使用技術",
     "bottom_cta_title": "似たようなものを作っていますか？",
-    "bottom_cta_subtitle": "大きなエージェンシーなしで、チームの高速リリースをお手伝いします。",
+    "bottom_cta_subtitle": "作る過程で学んだことを、気軽に共有します。",
     "bottom_cta_button": "話しましょう"
   },
   "blog": {
@@ -76,7 +76,7 @@
     "reading": "読んでいる",
     "available_for": "やりたいこと",
     "bottom_cta_title": "気になりますか？",
-    "bottom_cta_subtitle": "合うかどうか、話してみましょう。",
+    "bottom_cta_subtitle": "お気軽にご連絡ください。",
     "bottom_cta_button": "声をかける"
   },
   "contact": {

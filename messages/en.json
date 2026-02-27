@@ -8,7 +8,7 @@
     "contact": "Contact"
   },
   "hero": {
-    "badge": "Indie Builder",
+    "badge": "Builder",
     "title": "Build the Whole Damn Thing.",
     "subtitle": "I tinker, I build, I ship.",
     "cta_primary": "See What I Built",
@@ -16,23 +16,23 @@
   },
   "home": {
     "featured_label": "Recent Builds",
-    "featured_title": "Stuff I Shipped",
+    "featured_title": "What I've Shipped",
     "testimonial_label": "Nice Things People Said",
-    "bottom_cta_title": "Wanna build something together?",
-    "bottom_cta_subtitle": "Always down to chat about weird ideas.",
-    "bottom_cta_button": "Hit Me Up"
+    "bottom_cta_title": "Want to build something together?",
+    "bottom_cta_subtitle": "Always open to interesting ideas.",
+    "bottom_cta_button": "Get in Touch"
   },
   "projects": {
     "title": "Projects",
     "subtitle": "Ideas I turned into products.",
     "read_case_study": "Read More",
-    "bottom_cta_title": "Got a cool idea?",
+    "bottom_cta_title": "Have a good idea?",
     "bottom_cta_button": "Let's Talk"
   },
   "project": {
     "overview": "Overview",
     "problem": "The Problem",
-    "solution": "How I Fixed It",
+    "solution": "How I Solved It",
     "tech_stack": "Tech Stack",
     "architecture": "Architecture",
     "view_live": "View Live",
@@ -48,7 +48,7 @@
     "vs": "vs",
     "built_with": "Built with",
     "bottom_cta_title": "Working on something similar?",
-    "bottom_cta_subtitle": "I help teams ship faster without the overhead of a big agency.",
+    "bottom_cta_subtitle": "Happy to share what I've learned along the way.",
     "bottom_cta_button": "Let's Chat"
   },
   "blog": {
@@ -56,7 +56,7 @@
     "subtitle": "Notes on building stuff, breaking stuff, and shipping anyway.",
     "all": "All",
     "min_read": "min read",
-    "bottom_cta_title": "Wanna collab?",
+    "bottom_cta_title": "Want to collaborate?",
     "bottom_cta_button": "Reach Out"
   },
   "about": {
@@ -75,8 +75,8 @@
     "learning": "Learning",
     "reading": "Reading",
     "available_for": "Down For",
-    "bottom_cta_title": "Sounds like your vibe?",
-    "bottom_cta_subtitle": "Let's see if we click.",
+    "bottom_cta_title": "Sound interesting?",
+    "bottom_cta_subtitle": "I'd love to hear from you.",
     "bottom_cta_button": "Say Hi"
   },
   "contact": {
@@ -100,7 +100,7 @@
   },
   "availability": {
     "available": "Building something new",
-    "limited": "Kinda busy rn",
+    "limited": "A bit busy",
     "booked": "Locked in until {date}"
   },
   "common": {

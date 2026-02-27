@@ -2,13 +2,12 @@
 
 ## Identity
 - Name: zzoo
-- Role: Indie Builder
+- Role: Builder
 - Tagline: Build the Whole Damn Thing.
 - Website: https://zzoo.dev
 
 ## Expertise
 - Full-stack web development (React, Next.js, TypeScript)
-- AI-powered development workflows
 - Solo product development from idea to deployment
 - Scalable web applications and technical architecture
 - Cloudflare Workers deployment

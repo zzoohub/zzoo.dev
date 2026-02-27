@@ -8,7 +8,7 @@
     "contact": "Contato"
   },
   "hero": {
-    "badge": "Indie Builder",
+    "badge": "Builder",
     "title": "Build the Whole Damn Thing.",
     "subtitle": "Fuço, construo, lanço.",
     "cta_primary": "Ver o que construi",
@@ -19,7 +19,7 @@
     "featured_title": "O que eu lancei",
     "testimonial_label": "Coisas legais que falaram",
     "bottom_cta_title": "Quer construir algo junto?",
-    "bottom_cta_subtitle": "Sempre a fim de trocar ideia sobre coisas malucas.",
+    "bottom_cta_subtitle": "Sempre aberto a boas ideias.",
     "bottom_cta_button": "Fala comigo"
   },
   "projects": {
@@ -48,7 +48,7 @@
     "vs": "vs",
     "built_with": "Feito com",
     "bottom_cta_title": "Trabalhando em algo parecido?",
-    "bottom_cta_subtitle": "Ajudo times a lançar rapido sem o overhead de uma agencia grande.",
+    "bottom_cta_subtitle": "Terei prazer em compartilhar o que aprendi no caminho.",
     "bottom_cta_button": "Bora trocar ideia"
   },
   "blog": {
@@ -76,7 +76,7 @@
     "reading": "Lendo",
     "available_for": "Aberto pra",
     "bottom_cta_title": "Curtiu?",
-    "bottom_cta_subtitle": "Vamos ver se rola.",
+    "bottom_cta_subtitle": "Fique a vontade para entrar em contato.",
     "bottom_cta_button": "Mandar oi"
   },
   "contact": {

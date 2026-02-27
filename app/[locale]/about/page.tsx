@@ -12,8 +12,8 @@ import type { ExperienceEntry } from "@/lib/types";
 
 const titles: Record<string, string> = { en: "About", ko: "소개" };
 const descriptions: Record<string, string> = {
-  en: "Indie Builder. Learn about my background, experience, and what drives me.",
-  ko: "Indie Builder. 경험과 배경을 소개합니다.",
+  en: "Learn about my background, experience, and what drives me.",
+  ko: "경험과 배경을 소개합니다.",
 };
 
 export async function generateMetadata({

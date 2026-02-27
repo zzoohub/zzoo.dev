@@ -108,7 +108,7 @@ export function buildWebSiteJsonLd() {
     name: siteConfig.name,
     url: siteConfig.url,
     description:
-      "Indie Builder. Build the Whole Damn Thing — from idea to deployment.",
+      "Build the Whole Damn Thing — from idea to deployment.",
     inLanguage: [...routing.locales],
   };
 }
@@ -121,13 +121,12 @@ export function buildPersonJsonLd() {
     url: siteConfig.url,
     email: siteConfig.email,
     sameAs: [siteConfig.social.github, siteConfig.social.linkedin],
-    jobTitle: "Indie Builder",
+    jobTitle: "Builder",
     knowsAbout: [
       "Full-stack Development",
       "React",
       "Next.js",
       "TypeScript",
-      "AI-powered Development",
       "Cloudflare Workers",
       "Solo Product Development",
     ],

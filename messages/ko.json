@@ -8,7 +8,7 @@
     "contact": "연락"
   },
   "hero": {
-    "badge": "Indie Builder",
+    "badge": "Builder",
     "title": "Build the Whole Damn Thing.",
     "subtitle": "떠올리고, 만들고, 또 고치는 이야기.",
     "cta_primary": "만든 것들 보기",
@@ -18,21 +18,21 @@
     "featured_label": "최근 빌드",
     "featured_title": "이런 걸 만들었어요",
     "testimonial_label": "사람들이 해준 좋은 말",
-    "bottom_cta_title": "같이 뭔가 만들어 볼래요?",
-    "bottom_cta_subtitle": "재밌는 아이디어 얘기는 언제든 환영.",
+    "bottom_cta_title": "함께 만들어 보시겠어요?",
+    "bottom_cta_subtitle": "좋은 아이디어는 언제든 환영합니다.",
     "bottom_cta_button": "연락하기"
   },
   "projects": {
     "title": "프로젝트",
     "subtitle": "아이디어를 제품으로 만든 기록.",
     "read_case_study": "자세히 보기",
-    "bottom_cta_title": "괜찮은 아이디어 있어요?",
-    "bottom_cta_button": "얘기해요"
+    "bottom_cta_title": "좋은 아이디어가 있으신가요?",
+    "bottom_cta_button": "이야기하기"
   },
   "project": {
     "overview": "개요",
     "problem": "문제",
-    "solution": "이렇게 풀었어요",
+    "solution": "이렇게 해결했습니다",
     "tech_stack": "기술 스택",
     "architecture": "아키텍처",
     "view_live": "라이브 보기",
@@ -47,16 +47,16 @@
     "how_its_different": "이렇게 다릅니다",
     "vs": "vs",
     "built_with": "사용 기술",
-    "bottom_cta_title": "비슷한 걸 만들고 있나요?",
-    "bottom_cta_subtitle": "큰 에이전시 없이도 빠르게 배포할 수 있게 도와드려요.",
-    "bottom_cta_button": "얘기해요"
+    "bottom_cta_title": "비슷한 것을 만들고 계신가요?",
+    "bottom_cta_subtitle": "만드는 과정에서 배운 것들, 편하게 나누겠습니다.",
+    "bottom_cta_button": "이야기하기"
   },
   "blog": {
     "title": "블로그",
     "subtitle": "만들고, 부수고, 그래도 배포하는 이야기.",
     "all": "전체",
     "min_read": "min read",
-    "bottom_cta_title": "같이 해볼래요?",
+    "bottom_cta_title": "함께 해보시겠어요?",
     "bottom_cta_button": "연락하기"
   },
   "about": {
@@ -75,13 +75,13 @@
     "learning": "배우는 중",
     "reading": "읽는 중",
     "available_for": "이런 거 하고 싶어요",
-    "bottom_cta_title": "관심 가나요?",
-    "bottom_cta_subtitle": "한번 얘기해 봐요.",
+    "bottom_cta_title": "관심이 생기셨나요?",
+    "bottom_cta_subtitle": "편하게 연락해 주세요.",
     "bottom_cta_button": "연락하기"
   },
   "contact": {
-    "title": "연락해요",
-    "subtitle": "이메일이 제일 빨라요.",
+    "title": "연락하기",
+    "subtitle": "이메일이 가장 빠릅니다.",
     "email_label": "이메일",
     "send_email": "이메일 보내기",
     "copy_address": "주소 복사",
@@ -99,9 +99,9 @@
     "booked": "예약됨"
   },
   "availability": {
-    "available": "뭔가 만드는 중",
-    "limited": "좀 바쁜 중",
-    "booked": "{date}까지 꽉 참"
+    "available": "새로운 것을 만드는 중",
+    "limited": "조금 바쁜 상태입니다",
+    "booked": "{date}까지 바쁩니다"
   },
   "common": {
     "skip_to_main": "본문으로 건너뛰기"

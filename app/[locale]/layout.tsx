@@ -24,12 +24,12 @@ const geistMono = Geist_Mono({
 });
 
 const descriptions: Record<string, string> = {
-  en: "Indie Builder. Build the Whole Damn Thing — from idea to deployment.",
-  es: "Indie Builder. Construye todo — de la idea al despliegue.",
-  "pt-BR": "Indie Builder. Construa tudo — da ideia ao deploy.",
-  id: "Indie Builder. Bangun semuanya — dari ide sampai deployment.",
-  ja: "Indie Builder. アイデアからデプロイまで、全部つくる。",
-  ko: "Indie Builder. 아이디어부터 배포까지 빠르게.",
+  en: "Build the Whole Damn Thing — from idea to deployment.",
+  es: "Construye todo — de la idea al despliegue.",
+  "pt-BR": "Construa tudo — da ideia ao deploy.",
+  id: "Bangun semuanya — dari ide sampai deployment.",
+  ja: "アイデアからデプロイまで、全部つくる。",
+  ko: "떠오르는 것들을 하나씩 만들고 있습니다.",
 };
 
 export async function generateMetadata({
@@ -41,7 +41,7 @@ export async function generateMetadata({
   return {
     metadataBase: new URL(siteConfig.url),
     title: {
-      default: "zzoo.dev — Indie Builder",
+      default: "zzoo.dev — Builder",
       template: "%s | zzoo.dev",
     },
     description: descriptions[locale] ?? descriptions.en,
