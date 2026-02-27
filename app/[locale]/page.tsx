@@ -18,8 +18,8 @@ import { Testimonial } from "@/components/testimonial";
 import { CTASection } from "@/components/cta-section";
 
 const descriptions: Record<string, string> = {
-  en: "Vibe Builder. Build the Whole Damn Thing — from idea to deployment.",
-  ko: "Vibe Builder. 아이디어부터 배포까지 빠르게.",
+  en: "Indie Builder. Build the Whole Damn Thing — from idea to deployment.",
+  ko: "Indie Builder. 아이디어부터 배포까지 빠르게.",
 };
 
 export async function generateMetadata({
@@ -31,7 +31,7 @@ export async function generateMetadata({
   return buildPageMeta({
     locale,
     pathname: "/",
-    title: "zzoo.dev — Vibe Builder",
+    title: "zzoo.dev — Indie Builder",
     description: descriptions[locale] ?? descriptions.en,
   });
 }

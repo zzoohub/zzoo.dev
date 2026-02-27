@@ -2,7 +2,7 @@
 
 ## Identity
 - Name: zzoo
-- Role: Vibe Builder
+- Role: Indie Builder
 - Tagline: Build the Whole Damn Thing.
 - Website: https://zzoo.dev
 
