@@ -30,6 +30,9 @@ export function ProjectImageGallery({
     el.addEventListener("scroll", checkScroll, { passive: true });
     const observer = new ResizeObserver(checkScroll);
     observer.observe(el);
+    for (const child of el.children) {
+      observer.observe(child);
+    }
     return () => {
       el.removeEventListener("scroll", checkScroll);
       observer.disconnect();
@@ -52,19 +55,21 @@ export function ProjectImageGallery({
     <div className="relative">
       <div
         ref={scrollRef}
-        className="flex gap-3 overflow-x-auto scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {images.map((src, i) => (
           <div
             key={src}
-            className="relative aspect-4/3 w-[min(100%,24rem)] shrink-0 overflow-hidden rounded-lg border border-border bg-muted"
+            className="h-64 shrink-0 snap-start overflow-hidden rounded-lg border border-border bg-muted sm:h-80"
           >
             <Image
               src={src}
               alt={`${alt} — ${i + 1}`}
-              fill
-              sizes="(max-width: 640px) 100vw, 24rem"
-              className="object-contain"
+              width={0}
+              height={0}
+              sizes="(max-width: 640px) 80vw, 24rem"
+              className="pointer-events-none h-full w-auto select-none"
+              draggable={false}
             />
           </div>
         ))}

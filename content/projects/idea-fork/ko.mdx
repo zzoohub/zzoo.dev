@@ -1,0 +1,107 @@
+---
+title: "Idea Fork — 문제의 Product Hunt"
+description: "자동화된 제품 기회 발견 도구. Reddit과 앱스토어의 실제 사용자 불만을 수집하고, 신규 제품을 추적하며, 출처가 명시된 AI 브리프로 합성합니다."
+clientType: "개인 프로젝트"
+status: "active"
+techStack:
+  - Next.js
+  - React
+  - TypeScript
+  - Python
+  - FastAPI
+  - PostgreSQL
+  - Neon
+  - Google Gemini
+  - GCP Cloud Run
+  - Pulumi
+tags:
+  - SaaS
+  - Web App
+  - AI
+featured: true
+launchDate: "2026-02-01"
+thumbnail: "thumbnail.png"
+images:
+  - "screenshot-01.png"
+  - "screenshot-02.png"
+  - "screenshot-03.png"
+  - "screenshot-04.png"
+d2Diagram: "idea-fork-architecture-simplified"
+links:
+  live: "https://idea-fork.vercel.app"
+  github: "https://github.com/zzoohub/idea-fork"
+
+tagline: "다음에 뭘 만들지 찾아보세요. 실제 사용자 불만에 기반합니다."
+category: "web"
+keywords:
+  primary:
+    - "제품 기회 발견"
+    - "아이디어 검증 도구"
+  longTail:
+    - "Reddit 불만에서 SaaS 아이디어 찾기"
+    - "사용자 피드백 기반 AI 제품 브리프 생성기"
+competitors:
+  - name: "Product Hunt"
+    differentiator: "Product Hunt는 출시된 것을 보여주고 — Idea Fork는 빠진 것을 보여줍니다"
+  - name: "GummySearch"
+    differentiator: "수동 쿼리 작성 불필요 — 파이프라인이 매일 실행되어 원본 스레드가 아닌 합성된 브리프를 제공"
+  - name: "SparkToro"
+    differentiator: "SparkToro는 오디언스를 매핑 — Idea Fork는 출처 기반 AI 브리프로 수요-공급 갭을 매핑"
+cta:
+  primary:
+    label: "Idea Fork 사용해보기"
+    url: "https://idea-fork.vercel.app"
+  secondary:
+    label: "소스 보기"
+    url: "https://github.com/zzoohub/idea-fork"
+features:
+  - title: "시그널 피드"
+    description: "Reddit과 앱스토어의 사용자 불만, 니즈, 기능 요청을 실시간으로 스트리밍."
+    icon: "rss"
+  - title: "제품 트래커"
+    description: "Product Hunt, App Store, Play Store의 트렌딩 제품과 불만 시그널 수치."
+    icon: "trending-up"
+  - title: "AI 브리프"
+    description: "실제 출처 게시물에 근거한 자동 생성 제품 기회 브리프."
+    icon: "sparkles"
+  - title: "6개 언어"
+    description: "완전한 i18n 지원: 영어, 스페인어, 포르투갈어, 인도네시아어, 일본어, 한국어."
+    icon: "globe"
+---
+
+## Reddit에서 제품 아이디어 찾느라 몇 시간씩 스크롤한 적 있나요?
+
+탭 20개를 엽니다. r/SaaS, r/startups, r/selfhosted를 훑어봅니다. Product Hunt에서 방금 출시된 것을 확인합니다. 앱스토어 리뷰와 교차 검증합니다. 사람들이 불만을 토로하는 것과 실제로 존재하는 것 사이의 갭을 찾으려 합니다.
+
+5시간 후, 손에 남은 건 지저분한 스프레드시트와 모호한 직감뿐. 아마도.
+
+**리서치는 가치 있습니다. 수동 프로세스는 아닙니다.**
+
+## 수요와 공급의 만남, 자동으로
+
+Idea Fork는 당신이 수동으로 하는 일을 매일 파이프라인으로 실행합니다 — 44개 서브레딧, RSS 피드, App Store 리뷰, Play Store 리뷰, Product Hunt를 한꺼번에 처리합니다.
+
+**수요**(사람들이 실제로 불만을 토로하는 것)를 수집하고, **공급**(어떤 제품이 존재하는지)을 추적하고, AI를 사용해 그 **갭**을 실행 가능한 제품 브리프로 합성합니다. 모든 주장은 원본 게시물로 연결됩니다. 환각 없음 — 증거가 있는 AI.
+
+## 이렇게 작동합니다
+
+1. **피드 탐색** — 유형(니즈, 불만, 기능 요청)과 카테고리로 필터링된 사용자 시그널을 스크롤
+2. **제품 탐색** — 사용자 불만 시그널 수와 함께 트렌딩 제품 확인
+3. **AI 브리프 읽기** — 문제 정의, 수요 시그널, 솔루션 방향이 포함된 합성 제품 기회 확인
+4. **출처 검증** — 모든 브리프는 원본 게시물로 연결되어, 직접 판단 가능
+
+## 무대 뒤의 파이프라인
+
+매일 5단계 파이프라인이 자동으로 실행됩니다:
+
+- **Fetch** — Reddit, RSS, App Store, Play Store, Product Hunt에서 병렬로 데이터 수집
+- **Tag** — Gemini Flash Lite가 각 게시물을 유형, 감정, 토픽 태그로 분류
+- **Score** — 제품 트렌딩 점수와 불만 수 업데이트
+- **Cluster** — HDBSCAN이 관련 불만을 그룹화하고, Gemini가 클러스터 라벨 생성
+- **Synthesize** — Gemini Flash가 수요-공급 갭에서 출처가 포함된 전체 브리프 작성
+
+수동 큐레이션 없음. 편집 편향 없음. 데이터 기반 기회 발견만.
+
+## 지금 바로 사용해보세요
+
+Idea Fork는 무료로 탐색할 수 있습니다. 가입도, 유료벽도 없습니다. 피드를 열고 사람들이 실제로 원하는 것을 탐색한 다음 — 다음에 뭘 만들지 결정하세요.

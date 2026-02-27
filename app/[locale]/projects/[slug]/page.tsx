@@ -23,14 +23,12 @@ import { JsonLd } from "@/components/json-ld";
 import { D2Diagram } from "@/components/d2-diagram";
 import { ProjectDetailTabs } from "@/components/project-detail-tabs";
 import { ProjectImageGallery } from "@/components/project-image-gallery";
-import { ProductHero } from "@/components/product-hero";
 import { FeatureGrid } from "@/components/feature-grid";
 import { CompetitorComparison } from "@/components/competitor-comparison";
 import { ProductCTA } from "@/components/product-cta";
 import { VideoEmbed } from "@/components/video-embed";
 import { compileMDX } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
-import { ExternalLink, Github, FileText } from "lucide-react";
 import type { CaseStudyMeta } from "@/lib/types";
 import { Comments } from "@/components/comments";
 
@@ -120,6 +118,7 @@ export default async function ProjectDetailPage({
     datePublished: study.meta.launchDate,
     techStack: study.meta.techStack,
     keywords: [
+      ...study.meta.tags,
       ...(study.meta.keywords?.primary ?? []),
       ...(study.meta.keywords?.longTail ?? []),
     ],
@@ -175,17 +174,6 @@ function ProjectDetailContent({
   // Build the full product tab content with marketing components
   const fullProductContent = (
     <div className="space-y-12">
-      {/* Hero: tagline + CTA + hero image */}
-      {meta.tagline && (
-        <ProductHero
-          tagline={meta.tagline}
-          heroImage={meta.heroImage}
-          title={meta.title}
-          ctaPrimary={meta.cta?.primary}
-          ctaSecondary={meta.cta?.secondary}
-        />
-      )}
-
       {/* MDX body */}
       <div className={proseClassName}>{productContent}</div>
 
@@ -248,56 +236,19 @@ function ProjectDetailContent({
             {meta.description}
           </p>
 
-          {/* Product Links (shown when no tagline/CTA — fallback for legacy) */}
-          {!meta.tagline && meta.links && (
-            <div className="mt-6 flex flex-wrap gap-3">
-              {meta.links.live && (
-                <a
-                  href={meta.links.live}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex h-10 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          {/* Tags */}
+          {meta.tags.length > 0 && (
+            <div className="mt-6 flex flex-wrap gap-2">
+              {meta.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-full border border-border bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground"
                 >
-                  <ExternalLink className="size-4" />
-                  {t("view_live")}
-                </a>
-              )}
-              {meta.links.github && (
-                <a
-                  href={meta.links.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex h-10 items-center gap-2 rounded-lg border border-border px-4 text-sm font-medium transition-colors hover:bg-muted"
-                >
-                  <Github className="size-4" />
-                  {t("view_source")}
-                </a>
-              )}
-              {meta.links.docs && (
-                <a
-                  href={meta.links.docs}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex h-10 items-center gap-2 rounded-lg border border-border px-4 text-sm font-medium transition-colors hover:bg-muted"
-                >
-                  <FileText className="size-4" />
-                  {t("documentation")}
-                </a>
-              )}
+                  {tag}
+                </span>
+              ))}
             </div>
           )}
-
-          {/* Tech Stack */}
-          <div className="mt-6 flex flex-wrap gap-2">
-            {meta.techStack.map((tech) => (
-              <span
-                key={tech}
-                className="rounded-full border border-border bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground"
-              >
-                {tech}
-              </span>
-            ))}
-          </div>
         </header>
 
         {/* Image Gallery */}
@@ -340,6 +291,13 @@ function ProjectDetailContent({
           />
         ) : (
           fullProductContent
+        )}
+
+        {/* Tech Stack */}
+        {meta.techStack.length > 0 && (
+          <p className="mt-12 text-sm text-muted-foreground">
+            {t("built_with")}: {meta.techStack.join(", ")}
+          </p>
         )}
 
         {/* Comments */}

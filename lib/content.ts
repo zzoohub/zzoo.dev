@@ -257,7 +257,12 @@ function parseCaseStudyMeta(data: Record<string, unknown>, slug: string): CaseSt
     description: data.description as string,
     clientType: data.clientType as string,
     status: data.status as CaseStudyMeta["status"],
-    techStack: (data.techStack as string[]) ?? [],
+    tags: Array.isArray(data.tags)
+      ? data.tags.filter((v): v is string => typeof v === "string")
+      : [],
+    techStack: Array.isArray(data.techStack)
+      ? data.techStack.filter((v): v is string => typeof v === "string")
+      : [],
     featured: (data.featured as boolean) ?? false,
     launchDate: toDateString(data.launchDate),
     thumbnail: typeof data.thumbnail === "string" ? resolveProjectImage(data.thumbnail, slug) : undefined,

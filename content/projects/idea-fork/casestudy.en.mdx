@@ -1,0 +1,38 @@
+---
+title: "Idea Fork — Case Study"
+---
+
+## Problem
+
+Indie hackers and early-stage founders spend 5+ hours per week manually researching product opportunities across Reddit, Hacker News, Product Hunt, and app stores. The process is fragmented: demand signals (user complaints) live in one place, supply data (existing products) in another, and synthesizing the gap requires significant manual effort. Most of this research produces a messy spreadsheet and a vague hunch — not actionable insights.
+
+## Solution
+
+Idea Fork automates the entire demand-supply research pipeline end-to-end. A daily 5-stage data pipeline collects user complaints from 44 subreddits, RSS feeds, and app store reviews, tracks trending products from Product Hunt and app stores, and uses a Gemini LLM pipeline to synthesize the gap into source-backed product opportunity briefs.
+
+### Split-Path Architecture
+
+The web app reads directly from Neon PostgreSQL via `@neondatabase/serverless`, bypassing the API server entirely for read operations. The FastAPI backend runs only as a scheduled pipeline — it's not in the production read path. This eliminates latency for users and keeps infrastructure costs near zero when the pipeline isn't running.
+
+### Hexagonal Backend
+
+The FastAPI service uses hexagonal architecture with Protocol ABCs as domain ports. This made it straightforward to swap data sources (Reddit, App Store, Product Hunt) without touching business logic. Each external adapter is independently testable.
+
+### AI with Receipts
+
+Every AI-generated brief includes `source_snapshots` — denormalized JSONB linking each claim to its original post. This dual approach (normalized `brief_source` table for integrity + JSONB for fast reads) lets users verify claims without additional database joins.
+
+## Key Design Decisions
+
+- **Python backend over Node.js** — Rich ML/LLM ecosystem (scikit-learn HDBSCAN, google-genai SDK) was the deciding factor; pipeline bottleneck is LLM latency, not compute
+- **HDBSCAN over LLM clustering** — O(n) cost issue with LLM-based clustering; HDBSCAN auto-detects cluster count and handles noise gracefully
+- **Direct Neon reads from Next.js** — Eliminates API server as a read-path bottleneck; switchable via `DATA_SOURCE` env var for development flexibility
+- **Anonymous sessions for ratings** — Zero friction; httpOnly cookie-based rate limiting is sufficient for directional signal at MVP scale
+
+## Results
+
+- **5-stage automated pipeline** — Daily execution across 5+ data sources with zero manual intervention
+- **350+ briefs generated** — Each with source attribution linking back to original user posts
+- **6-language i18n** — Full internationalization for en, es, pt-BR, id, ja, ko
+- **Zero-to-three autoscaling** — Cloud Run scales to zero when pipeline isn't running, keeping costs minimal
+- **10-table PostgreSQL schema** — Normalized design supporting posts, products, briefs, clusters, tags, and ratings

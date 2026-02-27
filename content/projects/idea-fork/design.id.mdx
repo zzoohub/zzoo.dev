@@ -1,0 +1,39 @@
+---
+title: "Idea Fork — Dokumen Desain"
+---
+
+## Arsitektur
+
+Idea Fork menggunakan arsitektur jalur terpisah: web app Next.js membaca langsung dari Neon PostgreSQL untuk semua query pengguna, sementara backend FastAPI hanya berjalan sebagai pipeline data harian.
+
+**Web App (Next.js di Vercel)**
+- App Router dengan SSR/ISR, arsitektur Feature-Sliced Design (FSD)
+- Akses data ganda: `@neondatabase/serverless` untuk pembacaan SQL langsung, Server Actions untuk penulisan (rating)
+- next-intl untuk 6 locale (en, es, pt-BR, id, ja, ko)
+- Animasi GSAP, tema gelap/terang
+
+**API + Pipeline (FastAPI di GCP Cloud Run)**
+- Arsitektur hexagonal: pola port/adapter domain dengan Protocol ABC
+- Pipeline harian 5 tahap: Fetch, Tag, Score, Cluster, Synthesize
+- Advisory lock mencegah eksekusi pipeline yang tumpang tindih
+
+**Database (Neon PostgreSQL)**
+- 10 tabel: post, tag, post_tag, cluster, cluster_post, brief, brief_source, product, product_tag, rating
+- Paginasi keyset berbasis cursor (cursor JSON yang di-encode base64)
+- Index parsial pada `deleted_at IS NULL` untuk soft delete
+
+## Stack Teknis
+
+| Layer | Teknologi | Alasan |
+|-------|-----------|--------|
+| Web | Next.js 16 + React 19 | App Router SSR/ISR, streaming, Server Actions |
+| Styling | Tailwind CSS v4 | Utility-first, dark mode dengan tema oklch |
+| Animasi | GSAP + @gsap/react | Animasi scroll dan entrance performa tinggi |
+| API | Python 3.12 + FastAPI | Ekosistem ML/LLM yang kaya (scikit-learn, google-genai) |
+| Arsitektur | Hexagonal (port/adapter) | Banyak adapter eksternal yang bisa ditukar |
+| LLM | Google Gemini (Flash Lite + Flash + Embeddings) | Tagging, clustering, dan sintesis brief biaya rendah |
+| Clustering | HDBSCAN (scikit-learn) | Deteksi otomatis jumlah cluster |
+| Database | PostgreSQL 18 (Neon) | Harga scale-to-zero, driver serverless |
+| IaC | Pulumi (TypeScript) | Manajemen deklaratif untuk GCP, Neon, dan Vercel |
+| Analytics | PostHog | Analitik produk dengan 9 event kustom |
+| Error Tracking | Sentry | Monitoring error full-stack |

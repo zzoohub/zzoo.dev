@@ -45,21 +45,18 @@ export function ProjectCard({ project, showThumbnail = true }: { project: CaseSt
             {project.description}
           </p>
 
-          <div className="mt-4 flex flex-wrap gap-2">
-            {project.techStack.slice(0, 5).map((tech) => (
-              <span
-                key={tech}
-                className="rounded-md bg-muted px-2 py-0.5 text-xs"
-              >
-                {tech}
-              </span>
-            ))}
-            {project.techStack.length > 5 && (
-              <span className="rounded-md bg-muted px-2 py-0.5 text-xs">
-                +{project.techStack.length - 5}
-              </span>
-            )}
-          </div>
+          {project.tags.length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {project.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-md bg-muted px-2 py-0.5 text-xs"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       </article>
     </Link>

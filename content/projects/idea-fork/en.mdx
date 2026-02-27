@@ -1,0 +1,107 @@
+---
+title: "Idea Fork — Product Hunt for Problems"
+description: "Automated product opportunity discovery. Aggregates real user complaints from Reddit and app stores, tracks new products, and synthesizes AI briefs with source-backed evidence."
+clientType: "Personal Product"
+status: "active"
+techStack:
+  - Next.js
+  - React
+  - TypeScript
+  - Python
+  - FastAPI
+  - PostgreSQL
+  - Neon
+  - Google Gemini
+  - GCP Cloud Run
+  - Pulumi
+tags:
+  - SaaS
+  - Web App
+  - AI
+featured: true
+launchDate: "2026-02-01"
+thumbnail: "thumbnail.png"
+images:
+  - "screenshot-01.png"
+  - "screenshot-02.png"
+  - "screenshot-03.png"
+  - "screenshot-04.png"
+d2Diagram: "idea-fork-architecture-simplified"
+links:
+  live: "https://idea-fork.vercel.app"
+  github: "https://github.com/zzoohub/idea-fork"
+
+tagline: "Find what to build next. Backed by real user pain."
+category: "web"
+keywords:
+  primary:
+    - "product opportunity discovery"
+    - "idea validation tool"
+  longTail:
+    - "find SaaS ideas from Reddit complaints"
+    - "AI product brief generator from user feedback"
+competitors:
+  - name: "Product Hunt"
+    differentiator: "Product Hunt shows what's launched — Idea Fork shows what's missing"
+  - name: "GummySearch"
+    differentiator: "No manual query writing — the pipeline runs daily and delivers synthesized briefs, not raw threads"
+  - name: "SparkToro"
+    differentiator: "SparkToro maps audiences — Idea Fork maps demand-supply gaps with source-backed AI briefs"
+cta:
+  primary:
+    label: "Try Idea Fork"
+    url: "https://idea-fork.vercel.app"
+  secondary:
+    label: "View Source"
+    url: "https://github.com/zzoohub/idea-fork"
+features:
+  - title: "Signal Feed"
+    description: "Real-time stream of user complaints, needs, and feature requests from Reddit and app stores."
+    icon: "rss"
+  - title: "Product Tracker"
+    description: "Trending products from Product Hunt, App Store, and Play Store with complaint signal counts."
+    icon: "trending-up"
+  - title: "AI Briefs"
+    description: "Auto-generated product opportunity briefs backed by real source posts."
+    icon: "sparkles"
+  - title: "6 Languages"
+    description: "Full i18n support: English, Spanish, Portuguese, Indonesian, Japanese, Korean."
+    icon: "globe"
+---
+
+## Spent hours scrolling Reddit for product ideas?
+
+You open 20 tabs. Skim r/SaaS, r/startups, r/selfhosted. Check Product Hunt for what just launched. Cross-reference app store reviews. Try to spot the gap between what people complain about and what exists.
+
+Five hours later, you have a messy spreadsheet and a vague hunch. Maybe.
+
+**The research is valuable. The manual process isn't.**
+
+## Demand meets supply, automatically
+
+Idea Fork runs a daily pipeline that does what you do manually — but across 44 subreddits, RSS feeds, App Store reviews, Play Store reviews, and Product Hunt — all at once.
+
+It collects the **demand** (what people actually complain about), tracks the **supply** (what products exist), and uses AI to synthesize the **gap** into actionable product briefs. Every claim links back to the real source post. No hallucinations — AI with receipts.
+
+## How it works
+
+1. **Browse the Feed** — scroll through tagged user signals filtered by type (Need, Complaint, Feature Request) and category
+2. **Explore Products** — see trending products paired with their user complaint signal counts
+3. **Read AI Briefs** — get synthesized product opportunities with problem statements, demand signals, and solution directions
+4. **Verify the sources** — every brief links back to the original posts, so you can judge for yourself
+
+## The pipeline behind the scenes
+
+Every day, a 5-stage pipeline runs automatically:
+
+- **Fetch** — pulls from Reddit, RSS, App Store, Play Store, and Product Hunt in parallel
+- **Tag** — Gemini Flash Lite classifies each post by type, sentiment, and topic tags
+- **Score** — updates product trending scores and complaint counts
+- **Cluster** — HDBSCAN groups related complaints, Gemini generates cluster labels
+- **Synthesize** — Gemini Flash writes full briefs from demand-supply gaps, with source attribution
+
+No manual curation. No editorial bias. Just data-driven opportunity discovery.
+
+## Try it now
+
+Idea Fork is free to browse. No signup, no paywall. Open the feed and start exploring what people are actually asking for — then decide what to build next.

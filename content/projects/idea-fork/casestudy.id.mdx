@@ -1,0 +1,31 @@
+---
+title: "Idea Fork — Studi Kasus"
+---
+
+## Masalah
+
+Indie hacker dan founder tahap awal menghabiskan 5+ jam per minggu untuk meneliti peluang produk secara manual di Reddit, Hacker News, Product Hunt, dan app store. Prosesnya terfragmentasi: sinyal demand (keluhan pengguna) ada di satu tempat, data supply (produk yang sudah ada) di tempat lain, dan menyintesis gap-nya membutuhkan usaha manual yang signifikan.
+
+## Solusi
+
+Idea Fork mengotomatiskan seluruh pipeline riset demand-supply dari ujung ke ujung. Pipeline data harian 5 tahap mengumpulkan keluhan pengguna dari 44 subreddit, feed RSS, dan review app store, melacak produk trending dari Product Hunt dan app store, dan menggunakan pipeline Gemini LLM untuk menyintesis gap menjadi brief peluang produk yang didukung sumber.
+
+### Arsitektur Jalur Terpisah
+
+Web app membaca langsung dari Neon PostgreSQL via `@neondatabase/serverless`, melewati server API sepenuhnya untuk operasi baca. Backend FastAPI hanya berjalan sebagai pipeline terjadwal.
+
+### Backend Hexagonal
+
+Layanan FastAPI menggunakan arsitektur hexagonal dengan Protocol ABC sebagai port domain. Setiap adapter eksternal dapat diuji secara independen dan sumber data dapat ditukar tanpa menyentuh logika bisnis.
+
+### AI dengan Bukti
+
+Setiap brief yang dihasilkan AI menyertakan `source_snapshots` — JSONB yang didenormalisasi yang menghubungkan setiap klaim ke post aslinya.
+
+## Hasil
+
+- **Pipeline otomatis 5 tahap** — Eksekusi harian dari 5+ sumber data tanpa intervensi manual
+- **350+ brief dihasilkan** — Masing-masing dengan atribusi sumber yang menghubungkan ke post pengguna asli
+- **i18n 6 bahasa** — Internasionalisasi lengkap untuk en, es, pt-BR, id, ja, ko
+- **Autoscaling zero-to-three** — Cloud Run scale ke nol saat pipeline tidak berjalan
+- **Schema PostgreSQL 10 tabel** — Desain ternormalisasi mendukung post, produk, brief, cluster, tag, dan rating

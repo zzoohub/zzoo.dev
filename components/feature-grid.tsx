@@ -8,6 +8,9 @@ import {
   Code,
   Lock,
   Layers,
+  Rss,
+  TrendingUp,
+  Sparkles,
   type LucideIcon,
 } from "lucide-react";
 
@@ -21,6 +24,9 @@ const iconMap: Record<string, LucideIcon> = {
   code: Code,
   lock: Lock,
   layers: Layers,
+  rss: Rss,
+  "trending-up": TrendingUp,
+  sparkles: Sparkles,
 };
 
 interface Feature {
