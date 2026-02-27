@@ -1,3 +1,5 @@
+# The Best Essay
+
 Despite its title this isn't meant to be the best essay. My goal here is to figure out what the best essay would be like.
 
 It would be well-written, but you can write well about any topic. What made it special would be what it was about.
@@ -109,3 +111,5 @@ The most striking feature of this map of essay writing are the alternating strip
 But although I wish I could say that writing great essays depends mostly on effort, in the limit case it's inspiration that makes the difference. In the limit case, the questions are the harder thing to get. That pool has no bottom.
 
 How to get more questions? That is the most important question of all.
+
+*Source: [The Best Essay](https://paulgraham.com/best.html)*

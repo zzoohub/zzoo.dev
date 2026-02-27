@@ -1,4 +1,4 @@
-[https://paulgraham.com/genius.html]
+# The Bus Ticket Theory of Genius
 
 Everyone knows that to do great work you need both natural ability and determination. But there's a third ingredient that's not as well understood: an obsessive interest in a particular topic.
 
@@ -65,3 +65,5 @@ It may even be that we can cultivate a habit of intellectual bus ticket collecti
 When they get interested in something, however random, I encourage them to go preposterously, bus ticket collectorly, deep. I don't do this because of the bus ticket theory. I do it because I want them to feel the joy of learning, and they're never going to feel that about something I'm making them learn. It has to be something they're interested in. I'm just following the path of least resistance; depth is a byproduct. But if in trying to show them the joy of learning I also end up training them to go deep, so much the better.
 
 Will it have any effect? I have no idea. But that uncertainty may be the most interesting point of all. There is so much more to learn about how to do great work. As old as human civilization feels, it's really still very young if we haven't nailed something so basic. It's exciting to think there are still discoveries to make about discovery. If that's the sort of thing you're interested in.
+
+*Source: [The Bus Ticket Theory of Genius](https://paulgraham.com/genius.html)*

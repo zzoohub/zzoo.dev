@@ -1,4 +1,4 @@
-[https://www.paulgraham.com/goodwriting.html]
+# Good Writing
 
 There are two senses in which writing can be good: it can sound good, and the ideas can be right. It can have nice, flowing sentences, and it can draw correct conclusions about important things. It might seem as if these two kinds of good would be unrelated, like the speed of a car and the color it's painted. And yet I don't think they are. I think writing that sounds good is more likely to be right.
 
@@ -41,3 +41,5 @@ So it's not quite right to say that better sounding writing is more likely to be
 But while we can't safely conclude that beautiful writing is true, it's usually safe to conclude the converse: something that seems clumsily written will usually have gotten the ideas wrong too.
 
 Indeed, the two senses of good writing are more like two ends of the same thing. The connection between them is not a rigid one; the goodness of good writing is not a rod but a rope, with multiple overlapping connections running through it. But it's hard to move one end without moving the other. It's hard to be right without sounding right.
+
+*Source: [Good Writing](https://www.paulgraham.com/goodwriting.html)*

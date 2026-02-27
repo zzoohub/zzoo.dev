@@ -1,4 +1,4 @@
-[https://paulgraham.com/hp.html]
+# Hackers and Painters
 
 When I finished grad school in computer science I went to art school to study painting. A lot of people seemed surprised that someone interested in computers would also be interested in painting. They seemed to think that hacking and painting were very different kinds of work-- that hacking was cold, precise, and methodical, and that painting was the frenzied expression of some primal urge.
 
@@ -187,3 +187,5 @@ What we can say with some confidence is that these are the glory days of hacking
 Over and over we see the same pattern. A new medium appears, and people are so excited about it that they explore most of its possibilities in the first couple generations. Hacking seems to be in this phase now.
 
 Painting was not, in Leonardo's time, as cool as his work helped make it. How cool hacking turns out to be will depend on what we can do with this new medium.
+
+*Source: [Hackers and Painters](https://paulgraham.com/hp.html)*

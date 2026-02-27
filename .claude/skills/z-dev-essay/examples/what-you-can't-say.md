@@ -1,4 +1,4 @@
-[https://paulgraham.com/say.html]
+# What You Can't Say
 
 Have you ever seen an old photo of yourself and been embarrassed at the way you looked? Did we actually dress like that? We did. And we had no idea how silly we looked. It's the nature of fashion to be invisible, in the same way the movement of the earth is invisible to all of us riding on it.
 
@@ -12,7 +12,7 @@ Is our time any different? To anyone who has read any amount of history, the ans
 
 It's tantalizing to think we believe things that people in the future will find ridiculous. What would someone coming back to visit us in a time machine have to be careful not to say? That's what I want to study here. But I want to do more than just shock everyone with the heresy du jour. I want to find general recipes for discovering what you can't say, in any era.
 
-The Conformist Test
+## The Conformist Test
 
 Let's start with a test: Do you have any opinions that you would be reluctant to express in front of a group of your peers?
 
@@ -26,7 +26,7 @@ If you believe everything you're supposed to now, how can you be sure you wouldn
 
 Back in the era of terms like "well-adjusted," the idea seemed to be that there was something wrong with you if you thought things you didn't dare say out loud. This seems backward. Almost certainly, there is something wrong with you if you don't think things you don't dare say out loud.
 
-Trouble
+## Trouble
 
 What can't we say? One way to find these ideas is simply to look at things people do say, and get in trouble for. [2]
 
@@ -38,7 +38,7 @@ Certainly, as we look back on the past, this rule of thumb works well. A lot of 
 
 To find them, keep track of opinions that get people in trouble, and start asking, could this be true? Ok, it may be heretical (or whatever modern equivalent), but might it also be true?
 
-Heresy
+## Heresy
 
 This won't get us all the answers, though. What if no one happens to have gotten in trouble for a particular idea yet? What if some idea would be so radioactively controversial that no one would dare express it in public? How can we find these too?
 
@@ -54,7 +54,7 @@ Just start listing ideas at random? Yes, because they won't really be random. Th
 
 In 1989 some clever researchers tracked the eye movements of radiologists as they scanned chest images for signs of lung cancer. [3] They found that even when the radiologists missed a cancerous lesion, their eyes had usually paused at the site of it. Part of their brain knew there was something there; it just didn't percolate all the way up into conscious knowledge. I think many interesting heretical thoughts are already mostly formed in our minds. If we turn off our self-censorship temporarily, those will be the first to emerge.
 
-Time and Space
+## Time and Space
 
 If we could look into the future it would be obvious which of our taboos they'd laugh at. We can't do that, but we can do something almost as good: we can look into the past. Another way to figure out what we're getting wrong is to look at what used to be acceptable and is now unthinkable.
 
@@ -68,7 +68,7 @@ You don't have to look into the past to find big differences. In our own time, d
 
 For example, at the high water mark of political correctness in the early 1990s, Harvard distributed to its faculty and staff a brochure saying, among other things, that it was inappropriate to compliment a colleague or student's clothes. No more "nice shirt." I think this principle is rare among the world's cultures, past or present. There are probably more where it's considered especially polite to compliment someone's clothing than where it's considered improper. Odds are this is, in a mild form, an example of one of the taboos a visitor from the future would have to be careful to avoid if he happened to set his time machine for Cambridge, Massachusetts, 1992. [5]
 
-Prigs
+## Prigs
 
 Of course, if they have time machines in the future they'll probably have a separate reference manual just for Cambridge. This has always been a fussy place, a town of i dotters and t crossers, where you're liable to get both your grammar and your ideas corrected in the same conversation. And that suggests another way to find taboos. Look for prigs, and see what's inside their heads.
 
@@ -82,7 +82,7 @@ I'm not arguing for or against this idea here. It is probably inevitable that pa
 
 How do we get at these ideas? By the following thought experiment. Imagine a kind of latter-day Conrad character who has worked for a time as a mercenary in Africa, for a time as a doctor in Nepal, for a time as the manager of a nightclub in Miami. The specifics don't matter — just someone who has seen a lot. Now imagine comparing what's inside this guy's head with what's inside the head of a well-behaved sixteen year old girl from the suburbs. What does he think that would shock her? He knows the world; she knows, or at least embodies, present taboos. Subtract one from the other, and the result is what we can't say.
 
-Mechanism
+## Mechanism
 
 I can think of one more way to figure out what we can't say: to look at how taboos are created. How do moral fashions arise, and why are they adopted? If we can understand this mechanism, we may be able to see it at work in our own time.
 
@@ -106,7 +106,7 @@ So if you want to figure out what we can't say, look at the machinery of fashion
 
 This technique won't find us all the things we can't say. I can think of some that aren't the result of any recent struggle. Many of our taboos are rooted deep in the past. But this approach, combined with the preceding four, will turn up a good number of unthinkable ideas.
 
-Why
+## Why
 
 Some would ask, why would one want to do this? Why deliberately go poking around among nasty, disreputable ideas? Why look under rocks?
 
@@ -130,7 +130,7 @@ It's not only in the sciences that heresy pays off. In any competitive field, yo
 
 Training yourself to think unthinkable thoughts has advantages beyond the thoughts themselves. It's like stretching. When you stretch before running, you put your body into positions much more extreme than any it will assume during the run. If you can think things so outside the box that they'd make people's hair stand on end, you'll have no trouble with the small trips outside the box that people call innovative.
 
-Pensieri Stretti
+## Pensieri Stretti
 
 When you find something you can't say, what do you do with it? My advice is, don't say it. Or at least, pick your battles.
 
@@ -144,7 +144,7 @@ I admit it seems cowardly to keep quiet. When I read about the harassment to whi
 
 The trouble with keeping your thoughts secret, though, is that you lose the advantages of discussion. Talking about an idea leads to more ideas. So the optimal plan, if you can manage it, is to have a few trusted friends you can speak openly to. This is not just a way to develop ideas; it's also a good rule of thumb for choosing friends. The people you can say heretical things to without getting jumped on are also the most interesting to know.
 
-Viso Sciolto?
+## Viso Sciolto?
 
 I don't think we need the viso sciolto so much as the pensieri stretti. Perhaps the best policy is to make it plain that you don't agree with whatever zealotry is current in your time, but not to be too specific about what you disagree with. Zealots will try to draw you out, but you don't have to answer them. If they try to force you to treat a question on their terms by asking "are you with us or against us?" you can always just answer "neither".
 
@@ -158,7 +158,7 @@ Another way to counterattack is with metaphor. Arthur Miller undermined the Hous
 
 Best of all, probably, is humor. Zealots, whatever their cause, invariably lack a sense of humor. They can't reply in kind to jokes. They're as unhappy on the territory of humor as a mounted knight on a skating rink. Victorian prudishness, for example, seems to have been defeated mainly by treating it as a joke. Likewise its reincarnation as political correctness. "I am glad that I managed to write 'The Crucible,'" Arthur Miller wrote, "but looking back I have often wished I'd had the temperament to do an absurd comedy, which is what the situation deserved." [17]
 
-ABQ
+## ABQ
 
 A Dutch friend says I should use Holland as an example of a tolerant society. It's true they have a long tradition of comparative open-mindedness. For centuries the low countries were the place to go to say things you couldn't say anywhere else, and this helped to make the region a center of scholarship and industry (which have been closely tied for longer than most people realize). Descartes, though claimed by the French, did much of his thinking in Holland.
 
@@ -179,3 +179,5 @@ Especially if you hear yourself using them. It's not just the mob you need to le
 You have to take that extra step if you want to think clearly. But it's harder, because now you're working against social customs instead of with them. Everyone encourages you to grow up to the point where you can discount your own bad moods. Few encourage you to continue to the point where you can discount society's bad moods.
 
 How can you see the wave, when you're the water? Always be questioning. That's the only defence. What can't you say? And why?
+
+*Source: [What You Can't Say](https://paulgraham.com/say.html)*

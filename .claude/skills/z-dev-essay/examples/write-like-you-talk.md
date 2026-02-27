@@ -1,4 +1,4 @@
-[https://paulgraham.com/talk.html]
+# Write Like You Talk
 
 Here's a simple trick for getting more people to read what you write: write in spoken language.
 
@@ -27,3 +27,5 @@ This trick may not always be enough. I've seen writing so far removed from spoke
 People often tell me how much my essays sound like me talking. The fact that this seems worthy of comment shows how rarely people manage to write in spoken language. Otherwise everyone's writing would sound like them talking.
 
 If you simply manage to write in spoken language, you'll be ahead of 95% of writers. And it's so easy to do: just don't let a sentence through unless it's the way you'd say it to a friend.
+
+*Source: [Write Like You Talk](https://paulgraham.com/talk.html)*

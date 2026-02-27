@@ -48,7 +48,19 @@ Key constraints:
   - **en, ko** (first class): These must read as native-quality prose — no awkward phrasing, no translation artifacts. See `references/writing-principles.md` for language-specific guidelines.
   - **es, pt-BR, id, ja** (supported): Write naturally and correctly, but the user understands these may not reach native-essay polish. Still apply all core principles (conversational tone, concrete examples, surprise test).
 - **Length**: 800-2500 words typically. Let the idea dictate length.
-- **Format**: Markdown file with a title. No bullet points in the body. Minimal headers — only when there's a genuine shift in direction.
+- **Format**: MDX file with frontmatter and markdown body.
+  ```yaml
+  ---
+  title: "Essay Title"
+  description: "1-2 sentence hook for social/SEO"
+  date: "YYYY-MM-DD"
+  tags:
+    - tag-one
+    - tag-two
+  draft: false
+  ---
+  ```
+  Body: Markdown prose. No bullet points. Minimal headers — only when there's a genuine shift in direction.
 
 ### Step 4: Rewrite (Tight)
 
@@ -56,7 +68,7 @@ This is where the essay gets good. The tight phase is days of careful rewriting 
 
 Reread the draft multiple times. Each pass is like shaking a bin of objects — the arbitrary constraint of fixing what sounds wrong forces ideas to pack more tightly. Writing that sounds good is more likely to be right, because you can't fix awkward prose without fixing the underlying thinking.
 
-For every sentence, apply the **four-component test** (importance × novelty × correctness × strength):
+For every sentence, run through this rewrite checklist:
 
 1. **Does it sound right?** If something sounds clumsy, it's probably wrong. "Ugh, this doesn't sound right; what do I mean to say here?" is your most reliable heuristic. Good rhythm follows from correct thinking.
 2. **Is this the way I'd say this to a friend?** If not, rewrite it in spoken language. Read it aloud — fix everything that doesn't sound like conversation.
