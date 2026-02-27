@@ -1,6 +1,6 @@
 ---
-title: "Developers Who Matter in the AI Era"
-description: "The cost of writing code is converging to zero. Coding skill is no longer scarce. So which developers survive?"
+title: "Taste and Code"
+description: "Everyone says learn to code better. But when code is free, the scarce thing isn't writing it — it's knowing what to write."
 date: "2026-02-19"
 tags:
   - ai
@@ -9,78 +9,72 @@ tags:
 draft: false
 ---
 
-I've worked with developers like this. Give them a task and they deliver. Code quality is decent, deadlines are met. But they never build anything on their own. Say "implement this" and they do. They never say "what if we built this?"
+Here's something strange I noticed last month. I was building a feature — a settings page for a meal tracking app. The kind of thing that would've taken me most of a day a year ago. I described what I wanted, and my AI coding assistant produced the whole thing in about twenty minutes. The code was fine. Better than fine, actually. Clean types, proper validation, edge cases handled.
 
-Five years ago, that was a perfectly fine developer. Not anymore.
+And I felt nothing. No satisfaction at all.
 
-## The Cost of Code Is Going to Zero
+That surprised me. I've been a developer for years. Shipping code used to feel like something. But this time the interesting part was already over before the code existed. The interesting part was two weeks earlier, when I watched users fumble through the old settings flow and realized the problem wasn't the UI — it was the mental model. They didn't understand what the settings controlled. The fix wasn't better code. It was rethinking what settings should even be there.
 
-This isn't hyperbole. Features that took a full day six months ago now ship in an hour. AI coding tools get faster and more accurate every month. The raw cost of "writing code" is rapidly converging to zero.
+That's when it clicked: the work that mattered had nothing to do with writing code. The code was just the receipt.
 
-This poses an existential question for developers: **When the cost of writing code approaches free, where is the value in knowing how to code?**
+---
 
-The answer is simple. It isn't in the code itself.
+There's a standard response to AI taking over coding work. You hear it everywhere. "Get better at coding." Learn system design. Master algorithms. Go deeper technically.
 
-## Two Kinds of Developers
+This advice is not wrong, exactly. It's just aimed at the wrong scarcity. When something becomes abundant, getting better at it is like becoming the world's fastest typist right as word processors arrive. Impressive, maybe. But beside the point.
 
-Developers roughly fall into two categories.
+The scarcity isn't shifting from bad code to good code. It's shifting from code to the thing before code — the judgment about what to build and how it should feel. I call that taste, for lack of a better word.
 
-**Builders**: They find problems, imagine solutions, and create. Code is the means, not the end. They spend energy on "what if we solve this problem like this?" rather than "implement this feature for me."
+---
 
-**Executors**: Given a spec, they implement precisely. They write clean code and hit deadlines. But without a spec, they stall. They rarely decide what to build on their own.
+Let me make this concrete. I know two developers. Both are excellent coders. One works at a big company, building features from specs that product managers hand him. He implements them precisely, often beautifully. The other barely writes code anymore. She spends her days talking to customers of her own product, reading analytics, sketching interfaces on paper. When she finally sits down to build, she already knows exactly what the thing should do and why. The AI does most of the typing.
 
-Before AI, you needed both. Builders set direction, executors shipped features. The more executors on a team, the more features you could push out, faster.
+A year ago, you'd have said the first developer was more skilled. He could whiteboard a distributed system. She sometimes has to look up API syntax. But she ships things people love, and he ships things people use because they have to.
 
-But AI has started replacing the executor's role. Code conversion, boilerplate generation, test writing, bug fixing — given a clear spec, AI handles it. And it keeps getting better.
+The gap between them isn't technical. It's perceptual. She sees problems he doesn't even know exist, because she's embedded in the domain. She has taste.
 
-**Builders don't get replaced.** The ability to decide "what should we build?" can't be delegated to AI. Not yet.
+---
 
-## Both Ends of the Frontier
+Taste is a funny word to use about software. It sounds soft, aesthetic, almost frivolous. But it's actually the hardest thing to develop and the hardest thing to automate.
 
-There are exceptions, of course. Not every domain shifts uniformly.
+Taste in software is really two things fused together. The first is domain taste — knowing which problems actually matter. Not which problems are technically interesting or which problems your boss thinks are important, but which problems make real people's lives genuinely worse. You can only get this by spending unglamorous time watching people struggle with things. Reading support tickets. Staring at analytics dashboards. Having uncomfortable conversations where users tell you your product sucks.
 
-**Deep-tech engineering** — Infrastructure for training AI models, real-time control systems in robotics, kernel development, compiler design. Here, a single mistake is catastrophic, and defining the problem itself requires deep expertise. Pure technical depth remains the highest-value skill. The small number of engineers with frontier-level capabilities won't be shaken by the AI era.
+The second is UX taste — knowing how a solution should feel. This is the difference between a feature that exists and a feature that gets used. Same functionality, wildly different adoption, because one version matches how people actually think and the other matches how the developer thought they should think.
 
-**Service development** — Most web services, mobile apps, SaaS products. Technical difficulty in this space is rapidly flattening. The ability to write CRUD is not a differentiator.
+AI can write code for either of these. But AI can't tell you which problem to pick or how the solution should feel in someone's hands. That requires a kind of accumulated human judgment that doesn't come from training on GitHub repos.
 
-Most developers fall into the latter category. And in this space, the rules of the game are changing.
+---
 
-## The Age of Makers
+There's a useful analogy here. Think about what happened to video content when cameras and editing software got cheap. The conventional wisdom at the time was that professional videographers would dominate YouTube. They had the technical skills. They knew lighting, color grading, sound design.
 
-What happens when the cost of development converges to zero? The developer's role shifts closer to **creator** territory.
+But that's not what happened. The people who won were the ones with content instinct — the ability to know what an audience would find interesting, how to structure a narrative, when to cut. The technical craft mattered far less than the creative direction. A YouTuber filming on an iPhone with a good idea crushes a cinematographer with nothing to say.
 
-Just as YouTubers differentiate on content instinct rather than camera technique, developers will differentiate on **what they build** rather than how well they code. Cheaper filming and editing didn't kill YouTube — it created an explosion of creators. The same will happen with development.
+The same inversion is happening in software development right now. As AI drives the cost of writing code toward zero, the developers who only know how to write code are the videographers who only know camera settings. Technically proficient, but missing the thing that matters.
 
-When AI lowers the barrier to building, more people build more things. But the people who build **something meaningful** remain rare. Meaning comes from taste, not technique.
+---
 
-## Taste as a Moat
+I've been living this shift myself. I'm a solo developer. I ship products. And the way I spend my time has changed radically in the past year.
 
-Developers who survive in the service space share two kinds of taste:
+I used to spend maybe 70% of my time writing code and 30% on everything else — research, design, talking to users. Now it's almost inverted. I spend most of my time understanding problems, sketching solutions, and testing whether what I built actually works for people. The coding part has compressed into a fraction of the workday, because AI handles the bulk of it.
 
-**Domain taste** — The ability to understand problems, not just technology. If you're building fintech, knowing financial regulations and user psychology around money. If you're building a healthcare app, understanding medical workflows and compliance. AI can write the code, but it won't tell you which problem actually hurts and where the money is.
+And my output is better. Not because I'm a better coder — I'm probably a worse one, since I practice less. But because I spend more time on the part that was always the bottleneck: figuring out what the right thing to build is.
 
-**UX taste** — Knowing what users want, where they get stuck, what makes them feel good. The same feature, presented differently, either gets used or gets abandoned. Reading data, observing user behavior, intuitively reducing friction — this doesn't come from code.
+This feels counterintuitive if you think of developers as people who write code. But developers were never really people who write code. That's like saying authors are people who type. The code was always a means to an end. We just couldn't see that clearly because the means was so expensive.
 
-These two senses are hard for AI to replicate. Domain knowledge comes from field experience. UX taste comes from relentless observation and experimentation. As the ability to write code becomes commoditized, these become a developer's real moat.
+---
 
-## So What Should You Do?
+So what does this mean practically? If you're a developer wondering how to stay relevant, the standard advice — learn more frameworks, grind LeetCode, get better at system design — is at best incomplete. Those skills won't hurt you. But they're not the moat.
 
-Here's a concrete strategy:
+The moat is building things of your own. Not side projects that collect dust on GitHub, but real products with real users who give you real feedback. The full cycle — finding a problem, designing a solution, building it, shipping it, watching it succeed or fail, iterating. That loop is where taste develops. You can't shortcut it.
 
-**Build something.** Beyond your day job, create a product of your own. Not a side project — a real product with real users. Going through the full cycle from ideation to deployment to operations shifts your perspective from "person who does assigned work" to "person who finds and solves problems."
+The moat is going deep into a domain. Not "full-stack" in the old sense of frontend plus backend plus infra. Full-stack in the new sense: technology plus domain knowledge plus user understanding. Pick an industry. Learn how it works. Understand the people in it. The developer who knows both code and the problem space is the one AI makes more powerful rather than more replaceable.
 
-**Go deep into a domain.** The meaning of "full-stack" is changing. It's no longer frontend + backend + infra. It's technology + domain + UX. Pick an industry you care about and go deep.
+The moat is watching your users. Spending as much time on user feedback as you do on code review. Turning on analytics. Noticing where people get stuck. Building the intuition for what makes software feel right. UX taste isn't innate. It's trained by observation, and most developers never bother.
 
-**Watch your users.** Spend as much time on user reviews as you do on code reviews. Turn on your analytics, see where users drop off, think about why. UX taste isn't innate — it's trained through practice.
+---
 
-**Use AI as leverage.** Don't fight in the space AI is replacing. Use AI as a tool so one person does the work of ten. The time you save writing code — spend it thinking about what to build.
+There's a strange optimism in all of this. When code becomes free, the number of people who can build software explodes. That sounds threatening if you think the value is in the building. But most of those new builders won't have taste. They'll build the obvious thing, the technically impressive thing, the thing nobody actually needs.
 
-## Conclusion
+The developers who've done the unglamorous work — who know a domain deeply, who've watched users enough to develop real UX instinct, who can look at a problem and see the solution that's not obvious — those developers become more valuable, not less. AI is the best tool they've ever had. It turns their taste into shipped products at a speed that wasn't possible before.
 
-The developer who matters in the AI era isn't the one who writes the best code. It's **the one who knows what to build**.
-
-Code is becoming free. Taste is becoming expensive.
-
-A developer with no interest in building things is, frankly, in danger now. If the interest isn't there, change — or AI will change things for you.
-
-Live as a builder. The tools keep getting better.
+Code is getting cheaper every month. Taste stays expensive. It can only be earned the slow way: by building things, shipping them, and paying attention to what happens next.

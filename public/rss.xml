@@ -7,10 +7,10 @@
     <language>en</language>
     <atom:link href="https://zzoo.dev/rss.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>From Idea to Product with Claude Code Alone</title>
+      <title>Vibe Coding Isn&apos;t About Code</title>
       <link>https://zzoo.dev/en/blog/idea-to-product-with-vibe-coding</link>
       <guid isPermaLink="true">https://zzoo.dev/en/blog/idea-to-product-with-vibe-coding</guid>
-      <description>Vibe coding isn&apos;t code generation. It&apos;s running the entire product lifecycle with AI — from idea validation to growth optimization.</description>
+      <description>Everyone thinks vibe coding means AI writes your code. That&apos;s the least interesting part. The real shift is that one person can now run an entire company.</description>
       <pubDate>Fri, 27 Feb 2026 00:00:00 GMT</pubDate>
       <category>vibe-coding</category>
       <category>claude-code</category>
@@ -19,20 +19,20 @@
       <category>product</category>
     </item>
     <item>
-      <title>Developers Who Matter in the AI Era</title>
+      <title>Taste and Code</title>
       <link>https://zzoo.dev/en/blog/developers-who-matter-in-the-ai-era</link>
       <guid isPermaLink="true">https://zzoo.dev/en/blog/developers-who-matter-in-the-ai-era</guid>
-      <description>The cost of writing code is converging to zero. Coding skill is no longer scarce. So which developers survive?</description>
+      <description>Everyone says learn to code better. But when code is free, the scarce thing isn&apos;t writing it — it&apos;s knowing what to write.</description>
       <pubDate>Thu, 19 Feb 2026 00:00:00 GMT</pubDate>
       <category>ai</category>
       <category>career</category>
       <category>opinion</category>
     </item>
     <item>
-      <title>My Claude Code Setup</title>
+      <title>A Team of One</title>
       <link>https://zzoo.dev/en/blog/my-claude-code-setup</link>
       <guid isPermaLink="true">https://zzoo.dev/en/blog/my-claude-code-setup</guid>
-      <description>CLAUDE.md, 21 skills, 7 agents, 8 MCP servers. The complete Claude Code setup a solo developer uses to maintain team-level quality without a team.</description>
+      <description>Can one person have a team? Turns out the answer isn&apos;t about hiring.</description>
       <pubDate>Tue, 17 Feb 2026 00:00:00 GMT</pubDate>
       <category>claude-code</category>
       <category>ai</category>
@@ -40,10 +40,10 @@
       <category>setup</category>
     </item>
     <item>
-      <title>Why I Chose This Infra Stack as a Solo Developer</title>
+      <title>Infrastructure Debt</title>
       <link>https://zzoo.dev/en/blog/why-i-chose-this-infra-stack-as-a-solo-developer</link>
       <guid isPermaLink="true">https://zzoo.dev/en/blog/why-i-chose-this-infra-stack-as-a-solo-developer</guid>
-      <description>GCP Cloud Run, Neon, Cloudflare, and Pulumi — a pragmatic infrastructure stack built for one-person teams who ship many projects.</description>
+      <description>The most important command in my infrastructure isn&apos;t deploy. It&apos;s destroy.</description>
       <pubDate>Sun, 08 Feb 2026 00:00:00 GMT</pubDate>
       <category>infrastructure</category>
       <category>devops</category>
@@ -54,10 +54,10 @@
       <category>neon</category>
     </item>
     <item>
-      <title>Why Rust Is the Perfect Language for Vibe Coding</title>
+      <title>The Hardest Language</title>
       <link>https://zzoo.dev/en/blog/why-rust-is-the-perfect-language-for-vibe-coding</link>
       <guid isPermaLink="true">https://zzoo.dev/en/blog/why-rust-is-the-perfect-language-for-vibe-coding</guid>
-      <description>Rust has the steepest learning curve in programming — and that&apos;s exactly why it thrives in the AI era. The compiler does the teaching.</description>
+      <description>Everyone assumes vibe coding works best with easy languages. They have it exactly backwards.</description>
       <pubDate>Thu, 15 Jan 2026 00:00:00 GMT</pubDate>
       <category>rust</category>
       <category>vibe-coding</category>

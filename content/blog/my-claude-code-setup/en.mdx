@@ -1,6 +1,6 @@
 ---
-title: "My Claude Code Setup"
-description: "CLAUDE.md, 21 skills, 7 agents, 8 MCP servers. The complete Claude Code setup a solo developer uses to maintain team-level quality without a team."
+title: "A Team of One"
+description: "Can one person have a team? Turns out the answer isn't about hiring."
 date: "2026-02-17"
 tags:
   - claude-code
@@ -10,126 +10,83 @@ tags:
 draft: false
 ---
 
-When I first used Claude Code, it was just a smart autocomplete. Not anymore. It follows project conventions, runs security reviews, writes tests to 100% coverage, and reviews database schemas like a senior DBA. Every project gets the same quality bar, enforced automatically.
+Can one person have a team?
 
-It's not that the tool is exceptional. The setup is different. Here's my complete Claude Code configuration.
+I've been thinking about this question for months because the answer used to be obvious. A team is a group of people. You hire them. They bring different expertise. The security person catches what the product person misses. The DBA questions schemas the frontend developer never thinks about. One person can be talented, but one person can't be a team.
 
-## The CLAUDE.md System
+Except now I think that's wrong. Or at least, the word "team" was pointing at something more specific than we realized. What you actually want from a team isn't multiple people. It's multiple perspectives applied consistently. The security engineer isn't valuable because she's a second body in a chair. She's valuable because she looks at your code through a lens you don't have, and she does it every time, not just when she's in the mood.
 
-Every project has a `CLAUDE.md` file at its root. Think of it as a constitution for AI behavior in that codebase. It defines the tech stack, architecture patterns, key constraints, and — most importantly — **which skills and agents must be used**.
+That distinction matters because it opens a question: can you get multiple consistent perspectives without multiple people?
 
-The critical pattern across all my projects:
+I run several products as a solo developer. Six months ago I would have said the hardest part was context-switching between security thinking, database thinking, UX thinking, and actually building things. You can learn all those skills, but you can't apply them all simultaneously. When you're deep in implementing a feature, you don't spontaneously pause and think like a DBA. Nobody does. That's why teams exist.
+
+My Claude Code setup changed this. Not by making me faster at the things I already do, but by creating what genuinely feels like colleagues with specific expertise. The surprise isn't that AI can help you code. The surprise is that the right configuration creates something qualitatively different from "a faster you." It creates persistent, specialized perspectives that engage with your work whether you remember to ask or not.
+
+Let me explain the architecture, because individually the pieces are simple. It's the composition that does something unexpected.
+
+## The Constitution
+
+Every project starts with a file called `CLAUDE.md` at the root. I think of it as a constitution for how the AI behaves in that codebase. It defines the tech stack, architecture patterns, constraints, and most critically, which skills and agents must be used for every change. Here's the core pattern that appears in every one of mine:
 
 ```
 1. All implementation MUST use specified skills
 2. After implementation, run TWO agents IN PARALLEL:
-   - security-reviewer → audit → fix
-   - tester → test changed code → fix
+   - security-reviewer -> audit -> fix
+   - tester -> test changed code -> fix
 ```
 
-This isn't a suggestion. It's a hard rule. Every feature, every bug fix, every refactor goes through this pipeline. The `CLAUDE.md` file makes it automatic — Claude Code reads it at the start of every session and follows the workflow without being asked.
+This isn't a suggestion. It's a hard rule, baked into the project's DNA. Claude Code reads this file at the start of every session. It doesn't need to be reminded. Every feature, every bug fix, every refactor goes through the same pipeline. The constitution enforces it.
 
-For my Next.js website, the CLAUDE.md mandates `vercel-react-best-practices` and `vercel-composition-patterns` skills. For my Rust API, it's `axum` and `postgresql`. For the React Native app, `react-native` and `vercel-react-native-skills`. The right expertise is loaded before the first line of code is written.
+Different projects get different constitutions. My Next.js site mandates Vercel's React best practices skill. My Rust API mandates `axum` and `postgresql` skills. My React Native app mandates mobile-specific skills. But the security-and-testing parallel pass is universal. No exceptions, no "I'll add tests later."
 
-## 21 Skills: Encoded Expertise
+The effect of this is subtle but profound. I used to be the kind of developer who wrote tests when I felt like it and did security reviews when I remembered. Now the system doesn't give me that option. Consistency isn't a matter of discipline anymore. It's structural.
 
-Skills are knowledge files that Claude Code loads on demand. Some I wrote myself, and some come from official sources. I use 21 across seven domains:
+## Skills as Constraints
 
-**Architecture & Design** — `data-modeling`, `api-design`, `ux-design`, `design-system`. These encode how I think about system design: entity extraction, REST conventions, cognitive ergonomics, design tokens.
+I have 21 skills across seven domains: architecture, web frameworks, mobile, backend, databases, AI/ML, and quality. Some I wrote myself. Some come from framework vendors, which is where things get interesting.
 
-**Web Frameworks** — `vercel-react-best-practices` (45 rules across 8 categories), `vercel-composition-patterns`, `nextjs`. The `vercel-*` prefixed skills are **officially provided by Vercel** — not something I wrote. The React best practices skill alone covers waterfall prevention, bundle optimization, server-side patterns, re-render avoidance, and rendering strategies. Having framework vendors ship skills like these is a game changer: the people who built the framework encode exactly how they want you to use it. `nextjs` is a custom skill I wrote to fill in the gaps the official ones don't cover.
+Vercel ships official Claude Code skills for React best practices. Forty-five rules across eight categories. Waterfall prevention, bundle optimization, server-side patterns, re-render avoidance. The people who built the framework encoded exactly how they want you to use it.
 
-**Mobile** — `react-native`, `vercel-react-native-skills` (also official from Vercel). List performance, animations, state management patterns specific to React Native.
+Think about what that means. For years, best practices lived in documentation that developers might or might not read. Blog posts that went out of date. Conference talks that people half-remembered. Now the framework authors are shipping machine-readable constraints that the AI must follow. Not guidelines you might read. Guardrails you can't ignore.
 
-**Backend** — `axum`, `axum-hexagonal`, `fastapi`, `fastapi-hexagonal`. Both Rust and Python stacks with hexagonal architecture patterns baked in.
+I expect this to become one of the most significant shifts in how frameworks are adopted. When every major library ships a skill, the baseline quality of AI-assisted code rises across the board. My custom skills fill the gaps today. The official ones will eventually cover most of it.
 
-**Database** — `postgresql`, `sqlite`, `neon-postgres`. Problem-solving patterns for pagination, full-text search, N+1 queries, zero-downtime migrations, partitioning.
+The key insight about skills is that they're not documentation. Documentation describes. Skills constrain. When Claude Code loads a security checklist skill, it doesn't just know about OWASP top 10. It's compelled to check for every item. When it loads the database skill, it doesn't just know about N+1 queries. It's required to look for them. The difference between knowing and being compelled is the difference between a textbook and a colleague who won't sign off until the work meets their standard.
 
-**AI/ML** — `langgraph`. ReAct agents, multi-agent systems, human-in-the-loop patterns.
+## The Virtual Team
 
-**Quality** — `security-checklists`, `web-vitals-checklist`, `i18n-patterns`, `web-design-guidelines`.
+This is where the "team" feeling really emerges. I run seven agents, which are specialized sub-processes that handle specific tasks autonomously.
 
-The key insight: skills aren't documentation. They're **constraints**. When Claude Code loads `vercel-react-best-practices`, it doesn't just know React patterns — it's compelled to follow 45 specific rules. Waterfall prevention is marked CRITICAL priority. Bundle size optimization is CRITICAL. These aren't guidelines; they're guardrails.
+The security reviewer runs after every implementation. It scans for injection vulnerabilities, secrets exposure, race conditions, IDOR. It classifies findings by severity. It escalates anything touching payment logic or authentication directly to me, because some decisions shouldn't be automated. This agent has the disposition of the most paranoid security engineer you've ever worked with, except it never gets tired of being paranoid.
 
-I expect this to become a major trend. As more framework authors and tool vendors publish official skills, the baseline quality of AI-generated code will rise across the board. Imagine every major library shipping a skill that encodes its best practices — not as docs you might read, but as constraints the AI must follow. The custom skills I wrote fill the gaps today, but the official ones are already better for the domains they cover.
+The tester targets 100% coverage across lines, branches, functions, and statements. It analyzes what changed, plans a test strategy, writes tests, runs them, and iterates until coverage is complete. One strict rule: it never modifies application code. Only test files. This constraint is important because it means the tester has to work with whatever the implementation gives it, just like a real QA engineer who doesn't get to "just fix the code to make it testable."
 
-## 7 Agents: A Virtual Team
+The database reviewer takes a senior DBA perspective. Its core question: "Will this schema survive reality?" It checks for missing foreign key constraints, mixed ID strategies, undocumented denormalization, the nullable-everything anti-pattern. Multi-table migrations get escalated. PK strategy changes get escalated. It asks the questions I would forget to ask when I'm focused on features.
 
-Agents are specialized sub-processes that handle specific tasks autonomously. I have seven, split between development and planning:
+Then there's the UI engineer (pure components, zero business logic), the web vitals auditor (automated Lighthouse on every change), the UX designer (first-principles interaction design), and the copywriter (persuasive microcopy with A/B variations). The UX designer and copywriter work as a pipeline: design the flow first, then hand it off for the words.
 
-### Development Agents
+What strikes me is that each of these agents embodies a perspective I theoretically have but can't maintain simultaneously. I know security matters. I know test coverage matters. I know schema design matters. But when I'm deep in building a feature, I'm thinking about the feature. These agents don't have that problem. They only think about their one thing, and they think about it every time.
 
-**security-reviewer** — Runs a security audit after every implementation. Scans for OWASP top 10, checks for secrets exposure, SQL injection, command injection, XSS, IDOR, race conditions. Classifies findings by severity. Escalates to me for payment logic, auth changes, cryptography, or compliance-related code.
+## The Connective Tissue
 
-**tester** — Targets 100% test coverage across line, branch, function, and statement metrics. Analyzes changed code, plans test strategy, writes tests, runs them, iterates until coverage is complete. Important rule: it never modifies application code, only test files.
+Skills and agents would be useful on their own. What makes them feel like a team is the connective tissue: MCP servers that plug Claude Code into the actual systems I use.
 
-**database-reviewer** — Takes a senior DBA perspective. Asks the questions that matter: "Will this schema survive reality?" Checks for missing foreign key constraints, mixed ID strategies, undocumented denormalization, nullable-everything anti-patterns. Escalates multi-table migrations and PK strategy changes.
+Context7 gives it real-time documentation for any library, so it's never working from stale knowledge. Playwright lets it drive a browser for testing and verification. Sentry pipes production errors directly into debugging sessions, so when something breaks at 2 AM, the context is already there when I sit down in the morning. Neon lets it run migrations, inspect schemas, and tune queries without me copying and pasting between terminals. GitHub gives it full access to PRs, issues, and code search. Cloudflare lets it manage Workers, KV stores, and D1 databases.
 
-**ui-engineer** — Builds pure UI components with zero business logic. On web, uses shadcn/ui or custom components following the design system skill. On mobile, uses the design-system skill with platform-native patterns. Strict boundary: no state management, no data fetching, no routing.
-
-**web-vitals-auditor** — Automated performance audit. Builds and serves the app, runs Lighthouse on both desktop and mobile, checks against targets: LCP < 2.5s, INP < 200ms, CLS < 0.1, TTFB < 800ms, FCP < 1.8s. Outputs a report with scores, bundle analysis, and actionable recommendations.
-
-### Planning Agents
-
-**ux-designer** — Designs from first principles. Five-step process: Define the problem → Map user journeys → Design interactions → Remove friction → Validate accessibility. Outputs user flows, screen specs with primary actions and information hierarchy.
-
-**copywriter** — Product copy and UX microcopy with six persuasion principles: one message only, certainty beats maximum reward, novelty is enough, specify concrete action, power of aggregation, write as one message. Delivers 2–3 variations with character counts and A/B test suggestions.
-
-The UX designer and copywriter work as a pipeline: designer creates the flow, then hands off to the copywriter for persuasive text, CTAs, onboarding copy, and error messages.
-
-## Workflow Pipelines
-
-The real power isn't individual tools — it's how they compose into repeatable workflows:
-
-**Standard Development:**
-```
-Implementation (with skills) → [security-reviewer + tester] (parallel) → Fix → Done
-```
-
-**Data Modeling:**
-```
-data-modeling skill → database-reviewer agent → api-design skill → implementation
-```
-
-**Frontend:**
-```
-nextjs skill → implementation → vercel-react-best-practices (review)
-```
-
-**UX Design:**
-```
-ux-designer agent → copywriter agent (persuasive text only)
-```
-
-Every project enforces the same development workflow through CLAUDE.md. The schema review pipeline runs automatically when database changes are involved. The security-and-testing parallel pass happens on every change. No exceptions.
-
-## MCP Servers: External Integrations
-
-Claude Code connects to external services through MCP (Model Context Protocol) servers. My setup includes:
-
-- **Context7** — Real-time documentation lookup for any library
-- **Playwright** — Browser automation for testing and screenshots
-- **Sentry** — Error tracking integration for debugging production issues
-- **Neon** — Direct database operations and schema management
-- **Notion** — Workspace integration for project management
-- **GitHub** — Full GitHub workflow (PRs, issues, code search)
-- **D2** — Architecture diagram generation (compiled to themed SVGs)
-- **Cloudflare** — Workers, KV, R2, D1 management
-
-These aren't just nice-to-haves. The Neon MCP means Claude Code can run migrations, inspect schemas, and tune queries without me context-switching. The Sentry MCP means production errors feed directly into debugging sessions. The D2 MCP generates architecture diagrams that ship as part of project documentation.
-
-## What This Actually Looks Like
-
-A typical session: I describe a feature in natural language. Claude Code reads the CLAUDE.md, loads the required skills, and starts implementing. When it's done, two agents spin up in parallel — security reviewer scanning for vulnerabilities, tester writing tests to 100% coverage. If either finds issues, they get fixed. Then I review and ship.
-
-I don't manually run linters. I don't write boilerplate tests. I don't do security checklists from memory. The system handles it.
-
-The investment was building the 21 skills, configuring the 7 agents, and writing detailed CLAUDE.md files for each project. That took time. But now every new feature, across every project, gets the benefit of that accumulated knowledge — automatically.
+Each of these connections is individually simple. But together they mean Claude Code operates with the same context a human team member would have. It's not working in isolation, guessing about the production database or the latest error rates. It's connected to the living system.
 
 ## The Compound Effect
 
-Each skill, agent, and CLAUDE.md file is individually simple. A security checklist. A set of React rules. A DBA review process. But composed together, they create something that feels like having a team: an architect who knows my patterns, a security engineer who never sleeps, a QA lead who insists on 100% coverage, and a DBA who asks "will this survive reality?"
+Here's what I didn't expect. Each piece, individually, is modest. A security checklist. A set of React rules. A DBA review process. An error tracking integration. If you looked at any one of them, you'd think: that's nice, but it's just a checklist.
 
-For a solo developer shipping multiple products, that's the difference between burning out and scaling up.
+The compound effect is what surprises. When the security reviewer runs in parallel with the tester, and both have access to the database reviewer's schema analysis, and all of them operate under the constraints of framework-specific skills, and all of that is connected to live production data through MCP servers, the result isn't the sum of the parts. It's something qualitatively different. It's a quality bar that stays consistent across every change, in every project, regardless of whether I'm energized or exhausted, focused or scattered.
 
-The vibes are good. The agents have my back.
+This is actually more consistent than most human teams I've worked on. Human teams have bad days. People cut corners under deadline pressure. The senior engineer who usually catches everything is distracted because they're interviewing for a new role. The quality bar fluctuates. My agent team's quality bar doesn't fluctuate because it's structural, not motivational.
+
+The investment was real. Building 21 skills, configuring 7 agents, writing detailed constitutions for each project. That took weeks. But the investment was in the system, not in any individual project. Now every new project, every new feature, automatically benefits from the accumulated expertise. The marginal cost of maintaining team-level quality on a new project is close to zero.
+
+I keep coming back to the original question. Can one person have a team? I think the honest answer is: what I have isn't a team in the human sense. It's something new that doesn't have a good name yet. It's a set of persistent, specialized, consistent perspectives that engage with every piece of work I produce. It's more reliable than the teams I've been on, in some specific ways, and obviously less capable in others. It can't have the insight that comes from a human colleague's completely different life experience. It can't push back on the product direction itself. It can't tell me I'm solving the wrong problem.
+
+But for the specific job of maintaining quality across multiple dimensions simultaneously, on every change, without exception, while a single person does the creative and strategic work? Nothing I've experienced comes close.
+
+The setup is the investment. The returns compound from there.
