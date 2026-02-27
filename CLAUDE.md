@@ -6,17 +6,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Personal branding website for a solopreneur developer. Multilingual (6 locales), statically generated, deployed to Cloudflare Workers. See `docs/PRD.md` for full product requirements.
 
-## Principles (MUST CONFORM TO)
+## Principles (MUST FOLLOW)
 
 1. All implementation must use skills:
-   - Use **vercel-react-best-practices** skill
-   - Use **vercel-composition-patterns** skill
+   - Use **vercel-react-best-practices** skill   
    - Use **z-search-visibility** skill
 2. Once the implementation is complete, run the two sub-agents below in parallel:
    - Run a **z-security-reviewer** sub-agent for security audit → fix
    - Run a **z-verifier** sub-agent for verifying changes (run tests, E2E, browser verify)
 3. Multilingual (en, es, pt-BR, id, ja, ko) based on user language preference
 4. Mobile-first responsive design
+5. Content writing MUST use designated skills:
+   - Blog posts → use **z-dev-essay** skill
+   - Project pages → use **z-copywriting** skill
 
 ## Commands
 
