@@ -14,6 +14,11 @@ Paul Graham's most celebrated essays. Read 1-2 before drafting — pick whicheve
 | hackers-and-painters | Long | Cross-domain analogy | Drawing parallels between two seemingly unrelated fields |
 | what-you-can't-say | Long | Systematic exploration | Exploring a provocative question methodically |
 | how-to-do-what-you-love | Long | Life reflection | Writing a big, personal, reflective essay |
+| makers-schedule-managers-schedule | Medium | Reversal | Flipping conventional wisdom on its head |
+| schlep-blindness | Short | Nomenclature move | Naming an unnamed phenomenon |
+| putting-ideas-into-words | Medium | Personal→Universal | Extracting universal insight from personal experience |
+| life-is-short | Medium | Gradual reveal | Peeling layers from a simple observation |
+| cities-and-ambition | Long | Thought experiment | Using "what if" scenarios to explore an idea |
 
 ## By Technique
 
@@ -38,3 +43,18 @@ Paul Graham's most celebrated essays. Read 1-2 before drafting — pick whicheve
 
 ### Long-form personal reflection
 - **how-to-do-what-you-love** — Personal experience woven with broader observation across a big, fuzzy topic. Shows how to maintain focus and forward momentum through a long, reflective piece. Uses sections (Jobs, Bounds, Sirens, Discipline) as natural resting points.
+
+### The Reversal (flipping conventional wisdom)
+- **makers-schedule-managers-schedule** — "There isn't one kind of schedule — there are two, and they're incompatible." Takes the universal assumption that everyone's time works the same way and splits it in half. Shows how naming a distinction that everyone felt but nobody articulated changes how people think about it. One of PG's most shared essays ever.
+
+### The Nomenclature Move (naming unnamed phenomena)
+- **schlep-blindness** — Names the phenomenon where your unconscious prevents you from seeing ideas that involve painful work. "Schlep blindness" became a term people actually use. Short, focused, punchy. Shows how giving something a name makes it thinkable and discussable.
+
+### Personal experience → Universal principle
+- **putting-ideas-into-words** — Starts from personal writing experience ("I've written about Lisp hacking and startups") and builds to a shocking universal claim: anyone who hasn't written about a topic doesn't have fully formed ideas about it. Clean example of the personal-to-universal escalation.
+
+### Gradual Reveal (peeling layers)
+- **life-is-short** — Opens with something everyone already knows ("life is short") and keeps peeling. First layer: it's actually short, not just finite. Second layer: "bullshit" is what life is too short for. Third layer: bullshit sneaks in by tricking you. Fourth layer: the windows close on people, not just things. Each layer goes deeper than you expect from the simple premise.
+
+### Thought Experiment
+- **cities-and-ambition** — "What message does your city whisper to you?" Sustained thought experiment about how physical environment shapes ambition. Builds a framework by asking "what if you listened to the city?" and mapping each city to its message (New York → money, Cambridge → smarts, Silicon Valley → power). Shows how a thought experiment can generate a taxonomy.
