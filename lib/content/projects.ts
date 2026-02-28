@@ -28,7 +28,6 @@ function parseCaseStudyMeta(data: Record<string, unknown>, slug: string): CaseSt
     slug,
     title: data.title as string,
     description: data.description as string,
-    clientType: data.clientType as string,
     status: data.status as CaseStudyMeta["status"],
     tags: Array.isArray(data.tags)
       ? data.tags.filter((v): v is string => typeof v === "string")

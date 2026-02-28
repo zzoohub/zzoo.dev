@@ -17,7 +17,6 @@ export interface CaseStudyMeta {
   slug: string;
   title: string;
   description: string;
-  clientType: string;
   status: "active" | "completed" | "archived";
   tags: string[];
   techStack: string[];
