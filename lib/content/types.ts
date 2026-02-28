@@ -1,82 +1,32 @@
-export interface BlogPostMeta {
-  slug: string;
-  title: string;
-  description: string;
-  date: string;
-  tags: string[];
-  locale: string;
-  draft?: boolean;
-  readingTime: number;
-}
+import type { z } from "zod";
+import type {
+  blogFrontmatterSchema,
+  projectFrontmatterSchema,
+  aboutFrontmatterSchema,
+  testimonialSchema,
+} from "./schemas";
 
+export type BlogFrontmatter = z.infer<typeof blogFrontmatterSchema>;
+export type BlogPostMeta = BlogFrontmatter & {
+  slug: string;
+  locale: string;
+  readingTime: number;
+};
 export interface BlogPost extends BlogPostMeta {
   content: string;
 }
 
-export interface CaseStudyMeta {
+export type ProjectFrontmatter = z.infer<typeof projectFrontmatterSchema>;
+export type CaseStudyMeta = ProjectFrontmatter & {
   slug: string;
-  title: string;
-  description: string;
-  status: "active" | "completed" | "archived";
-  tags: string[];
-  techStack: string[];
-  featured?: boolean;
-  launchDate: string;
-  thumbnail?: string;
-  images?: string[];
-  d2Diagram?: string;
-  links?: {
-    live?: string;
-    github?: string;
-    docs?: string;
-  };
-
-  // Marketing fields
-  tagline?: string;
-  category?: "mobile-app" | "chrome-extension" | "web" | "cli";
-  keywords?: {
-    primary?: string[];
-    longTail?: string[];
-  };
-  competitors?: Array<{
-    name: string;
-    differentiator: string;
-  }>;
-  cta?: {
-    primary?: { label: string; url: string };
-    secondary?: { label: string; url: string };
-  };
-  features?: Array<{
-    title: string;
-    description: string;
-    icon?: string;
-  }>;
-
-  // Extended media
-  heroImage?: string;
-  video?: string;
-}
-
+};
 export interface CaseStudy extends CaseStudyMeta {
   content: string;
 }
 
-export interface ExperienceEntry {
-  period: string;
-  title: string;
-  description: string;
-  current?: boolean;
-}
-
-export interface AboutData {
-  experience: ExperienceEntry[];
+export type ExperienceEntry = z.infer<typeof aboutFrontmatterSchema>["experience"][number];
+export type AboutData = z.infer<typeof aboutFrontmatterSchema> & {
   content: string;
-}
+};
 
-export interface Testimonial {
-  quote: string;
-  authorName: string;
-  authorRole: string;
-  authorCompany: string;
-  featured?: boolean;
-}
+export type Testimonial = z.infer<typeof testimonialSchema>;

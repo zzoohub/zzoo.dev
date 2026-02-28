@@ -31,6 +31,8 @@ import { compileMDX } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import type { CaseStudyMeta } from "@/lib/types";
 import { Comments } from "@/components/shared/comments";
+import { proseClassName } from "@/lib/utils";
+import { generateContentStaticParams } from "@/lib/static-params";
 
 const mdxOptions = {
   parseFrontmatter: false,
@@ -38,9 +40,7 @@ const mdxOptions = {
 };
 
 export async function generateStaticParams() {
-  return routing.locales.flatMap((locale) =>
-    getAllCaseStudies(locale).map((s) => ({ slug: s.slug }))
-  );
+  return generateContentStaticParams((locale) => getAllCaseStudies(locale));
 }
 
 export async function generateMetadata({
@@ -167,9 +167,6 @@ function ProjectDetailContent({
   const t = useTranslations("project");
 
   const hasMultipleTabs = hasCaseStudyContent || hasDesign;
-
-  const proseClassName =
-    "prose prose-lg prose-neutral dark:prose-invert prose-custom prose-headings:tracking-tight prose-h2:text-xl prose-h2:sm:text-2xl prose-p:text-base prose-p:leading-relaxed prose-a:text-primary prose-a:underline-offset-4 prose-a:decoration-primary/30 hover:prose-a:decoration-primary";
 
   // Build the full product tab content with marketing components
   const fullProductContent = (

@@ -2,53 +2,24 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import type { CaseStudyMeta } from "./types";
+import { projectFrontmatterSchema } from "./schemas";
 import {
   contentDir,
   resolveContentPath,
   resolveContentLocale,
   isValidSlug,
-  toDateString,
-  sanitizeLinks,
-  sanitizeImages,
-  sanitizeCta,
-  sanitizeCompetitors,
-  sanitizeFeatures,
-  sanitizeKeywords,
   resolveProjectImage,
-  sanitizeVideo,
 } from "./utils";
 
 function parseCaseStudyMeta(data: Record<string, unknown>, slug: string): CaseStudyMeta {
-  const VALID_CATEGORIES = ["mobile-app", "chrome-extension", "web", "cli"] as const;
-  const category = typeof data.category === "string" && (VALID_CATEGORIES as readonly string[]).includes(data.category)
-    ? (data.category as CaseStudyMeta["category"])
-    : undefined;
+  const parsed = projectFrontmatterSchema.parse(data);
 
   return {
+    ...parsed,
     slug,
-    title: data.title as string,
-    description: data.description as string,
-    status: data.status as CaseStudyMeta["status"],
-    tags: Array.isArray(data.tags)
-      ? data.tags.filter((v): v is string => typeof v === "string")
-      : [],
-    techStack: Array.isArray(data.techStack)
-      ? data.techStack.filter((v): v is string => typeof v === "string")
-      : [],
-    featured: (data.featured as boolean) ?? false,
-    launchDate: toDateString(data.launchDate),
-    thumbnail: typeof data.thumbnail === "string" ? resolveProjectImage(data.thumbnail, slug) : undefined,
-    images: sanitizeImages(data.images)?.map((img) => resolveProjectImage(img, slug)),
-    d2Diagram: (data.d2Diagram as string) ?? undefined,
-    links: sanitizeLinks(data.links),
-    tagline: typeof data.tagline === "string" ? data.tagline : undefined,
-    category,
-    keywords: sanitizeKeywords(data.keywords),
-    competitors: sanitizeCompetitors(data.competitors),
-    cta: sanitizeCta(data.cta),
-    features: sanitizeFeatures(data.features),
-    heroImage: typeof data.heroImage === "string" ? resolveProjectImage(data.heroImage, slug) : undefined,
-    video: sanitizeVideo(data.video),
+    thumbnail: parsed.thumbnail ? resolveProjectImage(parsed.thumbnail, slug) : undefined,
+    images: parsed.images?.map((img) => resolveProjectImage(img, slug)),
+    heroImage: parsed.heroImage ? resolveProjectImage(parsed.heroImage, slug) : undefined,
   };
 }
 

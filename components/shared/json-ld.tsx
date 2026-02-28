@@ -1,8 +1,8 @@
 export function JsonLd({ data }: { data: Record<string, unknown> }) {
-  // Data comes from trusted internal config (lib/seo.ts, lib/site-config.ts)
-  // and sanitized frontmatter (lib/content.ts). Escaping </script> prevents
-  // HTML structure breakage if content ever contains that sequence.
-  const safe = JSON.stringify(data).replace(/<\/script>/gi, "<\\/script>");
+  const safe = JSON.stringify(data)
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/&/g, "\\u0026");
   return (
     <script
       type="application/ld+json"

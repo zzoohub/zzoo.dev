@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Link } from "@/i18n/navigation";
 import { hasLocale, useTranslations } from "next-intl";
 import { getAllCaseStudies, getTestimonials } from "@/lib/content";
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import {
@@ -17,22 +17,18 @@ import { ProjectCard } from "@/components/project/project-card";
 import { Testimonial } from "@/components/shared/testimonial";
 import { CTASection } from "@/components/shared/cta-section";
 
-const descriptions: Record<string, string> = {
-  en: "Build the Whole Damn Thing — from idea to deployment.",
-  ko: "떠오르는 것들을 하나씩 만들고 있습니다.",
-};
-
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const t = await getTranslations("home");
   return buildPageMeta({
     locale,
     pathname: "/",
-    title: "zzoo.dev — Builder",
-    description: descriptions[locale] ?? descriptions.en,
+    title: t("meta_title"),
+    description: t("meta_description"),
   });
 }
 

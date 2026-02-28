@@ -1009,12 +1009,12 @@ Content`;
       mockFs.readFileSync.mockReturnValue(
         `---
 experience:
-  - company: Tech Corp
-    role: Senior Developer
-    period: 2020-2023
-  - company: Startup Inc
-    role: Developer
-    period: 2018-2020
+  - period: 2020-2023
+    title: Senior Developer at Tech Corp
+    description: Led frontend team
+  - period: 2018-2020
+    title: Developer at Startup Inc
+    description: Built core product
 ---
 About me content here`
       );
@@ -1023,14 +1023,14 @@ About me content here`
       expect(result).not.toBeNull();
       expect(result?.experience).toEqual([
         {
-          company: "Tech Corp",
-          role: "Senior Developer",
           period: "2020-2023",
+          title: "Senior Developer at Tech Corp",
+          description: "Led frontend team",
         },
         {
-          company: "Startup Inc",
-          role: "Developer",
           period: "2018-2020",
+          title: "Developer at Startup Inc",
+          description: "Built core product",
         },
       ]);
       expect(result?.content).toBe("About me content here");
@@ -1855,7 +1855,7 @@ Content`
       expect(study?.meta.competitors).toBeUndefined();
     });
 
-    it("filters out competitors with missing fields", () => {
+    it("drops competitors array when any entry has missing fields", () => {
       mockFs.existsSync.mockReturnValue(true);
       mockFs.readFileSync.mockReturnValue(
         `---
@@ -1874,9 +1874,7 @@ Content`
       );
 
       const study = getCaseStudy("en", "project");
-      expect(study?.meta.competitors).toEqual([
-        { name: "Valid Competitor", differentiator: "Better UX" },
-      ]);
+      expect(study?.meta.competitors).toBeUndefined();
     });
 
     it("returns undefined when all competitors are invalid", () => {
@@ -2003,7 +2001,7 @@ Content`
       expect(study?.meta.features).toBeUndefined();
     });
 
-    it("filters out features with missing required fields", () => {
+    it("drops features array when any entry has missing required fields", () => {
       mockFs.existsSync.mockReturnValue(true);
       mockFs.readFileSync.mockReturnValue(
         `---
@@ -2022,12 +2020,10 @@ Content`
       );
 
       const study = getCaseStudy("en", "project");
-      expect(study?.meta.features).toEqual([
-        { title: "Valid Feature", description: "Has both required fields" },
-      ]);
+      expect(study?.meta.features).toBeUndefined();
     });
 
-    it("does not include icon property when icon is not a string", () => {
+    it("drops features array when icon is not a string", () => {
       mockFs.existsSync.mockReturnValue(true);
       mockFs.readFileSync.mockReturnValue(
         `---
@@ -2045,10 +2041,7 @@ Content`
       );
 
       const study = getCaseStudy("en", "project");
-      expect(study?.meta.features).toEqual([
-        { title: "Feature", description: "Desc" },
-      ]);
-      expect(study?.meta.features?.[0]).not.toHaveProperty("icon");
+      expect(study?.meta.features).toBeUndefined();
     });
 
     it("returns undefined when features is not an array", () => {
@@ -2235,9 +2228,7 @@ Content`
       );
 
       const study = getCaseStudy("en", "project");
-      // Empty arrays pass the Array.isArray check but result has keys with empty arrays
-      // so Object.keys(result).length > 0 is true
-      expect(study?.meta.keywords).toBeDefined();
+      expect(study?.meta.keywords).toBeUndefined();
     });
 
     it("returns undefined when keywords object has no primary or longTail arrays", () => {
@@ -2263,7 +2254,7 @@ Content`
   });
 
   describe("resolveProjectImage edge cases (via getCaseStudy)", () => {
-    it("returns empty string for thumbnail starting with //", () => {
+    it("drops thumbnail starting with //", () => {
       mockFs.existsSync.mockReturnValue(true);
       mockFs.readFileSync.mockReturnValue(
         `---
@@ -2278,10 +2269,10 @@ Content`
       );
 
       const study = getCaseStudy("en", "project");
-      expect(study?.meta.thumbnail).toBe("");
+      expect(study?.meta.thumbnail).toBeUndefined();
     });
 
-    it("returns empty string for thumbnail containing ..", () => {
+    it("drops thumbnail containing ..", () => {
       mockFs.existsSync.mockReturnValue(true);
       mockFs.readFileSync.mockReturnValue(
         `---
@@ -2296,10 +2287,10 @@ Content`
       );
 
       const study = getCaseStudy("en", "project");
-      expect(study?.meta.thumbnail).toBe("");
+      expect(study?.meta.thumbnail).toBeUndefined();
     });
 
-    it("returns empty string for heroImage starting with //", () => {
+    it("drops heroImage starting with //", () => {
       mockFs.existsSync.mockReturnValue(true);
       mockFs.readFileSync.mockReturnValue(
         `---
@@ -2314,10 +2305,10 @@ Content`
       );
 
       const study = getCaseStudy("en", "project");
-      expect(study?.meta.heroImage).toBe("");
+      expect(study?.meta.heroImage).toBeUndefined();
     });
 
-    it("returns empty string for heroImage containing ..", () => {
+    it("drops heroImage containing ..", () => {
       mockFs.existsSync.mockReturnValue(true);
       mockFs.readFileSync.mockReturnValue(
         `---
@@ -2332,7 +2323,7 @@ Content`
       );
 
       const study = getCaseStudy("en", "project");
-      expect(study?.meta.heroImage).toBe("");
+      expect(study?.meta.heroImage).toBeUndefined();
     });
   });
 

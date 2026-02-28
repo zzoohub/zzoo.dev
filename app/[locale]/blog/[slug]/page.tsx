@@ -16,11 +16,11 @@ import { compileMDX } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import { siteConfig } from "@/lib/site-config";
 import { Comments } from "@/components/shared/comments";
+import { proseClassName } from "@/lib/utils";
+import { generateContentStaticParams } from "@/lib/static-params";
 
 export async function generateStaticParams() {
-  return routing.locales.flatMap((locale) =>
-    getAllBlogPosts(locale).map((p) => ({ slug: p.slug }))
-  );
+  return generateContentStaticParams((locale) => getAllBlogPosts(locale));
 }
 
 export async function generateMetadata({
@@ -163,7 +163,7 @@ function BlogPostContent({
           <hr className="my-10 border-border" />
 
           {/* MDX Content */}
-          <div className="prose prose-lg prose-neutral dark:prose-invert prose-custom prose-headings:tracking-tight prose-h2:text-xl prose-h2:sm:text-2xl prose-p:text-base prose-p:leading-relaxed prose-a:text-primary prose-a:underline-offset-4 prose-a:decoration-primary/30 hover:prose-a:decoration-primary">
+          <div className={proseClassName}>
             {content}
           </div>
 

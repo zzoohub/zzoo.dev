@@ -2,7 +2,23 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import type { BlogPostMeta } from "./types";
-import { contentDir, resolveContentLocale, isValidSlug, toDateString, calculateReadingTime } from "./utils";
+import { blogFrontmatterSchema } from "./schemas";
+import { contentDir, resolveContentLocale, isValidSlug, calculateReadingTime } from "./utils";
+
+function parseBlogMeta(
+  data: Record<string, unknown>,
+  slug: string,
+  content: string,
+  locale: string
+): BlogPostMeta {
+  const parsed = blogFrontmatterSchema.parse(data);
+  return {
+    ...parsed,
+    slug,
+    locale,
+    readingTime: calculateReadingTime(content, locale),
+  };
+}
 
 export function getAllBlogPosts(locale: string): BlogPostMeta[] {
   const dir = path.join(contentDir, "blog");
@@ -25,16 +41,7 @@ export function getAllBlogPosts(locale: string): BlogPostMeta[] {
       const raw = fs.readFileSync(filePath, "utf-8");
       const { data, content } = matter(raw);
       if (data.draft) return null;
-      return {
-        slug,
-        title: data.title,
-        description: data.description,
-        date: toDateString(data.date),
-        tags: data.tags ?? [],
-        locale: effectiveLocale,
-        draft: data.draft ?? false,
-        readingTime: calculateReadingTime(content, effectiveLocale),
-      } satisfies BlogPostMeta;
+      return parseBlogMeta(data, slug, content, effectiveLocale);
     })
     .filter(Boolean) as BlogPostMeta[];
 
@@ -57,16 +64,7 @@ export function getBlogPost(
   const { data, content } = matter(raw);
 
   return {
-    meta: {
-      slug,
-      title: data.title,
-      description: data.description,
-      date: toDateString(data.date),
-      tags: data.tags ?? [],
-      locale: effectiveLocale,
-      draft: data.draft ?? false,
-      readingTime: calculateReadingTime(content, effectiveLocale),
-    },
+    meta: parseBlogMeta(data, slug, content, effectiveLocale),
     content,
   };
 }

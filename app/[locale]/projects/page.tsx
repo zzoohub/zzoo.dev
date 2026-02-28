@@ -1,17 +1,11 @@
 import type { Metadata } from "next";
 import { hasLocale, useTranslations } from "next-intl";
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { getAllCaseStudies } from "@/lib/content";
 import { buildPageMeta } from "@/lib/seo";
 import { ProjectCard } from "@/components/project/project-card";
-
-const titles: Record<string, string> = { en: "Projects", ko: "프로젝트" };
-const descriptions: Record<string, string> = {
-  en: "Ideas I turned into products.",
-  ko: "아이디어를 제품으로 만든 기록.",
-};
 
 export async function generateMetadata({
   params,
@@ -19,11 +13,12 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const t = await getTranslations("projects");
   return buildPageMeta({
     locale,
     pathname: "/projects",
-    title: titles[locale] ?? titles.en,
-    description: descriptions[locale] ?? descriptions.en,
+    title: t("title"),
+    description: t("subtitle"),
   });
 }
 

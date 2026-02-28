@@ -15,6 +15,8 @@
     "cta_secondary": "인사하기"
   },
   "home": {
+    "meta_title": "zzoo.dev — Builder",
+    "meta_description": "떠오르는 것들을 하나씩 만들고 있습니다.",
     "featured_label": "최근 빌드",
     "featured_title": "이런 걸 만들었어요",
     "testimonial_label": "사람들이 해준 좋은 말",
@@ -61,6 +63,7 @@
   },
   "about": {
     "title": "소개",
+    "meta_description": "경험과 배경을 소개합니다.",
     "bio_1": "",
     "bio_2": "",
     "bio_3": "",

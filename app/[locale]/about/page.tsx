@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import { hasLocale, useTranslations } from "next-intl";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
@@ -10,23 +10,18 @@ import { JsonLd } from "@/components/shared/json-ld";
 import { CTASection } from "@/components/shared/cta-section";
 import type { ExperienceEntry } from "@/lib/types";
 
-const titles: Record<string, string> = { en: "About", ko: "소개" };
-const descriptions: Record<string, string> = {
-  en: "Learn about my background, experience, and what drives me.",
-  ko: "경험과 배경을 소개합니다.",
-};
-
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const t = await getTranslations("about");
   return buildPageMeta({
     locale,
     pathname: "/about",
-    title: titles[locale] ?? titles.en,
-    description: descriptions[locale] ?? descriptions.en,
+    title: t("title"),
+    description: t("meta_description"),
   });
 }
 

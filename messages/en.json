@@ -15,6 +15,8 @@
     "cta_secondary": "Say Hi"
   },
   "home": {
+    "meta_title": "zzoo.dev — Builder",
+    "meta_description": "Build the Whole Damn Thing — from idea to deployment.",
     "featured_label": "Recent Builds",
     "featured_title": "What I've Shipped",
     "testimonial_label": "Nice Things People Said",
@@ -61,6 +63,7 @@
   },
   "about": {
     "title": "About",
+    "meta_description": "Learn about my background, experience, and what drives me.",
     "bio_1": "",
     "bio_2": "",
     "bio_3": "",

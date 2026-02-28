@@ -15,6 +15,8 @@
     "cta_secondary": "Mandar oi"
   },
   "home": {
+    "meta_title": "zzoo.dev — Builder",
+    "meta_description": "Fuço, construo, lanço — da ideia ao deploy.",
     "featured_label": "Builds recentes",
     "featured_title": "O que eu lancei",
     "testimonial_label": "Coisas legais que falaram",
@@ -61,6 +63,7 @@
   },
   "about": {
     "title": "Sobre",
+    "meta_description": "Conheça minha experiência e o que me motiva.",
     "bio_1": "",
     "bio_2": "",
     "bio_3": "",
