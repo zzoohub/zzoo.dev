@@ -1,5 +1,6 @@
 import {
   Camera,
+  Search,
   SearchX,
   User,
   Shield,
@@ -16,6 +17,7 @@ import {
 
 const iconMap: Record<string, LucideIcon> = {
   camera: Camera,
+  search: Search,
   "search-x": SearchX,
   user: User,
   shield: Shield,
