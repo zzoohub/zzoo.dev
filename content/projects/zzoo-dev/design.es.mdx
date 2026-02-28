@@ -4,7 +4,7 @@ title: "zzoo.dev — Documento de Diseño de Ingeniería"
 
 ## Enfoque Técnico
 
-Cada página está generada estáticamente (SSG) en tiempo de build. Sin server-side rendering ni API routes, las páginas se sirven directamente desde la red edge global de Cloudflare Workers — rápido sin importar desde dónde se conecten los visitantes.
+Cada página está generada estáticamente (SSG) en tiempo de build. Sin server-side rendering ni API routes, las páginas se sirven directamente desde la red edge global de Vercel — rápido sin importar desde dónde se conecten los visitantes.
 
 El contenido se gestiona como archivos MDX. Cada pieza se divide en `content/[type]/[slug]/{locale}.mdx` para cada uno de los 6 idiomas soportados, manteniendo las traducciones independientes. Los diagramas de arquitectura escritos en D2 se compilan automáticamente a SVGs en variantes de tema claro y oscuro en tiempo de build.
 
@@ -19,7 +19,7 @@ La UI está construida con Tailwind CSS v4 y shadcn/ui. El sistema de temas basa
 | Contenido | MDX + gray-matter | Componentes React dentro de markdown |
 | i18n | next-intl | i18n probado en batalla con soporte de export estático |
 | Diagramas | D2 | Diagramas declarativos versionables |
-| Hosting | Cloudflare Workers | CDN edge global, el free tier es más que suficiente |
+| Hosting | Vercel | CDN edge global, soporte nativo de Next.js |
 | Testing | Vitest + Testing Library | Tests unitarios rápidos |
 
 ## Estrategia de Visibilidad en Búsquedas
@@ -28,7 +28,7 @@ El sitio implementa un enfoque por capas para la visibilidad en búsquedas, apun
 
 ### Capa SEO
 
-- **SSG + entrega Edge** — Cada página se pre-renderiza en tiempo de build y se sirve desde la red edge de Cloudflare, logrando FCP por debajo del segundo
+- **SSG + entrega Edge** — Cada página se pre-renderiza en tiempo de build y se sirve desde la red edge de Vercel, logrando FCP por debajo del segundo
 - **HTML semántico** — Jerarquía de encabezados correcta (`h1` → `h2` → `h3`), roles landmark y markup accesible
 - **Alternates hreflang** — Sitemap XML y tags `<link rel="alternate">` para los 6 locales, para que los motores de búsqueda sirvan el idioma correcto
 - **URLs canónicas** — Cada página declara su URL canónica para prevenir problemas de contenido duplicado entre locales

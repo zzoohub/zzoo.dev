@@ -4,7 +4,7 @@ title: "zzoo.dev — Documento de Design de Engenharia"
 
 ## Abordagem Técnica
 
-Toda página é gerada estaticamente (SSG) em tempo de build. Sem server-side rendering ou rotas de API, as páginas são servidas diretamente pela rede edge global do Cloudflare Workers — rápido independente de onde os visitantes se conectam.
+Toda página é gerada estaticamente (SSG) em tempo de build. Sem server-side rendering ou rotas de API, as páginas são servidas diretamente pela rede edge global da Vercel — rápido independente de onde os visitantes se conectam.
 
 O conteúdo é gerenciado como arquivos MDX. Cada peça é dividida em `content/[type]/[slug]/{locale}.mdx` para cada um dos 6 idiomas suportados, mantendo as traduções independentes. Diagramas de arquitetura escritos em D2 são automaticamente compilados em SVGs nas variantes de tema claro e escuro em tempo de build.
 
@@ -19,7 +19,7 @@ A UI é construída com Tailwind CSS v4 e shadcn/ui. O sistema de temas baseado 
 | Conteúdo | MDX + gray-matter | Componentes React dentro de markdown |
 | i18n | next-intl | i18n battle-tested com suporte a exportação estática |
 | Diagramas | D2 | Diagramas declarativos versionáveis |
-| Hospedagem | Cloudflare Workers | CDN edge global, free tier é mais que suficiente |
+| Hospedagem | Vercel | CDN edge global, suporte nativo Next.js |
 | Testes | Vitest + Testing Library | Testes unitários rápidos |
 
 ## Estratégia de Visibilidade em Busca
@@ -28,7 +28,7 @@ O site implementa uma abordagem em camadas para visibilidade em busca, mirando t
 
 ### Camada SEO
 
-- **SSG + Entrega Edge** — Toda página é pré-renderizada em tempo de build e servida pela rede edge da Cloudflare, alcançando FCP abaixo de um segundo
+- **SSG + Entrega Edge** — Toda página é pré-renderizada em tempo de build e servida pela rede edge da Vercel, alcançando FCP abaixo de um segundo
 - **HTML Semântico** — Hierarquia correta de headings (`h1` → `h2` → `h3`), landmark roles e markup acessível
 - **Hreflang alternates** — Sitemap XML e tags `<link rel="alternate">` para todos os 6 locales, para que motores de busca sirvam o idioma correto
 - **URLs Canônicas** — Cada página declara sua URL canônica para prevenir problemas de conteúdo duplicado entre locales

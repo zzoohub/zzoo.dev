@@ -4,7 +4,7 @@ title: "zzoo.dev — Dokumen Desain Engineering"
 
 ## Pendekatan Teknis
 
-Setiap halaman statically generated (SSG) saat build time. Tanpa server-side rendering atau API route, halaman disajikan langsung dari jaringan edge global Cloudflare Workers — cepat dari manapun pengunjung terhubung.
+Setiap halaman statically generated (SSG) saat build time. Tanpa server-side rendering atau API route, halaman disajikan langsung dari jaringan edge global Vercel — cepat dari manapun pengunjung terhubung.
 
 Konten dikelola sebagai file MDX. Setiap konten dibagi menjadi `content/[type]/[slug]/{locale}.mdx` untuk masing-masing 6 bahasa yang didukung, menjaga terjemahan tetap independen. Diagram arsitektur yang ditulis dalam D2 secara otomatis dikompilasi menjadi SVG dalam varian tema terang dan gelap saat build time.
 
@@ -19,7 +19,7 @@ UI dibangun dengan Tailwind CSS v4 dan shadcn/ui. Sistem theming berbasis CSS va
 | Konten | MDX + gray-matter | Komponen React di dalam markdown |
 | i18n | next-intl | i18n yang battle-tested dengan dukungan static export |
 | Diagram | D2 | Diagram deklaratif yang bisa di-version control |
-| Hosting | Cloudflare Workers | CDN edge global, free tier lebih dari cukup |
+| Hosting | Vercel | CDN edge global, dukungan native Next.js |
 | Testing | Vitest + Testing Library | Unit test yang cepat |
 
 ## Strategi Visibilitas Pencarian
@@ -28,7 +28,7 @@ Situs ini mengimplementasikan pendekatan berlapis untuk visibilitas pencarian, m
 
 ### Layer SEO
 
-- **SSG + pengiriman Edge** — Setiap halaman di-pre-render saat build time dan disajikan dari jaringan edge Cloudflare, mencapai FCP di bawah satu detik
+- **SSG + pengiriman Edge** — Setiap halaman di-pre-render saat build time dan disajikan dari jaringan edge Vercel, mencapai FCP di bawah satu detik
 - **HTML semantik** — Hierarki heading yang tepat (`h1` → `h2` → `h3`), landmark role, dan markup yang aksesibel
 - **Hreflang alternate** — XML sitemap dan tag `<link rel="alternate">` untuk semua 6 locale, supaya mesin pencari menyajikan bahasa yang tepat
 - **URL kanonikal** — Setiap halaman mendeklarasikan URL kanonikalnya untuk mencegah masalah konten duplikat antar locale
