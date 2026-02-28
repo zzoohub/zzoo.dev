@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Builder Log for a solopreneur developer. Multilingual (6 locales), statically generated, deployed to Cloudflare Workers. See `docs/PRD.md` for full product requirements.
+Builder Log for a solopreneur developer. Multilingual (6 locales), statically generated, deployed to Vercel. See `docs/PRD.md` for full product requirements.
 
 ## Principles (MUST FOLLOW)
 
@@ -36,16 +36,14 @@ bunx vitest run --coverage       # Run tests with v8 coverage
 ```
 
 ```bash
-bun run build:worker             # Cloudflare Workers build (runs images + diagrams but NOT RSS)
-bun run preview                  # Local preview via opennextjs-cloudflare
-bun run deploy                   # Deploy to Cloudflare Workers (needs CLOUDFLARE_API_TOKEN + CLOUDFLARE_ACCOUNT_ID)
+bun run preview                  # Local preview via next start (requires bun run build first)
 ```
 
 Use `bunx --bun shadcn@latest add <component>` to add shadcn/ui components.
 
 ## Tech Stack
 
-Next.js 16 (App Router, SSG only), React 19, TypeScript strict, Tailwind CSS v4 (oklch theming), Bun, Geist font via `next/font`, next-intl, next-mdx-remote/rsc, next-themes (`.dark` class), shadcn/ui (new-york style, lucide icons), Zod (frontmatter validation), Giscus comments, Vitest + Testing Library, Cloudflare Workers via `@opennextjs/cloudflare`.
+Next.js 16 (App Router, SSG only), React 19, TypeScript strict, Tailwind CSS v4 (oklch theming), Bun, Geist font via `next/font`, next-intl, next-mdx-remote/rsc, next-themes (`.dark` class), shadcn/ui (new-york style, lucide icons), Zod (frontmatter validation), Giscus comments, Vitest + Testing Library, Vercel (deployment).
 
 ## Architecture
 
@@ -108,7 +106,7 @@ Project frontmatter: `title`, `description`, `status` (`active|completed|archive
 - Config: `i18n/routing.ts` — locales: en, es, pt-BR, id, ja, ko; default: en
 - Translations: `messages/{locale}.json` — UI strings only (not content)
 - Navigation: import `Link`, `redirect`, `usePathname` from `@/i18n/navigation` (locale-aware)
-- `i18n/request.ts` uses static `MESSAGE_MAP` (explicit imports) — intentional for Cloudflare Workers compatibility (no dynamic filesystem access at runtime)
+- `i18n/request.ts` uses static `MESSAGE_MAP` (explicit imports) — intentional for SSG compatibility
 - **Server components must call `setRequestLocale(locale)` from `params`** — NOT `getLocale()` (breaks SSG)
 - Async server components cannot call `useTranslations` — use async wrapper + sync inner component pattern
 
@@ -135,7 +133,7 @@ Project frontmatter: `title`, `description`, `status` (`active|completed|archive
 ## Key Constraints
 
 - **SSG only** — no SSR, no API routes. Verify `●` (SSG) in build output, not `ƒ` (Dynamic).
-- **Cloudflare Workers** — `@opennextjs/cloudflare` (config: `open-next.config.ts` with `staticAssetsIncrementalCache`, `wrangler.jsonc`). Uses `nodejs_compat` flag.
+- **Vercel** — deployed via Vercel GitHub integration (auto build + deploy on push to main, PR preview deployments).
 - **Performance** — Lighthouse 95+, JS < 100KB gzipped, FCP < 1.0s
 - **Accessibility** — WCAG 2.1 AA
 - **Security headers** — CSP, HSTS, X-Frame-Options etc. in `next.config.ts` `headers()`. frame-src: YouTube + Giscus only.

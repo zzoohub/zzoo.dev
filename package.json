@@ -9,15 +9,12 @@
     "build:rss": "bun run scripts/generate-rss.ts",
     "prebuild": "bun run build:images && bun run build:diagrams && bun run build:rss",
     "build": "next build",
-    "build:worker": "bun run build:images && bun run build:diagrams && opennextjs-cloudflare build",
-    "preview": "opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare deploy",
+    "preview": "next start",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
     "@giscus/react": "^3.1.0",
-    "@opennextjs/cloudflare": "^1.16.5",
     "@tailwindcss/typography": "^0.5.19",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
