@@ -17,7 +17,7 @@ draft: false
 
 ここ数ヶ月こうやってプロダクトを作ってきたが、驚き続けているのは、この仕事のうちコードに関わる部分がいかに少ないか、ということだ。
 
-以前、[Claude Codeの設定について書いた](/ja/blog/my-claude-code-setup) -- skill、agent、MCP server。あの記事はbuild pipelineの話だった。しかしbuildはプロダクトを出すうちの三分の一にすぎない。残りはコードの周りにある全てだ。誰かがそのものを欲しがるかの検証、体験の設計、launchの実行、うまくいっているかの計測、次に何をするかの判断。プロダクトのlifecycleの半分以上は、コードを一行も生み出さない。そしてそこが、バイブコーディングが面白くなるポイントだ。
+[前の記事](/ja/blog/my-claude-code-setup)でセットアップの構造を説明した。skill、agent、plugin、MCP serverがどう組み合わさるか。だが構造だけでは半分にすぎない。それで実際に何をするかが残りの半分だ。誰かがそのものを欲しがるかの検証、体験の設計、launchの実行、うまくいっているかの計測、次に何をするかの判断。プロダクトのlifecycleの半分以上は、コードを一行も生み出さない。そこが、バイブコーディングが面白くなるポイントだ。
 
 考え方が変わったきっかけがある。side projectに取り組んでいて、数日でコードが完成した。動く、testも通る、deployもされている。そこで気づいた。launch計画がない。analyticsがない。pricing戦略がない。利用規約がない。solo developerのいつもの話だ。ものを作って、それを眺めて、なぜ誰も来ないのか不思議に思う。簡単な部分を自動化して、難しい部分を手動のまま残していたのだ。
 
@@ -45,7 +45,7 @@ growthはscale決定の後にだけ発生する。穴のあるプロダクトを
 
 system全体がtemplateになっている。新しいものを始めるときにcopyするscaffold projectがある。workflow定義、skill mapping、planning docとbusiness doc両方のdocument structureが入っている。Claude Codeが最初のsessionでこれを読み、pipeline全体を把握する。docとコードは同じrepositoryにあるので、AIは常に最新のcontextを持つ。
 
-これをreproducibleにしているのは、個々のtoolではない。3つの要素の組み合わせだ。skillはexpert knowledgeをloadする -- 読むかもしれないdocumentationとしてではなく、AIが従わなければならないconstraintとして。agentは特化したtaskを並列で実行する。security reviewerとtest writerが同時に動くように。MCP serverは外部serviceに接続する -- analytics platform、error tracker、design tool、deploy infrastructure -- AIがtextを生成するだけでなく、現実世界に作用できるようにするために。
+これをreproducibleにしているのは、個々のtoolではない。3つの要素の組み合わせだ。skillはexpert knowledgeをloadする -- 読むかもしれないdocumentationとしてではなく、AIが従わなければならないconstraintとして。agentは特化したtaskを並列で実行する。security reviewerとverifierが同時に動くように。MCP serverは外部serviceに接続する -- analytics platform、error tracker、design tool、deploy infrastructure -- AIがtextを生成するだけでなく、現実世界に作用できるようにするために。
 
 directorという比喩が、見つけた中で一番しっくりくる。僕が方向を設定する。judgment callを下す。何を作り、何を殺し、何を育てるかを決める。AIがすべてのdomainにわたってexpert levelのexecutionを担う。これはmanagement的な意味でのdelegationではない。仕事がちゃんとできるか心配する類いのものではない。conducting -- 指揮に近い。楽器は弾かない。演奏を形作るのだ。
 

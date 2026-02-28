@@ -17,7 +17,7 @@ The interesting thing about vibe coding isn't code generation. It's what happens
 
 I've been building this way for a few months now, and the thing that keeps surprising me is how little of it involves code.
 
-I wrote before about [my AI setup](/en/blog/my-claude-code-setup) -- skills, agents, MCP servers. That post was about the build pipeline. But building is maybe a third of shipping a product. The rest is everything around the code: validating whether anyone wants the thing, designing the experience, launching it, measuring whether it's working, and deciding what to do next. More than half the work in a product's lifecycle produces zero lines of code. And that's exactly where vibe coding gets interesting.
+In a [previous post](/en/blog/my-claude-code-setup) I explained the structure of the setup — how skills, agents, plugins, and MCP servers compose together. But structure is only half the story. What you actually do with it is the other half. Validating whether anyone wants the thing, designing the experience, launching it, measuring whether it's working, deciding what to do next. More than half the work in a product's lifecycle produces zero lines of code. That's exactly where vibe coding gets interesting.
 
 Here's what changed my thinking. I was working on a side project and had the code done in a couple of days. Functional, tested, deployed. Then I realized I had no launch plan, no analytics, no pricing strategy, no terms of service. The usual solo developer story: you build the thing and then stare at it, wondering why no one shows up. I'd automated the easy part and left the hard part manual.
 
@@ -45,7 +45,7 @@ Growth only happens after a scale decision. Don't grow a leaky product. This pha
 
 The whole system is templatized. I have a scaffold project I copy to start anything new. It contains the workflow definition, the skill mappings, the document structure for both planning docs and business docs. Claude Code reads this on the first session and knows the entire pipeline. Docs and code live in the same repository, so the AI always has current context.
 
-What makes this reproducible isn't any individual tool. It's the combination of three things. Skills load expert knowledge -- not as documentation you might read, but as constraints the AI must follow. Agents run specialized tasks in parallel, like a security reviewer and a test writer working simultaneously. MCP servers connect to external services -- analytics platforms, error trackers, design tools, deployment infrastructure -- so the AI can act on the real world, not just generate text.
+What makes this reproducible isn't any individual tool. It's the combination of three things. Skills load expert knowledge -- not as documentation you might read, but as constraints the AI must follow. Agents run specialized tasks in parallel, like a security reviewer and a verifier working simultaneously. MCP servers connect to external services -- analytics platforms, error trackers, design tools, deployment infrastructure -- so the AI can act on the real world, not just generate text.
 
 The director metaphor is the best one I've found. I set direction. I make judgment calls. I decide what to build, what to kill, what to grow. The AI handles expert-level execution across every domain. This isn't delegation in the management sense, where you worry about whether the work gets done right. It's more like conducting. You don't play the instruments. You shape the performance.
 
