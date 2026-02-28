@@ -1,6 +1,6 @@
 ---
 title: "zzoo.dev — Sitio de Marca Personal"
-description: "Un portafolio de desarrollador construido por agentes de IA, en 6 idiomas, y diseñado para motores de búsqueda, motores de respuesta e IA generativa. Open source."
+description: "Un portafolio de desarrollador en 6 idiomas, optimizado para motores de búsqueda, motores de respuesta e IA generativa. Open source."
 status: "active"
 techStack:
   - Next.js 16
@@ -21,7 +21,7 @@ launchDate: "2026-01-01"
 links:
   github: "https://github.com/zzoohub/zzoo.dev"
 
-tagline: "Un portafolio de desarrollador construido por agentes de IA, en 6 idiomas."
+tagline: "Un portafolio de desarrollador en 6 idiomas, para humanos e IA por igual."
 category: "web"
 keywords:
   primary:
@@ -56,20 +56,20 @@ features:
     icon: "zap"
 ---
 
-## El sitio es el caso de estudio
+## Arquitectura de contenido
 
-La mayoría de portafolios de desarrollador muestran proyectos. Este es el proyecto.
+Cada proyecto tiene tres capas de documentos: brief de producto, caso de estudio y documento de diseño. Todo el frontmatter se valida con schemas Zod. Las rutas de imágenes están sanitizadas. Los slugs tienen verificación de tipos.
 
-zzoo.dev está construido con el mismo flujo de trabajo de IA descrito en el blog — 29 skills, 7 agentes, 3 departamentos operando a través de una [constitución CLAUDE.md](/es/blog/my-claude-code-setup). Cada página que estás leyendo fue producida, auditada y verificada por ese sistema. El sitio no es solo un portafolio. Es la prueba viva de que una persona puede lanzar un producto multilingüe de nivel producción usando desarrollo impulsado por IA.
+El contenido se gestiona como archivos MDX divididos por locale — 6 idiomas (EN, ES, PT-BR, ID, JA, KO) con fallback automático cuando falta una traducción.
 
-## Qué lo hace diferente
+## Visibilidad en búsquedas
 
-**Arquitectura de contenido, no un template.** Cada proyecto en este portafolio tiene tres capas de documentos: un brief de producto, un caso de estudio y un documento de diseño. Todo el frontmatter se valida con schemas Zod. Las rutas de imágenes están sanitizadas. Los slugs tienen verificación de tipos. No es un template de blog con una página de proyectos añadida — es un sistema de contenido diseñado para la profundidad.
+El sitio apunta a tres canales de descubrimiento:
 
-**Seis idiomas, no dos.** Cada pieza de contenido existe en inglés, español, portugués, indonesio, japonés y coreano — con fallback automático de locale cuando falta una traducción. No es un feature flag. Es un pipeline de contenido que escala.
-
-**Construido para tres canales de descubrimiento.** SEO te indexa. AEO (schemas JSON-LD para `Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`) te cita en motores de respuesta. GEO (`llms.txt` + MDX limpio) te representa con precisión en IA generativa. La mayoría de portafolios manejan uno de estos. Este maneja los tres.
+- **SEO** — Generación estática, HTML semántico, sitemap XML con alternates hreflang, URLs canónicas. Lighthouse 95+.
+- **AEO** — Schemas JSON-LD (`Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList`) para motores de respuesta de IA. Feed RSS para indexación de contenido.
+- **GEO** — `llms.txt` y contenido MDX limpio para motores de IA generativa.
 
 ## Open source
 
-Todo el codebase es open source. Clónalo, estudia la arquitectura de contenido, adapta el flujo de trabajo de IA. El valor real no es el template — es el sistema detrás.
+Todo el codebase es [open source](https://github.com/zzoohub/zzoo.dev). Construido con Next.js 16, React 19, TypeScript, Tailwind CSS v4, deployado en Cloudflare Workers.

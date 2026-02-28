@@ -1,6 +1,6 @@
 ---
 title: "zzoo.dev — Personal Branding Site"
-description: "A developer portfolio built by AI agents, served in 6 languages, and engineered for search engines, answer engines, and generative AI. Open source."
+description: "A developer portfolio in 6 languages, optimized for search engines, answer engines, and generative AI. Open source."
 status: "active"
 techStack:
   - Next.js 16
@@ -21,7 +21,7 @@ launchDate: "2026-01-01"
 links:
   github: "https://github.com/zzoohub/zzoo.dev"
 
-tagline: "A developer portfolio built by AI agents, in 6 languages."
+tagline: "A developer portfolio in 6 languages, optimized for humans and AI alike."
 category: "web"
 keywords:
   primary:
@@ -56,20 +56,20 @@ features:
     icon: "zap"
 ---
 
-## The site is the case study
+## Content architecture
 
-Most developer portfolios showcase projects. This one is the project.
+Each project has three document layers: product brief, case study, and design doc. All frontmatter is validated through Zod schemas. Image paths are sanitized. Slugs are type-checked.
 
-zzoo.dev is built by the same AI workflow described in the blog — 29 skills, 7 agents, 3 departments operating through a [CLAUDE.md constitution](/en/blog/my-claude-code-setup). Every page you're reading was produced, security-reviewed, and verified by that system. The site isn't just a portfolio. It's a living proof that one person can ship a production-grade, multilingual product using AI-driven development.
+Content is managed as MDX files split by locale — 6 languages (EN, ES, PT-BR, ID, JA, KO) with automatic fallback when a translation is missing.
 
-## What makes this different
+## Search visibility
 
-**Content architecture, not a template.** Each project in this portfolio has three document layers: a product brief, a case study, and a design doc. All frontmatter is validated through Zod schemas. Image paths are sanitized. Slugs are type-checked. This isn't a blog template with a projects page bolted on — it's a content system engineered for depth.
+The site targets three discovery channels:
 
-**Six languages, not two.** Every piece of content exists in English, Spanish, Portuguese, Indonesian, Japanese, and Korean — with automatic locale fallback when a translation is missing. That's not a feature flag. It's a content pipeline that scales.
-
-**Built for three discovery channels.** SEO gets you indexed. AEO (JSON-LD schemas for `Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`) gets you cited by answer engines. GEO (`llms.txt` + clean MDX) gets you represented accurately by generative AI. Most portfolios handle one of these. This handles all three.
+- **SEO** — Static generation, semantic HTML, XML sitemap with hreflang alternates, canonical URLs. Lighthouse 95+.
+- **AEO** — JSON-LD schemas (`Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList`) for AI answer engines. RSS feed for content indexing.
+- **GEO** — `llms.txt` and clean MDX content for generative AI engines.
 
 ## Open source
 
-The entire codebase is open source. Clone it, study the content architecture, adapt the AI workflow. The real value isn't the template — it's the system behind it.
+The entire codebase is [open source](https://github.com/zzoohub/zzoo.dev). Built with Next.js 16, React 19, TypeScript, Tailwind CSS v4, deployed to Cloudflare Workers.

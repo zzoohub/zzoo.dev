@@ -1,6 +1,6 @@
 ---
 title: "zzoo.dev — Situs Personal Branding"
-description: "Portofolio developer yang dibangun oleh agen AI, dalam 6 bahasa, dan dioptimalkan untuk mesin pencari, mesin jawaban, dan AI generatif. Open source."
+description: "Portofolio developer dalam 6 bahasa, dioptimalkan untuk mesin pencari, mesin jawaban, dan AI generatif. Open source."
 status: "active"
 techStack:
   - Next.js 16
@@ -21,7 +21,7 @@ launchDate: "2026-01-01"
 links:
   github: "https://github.com/zzoohub/zzoo.dev"
 
-tagline: "Portofolio developer yang dibangun oleh agen AI, dalam 6 bahasa."
+tagline: "Portofolio developer dalam 6 bahasa, untuk manusia dan AI."
 category: "web"
 keywords:
   primary:
@@ -56,20 +56,20 @@ features:
     icon: "zap"
 ---
 
-## Situs ini sendiri adalah studi kasus
+## Arsitektur konten
 
-Kebanyakan portofolio developer menampilkan proyek. Yang ini adalah proyeknya.
+Setiap proyek punya tiga lapis dokumen: product brief, studi kasus, dan design doc. Semua frontmatter divalidasi melalui schema Zod. Path gambar disanitasi. Slug di-type-check.
 
-zzoo.dev dibangun dengan workflow AI yang sama yang dijelaskan di blog — 29 skill, 7 agen, 3 departemen yang beroperasi melalui [konstitusi CLAUDE.md](/id/blog/my-claude-code-setup). Setiap halaman yang sedang kamu baca diproduksi, di-review keamanannya, dan diverifikasi oleh sistem itu. Situs ini bukan sekadar portofolio. Ini adalah bukti nyata bahwa satu orang bisa mengirimkan produk multilingual level produksi menggunakan pengembangan berbasis AI.
+Konten dikelola sebagai file MDX yang dibagi per locale — 6 bahasa (EN, ES, PT-BR, ID, JA, KO) dengan fallback otomatis ketika terjemahan belum tersedia.
 
-## Apa yang membuatnya berbeda
+## Visibilitas pencarian
 
-**Arsitektur konten, bukan template.** Setiap proyek di portofolio ini punya tiga lapis dokumen: product brief, studi kasus, dan design doc. Semua frontmatter divalidasi melalui schema Zod. Path gambar disanitasi. Slug di-type-check. Ini bukan template blog dengan halaman proyek yang ditempelkan — ini adalah sistem konten yang di-engineer untuk kedalaman.
+Situs ini menargetkan tiga kanal penemuan:
 
-**Enam bahasa, bukan dua.** Setiap konten ada dalam bahasa Inggris, Spanyol, Portugis, Indonesia, Jepang, dan Korea — dengan fallback locale otomatis ketika terjemahan belum tersedia. Ini bukan feature flag. Ini pipeline konten yang bisa di-scale.
-
-**Dibangun untuk tiga kanal penemuan.** SEO bikin kamu terindeks. AEO (schema JSON-LD untuk `Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`) bikin kamu dikutip mesin jawaban. GEO (`llms.txt` + MDX bersih) bikin kamu direpresentasikan akurat oleh AI generatif. Kebanyakan portofolio cuma handle satu dari ini. Yang ini handle ketiganya.
+- **SEO** — Static generation, HTML semantik, XML sitemap dengan hreflang alternate, URL kanonikal. Lighthouse 95+.
+- **AEO** — Schema JSON-LD (`Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList`) untuk mesin jawaban AI. Feed RSS untuk pengindeksan konten.
+- **GEO** — `llms.txt` dan konten MDX bersih untuk mesin AI generatif.
 
 ## Open source
 
-Seluruh codebase bersifat open source. Clone, pelajari arsitektur kontennya, adaptasi workflow AI-nya. Nilai sebenarnya bukan template — tapi sistem di baliknya.
+Seluruh codebase bersifat [open source](https://github.com/zzoohub/zzoo.dev). Dibangun dengan Next.js 16, React 19, TypeScript, Tailwind CSS v4, di-deploy ke Cloudflare Workers.
