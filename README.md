@@ -1,6 +1,6 @@
 # zzoo.dev
 
-Personal branding website for a solopreneur developer. Bilingual (EN/KO), statically generated, deployed to Cloudflare Workers.
+Builder log for a solopreneur developer. Multilingual (6 locales), statically generated, deployed to Vercel.
 
 ## Tech Stack
 
@@ -8,13 +8,13 @@ Personal branding website for a solopreneur developer. Bilingual (EN/KO), static
 - **React 19**, **TypeScript** (strict mode)
 - **Tailwind CSS v4** with oklch theming
 - **Bun** as package manager
-- **next-intl** for i18n (EN/KO)
+- **next-intl** for i18n (EN, ES, PT-BR, ID, JA, KO)
 - **next-mdx-remote** for MDX content
 - **next-themes** for dark mode
 - **shadcn/ui** components
 - **D2** diagrams (compiled to SVG at build time)
 - **Vitest** + Testing Library for tests
-- **Cloudflare Workers** via `@opennextjs/cloudflare`
+- **Vercel** for deployment
 
 ## Getting Started
 
@@ -35,21 +35,23 @@ Open [http://localhost:3000](http://localhost:3000) to view the site.
 | `bun run lint` | ESLint |
 | `bun test` | Run tests (watch mode) |
 | `bunx vitest run` | Run tests once (CI mode) |
-| `bun run build:worker` | Full Cloudflare Workers build |
-| `bun run preview` | Local preview via opennextjs-cloudflare |
-| `bun run deploy` | Deploy to Cloudflare Workers |
+| `bun run preview` | Local preview via `next start` |
 
 ## Project Structure
 
 ```
 content/              # File-based MDX content
-├── about/            # About page (en.mdx, ko.mdx)
+├── about/            # About page ({locale}.mdx)
 ├── blog/             # Blog posts by slug
 ├── projects/         # Case studies by slug
 └── testimonials.json # Social proof data
 
 messages/             # UI translation strings
 ├── en.json
+├── es.json
+├── pt-BR.json
+├── id.json
+├── ja.json
 └── ko.json
 
 app/[locale]/         # Locale-prefixed routes (Next.js App Router)
@@ -60,11 +62,11 @@ public/diagrams/      # Pre-rendered D2 SVGs
 
 ## Content
 
-Content is authored as MDX files in the `content/` directory with locale-specific variants (`en.mdx`, `ko.mdx`). Frontmatter is parsed with `gray-matter` and MDX is rendered server-side via `next-mdx-remote/rsc`.
+Content is authored as MDX files in the `content/` directory with locale-specific variants (`en.mdx`, `ko.mdx`, etc.). Frontmatter is parsed with `gray-matter` and MDX is rendered server-side via `next-mdx-remote/rsc`.
 
 ### Adding a blog post
 
-Create `content/blog/<slug>/en.mdx` (and optionally `ko.mdx`) with frontmatter:
+Create `content/blog/<slug>/en.mdx` (and optionally other locale files) with frontmatter:
 
 ```yaml
 ---
@@ -77,13 +79,12 @@ tags: [tag1, tag2]
 
 ### Adding a project
 
-Create `content/projects/<slug>/en.mdx` (and optionally `ko.mdx`) with frontmatter:
+Create `content/projects/<slug>/en.mdx` (and optionally other locale files) with frontmatter:
 
 ```yaml
 ---
 title: Project Name
 description: Short description
-clientType: Startup
 status: completed
 techStack: [Next.js, TypeScript]
 featured: true

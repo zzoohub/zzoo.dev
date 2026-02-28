@@ -127,7 +127,7 @@ export function buildPersonJsonLd() {
       "React",
       "Next.js",
       "TypeScript",
-      "Cloudflare Workers",
+      "Cloud Infrastructure",
       "Solo Product Development",
     ],
   };

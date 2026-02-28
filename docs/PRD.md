@@ -52,7 +52,7 @@ A bilingual (EN/KO), AI-optimized personal branding platform that positions the 
 | Performance | Lighthouse Score | 95+ | Lighthouse CI |
 | SEO | Lighthouse SEO | 100 | Lighthouse CI |
 | AI Discovery | AI search indexing | 2+ AI engines | Manual verification |
-| Conversion | Email CTA click rate | > 3% | Cloudflare Analytics |
+| Conversion | Email CTA click rate | > 3% | Vercel Analytics |
 | Speed | Time to Interactive | < 1.5s on 3G | WebPageTest |
 | Content | Blog posts/month | 2+ | Git commits |
 
@@ -71,9 +71,8 @@ A bilingual (EN/KO), AI-optimized personal branding platform that positions the 
 | i18n | next-intl | Battle-tested Next.js i18n with static export support |
 | Dark Mode | next-themes | Flash-free theme switching, SSG compatible |
 | Diagrams | D2 (d2lang) | Declarative, version-controllable architecture diagrams |
-| Hosting | Cloudflare Pages | Global edge CDN, generous free tier, fast builds |
-| Adapter | @cloudflare/next-on-pages | Official Next.js to Cloudflare Pages adapter |
-| Analytics | Cloudflare Web Analytics | Privacy-first, no cookie banner, free |
+| Hosting | Vercel | Global edge CDN, native Next.js support, PR preview deployments |
+| Analytics | Vercel Analytics | Privacy-first, built-in performance insights |
 
 ### 3.2 Development Tools
 
@@ -81,7 +80,7 @@ A bilingual (EN/KO), AI-optimized personal branding platform that positions the 
 |------|-----------|---------|
 | Linter | ESLint + Biome | Code quality and formatting |
 | Package Manager | pnpm | Fast, disk-efficient dependency management |
-| CI/CD | Cloudflare Pages (Git) | Auto-deploy on push to main branch |
+| CI/CD | Vercel (Git) | Auto-deploy on push to main branch |
 
 ### 3.3 Architecture Constraints
 
@@ -89,7 +88,7 @@ A bilingual (EN/KO), AI-optimized personal branding platform that positions the 
 - All content stored as MDX files in the repository (Git-based CMS)
 - D2 diagrams pre-rendered to SVG at build time
 - No backend logic — purely static site, contact via email only
-- No database in v1 — Cloudflare D1 reserved for future features
+- No database in v1
 - Bundle size budget: < 100KB initial JS (gzipped)
 
 ---
@@ -234,10 +233,10 @@ Reusable call-to-action components embedded throughout the site. A sticky or flo
 |---------|-------------|----------|
 | Decision Logs | Per-project technical decision records ("why X over Y") | P2 |
 | Newsletter | Email subscription for updates (e.g., Buttondown or Resend) | P2 |
-| Contact Form | Form with Cloudflare Workers backend for lead capture (if email-only proves insufficient) | P2 |
+| Contact Form | Form with serverless backend for lead capture (if email-only proves insufficient) | P2 |
 | Client Portal | Authenticated dashboard for active clients to track project progress | P3 |
 | AI Chat Widget | RAG-powered chatbot trained on site content for visitor Q&A | P3 |
-| Guestbook | Visitor messages (would require Cloudflare Workers + D1) | P3 |
+| Guestbook | Visitor messages (would require serverless backend + database) | P3 |
 | Product Pages | Dedicated pages for SaaS products or digital goods if pivoting to product-led | P3 |
 | Booking Integration | Embedded Cal.com or Calendly widget for direct scheduling | P3 |
 | Reading List | Curated list of books, articles, and tools | P3 |
@@ -369,8 +368,8 @@ A Node.js build script (`scripts/build-diagrams.js`) handles D2 compilation. It 
 
 ### 8.4 Security
 
-- Content Security Policy (CSP) headers via Cloudflare
-- HTTPS enforced (Cloudflare default)
+- Content Security Policy (CSP) headers via `next.config.ts`
+- HTTPS enforced (Vercel default)
 - No backend logic, forms, or user authentication (minimal attack surface)
 - Subresource integrity for external scripts
 
@@ -381,22 +380,22 @@ A Node.js build script (`scripts/build-diagrams.js`) handles D2 compilation. It 
 ### 9.1 Deployment Pipeline
 
 1. Developer pushes to `main` branch on GitHub.
-2. Cloudflare Pages triggers build.
-3. Build: `pnpm install` → D2 diagram compilation → `next build` → static export.
-4. Cloudflare deploys static output to global edge network.
+2. Vercel triggers build.
+3. Build: `bun install` → image copy → D2 diagram compilation → RSS generation → `next build`.
+4. Vercel deploys static output to global edge network.
 5. Preview deployments auto-generated for pull requests.
 
 ### 9.2 Environments
 
 | Environment | Trigger | URL |
 |-------------|---------|-----|
-| Production | Push to main | yourname.dev |
-| Preview | Pull request | [hash].pages.dev |
-| Local | pnpm dev | localhost:3000 |
+| Production | Push to main | zzoo-dev.zzooapp.com |
+| Preview | Pull request | [hash].vercel.app |
+| Local | bun dev | localhost:3000 |
 
 ### 9.3 Custom Domain
 
-Cloudflare Pages supports custom domains with automatic SSL. The site will be served from a custom domain (e.g., yourname.dev) with Cloudflare DNS for optimal performance. Cloudflare's global edge network ensures sub-50ms TTFB for both Korean and international visitors.
+Vercel supports custom domains with automatic SSL. The site is served from `zzoo-dev.zzooapp.com` with Cloudflare DNS (CNAME to `cname.vercel-dns.com`). Vercel's global edge network ensures fast TTFB worldwide.
 
 ---
 
@@ -407,7 +406,7 @@ Cloudflare Pages supports custom domains with automatic SSL. The site will be se
 | Phase 1 | Week 1–2 | Project scaffolding: Next.js + TypeScript + Tailwind + next-intl + next-themes. Home page with hero, intro, CTA, external links, availability badge. Global layout: nav, footer, locale switcher, theme toggle. |
 | Phase 2 | Week 3–4 | Case studies section: list view + detail page (problem/solution/result + D2 diagram). D2 build pipeline (light/dark). Contact page with email link and external profiles. |
 | Phase 3 | Week 5–6 | Blog section with MDX, syntax highlighting, tag filtering, RSS. AI discoverability: JSON-LD, llms.txt, OG tags, sitemap. /now and /about pages. Testimonials component. |
-| Phase 4 | Week 6 | Cloudflare Pages deployment. Custom domain setup. Performance + SEO audit. Content population (at least 2 case studies, 2 blog posts). Final QA and launch. |
+| Phase 4 | Week 6 | Vercel deployment. Custom domain setup. Performance + SEO audit. Content population (at least 2 case studies, 2 blog posts). Final QA and launch. |
 
 ---
 
@@ -415,8 +414,7 @@ Cloudflare Pages supports custom domains with automatic SSL. The site will be se
 
 | Risk | Impact | Mitigation |
 |------|--------|-----------|
-| Cloudflare + Next.js compat | Some Next.js features may not work on Cloudflare Pages | Strict SSG-only; test with @cloudflare/next-on-pages early in Phase 1 |
-| D2 CLI in CI | D2 may not be in Cloudflare build image | Pre-render SVGs locally and commit; or custom build image |
+| D2 CLI in CI | D2 may not be in default build image | Install via curl in CI; or pre-render SVGs locally and commit |
 | Bilingual content load | Doubles writing effort | English-first; add Korean incrementally; consider AI-assisted translation |
 | Scope creep | Solo developer stretched thin | Strict MVP; defer v2 features; ship iteratively |
 | No social proof at launch | Empty testimonials section looks worse than none | Hide testimonials until at least 2 are collected; use peer endorsements initially |
@@ -432,8 +430,7 @@ Cloudflare Pages supports custom domains with automatic SSL. The site will be se
 - next-intl: https://next-intl-docs.vercel.app
 - next-themes: https://github.com/pacocoursey/next-themes
 - D2 Language: https://d2lang.com
-- Cloudflare Pages: https://developers.cloudflare.com/pages
-- @cloudflare/next-on-pages: https://github.com/cloudflare/next-on-pages
+- Vercel: https://vercel.com/docs
 - llms.txt: https://llmstxt.org
 - JSON-LD / Schema.org: https://schema.org
 - /now page movement: https://nownownow.com/about
