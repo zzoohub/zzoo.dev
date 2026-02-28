@@ -1,6 +1,6 @@
 ---
-title: "zzoo.dev — 개인 브랜딩 사이트"
-description: "6개 언어 개발자 포트폴리오. 검색 엔진 · 답변 엔진 · 생성형 AI 동시 최적화. 오픈소스."
+title: "zzoo.dev — Builder Log"
+description: "6개 언어로 된 Builder Log. 검색 엔진 · 답변 엔진 · 생성형 AI 동시 최적화. 오픈소스."
 status: "active"
 techStack:
   - Next.js 16
@@ -13,7 +13,7 @@ techStack:
   - Cloudflare Workers
   - shadcn/ui
 tags:
-  - Portfolio
+  - Builder Log
   - Web App
   - Open Source
 featured: true
@@ -21,21 +21,21 @@ launchDate: "2026-01-01"
 links:
   github: "https://github.com/zzoohub/zzoo.dev"
 
-tagline: "6개 언어 개발자 포트폴리오, 사람과 AI 모두를 위해."
+tagline: "6개 언어로 된 Builder Log, 사람과 AI 모두를 위해."
 category: "web"
 keywords:
   primary:
-    - "개발자 포트폴리오 SEO"
-    - "개발자 개인 브랜딩 사이트"
+    - "개발자 builder log SEO"
+    - "개발자 빌더 로그 만들기"
   longTail:
-    - "Next.js 포트폴리오 만들기"
+    - "Next.js 빌더 로그 만들기"
     - "AI에 발견되는 개발자 사이트"
 competitors:
-  - name: "Next.js 포트폴리오 템플릿"
+  - name: "Next.js 개발자 사이트 템플릿"
     differentiator: "템플릿은 시작점을 줄 뿐 콘텐츠 아키텍처가 없음 — 이 사이트는 프로젝트당 3-Layer 문서 시스템(프로덕트 브리프, 케이스 스터디, 설계 문서)과 Zod 검증 프론트매터를 갖추고 있음"
-  - name: "Astro 포트폴리오 사이트"
+  - name: "Astro 개발자 사이트"
     differentiator: "Astro는 빠르지만 기본 단일 언어 — 이 사이트는 자동 폴백과 hreflang 대체 링크, 로케일별 MDX 콘텐츠로 6개 언어를 지원"
-  - name: "Notion / WordPress 포트폴리오"
+  - name: "Notion / WordPress 사이트"
     differentiator: "둘 다 구조화 데이터, JSON-LD 스키마, llms.txt를 지원하지 않음 — 이 사이트는 SEO, 답변 엔진, 생성형 AI를 처음부터 설계에 반영"
 cta:
   primary:
@@ -56,15 +56,17 @@ features:
     icon: "zap"
 ---
 
+이 사이트를 만들면서 두 가지를 고민했습니다. 첫째, 사람만이 아니라 AI도 이 사이트를 읽고 이해할 수 있어야 한다는 것. 둘째, 어떤 언어 사용자든 자연스럽게 접근할 수 있어야 한다는 것. 이 두 가지가 사이트의 구조와 기술 선택을 결정했습니다.
+
 ## 콘텐츠 아키텍처
 
-프로젝트마다 프로덕트 브리프, 케이스 스터디, 설계 문서의 세 가지 문서 레이어가 있습니다. 모든 프론트매터는 Zod 스키마로 검증됩니다. 이미지 경로는 정제되고, 슬러그는 타입 체크됩니다.
+프로젝트마다 프로덕트 브리프, 케이스 스터디, 설계 문서의 세 가지 문서 레이어가 있습니다. 단순한 기능 목록이 아니라, 맥락과 결정 과정까지 담을 수 있는 구조입니다.
 
-콘텐츠는 로케일별 MDX 파일로 관리됩니다 — 6개 언어(EN, ES, PT-BR, ID, JA, KO), 번역이 없는 경우 자동 폴백.
+모든 프론트매터는 Zod 스키마로 검증됩니다. 콘텐츠는 로케일별 MDX 파일로 관리됩니다 — 6개 언어(EN, ES, PT-BR, ID, JA, KO), 번역이 없는 경우 자동 폴백.
 
 ## 검색 가시성
 
-세 가지 발견 채널을 타겟합니다:
+구글 검색, AI 답변 엔진, 생성형 AI — 어디서든 발견되도록 세 가지 채널을 동시에 타겟합니다:
 
 - **SEO** — 정적 생성, 시맨틱 HTML, hreflang 대체 링크가 포함된 XML 사이트맵, 캐노니컬 URL. Lighthouse 95+.
 - **AEO** — AI 답변 엔진을 위한 JSON-LD 스키마(`Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList`). 콘텐츠 인덱싱을 위한 RSS 피드.
@@ -72,4 +74,4 @@ features:
 
 ## 오픈소스
 
-전체 코드베이스가 [오픈소스](https://github.com/zzoohub/zzoo.dev)입니다. Next.js 16, React 19, TypeScript, Tailwind CSS v4로 구축, Cloudflare Workers에 배포.
+전체 코드베이스가 [오픈소스](https://github.com/zzoohub/zzoo.dev)입니다. Next.js 16, React 19, TypeScript, Tailwind CSS v4로 구축, Cloudflare Workers에 배포. 누구나 포크해서 콘텐츠 구조를 가져다 쓸 수 있습니다.

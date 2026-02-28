@@ -1,6 +1,6 @@
 ---
-title: "zzoo.dev — Personal Branding Site"
-description: "A developer portfolio in 6 languages, optimized for search engines, answer engines, and generative AI. Open source."
+title: "zzoo.dev — Builder Log"
+description: "A builder log in 6 languages, optimized for search engines, answer engines, and generative AI. Open source."
 status: "active"
 techStack:
   - Next.js 16
@@ -13,7 +13,7 @@ techStack:
   - Cloudflare Workers
   - shadcn/ui
 tags:
-  - Portfolio
+  - Builder Log
   - Web App
   - Open Source
 featured: true
@@ -21,21 +21,21 @@ launchDate: "2026-01-01"
 links:
   github: "https://github.com/zzoohub/zzoo.dev"
 
-tagline: "A developer portfolio in 6 languages, optimized for humans and AI alike."
+tagline: "A builder log in 6 languages, for humans and AI alike."
 category: "web"
 keywords:
   primary:
-    - "developer portfolio SEO"
-    - "personal branding site for developers"
+    - "developer builder log SEO"
+    - "builder log for developers"
   longTail:
-    - "nextjs developer portfolio template with SEO"
-    - "how to make developer portfolio discoverable by AI"
+    - "nextjs builder log template with SEO"
+    - "how to make developer site discoverable by AI"
 competitors:
-  - name: "Next.js portfolio templates"
+  - name: "Next.js developer site templates"
     differentiator: "Templates give you a starting point but no content architecture — this has a 3-layer document system (product brief, case study, design doc) with Zod-validated frontmatter per project"
-  - name: "Astro portfolio sites"
+  - name: "Astro developer sites"
     differentiator: "Astro is fast but single-language by default — this ships 6 locales with automatic fallback, hreflang alternates, and per-locale MDX content"
-  - name: "Notion / WordPress portfolios"
+  - name: "Notion / WordPress sites"
     differentiator: "Neither supports structured data, JSON-LD schemas, or llms.txt — this site is engineered for SEO, answer engines, and generative AI from the ground up"
 cta:
   primary:
@@ -56,15 +56,17 @@ features:
     icon: "zap"
 ---
 
+Building this site, two things mattered most. First, not just humans but also AI systems should be able to read and understand this site. Second, it should be naturally accessible to users in any language. These two considerations shaped the site's structure and technical choices.
+
 ## Content architecture
 
-Each project has three document layers: product brief, case study, and design doc. All frontmatter is validated through Zod schemas. Image paths are sanitized. Slugs are type-checked.
+Each project has three document layers: product brief, case study, and design doc. Not just a feature list, but a structure that captures context and decision-making.
 
-Content is managed as MDX files split by locale — 6 languages (EN, ES, PT-BR, ID, JA, KO) with automatic fallback when a translation is missing.
+All frontmatter is validated through Zod schemas. Content is managed as MDX files split by locale — 6 languages (EN, ES, PT-BR, ID, JA, KO) with automatic fallback when a translation is missing.
 
 ## Search visibility
 
-The site targets three discovery channels:
+The site targets three discovery channels — Google search, AI answer engines, and generative AI — so content can be found wherever people look:
 
 - **SEO** — Static generation, semantic HTML, XML sitemap with hreflang alternates, canonical URLs. Lighthouse 95+.
 - **AEO** — JSON-LD schemas (`Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList`) for AI answer engines. RSS feed for content indexing.
@@ -72,4 +74,4 @@ The site targets three discovery channels:
 
 ## Open source
 
-The entire codebase is [open source](https://github.com/zzoohub/zzoo.dev). Built with Next.js 16, React 19, TypeScript, Tailwind CSS v4, deployed to Cloudflare Workers.
+The entire codebase is [open source](https://github.com/zzoohub/zzoo.dev). Built with Next.js 16, React 19, TypeScript, Tailwind CSS v4, deployed to Cloudflare Workers. Anyone can fork it, adapt the content structure, and make it their own.

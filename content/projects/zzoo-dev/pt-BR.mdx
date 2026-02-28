@@ -1,6 +1,6 @@
 ---
-title: "zzoo.dev — Site de Marca Pessoal"
-description: "Um portfólio de desenvolvedor em 6 idiomas, otimizado para motores de busca, motores de resposta e IA generativa. Open source."
+title: "zzoo.dev — Builder Log"
+description: "Um builder log em 6 idiomas, otimizado para motores de busca, motores de resposta e IA generativa. Open source."
 status: "active"
 techStack:
   - Next.js 16
@@ -13,7 +13,7 @@ techStack:
   - Cloudflare Workers
   - shadcn/ui
 tags:
-  - Portfolio
+  - Builder Log
   - Web App
   - Open Source
 featured: true
@@ -21,21 +21,21 @@ launchDate: "2026-01-01"
 links:
   github: "https://github.com/zzoohub/zzoo.dev"
 
-tagline: "Um portfólio de desenvolvedor em 6 idiomas, para humanos e IA igualmente."
+tagline: "Um builder log em 6 idiomas, para humanos e IA igualmente."
 category: "web"
 keywords:
   primary:
-    - "developer portfolio SEO"
-    - "personal branding site for developers"
+    - "developer builder log SEO"
+    - "builder log for developers"
   longTail:
-    - "nextjs developer portfolio template with SEO"
-    - "how to make developer portfolio discoverable by AI"
+    - "nextjs builder log template with SEO"
+    - "how to make developer site discoverable by AI"
 competitors:
-  - name: "Templates de portfólio Next.js"
+  - name: "Templates de sites de desenvolvedor Next.js"
     differentiator: "Templates dão um ponto de partida mas sem arquitetura de conteúdo — este tem um sistema de documentos de 3 camadas (product brief, estudo de caso, design doc) com frontmatter validado por Zod por projeto"
-  - name: "Sites portfólio com Astro"
+  - name: "Sites de desenvolvedor com Astro"
     differentiator: "Astro é rápido mas mono-idioma por padrão — este tem 6 locales com fallback automático, hreflang alternates e conteúdo MDX por locale"
-  - name: "Portfólios Notion / WordPress"
+  - name: "Sites Notion / WordPress"
     differentiator: "Nenhum suporta dados estruturados, schemas JSON-LD ou llms.txt — este site é projetado para SEO, motores de resposta e IA generativa desde a base"
 cta:
   primary:
@@ -56,15 +56,17 @@ features:
     icon: "zap"
 ---
 
+Ao construir este site, duas coisas foram as mais importantes. Primeiro, não apenas humanos mas também sistemas de IA deveriam conseguir ler e entender este site. Segundo, deveria ser naturalmente acessível para usuários em qualquer idioma. Essas duas considerações moldaram a estrutura e as escolhas técnicas do site.
+
 ## Arquitetura de conteúdo
 
-Cada projeto tem três camadas de documentos: product brief, estudo de caso e design doc. Todo o frontmatter é validado por schemas Zod. Caminhos de imagem são sanitizados. Slugs têm verificação de tipo.
+Cada projeto tem três camadas de documentos: product brief, estudo de caso e design doc. Não apenas uma lista de funcionalidades, mas uma estrutura que captura contexto e tomada de decisão.
 
-O conteúdo é gerenciado como arquivos MDX divididos por locale — 6 idiomas (EN, ES, PT-BR, ID, JA, KO) com fallback automático quando uma tradução está faltando.
+Todo o frontmatter é validado por schemas Zod. O conteúdo é gerenciado como arquivos MDX divididos por locale — 6 idiomas (EN, ES, PT-BR, ID, JA, KO) com fallback automático quando uma tradução está faltando.
 
 ## Visibilidade em busca
 
-O site mira três canais de descoberta:
+O site mira três canais de descoberta — busca no Google, motores de resposta de IA e IA generativa — para que o conteúdo seja encontrado onde quer que as pessoas procurem:
 
 - **SEO** — Geração estática, HTML semântico, sitemap XML com hreflang alternates, URLs canônicas. Lighthouse 95+.
 - **AEO** — Schemas JSON-LD (`Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList`) para motores de resposta por IA. Feed RSS para indexação de conteúdo.
@@ -72,4 +74,4 @@ O site mira três canais de descoberta:
 
 ## Open source
 
-A codebase inteira é [open source](https://github.com/zzoohub/zzoo.dev). Construída com Next.js 16, React 19, TypeScript, Tailwind CSS v4, deployada na Cloudflare Workers.
+A codebase inteira é [open source](https://github.com/zzoohub/zzoo.dev). Construída com Next.js 16, React 19, TypeScript, Tailwind CSS v4, deployada na Cloudflare Workers. Qualquer pessoa pode fazer fork, adaptar a estrutura de conteúdo e fazer do jeito dela.

@@ -1,6 +1,6 @@
 ---
-title: "zzoo.dev — Situs Personal Branding"
-description: "Portofolio developer dalam 6 bahasa, dioptimalkan untuk mesin pencari, mesin jawaban, dan AI generatif. Open source."
+title: "zzoo.dev — Builder Log"
+description: "Builder log dalam 6 bahasa, dioptimalkan untuk mesin pencari, mesin jawaban, dan AI generatif. Open source."
 status: "active"
 techStack:
   - Next.js 16
@@ -13,7 +13,7 @@ techStack:
   - Cloudflare Workers
   - shadcn/ui
 tags:
-  - Portfolio
+  - Builder Log
   - Web App
   - Open Source
 featured: true
@@ -21,21 +21,21 @@ launchDate: "2026-01-01"
 links:
   github: "https://github.com/zzoohub/zzoo.dev"
 
-tagline: "Portofolio developer dalam 6 bahasa, untuk manusia dan AI."
+tagline: "Builder log dalam 6 bahasa, untuk manusia dan AI."
 category: "web"
 keywords:
   primary:
-    - "developer portfolio SEO"
-    - "personal branding site for developers"
+    - "developer builder log SEO"
+    - "builder log for developers"
   longTail:
-    - "nextjs developer portfolio template with SEO"
-    - "how to make developer portfolio discoverable by AI"
+    - "nextjs builder log template with SEO"
+    - "how to make developer site discoverable by AI"
 competitors:
-  - name: "Template portofolio Next.js"
+  - name: "Template situs developer Next.js"
     differentiator: "Template memberikan starting point tapi tanpa arsitektur konten — situs ini punya sistem dokumen 3-lapis (product brief, studi kasus, design doc) dengan frontmatter yang divalidasi Zod per proyek"
-  - name: "Situs portofolio Astro"
+  - name: "Situs developer Astro"
     differentiator: "Astro cepat tapi single-language secara default — situs ini menyediakan 6 locale dengan fallback otomatis, hreflang alternate, dan konten MDX per locale"
-  - name: "Portofolio Notion / WordPress"
+  - name: "Situs Notion / WordPress"
     differentiator: "Keduanya nggak support structured data, schema JSON-LD, atau llms.txt — situs ini didesain untuk SEO, mesin jawaban, dan AI generatif dari dasar"
 cta:
   primary:
@@ -56,15 +56,17 @@ features:
     icon: "zap"
 ---
 
+Saat membangun situs ini, dua hal yang paling penting. Pertama, bukan hanya manusia tapi juga sistem AI harus bisa membaca dan memahami situs ini. Kedua, harus bisa diakses secara natural oleh pengguna dalam bahasa apa pun. Dua pertimbangan ini yang menentukan struktur dan pilihan teknis situs.
+
 ## Arsitektur konten
 
-Setiap proyek punya tiga lapis dokumen: product brief, studi kasus, dan design doc. Semua frontmatter divalidasi melalui schema Zod. Path gambar disanitasi. Slug di-type-check.
+Setiap proyek punya tiga lapis dokumen: product brief, studi kasus, dan design doc. Bukan sekadar daftar fitur, tapi struktur yang menangkap konteks dan proses pengambilan keputusan.
 
-Konten dikelola sebagai file MDX yang dibagi per locale — 6 bahasa (EN, ES, PT-BR, ID, JA, KO) dengan fallback otomatis ketika terjemahan belum tersedia.
+Semua frontmatter divalidasi melalui schema Zod. Konten dikelola sebagai file MDX yang dibagi per locale — 6 bahasa (EN, ES, PT-BR, ID, JA, KO) dengan fallback otomatis ketika terjemahan belum tersedia.
 
 ## Visibilitas pencarian
 
-Situs ini menargetkan tiga kanal penemuan:
+Situs ini menargetkan tiga kanal penemuan — pencarian Google, mesin jawaban AI, dan AI generatif — agar konten bisa ditemukan di mana pun orang mencari:
 
 - **SEO** — Static generation, HTML semantik, XML sitemap dengan hreflang alternate, URL kanonikal. Lighthouse 95+.
 - **AEO** — Schema JSON-LD (`Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList`) untuk mesin jawaban AI. Feed RSS untuk pengindeksan konten.
@@ -72,4 +74,4 @@ Situs ini menargetkan tiga kanal penemuan:
 
 ## Open source
 
-Seluruh codebase bersifat [open source](https://github.com/zzoohub/zzoo.dev). Dibangun dengan Next.js 16, React 19, TypeScript, Tailwind CSS v4, di-deploy ke Cloudflare Workers.
+Seluruh codebase bersifat [open source](https://github.com/zzoohub/zzoo.dev). Dibangun dengan Next.js 16, React 19, TypeScript, Tailwind CSS v4, di-deploy ke Cloudflare Workers. Siapa pun bisa fork, sesuaikan struktur kontennya, dan buat versi sendiri.
