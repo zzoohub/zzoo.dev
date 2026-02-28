@@ -10,7 +10,7 @@
 - Full-stack web development (React, Next.js, TypeScript)
 - Solo product development from idea to deployment
 - Scalable web applications and technical architecture
-- Cloudflare Workers deployment
+- Cloud infrastructure and deployment
 
 ## Products
 
@@ -43,7 +43,7 @@
 - Value: Builder log optimized for SEO, AEO, and GEO — discoverable by both humans and AI
 - Target: Developers interested in SEO/AEO/GEO, builders documenting their work
 - Differentiator: Three-pillar search visibility (SEO + AEO + GEO). 6 languages. SSG + edge serving. Open source.
-- Tech: Next.js 16, React 19, TypeScript, Tailwind CSS v4, Cloudflare Workers
+- Tech: Next.js 16, React 19, TypeScript, Tailwind CSS v4, Vercel
 - URL: https://zzoo.dev/en/projects/zzoo-dev
 
 ## Contact
