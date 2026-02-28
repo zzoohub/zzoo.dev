@@ -10,7 +10,7 @@ import {
   getAboutContent,
   hasCaseStudy,
   getCaseStudyContent,
-} from "./content";
+} from ".";
 
 // Mock fs module
 vi.mock("fs", () => ({

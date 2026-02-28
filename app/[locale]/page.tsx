@@ -10,12 +10,12 @@ import {
   buildWebSiteJsonLd,
   buildPersonJsonLd,
 } from "@/lib/seo";
-import { JsonLd } from "@/components/json-ld";
-import { AvailabilityBadge } from "@/components/availability-badge";
-import { Section } from "@/components/section";
-import { ProjectCard } from "@/components/project-card";
-import { Testimonial } from "@/components/testimonial";
-import { CTASection } from "@/components/cta-section";
+import { JsonLd } from "@/components/shared/json-ld";
+import { AvailabilityBadge } from "@/components/shared/availability-badge";
+import { Section } from "@/components/shared/section";
+import { ProjectCard } from "@/components/project/project-card";
+import { Testimonial } from "@/components/shared/testimonial";
+import { CTASection } from "@/components/shared/cta-section";
 
 const descriptions: Record<string, string> = {
   en: "Build the Whole Damn Thing — from idea to deployment.",

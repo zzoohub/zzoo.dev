@@ -1,6 +1,6 @@
 import { siteConfig } from "@/lib/site-config";
 import { Github, Linkedin, Mail } from "lucide-react";
-import { AvailabilityBadge } from "@/components/availability-badge";
+import { AvailabilityBadge } from "@/components/shared/availability-badge";
 
 const socialLinks = [
   { href: siteConfig.social.github, label: "GitHub", icon: Github },

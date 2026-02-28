@@ -6,8 +6,8 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { siteConfig } from "@/lib/site-config";
 import { buildPageMeta } from "@/lib/seo";
-import { AvailabilityBadge } from "@/components/availability-badge";
-import { CopyButton } from "@/components/copy-button";
+import { AvailabilityBadge } from "@/components/shared/availability-badge";
+import { CopyButton } from "@/components/shared/copy-button";
 import { Mail, Github, Linkedin, ArrowUpRight } from "lucide-react";
 
 const channels = [

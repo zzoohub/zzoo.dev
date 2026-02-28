@@ -6,8 +6,8 @@ import { routing } from "@/i18n/routing";
 import { compileMDX } from "next-mdx-remote/rsc";
 import { getAboutContent } from "@/lib/content";
 import { buildPageMeta, buildPersonJsonLd } from "@/lib/seo";
-import { JsonLd } from "@/components/json-ld";
-import { CTASection } from "@/components/cta-section";
+import { JsonLd } from "@/components/shared/json-ld";
+import { CTASection } from "@/components/shared/cta-section";
 import type { ExperienceEntry } from "@/lib/types";
 
 const titles: Record<string, string> = { en: "About", ko: "소개" };

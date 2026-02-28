@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { getAllCaseStudies } from "@/lib/content";
 import { buildPageMeta } from "@/lib/seo";
-import { ProjectCard } from "@/components/project-card";
+import { ProjectCard } from "@/components/project/project-card";
 
 const titles: Record<string, string> = { en: "Projects", ko: "프로젝트" };
 const descriptions: Record<string, string> = {

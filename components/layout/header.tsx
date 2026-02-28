@@ -7,12 +7,7 @@ import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 import { LanguageSwitcher } from "./language-switcher";
 import { cn } from "@/lib/utils";
-
-const navItems = [
-  { href: "/projects", key: "projects" },
-  { href: "/blog", key: "blog" },
-  { href: "/about", key: "about" },
-] as const;
+import { navItems } from "@/lib/site-config";
 
 export function Header() {
   const t = useTranslations("nav");

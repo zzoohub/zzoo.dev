@@ -4,8 +4,8 @@ import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { buildPageMeta } from "@/lib/seo";
-import { AvailabilityBadge } from "@/components/availability-badge";
-import { CTASection } from "@/components/cta-section";
+import { AvailabilityBadge } from "@/components/shared/availability-badge";
+import { CTASection } from "@/components/shared/cta-section";
 
 const titles: Record<string, string> = { en: "Now", ko: "현재" };
 const descriptions: Record<string, string> = {

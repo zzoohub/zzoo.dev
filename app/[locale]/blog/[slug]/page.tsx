@@ -11,11 +11,11 @@ import {
   buildBreadcrumbJsonLd,
   buildCanonicalUrl,
 } from "@/lib/seo";
-import { JsonLd } from "@/components/json-ld";
+import { JsonLd } from "@/components/shared/json-ld";
 import { compileMDX } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import { siteConfig } from "@/lib/site-config";
-import { Comments } from "@/components/comments";
+import { Comments } from "@/components/shared/comments";
 
 export async function generateStaticParams() {
   return routing.locales.flatMap((locale) =>

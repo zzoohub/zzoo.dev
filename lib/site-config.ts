@@ -14,3 +14,9 @@ export const siteConfig = {
     linkedin: "https://linkedin.com/in/zzoo",
   },
 } as const;
+
+export const navItems = [
+  { href: "/projects", key: "projects" },
+  { href: "/blog", key: "blog" },
+  { href: "/about", key: "about" },
+] as const;

@@ -19,18 +19,18 @@ import {
   buildCanonicalUrl,
 } from "@/lib/seo";
 import { siteConfig } from "@/lib/site-config";
-import { JsonLd } from "@/components/json-ld";
-import { D2Diagram } from "@/components/d2-diagram";
-import { ProjectDetailTabs } from "@/components/project-detail-tabs";
-import { ProjectImageGallery } from "@/components/project-image-gallery";
-import { FeatureGrid } from "@/components/feature-grid";
-import { CompetitorComparison } from "@/components/competitor-comparison";
-import { ProductCTA } from "@/components/product-cta";
-import { VideoEmbed } from "@/components/video-embed";
+import { JsonLd } from "@/components/shared/json-ld";
+import { D2Diagram } from "@/components/project/d2-diagram";
+import { ProjectDetailTabs } from "@/components/project/project-detail-tabs";
+import { ProjectImageGallery } from "@/components/project/project-image-gallery";
+import { FeatureGrid } from "@/components/project/feature-grid";
+import { CompetitorComparison } from "@/components/project/competitor-comparison";
+import { ProductCTA } from "@/components/project/product-cta";
+import { VideoEmbed } from "@/components/project/video-embed";
 import { compileMDX } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import type { CaseStudyMeta } from "@/lib/types";
-import { Comments } from "@/components/comments";
+import { Comments } from "@/components/shared/comments";
 
 const mdxOptions = {
   parseFrontmatter: false,
