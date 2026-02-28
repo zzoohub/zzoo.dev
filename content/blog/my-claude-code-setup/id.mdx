@@ -1,6 +1,6 @@
 ---
 title: "Tim Satu Orang"
-description: "Yang sebenarnya kamu butuhkan dari sebuah tim bukan lebih banyak orang. Tapi lebih banyak perspektif yang diterapkan secara konsisten."
+description: "Bisakah satu orang punya tim? Jawabannya bukan soal merekrut."
 date: "2026-02-17"
 tags:
   - claude-code
@@ -10,79 +10,77 @@ tags:
 draft: false
 ---
 
-Bagian tersulit dari menjadi solo developer bukan yang orang-orang kira. Bukan soal beban kerja. Bukan soal kesepian. Masalahnya adalah kamu cuma bisa berpikir dengan satu cara pada satu waktu.
+Bisakah satu orang punya tim?
 
-Saat kamu tenggelam dalam sebuah feature, memikirkan state management dan flow UI, kamu tidak spontan berhenti untuk berpikir seperti DBA. "Apakah tabel ini punya foreign key yang benar? Apakah schema ini akan bertahan saat datanya seratus ribu baris?" Kamu tahu pertanyaan-pertanyaan itu penting. Kamu bahkan tahu jawabannya, dalam banyak kasus. Tapi saat kamu sedang membangun, ya kamu sedang membangun. Otakmu tidak melakukan audit keamanan dengan sendirinya. Otak siapapun tidak. Itulah mengapa tim ada.
+Aku menghabiskan berbulan-bulan dengan pertanyaan ini karena jawabannya tampak jelas. Tim adalah sekelompok orang. Kamu merekrut mereka. Masing-masing membawa keahlian berbeda. Orang keamanan menangkap apa yang orang produk lewatkan. DBA mempertanyakan schema yang developer frontend bahkan tidak pikirkan. Satu orang tidak bisa jadi tim.
 
-Setidaknya, itulah yang dulu kupikir. Bahwa tim ada supaya ada lebih banyak orang. Tapi sepertinya kata "tim" menunjuk ke sesuatu yang lebih spesifik dari yang kita sadari. Yang sebenarnya kamu mau dari sebuah tim bukan lebih banyak badan di kursi. Yang kamu mau adalah lebih banyak perspektif yang diterapkan secara konsisten. Engineer keamanan bukan berharga karena dia orang kedua di ruangan. Dia berharga karena melihat setiap perubahan kode melalui lensa yang kamu tidak punya, dan melakukannya setiap saat, bukan cuma saat dia sedang mood.
+Kecuali kata "tim" menunjuk ke sesuatu yang lebih spesifik dari yang kita sadari. Yang sebenarnya kamu mau dari tim bukan lebih banyak orang. Tapi perspektif yang diterapkan secara konsisten. Engineer keamanan bukan berharga karena dia orang tambahan di ruangan. Dia berharga karena melihat kodemu melalui lensa yang kamu tidak punya, dan melakukannya setiap saat — bukan cuma saat sedang mood.
 
-Pembedaan ini penting karena membuka pertanyaan nyata: kalau yang kamu butuhkan adalah perspektif yang konsisten, apakah kamu benar-benar butuh manusia untuk itu?
+Pembedaan ini membuka pintu. Bisakah kamu mendapat banyak perspektif konsisten tanpa banyak orang?
 
-Aku menjalankan beberapa produk sebagai developer solo. Setup Claude Code-ku mengubah cara kerjaku dengan cara yang tidak kuduga. Bukan membuatku lebih cepat menulis kode. Tapi menciptakan sesuatu yang benar-benar terasa seperti punya rekan kerja dengan keahlian spesifik. Kejutannya bukan bahwa AI bisa bantu coding. Kejutannya adalah bahwa konfigurasi yang tepat menghasilkan sesuatu yang secara kualitatif berbeda dari "kamu yang lebih cepat."
+Aku menjalankan beberapa produk sebagai solo developer. Bagian tersulit dulu adalah perpindahan konteks — bukan cuma antara pemikiran keamanan, database, dan UX, tapi lebih jauh. Arah produk. Analitik. Growth. Marketing. Kamu bisa belajar semua itu. Kamu tidak bisa menerapkannya secara bersamaan. Saat kamu tenggelam mengimplementasi feature, kamu tidak berhenti memikirkan churn rate. Saat menulis kode, kamu tidak spontan merencanakan strategi peluncuran. Itulah mengapa perusahaan punya departemen.
 
-Biar kujelaskan bagian-bagiannya. Masing-masing sederhana. Komposisinya yang menghasilkan sesuatu tak terduga.
+Setup Claude Code-ku mengubah ini. Bukan dengan membuatku lebih cepat di apa yang sudah kulakukan. Tapi dengan menciptakan sesuatu yang benar-benar terasa seperti departemen — perspektif yang persisten dan terspesialisasi yang terlibat dengan pekerjaanku, kuminta atau tidak. Kejutannya bukan bahwa AI membantu coding. Kejutannya adalah konfigurasi yang tepat memberimu product manager, engineer keamanan, marketer, dan data analyst. Secara bersamaan. Secara konsisten.
+
+Biar kujelaskan arsitekturnya, karena masing-masing bagian sederhana. Komposisinya yang menghasilkan sesuatu tak terduga.
 
 ## Konstitusi
 
-Setiap proyek dimulai dengan file bernama `CLAUDE.md` di root. Aku menganggapnya sebagai konstitusi: aturan fundamental tentang bagaimana AI berperilaku di codebase itu. File ini mendefinisikan tech stack, pola arsitektur, batasan, dan yang paling krusial, skill dan agent mana yang harus digunakan di setiap perubahan.
-
-Pola inti yang muncul di semua proyekku:
+Setiap proyek dimulai dengan file bernama `CLAUDE.md` di root — konstitusi untuk bagaimana AI berperilaku di codebase itu. Mendefinisikan tech stack, pola arsitektur, batasan, dan skill serta agent mana yang harus digunakan di setiap perubahan. Pola inti yang muncul di semua proyekku:
 
 ```
 1. Semua implementasi HARUS menggunakan skill yang ditentukan
-2. Setelah implementasi, jalankan DUA agent SECARA PARALEL:
-   - security-reviewer -> audit -> perbaikan
-   - tester -> tes kode yang berubah -> perbaikan
+2. Setelah implementasi, jalankan dua agent secara paralel:
+   - security-reviewer → audit → perbaikan
+   - verifier → jalankan test, E2E, verifikasi browser → laporan
 ```
 
-Ini bukan saran. Ini aturan keras. Claude Code membaca file ini di awal setiap sesi. Tidak perlu diingatkan. Setiap feature, setiap fix, setiap refactor melewati pipeline yang sama. Konstitusi yang memaksanya.
+Ini bukan saran. Ini aturan keras yang tertanam di DNA proyek. Claude Code membaca file ini di awal setiap sesi. Tidak perlu diingatkan.
 
-Proyek berbeda mendapat konstitusi berbeda. Situs Next.js-ku mewajibkan skill React best practices resmi dari Vercel. API Rust-ku mewajibkan skill `axum` dan `postgresql`. Tapi pass paralel keamanan-dan-testing bersifat universal. Tanpa pengecualian. Tanpa "nanti saja tesnya."
+Tapi konstitusi melakukan lebih dari memaksakan quality gate. Ia mendefinisikan pipeline skill — urutan paksa yang spesifik untuk setiap jenis pekerjaan. Membangun API? Desain database dulu, lalu spesifikasi API, lalu implementasi dengan pola query framework. Feature web? Design system, lalu pola komposisi, lalu optimisasi performa. Setiap workflow adalah perjalanan paksa melewati best practice yang terakumulasi, dalam urutan yang benar, setiap kali.
 
-Efeknya halus tapi mendalam. Dulu aku tipe developer yang menulis test kalau lagi rajin dan melakukan review keamanan kalau ingat. Sekarang sistemnya tidak memberi opsi itu. Konsistensi bukan lagi soal disiplin. Ini soal struktur.
+Dulu aku tipe developer yang menulis test kalau rajin dan melakukan review keamanan kalau ingat. Sekarang sistemnya tidak memberi opsi itu. Konsistensi berhenti jadi masalah disiplin dan menjadi struktural.
 
 ## Skill sebagai batasan
 
-Aku punya 21 skill di tujuh domain: arsitektur, web framework, mobile, backend, database, AI/ML, dan kualitas. Beberapa kutulis sendiri. Beberapa datang dari pembuat framework.
+Aku punya 29 skill, dan di sinilah jadi menarik: hampir setengahnya tidak ada hubungannya dengan kode.
 
-Vercel mendistribusikan skill resmi Claude Code untuk React best practices. Empat puluh lima aturan dalam delapan kategori. Pencegahan waterfall, optimisasi bundle, pola server-side, pencegahan re-render. Orang-orang yang membangun framework-nya mengkodekan persis bagaimana mereka ingin kamu menggunakannya.
+Yang jelas adalah yang teknis. Desain arsitektur. Pemodelan database. Spesifikasi API. Pola frontend. Pengembangan mobile. Internasionalisasi. Checklist keamanan. Web 3D. Vercel mendistribusikan skill resmi Claude Code untuk React best practices — 45 aturan dalam delapan kategori. Pembuat framework mengkodekan bagaimana mereka ingin kamu menggunakan alat mereka. Bukan panduan yang mungkin kamu baca. Guardrail yang tidak bisa kamu abaikan.
 
-Pikir tentang apa artinya itu. Bertahun-tahun, best practice tinggal di dokumentasi yang developer mungkin atau mungkin tidak baca. Post blog yang kedaluwarsa. Talk konferensi yang setengah diingat. Sekarang pembuat framework mendistribusikan batasan yang bisa dibaca mesin, yang wajib diikuti AI. Bukan panduan yang mungkin kamu baca. Guardrail yang tidak bisa kamu abaikan.
+Tapi di sampingnya ada skill untuk copywriting, email marketing, konten media sosial, kreatif iklan, strategi harga, analisis kompetitor, optimisasi konversi, pencegahan churn, visibilitas pencarian, product brief, dan PRD.
 
-Perbedaan kunci antara skill dan dokumentasi: dokumentasi mendeskripsikan. Skill membatasi. Saat Claude Code memuat skill checklist keamanan, dia tidak sekadar tahu tentang OWASP top 10. Dia dipaksa memeriksa setiap item. Saat memuat skill database, tidak sekadar tahu tentang query N+1. Dia wajib mencarinya. Perbedaan antara tahu dan dipaksa adalah perbedaan antara buku teks dan rekan kerja yang tidak mau approve sampai pekerjaannya memenuhi standarnya.
+Aku tidak merencanakannya. Mulai membangun skill untuk kualitas kode dan tidak berhenti. Arsitektur yang sama yang mencegah SQL injection ternyata juga mencegah copy marketing yang buruk. Skill bukan dokumentasi — dokumentasi mendeskripsikan, skill membatasi. Saat Claude Code memuat checklist keamanan, ia dipaksa memeriksa setiap item OWASP. Saat memuat skill copywriting, ia dipaksa mengikuti prinsip persuasi dan pedoman brand voice. Perbedaan antara tahu dan dipaksa adalah perbedaan antara buku teks dan rekan kerja yang tidak mau approve sampai pekerjaannya memenuhi standarnya.
 
 ## Tim virtual
 
-Di sinilah perasaan "tim" benar-benar muncul. Aku menjalankan tujuh agent: sub-proses terspesialisasi yang menangani tugas spesifik secara otonom.
+Di sinilah perasaan "tim" benar-benar muncul. Aku menjalankan tujuh agent yang diorganisir dalam tiga departemen.
 
-Reviewer keamanan berjalan setelah setiap implementasi. Memindai injeksi, kebocoran secret, race condition, IDOR. Mengklasifikasikan temuan berdasarkan severity. Apa pun yang menyentuh logika pembayaran atau autentikasi di-eskalasi langsung ke aku, karena ada keputusan yang tidak boleh diotomatisasi. Agent ini punya disposisi engineer keamanan paling paranoid yang pernah kamu temui, kecuali dia tidak pernah lelah paranoid.
+**Dev** punya dua agent. Security reviewer berjalan setelah setiap implementasi, memindai injeksi, kebocoran secret, race condition, dan cacat kontrol akses. Mengklasifikasikan berdasarkan severity dan mengeskalasi apapun yang menyentuh pembayaran atau autentikasi — ada keputusan yang tidak boleh diotomatisasi. Verifier menjalankan seluruh test suite dengan coverage, mengeksekusi test E2E, lalu membuka browser nyata untuk memeriksa UI berfungsi dengan benar. Tidak menulis test. Memvalidasi yang ada dan melaporkan persis apa yang rusak. Keduanya berjalan paralel di setiap perubahan.
 
-Tester menargetkan cakupan penuh: baris, branch, fungsi, statement. Menganalisis apa yang berubah, merencanakan strategi test, menulis test, menjalankannya, dan iterasi sampai cakupan lengkap. Satu aturan ketat: tidak pernah memodifikasi kode aplikasi. Hanya file test. Batasan ini penting karena artinya tester harus bekerja dengan apa pun yang diberikan implementasi, sama seperti QA asli yang tidak bisa "perbaiki saja kodenya biar bisa dites."
+**Plan** punya dua agent. Product manager menulis product brief dan PRD — pembingkaian masalah, metrik sukses, persyaratan detail. UX designer menangani arsitektur informasi, alur pengguna, dan desain interaksi, berdasarkan prinsip kognitif dan standar aksesibilitas. Saat aku memulai feature baru, keduanya mendefinisikan apa yang akan dibangun sebelum satu baris kode ditulis.
 
-Reviewer database mengambil perspektif DBA senior. Pertanyaan intinya: "Apakah schema ini akan bertahan menghadapi kenyataan?" Foreign key yang hilang, strategi ID yang campur aduk, denormalisasi tanpa dokumentasi, anti-pattern serba-nullable. Migrasi multi-tabel di-eskalasi. Perubahan strategi primary key di-eskalasi. Dia mengajukan pertanyaan yang akan kulupakan saat aku fokus pada feature.
+**Biz** punya tiga agent. Ini bagian yang tidak kuduga. Data analyst terhubung ke PostHog dan menghasilkan laporan analitik mingguan, menjalankan analisis retensi, dan membuat rekomendasi Kill/Keep/Scale untuk feature. Growth optimizer merancang program referral, mengoptimasi funnel konversi, dan menangani pencegahan churn. Marketer membangun strategi peluncuran, menulis kalender konten, dan mengelola positioning kompetitif.
 
-Lalu ada engineer UI, auditor web vitals, desainer UX, dan copywriter. Masing-masing dengan lensanya sendiri. Yang mengejutkanku adalah setiap agent mewujudkan perspektif yang secara teori aku punya tapi tidak bisa kupertahankan secara bersamaan. Aku tahu keamanan penting. Aku tahu cakupan test penting. Aku tahu desain schema penting. Tapi saat aku tenggelam membangun sesuatu, aku memikirkan apa yang sedang kubangun. Agent-agent ini tidak punya masalah itu. Mereka cuma memikirkan satu hal mereka, dan mereka melakukannya setiap kali.
+Pikir tentang apa artinya itu. Saat aku membangun feature, security reviewer dan verifier memeriksa kode. Tapi sebelumnya, product manager dan UX designer mendefinisikan apa yang dibangun. Dan setelah deploy, data analyst mengukur dampak, growth optimizer bereksperimen dengan konversi, dan marketer mengurus distribusi. Perencanaan, pembangunan, verifikasi, pengukuran, pertumbuhan. Agent spesialis di setiap tahap.
 
 ## Jaringan penghubung
 
-Skill dan agent akan berguna sendirian. Yang membuat mereka terasa seperti tim adalah jaringan penghubung: MCP server yang menghubungkan Claude Code ke sistem nyata yang kugunakan.
+Yang membuat agent-agent ini terasa seperti rekan kerja, bukan script, adalah koneksi mereka ke sistem nyata. Dua puluh satu plugin menyediakan infrastruktur — tiga server LSP memberi kecerdasan level tipe untuk TypeScript, Python, dan Rust. Plugin framework dari Expo, Pulumi, dan Vercel membawa konvensi mereka sendiri. Plugin utilitas menangani pembuatan diagram, penyederhanaan kode, dan pembuatan skill baru.
 
-Context7 memberinya dokumentasi terkini dari library mana pun, jadi tidak pernah bekerja dari pengetahuan basi. Playwright membuatnya bisa mengendalikan browser untuk testing dan verifikasi. Sentry menyalurkan error produksi langsung ke sesi debugging, jadi saat sesuatu rusak jam 2 pagi, konteksnya sudah ada saat aku duduk di depan komputer pagi harinya. Neon membuatnya bisa menjalankan migrasi, menginspeksi schema, dan mengoptimalkan query tanpa aku copy-paste antar terminal. GitHub memberi akses penuh ke PR, issue, dan code search. Cloudflare membuatnya bisa mengelola Workers, KV store, dan database D1.
+Di atasnya, server MCP menghubungkan agent ke sistem hidup yang mereka butuhkan. Context7 menyediakan dokumentasi library secara real-time. Playwright mengendalikan browser untuk testing. Sentry menyalurkan error produksi ke sesi debugging. PostHog memberi data analyst analytics langsung. Neon menangani migrasi database. GitHub memberi akses penuh ke PR dan issue. Cloudflare mengelola Workers dan edge storage. Supabase, Slack, Gmail, dan Google Calendar mengisi sisanya.
 
-Setiap koneksi secara individual sederhana. Tapi bersama-sama artinya Claude Code beroperasi dengan konteks yang sama seperti yang dimiliki anggota tim manusia. Tidak bekerja terisolasi, menebak-nebak soal database produksi atau rate error terbaru. Terhubung ke sistem yang hidup.
+Setiap koneksi itu sederhana. Bersama-sama artinya data analyst tidak menebak metrik — ia mengquery data nyata. Verifier tidak menebak apakah UI berfungsi — ia membuka browser dan memeriksa.
 
 ## Efek compound
 
-Inilah yang tidak kuduga. Setiap bagian, secara individual, modest. Checklist keamanan. Seperangkat aturan React. Proses review DBA. Integrasi error tracking. Kalau kamu lihat salah satunya saja, kamu akan pikir: oke, tapi itu cuma checklist.
+Setiap bagian secara individual modest. Checklist keamanan. Aturan React. Dashboard analitik. Playbook marketing. Salah satunya terlihat seperti sekadar checklist.
 
-Efek compound-nya yang mengejutkan. Saat reviewer keamanan berjalan paralel dengan tester, dan keduanya punya akses ke analisis schema dari reviewer database, dan semuanya beroperasi di bawah batasan skill spesifik framework, dan semua itu terhubung ke data produksi secara real-time via MCP server, hasilnya bukan jumlah bagian-bagiannya. Ini sesuatu yang secara kualitatif berbeda. Ini standar kualitas yang tetap konsisten di setiap perubahan, di setiap proyek, tidak peduli aku sedang bersemangat atau kelelahan, fokus atau buyar.
+Kejutannya adalah apa yang terjadi saat mereka ber-compound. Saat security reviewer berjalan paralel dengan verifier, dan keduanya beroperasi di bawah batasan skill spesifik framework, dan product manager mendefinisikan persyaratan, dan data analyst akan mengukur hasilnya, dan marketer akan mendistribusikannya, dan semua itu terhubung ke sistem produksi hidup — hasilnya bukan jumlah bagian-bagiannya. Ini operasi yang tetap konsisten di setiap perubahan, setiap proyek, entah aku sedang berenergi atau kelelahan.
 
-Ini sebenarnya lebih konsisten daripada kebanyakan tim manusia yang pernah kutempati. Tim manusia punya hari buruk. Orang memotong jalan di bawah tekanan deadline. Engineer senior yang biasanya menangkap semuanya sedang distraksi karena lagi interview di tempat lain. Standar kualitas berfluktuasi. Standar tim agent-ku tidak berfluktuasi karena bersifat struktural, bukan motivasional.
+Investasinya nyata. Dua puluh sembilan skill, tujuh agent dalam tiga departemen, dua puluh satu plugin, konstitusi detail untuk setiap proyek. Berminggu-minggu setup. Tapi investasinya di sistem, bukan di proyek individual manapun. Setiap proyek baru otomatis mendapat manfaat. Biaya marginal mempertahankan operasi ini di proyek baru mendekati nol.
 
-Investasinya nyata. Membangun 21 skill, mengonfigurasi 7 agent, menulis konstitusi detail untuk setiap proyek. Butuh berminggu-minggu. Tapi investasinya di sistem, bukan di proyek individual mana pun. Sekarang setiap proyek baru, setiap feature baru, otomatis mendapat manfaat dari keahlian yang terakumulasi. Biaya marginal untuk mempertahankan kualitas setingkat tim di proyek baru mendekati nol.
+Bisakah satu orang punya tim? Yang kupunya bukan tim dalam pengertian manusia. Ini sesuatu yang belum punya nama bagus — tiga departemen perspektif terspesialisasi yang terlibat dengan setiap karya yang kuhasilkan. Bukan cuma kode, tapi keputusan produk, analitik, marketing, eksperimen growth. Tidak bisa mempertanyakan apakah aku memecahkan masalah yang tepat. Tidak bisa membawa perspektif dari pengalaman hidup yang sama sekali berbeda.
 
-Kembali ke pertanyaan awal. Bisakah satu orang punya tim? Yang kupunya bukan tim dalam pengertian manusia. Ini sesuatu baru yang belum punya nama bagus. Ini sekumpulan perspektif yang persisten, terspesialisasi, dan konsisten yang terlibat dengan setiap karya yang kuhasilkan. Dia tidak bisa punya intuisi yang datang dari pengalaman hidup yang benar-benar berbeda dari rekan kerja manusia. Tidak bisa mempertanyakan arah produk itu sendiri. Tidak bisa memberitahuku bahwa aku sedang menyelesaikan masalah yang salah.
-
-Tapi untuk pekerjaan spesifik mempertahankan kualitas di berbagai dimensi secara bersamaan, di setiap perubahan, tanpa pengecualian, sementara satu orang melakukan pekerjaan kreatif dan strategis, tidak ada yang pernah kualami yang mendekati ini.
+Tapi untuk menjaga kualitas dan konsistensi operasional di seluruh siklus hidup produk, sementara satu orang melakukan pemikiran kreatif dan strategis? Tidak ada yang pernah kualami yang mendekati.
 
 Setup-nya adalah investasi. Return-nya ber-compound dari sana.

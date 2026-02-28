@@ -1,6 +1,6 @@
 ---
 title: "Um time de um"
-description: "O que você realmente quer de um time não são mais pessoas. São mais perspectivas aplicadas com consistência."
+description: "Uma pessoa pode ter um time? A resposta não tem a ver com contratar."
 date: "2026-02-17"
 tags:
   - claude-code
@@ -10,81 +10,77 @@ tags:
 draft: false
 ---
 
-A coisa mais difícil de ser um desenvolvedor solo não é o que a maioria das pessoas imagina. Não é a quantidade de trabalho. Não é a solidão. É que você só consegue pensar de um jeito por vez.
+Uma pessoa pode ter um time?
 
-Quando você está imerso numa feature, pensando em estados de componente e fluxos de usuário, você não para espontaneamente para pensar como um DBA. "Essa tabela tem as foreign keys certas? Esse schema vai aguentar cem mil registros?" Você sabe que essas perguntas importam. Você até sabe as respostas, na maioria dos casos. Mas quando está construindo, está construindo. Seu cérebro não faz auditoria de segurança por conta própria. O de ninguém faz. É por isso que times existem.
+Passei meses nessa pergunta porque a resposta parecia óbvia. Um time é um grupo de pessoas. Você contrata. Cada um traz uma expertise diferente. A pessoa de segurança pega o que a de produto não vê. O DBA questiona schemas que o dev frontend nem considera. Uma pessoa sozinha não pode ser um time.
 
-Ou pelo menos, era isso que eu pensava. Que times existiam para ter mais pessoas. Mas acho que a palavra "time" aponta para algo mais preciso do que percebíamos. O que você realmente quer de um time não são mais corpos em cadeiras. São mais perspectivas aplicadas de forma consistente. A engenheira de segurança é valiosa não porque é uma segunda pessoa na sala. É valiosa porque olha cada mudança no código por uma lente que você não tem, e faz isso sempre, não só quando está com vontade.
+Só que a palavra "time" apontava pra algo mais específico do que a gente imaginava. O que você realmente quer de um time não são mais pessoas. São mais perspectivas aplicadas de forma consistente. A engenheira de segurança não é valiosa porque é mais um corpo na cadeira. É valiosa porque olha seu código por uma lente que você não tem, e faz isso toda vez — não só quando está com vontade.
 
-Essa distinção importa porque abre uma pergunta real: se o que você precisa são perspectivas consistentes, você precisa mesmo de pessoas para isso?
+Essa distinção abre uma porta. Dá pra conseguir múltiplas perspectivas consistentes sem múltiplas pessoas?
 
-Eu toco vários produtos como desenvolvedor solo. Minha configuração de Claude Code mudou a forma como trabalho de um jeito que não esperava. Não me deixou mais rápido escrevendo código. Criou algo que genuinamente parece ter colegas com expertise específico. A surpresa não é que IA pode ajudar a programar. A surpresa é que a configuração certa produz algo qualitativamente diferente de "um você mais rápido." Cria perspectivas persistentes e especializadas que se engajam com seu trabalho quer você lembre de pedir ou não.
+Toco vários produtos como developer solo. A parte mais difícil costumava ser a troca de contexto — não só entre pensamento de segurança, banco de dados e UX, mas indo além. Direção de produto. Analytics. Growth. Marketing. Dá pra aprender tudo isso. Não dá pra aplicar tudo ao mesmo tempo. Quando você está imerso implementando uma feature, não para pra pensar na taxa de churn. Quando está escrevendo código, não planeja espontaneamente uma estratégia de lançamento. É por isso que empresas têm departamentos.
+
+Meu setup de Claude Code mudou isso. Não me deixando mais rápido no que já faço. Mas criando algo que genuinamente parece departamentos — perspectivas persistentes e especializadas que se envolvem com meu trabalho, eu pedindo ou não. A surpresa não é que IA ajuda a programar. A surpresa é que a configuração certa te dá um product manager, um engenheiro de segurança, um marketer e um analista de dados. Simultaneamente. Consistentemente.
 
 Cada peça é simples. É a composição que faz algo inesperado.
 
 ## A constituição
 
-Todo projeto começa com um arquivo chamado `CLAUDE.md` na raiz. Eu penso nele como uma constituição: as regras fundamentais de como a IA se comporta naquele código. Define o stack, padrões de arquitetura, restrições, e o mais importante, quais skills e agentes devem ser usados em cada mudança.
-
-O padrão central que aparece em todos os meus projetos é:
+Todo projeto começa com um arquivo chamado `CLAUDE.md` na raiz — uma constituição pra como a IA se comporta naquele codebase. Define o stack, padrões de arquitetura, restrições, e quais skills e agentes devem ser usados em cada mudança. O padrão central que aparece em todos os meus projetos:
 
 ```
 1. Toda implementação DEVE usar os skills especificados
-2. Depois de implementar, rodar DOIS agentes EM PARALELO:
-   - security-reviewer -> auditoria -> correção
-   - tester -> testar código alterado -> correção
+2. Depois de implementar, rodar dois agentes em paralelo:
+   - security-reviewer → auditoria → correção
+   - verifier → rodar testes, E2E, verificação no browser → relatório
 ```
 
-Isso não é sugestão. É regra dura. Claude Code lê esse arquivo no início de cada sessão. Não precisa ser lembrado. Cada feature, cada fix, cada refactor passa pelo mesmo pipeline. A constituição garante.
+Não é sugestão. É regra dura gravada no DNA do projeto. Claude Code lê esse arquivo no início de cada sessão. Não precisa ser lembrado.
 
-Projetos diferentes recebem constituições diferentes. Meu site Next.js exige o skill oficial de React best practices da Vercel. Minha API Rust exige skills de `axum` e `postgresql`. Meu app React Native exige skills específicos de mobile. Mas o passe paralelo de segurança e testes é universal. Sem exceção. Sem "coloco testes depois."
+Mas a constituição faz mais do que impor gates de qualidade. Define pipelines de skills — sequências forçadas específicas pra cada tipo de trabalho. Construindo uma API? Design de banco de dados primeiro, depois especificação da API, depois implementação com padrões de query do framework. Feature web? Design system, depois padrões de composição, depois otimização de performance. Cada workflow é uma marcha forçada pelas melhores práticas acumuladas, na ordem certa, toda vez.
 
-O efeito é sutil mas profundo. Eu era o tipo de desenvolvedor que escrevia testes quando tinha vontade e fazia revisão de segurança quando lembrava. Agora o sistema não me dá essa opção. Consistência não é mais questão de disciplina. É estrutura.
+Eu era o tipo de dev que escrevia testes quando dava vontade e fazia review de segurança quando lembrava. Agora o sistema não me dá essa opção. Consistência deixou de ser um problema de disciplina e virou estrutural.
 
 ## Skills como restrições
 
-Tenho 21 skills em sete domínios: arquitetura, frameworks web, mobile, backend, bancos de dados, IA/ML e qualidade. Alguns escrevi eu mesmo. Outros vêm dos criadores dos frameworks.
+Tenho 29 skills, e aqui fica interessante: quase metade não tem nada a ver com código.
 
-A Vercel distribui skills oficiais de Claude Code para melhores práticas de React. Quarenta e cinco regras em oito categorias. Prevenção de cascata, otimização de bundles, padrões server-side, prevenção de re-renders. As pessoas que construíram o framework codificaram exatamente como querem que você o use.
+Os óbvios são técnicos. Design de arquitetura. Modelagem de banco de dados. Especificações de API. Padrões de frontend. Desenvolvimento mobile. Internacionalização. Checklists de segurança. Web 3D. A Vercel distribui skills oficiais de Claude Code pra melhores práticas de React — 45 regras em oito categorias. Os autores do framework codificaram como querem que você use as ferramentas deles. Não são guias que você talvez leia. São barreiras que você não consegue ignorar.
 
-Pensa no que isso significa. Durante anos, melhores práticas moravam em documentação que desenvolvedores podiam ou não ler. Posts de blog que ficavam desatualizados. Palestras de conferência meio lembradas. Agora os autores de frameworks estão distribuindo restrições legíveis por máquina que a IA é obrigada a seguir. Não são guias que você talvez leia. São barreiras que você não consegue ignorar.
+Mas junto a eles existem skills de copywriting, email marketing, conteúdo pra redes sociais, criativos de anúncio, estratégia de preço, análise de concorrentes, otimização de conversão, prevenção de churn, visibilidade em buscadores, product briefs e PRDs.
 
-Eu espero que isso se torne uma das mudanças mais significativas na forma como frameworks são adotados. Quando toda biblioteca importante distribuir um skill, a qualidade base de código assistido por IA sobe no geral. Meus skills customizados preenchem as lacunas hoje. Os oficiais vão cobrir a maior parte eventualmente.
-
-O ponto chave sobre skills é que eles não são documentação. Documentação descreve. Skills restringem. Quando Claude Code carrega um skill de checklist de segurança, ele não apenas sabe sobre OWASP top 10. Ele é compelido a verificar cada item. Quando carrega o skill de banco de dados, não apenas sabe sobre queries N+1. É obrigado a procurá-las. A diferença entre saber e ser obrigado é a diferença entre um livro-texto e um colega que não assina até o trabalho atender ao padrão dele.
+Não planejei isso. Comecei fazendo skills pra qualidade de código e não parei. A mesma arquitetura que previne SQL injection acabou prevenindo copy de marketing ruim igualmente bem. Um skill não é documentação — documentação descreve, skill restringe. Quando Claude Code carrega o checklist de segurança, é obrigado a verificar cada item OWASP. Quando carrega o skill de copywriting, é obrigado a seguir princípios de persuasão e diretrizes de voz de marca. A diferença entre saber e ser obrigado é a diferença entre um livro-texto e um colega que não aprova até o trabalho atingir o padrão dele.
 
 ## O time virtual
 
-É aqui que a sensação de "time" realmente aparece. Rodo sete agentes: sub-processos especializados que lidam com tarefas específicas de forma autônoma.
+Aqui é onde a sensação de "time" realmente aparece. Rodo sete agentes organizados em três departamentos.
 
-O revisor de segurança roda depois de cada implementação. Escaneia injeções, exposição de segredos, race conditions, IDOR. Classifica achados por severidade. Escala pra mim qualquer coisa que toque lógica de pagamento ou autenticação, porque certas decisões não devem ser automatizadas. Esse agente tem a disposição do engenheiro de segurança mais paranoico com quem você já trabalhou, só que nunca se cansa de ser paranoico.
+**Dev** tem dois agentes. O security reviewer roda depois de cada implementação, escaneando injeções, exposição de secrets, race conditions e falhas de controle de acesso. Classifica por severidade e escala tudo que toca pagamento ou autenticação — certas decisões não devem ser automatizadas. O verifier roda a suite completa de testes com cobertura, executa testes E2E, e abre um browser real pra verificar que a UI funciona corretamente. Não escreve testes. Valida o que existe e reporta exatamente o que quebrou. Esses dois rodam em paralelo em toda mudança.
 
-O tester mira cobertura total: linhas, branches, funções, statements. Analisa o que mudou, planeja uma estratégia de teste, escreve testes, roda e itera até completar a cobertura. Uma regra estrita: nunca modifica código de aplicação. Só arquivos de teste. Essa restrição importa porque significa que o tester tem que trabalhar com o que a implementação dá, igual um QA real que não pode "dar um jeito no código pra ficar testável."
+**Plan** tem dois agentes. O product manager escreve product briefs e PRDs — definição de problema, métricas de sucesso, requisitos detalhados. A UX designer cuida de arquitetura de informação, fluxos de usuário e design de interação, baseada em princípios cognitivos e padrões de acessibilidade. Quando começo uma feature nova, esses dois definem o que vai ser construído antes de uma linha de código ser escrita.
 
-O revisor de banco de dados assume a perspectiva de um DBA senior. Pergunta central: "Esse schema vai sobreviver a realidade?" Foreign keys faltando, estratégias mistas de ID, desnormalização sem documentar, o anti-padrão de tudo-nullable. Migrações multi-tabela são escaladas. Mudanças de estratégia de primary key são escaladas. Faz as perguntas que eu esqueceria quando estou focado em features.
+**Biz** tem três agentes. Essa é a parte que eu não esperava. O data analyst conecta no PostHog e produz relatórios analíticos semanais, roda análise de retenção e faz recomendações Kill/Keep/Scale sobre features. O growth optimizer projeta programas de referral, otimiza funis de conversão e cuida de prevenção de churn. O marketer monta estratégias de lançamento, escreve calendários de conteúdo e gerencia posicionamento competitivo.
 
-Cada agente encarna uma perspectiva que eu teoricamente tenho mas não consigo manter simultaneamente. Sei que segurança importa. Sei que cobertura de teste importa. Sei que design de schema importa. Mas quando estou imerso construindo uma feature, estou pensando na feature. Esses agentes não têm esse problema. Só pensam na coisa deles, e pensam toda vez.
+Pensa no que isso significa. Quando construo uma feature, o security reviewer e o verifier checam o código. Mas antes disso, o product manager e a UX designer definiram o que construir. E depois do deploy, o data analyst mede o impacto, o growth optimizer experimenta com conversão, e o marketer resolve distribuição. Planejar, construir, verificar, medir, crescer. Agentes especializados em cada etapa.
 
 ## O tecido conectivo
 
-Skills e agentes seriam úteis sozinhos. O que os faz parecer um time é o tecido conectivo: MCP servers que plugam Claude Code nos sistemas reais que uso.
+O que faz esses agentes parecerem colegas em vez de scripts é a conexão com sistemas reais. Vinte e um plugins fornecem a infraestrutura — três servidores LSP dão inteligência em nível de tipo pra TypeScript, Python e Rust. Plugins de frameworks do Expo, Pulumi e Vercel trazem suas próprias convenções. Plugins utilitários cuidam de geração de diagramas, simplificação de código e criação de novos skills.
 
-Context7 dá documentação atualizada de qualquer biblioteca, então nunca trabalha com conhecimento obsoleto. Playwright permite controlar um navegador pra testes e verificação. Sentry canaliza erros de produção diretamente pras sessões de debug, então quando algo quebra de madrugada, o contexto já está lá quando sento pra trabalhar de manhã. Neon permite rodar migrações, inspecionar schemas e tunar queries sem eu copiar e colar entre terminais. GitHub dá acesso completo a PRs, issues e busca de código. Cloudflare permite gerenciar Workers, KV stores e bancos D1.
+Por cima disso, servidores MCP conectam os agentes aos sistemas vivos que precisam. Context7 fornece documentação de bibliotecas em tempo real. Playwright controla um browser pra testes. Sentry canaliza erros de produção pras sessões de debug. PostHog alimenta o data analyst com analytics ao vivo. Neon cuida de migrações de banco de dados. GitHub dá acesso completo a PRs e issues. Cloudflare gerencia Workers e armazenamento edge. Supabase, Slack, Gmail e Google Calendar cobrem o resto.
 
-Cada conexão é individualmente simples. Juntas significam que Claude Code opera com o mesmo contexto que um membro humano do time teria. Não trabalha isolado, adivinhando sobre o banco de produção ou as taxas de erro mais recentes. Está conectado ao sistema vivo.
+Cada conexão é simples. Juntas significam que o data analyst não adivinha métricas — consulta dados reais. O verifier não adivinha se a UI funciona — abre um browser e verifica.
 
 ## O efeito composto
 
-Cada peça, individualmente, é modesta. Uma checklist de segurança. Um conjunto de regras de React. Um processo de revisão de DBA. Uma integração de error tracking. Olhando qualquer uma delas isoladamente, você pensaria: legal, mas é só uma checklist.
+Cada peça isoladamente é modesta. Um checklist de segurança. Regras de React. Um dashboard analítico. Um playbook de marketing. Qualquer uma delas parece só um checklist.
 
-O efeito composto é o que surpreende. Quando o revisor de segurança roda em paralelo com o tester, e ambos têm acesso à análise de schema do revisor de banco de dados, e todos operam sob as restrições de skills específicos do framework, e tudo isso está conectado a dados de produção em tempo real via MCP servers, o resultado não é a soma das partes. É algo qualitativamente diferente. É um padrão de qualidade que se mantém consistente em cada mudança, em cada projeto, esteja eu energizado ou exausto, focado ou disperso.
+A surpresa é o que acontece quando se compõem. Quando o security reviewer roda em paralelo com o verifier, e ambos operam sob restrições de skills específicos do framework, e o product manager definiu os requisitos, e o data analyst vai medir os resultados, e o marketer vai distribuir, e tudo isso está conectado a sistemas de produção ao vivo — o resultado não é a soma das partes. É uma operação que se mantém consistente em cada mudança, cada projeto, esteja eu cheio de energia ou exausto.
 
-Isso é mais consistente que a maioria dos times humanos em que trabalhei. Times humanos têm dias ruins. Pessoas cortam caminhos sob pressão de prazo. O engenheiro senior que normalmente pega tudo está distraído porque está entrevistando pra outra empresa. O padrão de qualidade flutua. O do meu time de agentes não flutua porque é estrutural, não motivacional.
+O investimento foi real. Vinte e nove skills, sete agentes em três departamentos, vinte e um plugins, constituições detalhadas pra cada projeto. Semanas de setup. Mas o investimento foi no sistema, não em nenhum projeto individual. Cada projeto novo se beneficia automaticamente. O custo marginal de manter essa operação num projeto novo é perto de zero.
 
-O investimento foi real. Construir 21 skills, configurar 7 agentes, escrever constituições detalhadas pra cada projeto. Levou semanas. Mas o investimento foi no sistema, não em nenhum projeto individual. Agora cada projeto novo, cada feature nova, se beneficia automaticamente do expertise acumulado. O custo marginal de manter qualidade de time num projeto novo é perto de zero.
+Uma pessoa pode ter um time? O que tenho não é um time no sentido humano. É algo que ainda não tem um bom nome — três departamentos de perspectivas especializadas que se envolvem com cada peça de trabalho que produzo. Não só o código, mas as decisões de produto, o analytics, o marketing, os experimentos de growth. Não consegue questionar se estou resolvendo o problema certo. Não consegue trazer a perspectiva de uma experiência de vida completamente diferente.
 
-Volto à pergunta original. Um time de um é possível? O que tenho não é um time no sentido humano. É algo novo que ainda não tem um bom nome. É um conjunto de perspectivas persistentes, especializadas e consistentes que se engajam com cada pedaço de trabalho que produzo. Não pode ter a intuição que vem da experiência de vida completamente diferente de um colega humano. Não pode questionar a direção do produto. Não pode me dizer que estou resolvendo o problema errado.
+Mas pra manter qualidade e consistência operacional ao longo de todo o ciclo de vida de um produto, enquanto uma pessoa faz o pensamento criativo e estratégico? Nada que experimentei chega perto.
 
-Mas para o trabalho específico de manter qualidade em múltiplas dimensões simultaneamente, em cada mudança, sem exceção, enquanto uma pessoa faz o trabalho criativo e estratégico, nada do que experimentei chega perto.
-
-A configuração é o investimento. Os retornos se compõem a partir daí.
+O setup é o investimento. Os retornos se compõem a partir daí.

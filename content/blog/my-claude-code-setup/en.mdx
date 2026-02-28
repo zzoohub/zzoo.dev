@@ -12,81 +12,75 @@ draft: false
 
 Can one person have a team?
 
-I've been thinking about this question for months because the answer used to be obvious. A team is a group of people. You hire them. They bring different expertise. The security person catches what the product person misses. The DBA questions schemas the frontend developer never thinks about. One person can be talented, but one person can't be a team.
+I spent months on this question because the answer seemed obvious. A team is a group of people. You hire them. Each brings different expertise. The security person catches what the product person misses. The DBA questions schemas the frontend developer never considers. One person can't be a team.
 
-Except now I think that's wrong. Or at least, the word "team" was pointing at something more specific than we realized. What you actually want from a team isn't multiple people. It's multiple perspectives applied consistently. The security engineer isn't valuable because she's a second body in a chair. She's valuable because she looks at your code through a lens you don't have, and she does it every time, not just when she's in the mood.
+Except the word "team" was pointing at something more specific than we realized. What you want from a team isn't people. It's perspectives applied consistently. A security engineer is valuable not because she's another body in a chair, but because she looks at your code through a lens you don't have, and she does it every time — not when she feels like it.
 
-That distinction matters because it opens a question: can you get multiple consistent perspectives without multiple people?
+That distinction opens a door. Can you get multiple consistent perspectives without multiple people?
 
-I run several products as a solo developer. Six months ago I would have said the hardest part was context-switching between security thinking, database thinking, UX thinking, and actually building things. You can learn all those skills, but you can't apply them all simultaneously. When you're deep in implementing a feature, you don't spontaneously pause and think like a DBA. Nobody does. That's why teams exist.
+I run several products as a solo developer. The hardest part used to be context-switching — not just between security thinking, database thinking, and UX thinking, but further out. Product direction. Analytics. Growth. Marketing. You can learn all of these. You can't apply them simultaneously. When you're deep in implementing a feature, you don't pause to think about your churn rate. When you're writing code, you don't spontaneously plan a launch strategy. That's why companies have departments.
 
-My Claude Code setup changed this. Not by making me faster at the things I already do, but by creating what genuinely feels like colleagues with specific expertise. The surprise isn't that AI can help you code. The surprise is that the right configuration creates something qualitatively different from "a faster you." It creates persistent, specialized perspectives that engage with your work whether you remember to ask or not.
+My Claude Code setup changed this. Not by making me faster at what I already do. By creating what genuinely feels like departments — persistent, specialized perspectives that engage with my work whether I ask or not. The surprise isn't that AI helps you code. The surprise is that the right configuration gives you a product manager, a security engineer, a marketer, and a data analyst. Simultaneously. Consistently.
 
 Let me explain the architecture, because individually the pieces are simple. It's the composition that does something unexpected.
 
 ## The Constitution
 
-Every project starts with a file called `CLAUDE.md` at the root. I think of it as a constitution for how the AI behaves in that codebase. It defines the tech stack, architecture patterns, constraints, and most critically, which skills and agents must be used for every change. Here's the core pattern that appears in every one of mine:
+Every project starts with `CLAUDE.md` at the root — a constitution for how the AI behaves in that codebase. It defines the tech stack, architecture patterns, constraints, and which skills and agents must be used for every change. The core pattern that appears in all of mine:
 
 ```
 1. All implementation MUST use specified skills
-2. After implementation, run TWO agents IN PARALLEL:
-   - security-reviewer -> audit -> fix
-   - tester -> test changed code -> fix
+2. After implementation, run two agents in parallel:
+   - security-reviewer → audit → fix
+   - verifier → run tests, E2E, browser verify → report
 ```
 
-This isn't a suggestion. It's a hard rule, baked into the project's DNA. Claude Code reads this file at the start of every session. It doesn't need to be reminded. Every feature, every bug fix, every refactor goes through the same pipeline. The constitution enforces it.
+This isn't a suggestion. It's a hard rule baked into the project's DNA. Claude Code reads this file at the start of every session. It doesn't need reminding.
 
-Different projects get different constitutions. My Next.js site mandates Vercel's React best practices skill. My Rust API mandates `axum` and `postgresql` skills. My React Native app mandates mobile-specific skills. But the security-and-testing parallel pass is universal. No exceptions, no "I'll add tests later."
+But the constitution does more than enforce quality gates. It defines skill pipelines — forced sequences specific to each type of work. Building an API? Database design first, then API specification, then implementation with framework-specific query patterns. Building a web feature? Design system, then composition patterns, then performance optimization. Each workflow is a forced march through accumulated best practices, in the right order, every time.
 
-The effect of this is subtle but profound. I used to be the kind of developer who wrote tests when I felt like it and did security reviews when I remembered. Now the system doesn't give me that option. Consistency isn't a matter of discipline anymore. It's structural.
+I used to write tests when I felt like it and do security reviews when I remembered. Now the system doesn't give me that option. Consistency stopped being a discipline problem and became a structural one.
 
 ## Skills as Constraints
 
-I have 21 skills across seven domains: architecture, web frameworks, mobile, backend, databases, AI/ML, and quality. Some I wrote myself. Some come from framework vendors, which is where things get interesting.
+I run 29 skills, and here's where it gets interesting: nearly half of them have nothing to do with code.
 
-Vercel ships official Claude Code skills for React best practices. Forty-five rules across eight categories. Waterfall prevention, bundle optimization, server-side patterns, re-render avoidance. The people who built the framework encoded exactly how they want you to use it.
+The obvious ones are technical. Architecture design. Database modeling. API specifications. Frontend patterns. Mobile development. Internationalization. Security checklists. 3D web. Vercel ships official Claude Code skills for React best practices — 45 rules across eight categories. The framework authors encoded how they want you to use their tools. Not guidelines you might read. Guardrails you can't ignore.
 
-Think about what that means. For years, best practices lived in documentation that developers might or might not read. Blog posts that went out of date. Conference talks that people half-remembered. Now the framework authors are shipping machine-readable constraints that the AI must follow. Not guidelines you might read. Guardrails you can't ignore.
+But sitting alongside those are skills for copywriting, email marketing, social media content, ad creative, pricing strategy, competitor analysis, conversion optimization, churn prevention, search visibility, product briefs, and PRDs.
 
-I expect this to become one of the most significant shifts in how frameworks are adopted. When every major library ships a skill, the baseline quality of AI-assisted code rises across the board. My custom skills fill the gaps today. The official ones will eventually cover most of it.
-
-The key insight about skills is that they're not documentation. Documentation describes. Skills constrain. When Claude Code loads a security checklist skill, it doesn't just know about OWASP top 10. It's compelled to check for every item. When it loads the database skill, it doesn't just know about N+1 queries. It's required to look for them. The difference between knowing and being compelled is the difference between a textbook and a colleague who won't sign off until the work meets their standard.
+I didn't plan this. I started building skills for code quality and kept going. The same architecture that prevents SQL injection turned out to prevent bad marketing copy just as well. A skill isn't documentation — documentation describes, skills constrain. When Claude Code loads the security checklist, it's compelled to check every OWASP item. When it loads the copywriting skill, it's compelled to follow persuasion principles and voice guidelines. The difference between knowing and being compelled is the difference between a textbook and a colleague who won't sign off until the work meets their standard.
 
 ## The Virtual Team
 
-This is where the "team" feeling really emerges. I run seven agents, which are specialized sub-processes that handle specific tasks autonomously.
+This is where the "team" feeling really emerges. I run seven agents organized into three departments.
 
-The security reviewer runs after every implementation. It scans for injection vulnerabilities, secrets exposure, race conditions, IDOR. It classifies findings by severity. It escalates anything touching payment logic or authentication directly to me, because some decisions shouldn't be automated. This agent has the disposition of the most paranoid security engineer you've ever worked with, except it never gets tired of being paranoid.
+**Dev** has two agents. The security reviewer runs after every implementation, scanning for injection vulnerabilities, secrets exposure, race conditions, and access control flaws. It classifies by severity and escalates anything touching payment or authentication — some decisions shouldn't be automated. The verifier runs the full test suite with coverage, executes E2E tests, then opens a real browser to check the UI works correctly. It doesn't write tests. It validates what exists and reports exactly what broke. These two run in parallel on every change.
 
-The tester targets 100% coverage across lines, branches, functions, and statements. It analyzes what changed, plans a test strategy, writes tests, runs them, and iterates until coverage is complete. One strict rule: it never modifies application code. Only test files. This constraint is important because it means the tester has to work with whatever the implementation gives it, just like a real QA engineer who doesn't get to "just fix the code to make it testable."
+**Plan** has two agents. The product manager writes product briefs and PRDs — problem framing, success metrics, detailed requirements. The UX designer handles information architecture, user flows, and interaction design, grounded in cognitive principles and accessibility standards. When I start a new feature, these two define what gets built before a line of code is written.
 
-The database reviewer takes a senior DBA perspective. Its core question: "Will this schema survive reality?" It checks for missing foreign key constraints, mixed ID strategies, undocumented denormalization, the nullable-everything anti-pattern. Multi-table migrations get escalated. PK strategy changes get escalated. It asks the questions I would forget to ask when I'm focused on features.
+**Biz** has three agents. This is the part I didn't expect. The data analyst connects to PostHog and produces weekly analytics reports, runs retention analysis, and makes Kill/Keep/Scale recommendations on features. The growth optimizer designs referral programs, optimizes conversion funnels, and handles churn prevention. The marketer builds launch strategies, writes content calendars, and manages competitive positioning.
 
-Then there's the UI engineer (pure components, zero business logic), the web vitals auditor (automated Lighthouse on every change), the UX designer (first-principles interaction design), and the copywriter (persuasive microcopy with A/B variations). The UX designer and copywriter work as a pipeline: design the flow first, then hand it off for the words.
-
-What strikes me is that each of these agents embodies a perspective I theoretically have but can't maintain simultaneously. I know security matters. I know test coverage matters. I know schema design matters. But when I'm deep in building a feature, I'm thinking about the feature. These agents don't have that problem. They only think about their one thing, and they think about it every time.
+Think about what that means. When I build a feature, the security reviewer and verifier check the code. But before that, the product manager and UX designer defined what to build. And after deployment, the data analyst measures impact, the growth optimizer experiments with conversion, and the marketer figures out distribution. Plan, build, verify, measure, grow. Specialized agents at every stage.
 
 ## The Connective Tissue
 
-Skills and agents would be useful on their own. What makes them feel like a team is the connective tissue: MCP servers that plug Claude Code into the actual systems I use.
+What makes these agents feel like colleagues rather than scripts is their connection to real systems. Twenty-one plugins provide the infrastructure — three LSP servers give type-level intelligence for TypeScript, Python, and Rust. Framework plugins from Expo, Pulumi, and Vercel bring their own conventions. Utility plugins handle diagram generation, code simplification, and building new skills.
 
-Context7 gives it real-time documentation for any library, so it's never working from stale knowledge. Playwright lets it drive a browser for testing and verification. Sentry pipes production errors directly into debugging sessions, so when something breaks at 2 AM, the context is already there when I sit down in the morning. Neon lets it run migrations, inspect schemas, and tune queries without me copying and pasting between terminals. GitHub gives it full access to PRs, issues, and code search. Cloudflare lets it manage Workers, KV stores, and D1 databases.
+On top of that, MCP servers connect agents to the living systems they need. Context7 provides real-time library documentation. Playwright drives a browser for testing. Sentry pipes production errors into debugging sessions. PostHog feeds live analytics to the data analyst. Neon handles database migrations. GitHub gives full access to PRs and issues. Cloudflare manages Workers and edge storage. Supabase, Slack, Gmail, and Google Calendar fill in the rest.
 
-Each of these connections is individually simple. But together they mean Claude Code operates with the same context a human team member would have. It's not working in isolation, guessing about the production database or the latest error rates. It's connected to the living system.
+Each connection is simple. Together they mean the data analyst isn't guessing about metrics — it's querying real data. The verifier isn't guessing if the UI works — it's opening a browser and checking.
 
 ## The Compound Effect
 
-Here's what I didn't expect. Each piece, individually, is modest. A security checklist. A set of React rules. A DBA review process. An error tracking integration. If you looked at any one of them, you'd think: that's nice, but it's just a checklist.
+Each piece individually is modest. A security checklist. React rules. An analytics dashboard. A marketing playbook. Any one of them looks like just a checklist.
 
-The compound effect is what surprises. When the security reviewer runs in parallel with the tester, and both have access to the database reviewer's schema analysis, and all of them operate under the constraints of framework-specific skills, and all of that is connected to live production data through MCP servers, the result isn't the sum of the parts. It's something qualitatively different. It's a quality bar that stays consistent across every change, in every project, regardless of whether I'm energized or exhausted, focused or scattered.
+The surprise is what happens when they compound. When the security reviewer runs in parallel with the verifier, and both operate under framework-specific skill constraints, and the product manager defined the requirements, and the data analyst will measure the results, and the marketer will distribute it, and all of that connects to live production systems — the result isn't the sum of the parts. It's an operation that stays consistent across every change, every project, whether I'm energized or exhausted.
 
-This is actually more consistent than most human teams I've worked on. Human teams have bad days. People cut corners under deadline pressure. The senior engineer who usually catches everything is distracted because they're interviewing for a new role. The quality bar fluctuates. My agent team's quality bar doesn't fluctuate because it's structural, not motivational.
+The investment was real. Twenty-nine skills, seven agents across three departments, twenty-one plugins, detailed constitutions for each project. Weeks of setup. But the investment was in the system, not in any individual project. Every new project automatically benefits. The marginal cost of maintaining this operation on a new project is close to zero.
 
-The investment was real. Building 21 skills, configuring 7 agents, writing detailed constitutions for each project. That took weeks. But the investment was in the system, not in any individual project. Now every new project, every new feature, automatically benefits from the accumulated expertise. The marginal cost of maintaining team-level quality on a new project is close to zero.
+Can one person have a team? What I have isn't a team in the human sense. It's something that doesn't have a good name yet — three departments of specialized perspectives that engage with every piece of work I produce. Not just the code, but the product decisions, the analytics, the marketing, the growth experiments. It can't push back on whether I'm solving the right problem. It can't bring insight from a completely different life experience.
 
-I keep coming back to the original question. Can one person have a team? I think the honest answer is: what I have isn't a team in the human sense. It's something new that doesn't have a good name yet. It's a set of persistent, specialized, consistent perspectives that engage with every piece of work I produce. It's more reliable than the teams I've been on, in some specific ways, and obviously less capable in others. It can't have the insight that comes from a human colleague's completely different life experience. It can't push back on the product direction itself. It can't tell me I'm solving the wrong problem.
-
-But for the specific job of maintaining quality across multiple dimensions simultaneously, on every change, without exception, while a single person does the creative and strategic work? Nothing I've experienced comes close.
+But for maintaining quality and operational consistency across the full lifecycle of a product, while one person does the creative and strategic thinking? Nothing I've experienced comes close.
 
 The setup is the investment. The returns compound from there.
