@@ -1,6 +1,6 @@
 ---
 title: "zzoo.dev — パーソナルブランディングサイト"
-description: "人間とAIエンジンの両方に対応した開発者ポートフォリオ。SEO + AEO + GEO最適化、バイリンガル対応、静的生成、オープンソース。"
+description: "AIエージェントが構築した開発者ポートフォリオ。6言語対応、検索エンジン・回答エンジン・生成AI同時最適化。オープンソース。"
 status: "active"
 techStack:
   - Next.js 16
@@ -21,7 +21,7 @@ launchDate: "2026-01-01"
 links:
   github: "https://github.com/zzoohub/zzoo.dev"
 
-tagline: "人間とAIエンジンの両方に対応した開発者ポートフォリオ。"
+tagline: "AIエージェントが構築した開発者ポートフォリオ、6言語で。"
 category: "web"
 keywords:
   primary:
@@ -31,44 +31,45 @@ keywords:
     - "nextjs developer portfolio template with SEO"
     - "how to make developer portfolio discoverable by AI"
 competitors:
-  - name: "Generic portfolio templates"
-    differentiator: "ほとんどのテンプレートは見た目は良いがSEOスコアが低い — このサイトは検索エンジン、AI回答エンジン、生成AIに初日から最適化されている"
-  - name: "WordPress portfolios"
-    differentiator: "WordPressは重くて遅い — このサイトは静的生成でエッジ配信、Lighthouseスコア95以上を達成"
-  - name: "Notion portfolios"
-    differentiator: "NotionではSEOや構造化データのカスタマイズができない — このサイトにはJSON-LDスキーマ、llms.txt、完全なi18nが備わっている"
+  - name: "Next.jsポートフォリオテンプレート"
+    differentiator: "テンプレートは出発点を提供するがコンテンツアーキテクチャがない — このサイトはプロジェクトごとに3層ドキュメントシステム（プロダクトブリーフ、ケーススタディ、設計ドキュメント）とZod検証フロントマターを備えている"
+  - name: "Astroポートフォリオサイト"
+    differentiator: "Astroは高速だがデフォルトで単一言語 — このサイトは自動フォールバック、hreflang代替、ロケール別MDXコンテンツで6言語を提供"
+  - name: "Notion / WordPressポートフォリオ"
+    differentiator: "いずれも構造化データ、JSON-LDスキーマ、llms.txtに未対応 — このサイトはSEO、回答エンジン、生成AIを設計段階から組み込んでいる"
 cta:
   primary:
     label: "GitHubでソースを見る"
     url: "https://github.com/zzoohub/zzoo.dev"
 features:
+  - title: "6言語"
+    description: "EN、ES、PT-BR、ID、JA、KOの完全i18n。自動ロケールフォールバックとhreflang代替。"
+    icon: "globe"
+  - title: "3層プロジェクトドキュメント"
+    description: "各プロジェクトにプロダクトブリーフ、ケーススタディ、設計ドキュメント — すべてZod検証、独立翻訳。"
+    icon: "layers"
   - title: "SEO + AEO + GEO"
-    description: "従来の検索、AI回答エンジン、生成AIの3チャネルに同時最適化"
-    icon: "globe"
+    description: "JSON-LDスキーマ、llms.txt、RSSフィード、セマンティックHTML — 検索、回答エンジン、生成AI同時最適化。"
+    icon: "search"
   - title: "エッジ配信SSG"
-    description: "すべてのページを静的生成し、Cloudflareのグローバルエッジから配信。Lighthouse 95+。"
+    description: "全ページ静的生成、Cloudflare Workersから配信。Lighthouse 95+。"
     icon: "zap"
-  - title: "バイリンガル（EN/KO）"
-    description: "next-intlによる完全なi18n。hreflang代替、ロケール別コンテンツ、自動ルーティング。"
-    icon: "globe"
 ---
 
-## 見えない開発者の問題
+## このサイト自体がケーススタディ
 
-素晴らしいものを作っているのに誰にも見つけてもらえない。ポートフォリオの月間アクセスはほんの十数回で、しかもすべてURLを既に知っている人からのものだ。その一方で、潜在的なクライアントや採用担当者はGoogle検索し、ChatGPTに質問し、Perplexityであなたのような開発者を探している。
+ほとんどの開発者ポートフォリオはプロジェクトを紹介する。このサイトはそれ自体がプロジェクトだ。
 
-サイトがこれらのチャネルに最適化されていなければ、あなたのスキルを求めている人の99%にとって、あなたは存在しないも同然だ。
+zzoo.devはブログで説明しているAIワークフロー — 29のスキル、7つのエージェント、3つの部門が[CLAUDE.md憲法](/ja/blog/my-claude-code-setup)を通じて動作するシステム — で構築されている。今読んでいるすべてのページがそのシステムで制作、セキュリティレビュー、検証された。このサイトは単なるポートフォリオではない。一人の人間がAI駆動開発でプロダクションレベルの多言語製品を出荷できるという生きた証拠だ。
 
-## 3つの発見チャネルに対応
+## 何が違うのか
 
-zzoo.devは単なるきれいなポートフォリオではない。発見されるように設計されている：
+**テンプレートではなくコンテンツアーキテクチャ。** このポートフォリオの各プロジェクトには3つのドキュメントレイヤーがある：プロダクトブリーフ、ケーススタディ、設計ドキュメント。すべてのフロントマターはZodスキーマで検証される。画像パスはサニタイズされる。スラグは型チェックされる。プロジェクトページを付け足したブログテンプレートではない — 深さのために設計されたコンテンツシステムだ。
 
-**SEO** — 静的生成ページ、セマンティックHTML、hreflang付きXMLサイトマップ、正規URL。インデックス登録を確実にする技術基盤。
+**2言語ではなく6言語。** すべてのコンテンツは英語、スペイン語、ポルトガル語、インドネシア語、日本語、韓国語で存在する — 翻訳がない場合は自動ロケールフォールバックが機能する。フィーチャーフラグではない。スケールするコンテンツパイプラインだ。
 
-**AEO** — JSON-LDスキーマ（`Person`、`WebSite`、`BlogPosting`、`SoftwareApplication`、`BreadcrumbList`）がAI回答エンジンにあなたの専門性に関する構造化されたコンテキストを提供する。
+**3つの発見チャネルに対応。** SEOでインデックスされる。AEO（`Person`、`WebSite`、`BlogPosting`、`SoftwareApplication`のJSON-LDスキーマ）で回答エンジンに引用される。GEO（`llms.txt` + クリーンなMDX）で生成AIに正確に紹介される。ほとんどのポートフォリオはこのうち1つだけ。このサイトは3つすべてに対応している。
 
-**GEO** — `llms.txt`とクリーンなMDXコンテンツにより、「アプリを作れる人は？」と聞かれた時に生成AIエンジンがあなたの仕事を正確に紹介できる。
+## オープンソース
 
-## オープンソース、フォーク歓迎
-
-コードベース全体がオープンソース。Next.js 16、React 19、TypeScript、Tailwind CSS v4で構築し、Cloudflare Workersにデプロイ。クローンして、カスタマイズして、あなた自身のバージョンを公開しよう。
+コードベース全体がオープンソース。クローンして、コンテンツアーキテクチャを学び、AIワークフローを応用しよう。本当の価値はテンプレートではなく、その背後にあるシステムだ。

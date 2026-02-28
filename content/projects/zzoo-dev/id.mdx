@@ -1,6 +1,6 @@
 ---
 title: "zzoo.dev — Situs Personal Branding"
-description: "Portofolio developer yang dibangun untuk manusia dan mesin AI. Dioptimalkan untuk SEO + AEO + GEO, bilingual, statically generated, dan open source."
+description: "Portofolio developer yang dibangun oleh agen AI, dalam 6 bahasa, dan dioptimalkan untuk mesin pencari, mesin jawaban, dan AI generatif. Open source."
 status: "active"
 techStack:
   - Next.js 16
@@ -21,7 +21,7 @@ launchDate: "2026-01-01"
 links:
   github: "https://github.com/zzoohub/zzoo.dev"
 
-tagline: "Portofolio developer yang dibangun untuk manusia dan mesin AI."
+tagline: "Portofolio developer yang dibangun oleh agen AI, dalam 6 bahasa."
 category: "web"
 keywords:
   primary:
@@ -31,44 +31,45 @@ keywords:
     - "nextjs developer portfolio template with SEO"
     - "how to make developer portfolio discoverable by AI"
 competitors:
-  - name: "Generic portfolio templates"
-    differentiator: "Kebanyakan template terlihat bagus tapi skor SEO-nya jelek — yang ini dioptimalkan untuk pencarian, mesin jawaban AI, dan AI generatif sejak hari pertama"
-  - name: "WordPress portfolios"
-    differentiator: "WordPress berat dan lambat — situs ini statically generated, disajikan dari edge, dan skor Lighthouse 95+"
-  - name: "Notion portfolios"
-    differentiator: "Notion nggak bisa dikustomisasi untuk SEO atau structured data — situs ini punya schema JSON-LD, llms.txt, dan i18n lengkap"
+  - name: "Template portofolio Next.js"
+    differentiator: "Template memberikan starting point tapi tanpa arsitektur konten — situs ini punya sistem dokumen 3-lapis (product brief, studi kasus, design doc) dengan frontmatter yang divalidasi Zod per proyek"
+  - name: "Situs portofolio Astro"
+    differentiator: "Astro cepat tapi single-language secara default — situs ini menyediakan 6 locale dengan fallback otomatis, hreflang alternate, dan konten MDX per locale"
+  - name: "Portofolio Notion / WordPress"
+    differentiator: "Keduanya nggak support structured data, schema JSON-LD, atau llms.txt — situs ini didesain untuk SEO, mesin jawaban, dan AI generatif dari dasar"
 cta:
   primary:
     label: "Lihat Source di GitHub"
     url: "https://github.com/zzoohub/zzoo.dev"
 features:
+  - title: "6 Bahasa"
+    description: "i18n lengkap untuk EN, ES, PT-BR, ID, JA, KO dengan fallback locale otomatis dan hreflang alternate."
+    icon: "globe"
+  - title: "Dokumen Proyek 3-Lapis"
+    description: "Setiap proyek punya product brief, studi kasus, dan design doc — semua divalidasi Zod dan diterjemahkan secara independen."
+    icon: "layers"
   - title: "SEO + AEO + GEO"
-    description: "Dioptimalkan secara bersamaan untuk pencarian tradisional, mesin jawaban AI, dan AI generatif"
-    icon: "globe"
+    description: "Schema JSON-LD, llms.txt, feed RSS, HTML semantik — dioptimalkan untuk pencarian, mesin jawaban, dan AI generatif."
+    icon: "search"
   - title: "SSG di Edge"
-    description: "Setiap halaman statically generated, disajikan dari edge global Cloudflare. Lighthouse 95+."
+    description: "Setiap halaman statically generated, disajikan dari Cloudflare Workers. Lighthouse 95+."
     icon: "zap"
-  - title: "Bilingual (EN/KO)"
-    description: "i18n lengkap dengan next-intl. Hreflang alternate, konten per locale, routing otomatis."
-    icon: "globe"
 ---
 
-## Masalah developer yang nggak terlihat
+## Situs ini sendiri adalah studi kasus
 
-Kamu bikin hal-hal hebat tapi nggak ada yang nemuin kamu. Portofoliomu cuma dapat belasan kunjungan per bulan — semuanya dari orang yang sudah punya URL-mu. Sementara itu, calon klien dan hiring manager sedang mencari di Google, bertanya ke ChatGPT, atau browsing Perplexity untuk developer sepertimu.
+Kebanyakan portofolio developer menampilkan proyek. Yang ini adalah proyeknya.
 
-Kalau situsmu nggak dioptimalkan untuk kanal-kanal ini, kamu nggak terlihat oleh 99% orang yang mencari skill-mu.
+zzoo.dev dibangun dengan workflow AI yang sama yang dijelaskan di blog — 29 skill, 7 agen, 3 departemen yang beroperasi melalui [konstitusi CLAUDE.md](/id/blog/my-claude-code-setup). Setiap halaman yang sedang kamu baca diproduksi, di-review keamanannya, dan diverifikasi oleh sistem itu. Situs ini bukan sekadar portofolio. Ini adalah bukti nyata bahwa satu orang bisa mengirimkan produk multilingual level produksi menggunakan pengembangan berbasis AI.
 
-## Dibangun untuk tiga kanal penemuan
+## Apa yang membuatnya berbeda
 
-zzoo.dev bukan sekadar portofolio yang cantik. Ini di-engineer untuk ditemukan:
+**Arsitektur konten, bukan template.** Setiap proyek di portofolio ini punya tiga lapis dokumen: product brief, studi kasus, dan design doc. Semua frontmatter divalidasi melalui schema Zod. Path gambar disanitasi. Slug di-type-check. Ini bukan template blog dengan halaman proyek yang ditempelkan — ini adalah sistem konten yang di-engineer untuk kedalaman.
 
-**SEO** — Halaman statically generated, HTML semantik, XML sitemap dengan hreflang, URL kanonikal. Fondasi teknis yang bikin kamu terindeks.
+**Enam bahasa, bukan dua.** Setiap konten ada dalam bahasa Inggris, Spanyol, Portugis, Indonesia, Jepang, dan Korea — dengan fallback locale otomatis ketika terjemahan belum tersedia. Ini bukan feature flag. Ini pipeline konten yang bisa di-scale.
 
-**AEO** — Schema JSON-LD (`Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList`) memberikan konteks terstruktur kepada mesin jawaban AI tentang keahlianmu.
+**Dibangun untuk tiga kanal penemuan.** SEO bikin kamu terindeks. AEO (schema JSON-LD untuk `Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`) bikin kamu dikutip mesin jawaban. GEO (`llms.txt` + MDX bersih) bikin kamu direpresentasikan akurat oleh AI generatif. Kebanyakan portofolio cuma handle satu dari ini. Yang ini handle ketiganya.
 
-**GEO** — `llms.txt` dan konten MDX yang bersih memungkinkan mesin AI generatif merepresentasikan karyamu secara akurat saat seseorang bertanya "siapa yang bisa bikin aplikasi saya?"
+## Open source
 
-## Open source, siap di-fork
-
-Seluruh codebase bersifat open source. Dibangun dengan Next.js 16, React 19, TypeScript, Tailwind CSS v4, dan di-deploy ke Cloudflare Workers. Clone, kustomisasi, dan kirim versimu sendiri.
+Seluruh codebase bersifat open source. Clone, pelajari arsitektur kontennya, adaptasi workflow AI-nya. Nilai sebenarnya bukan template — tapi sistem di baliknya.

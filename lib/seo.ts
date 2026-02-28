@@ -206,7 +206,7 @@ export function buildProjectJsonLd(options: ProjectJsonLdOptions) {
       priceCurrency: "USD",
     },
     ...(options.techStack?.length
-      ? { applicationCategory: options.techStack.join(", ") }
+      ? { programmingLanguage: options.techStack.join(", ") }
       : {}),
     ...(options.keywords?.length
       ? { keywords: options.keywords.join(", ") }

@@ -1,6 +1,6 @@
 ---
 title: "zzoo.dev — Personal Branding Site"
-description: "A developer portfolio built for humans and AI engines alike. SEO + AEO + GEO optimized, bilingual, statically generated, and open source."
+description: "A developer portfolio built by AI agents, served in 6 languages, and engineered for search engines, answer engines, and generative AI. Open source."
 status: "active"
 techStack:
   - Next.js 16
@@ -21,7 +21,7 @@ launchDate: "2026-01-01"
 links:
   github: "https://github.com/zzoohub/zzoo.dev"
 
-tagline: "A developer portfolio built for humans and AI engines alike."
+tagline: "A developer portfolio built by AI agents, in 6 languages."
 category: "web"
 keywords:
   primary:
@@ -31,44 +31,45 @@ keywords:
     - "nextjs developer portfolio template with SEO"
     - "how to make developer portfolio discoverable by AI"
 competitors:
-  - name: "Generic portfolio templates"
-    differentiator: "Most templates look nice but score poorly on SEO — this one is optimized for search, AI answer engines, and generative AI from day one"
-  - name: "WordPress portfolios"
-    differentiator: "WordPress is heavy and slow — this is statically generated, served from the edge, and scores 95+ on Lighthouse"
-  - name: "Notion portfolios"
-    differentiator: "Notion can't be customized for SEO or structured data — this site has JSON-LD schemas, llms.txt, and full i18n"
+  - name: "Next.js portfolio templates"
+    differentiator: "Templates give you a starting point but no content architecture — this has a 3-layer document system (product brief, case study, design doc) with Zod-validated frontmatter per project"
+  - name: "Astro portfolio sites"
+    differentiator: "Astro is fast but single-language by default — this ships 6 locales with automatic fallback, hreflang alternates, and per-locale MDX content"
+  - name: "Notion / WordPress portfolios"
+    differentiator: "Neither supports structured data, JSON-LD schemas, or llms.txt — this site is engineered for SEO, answer engines, and generative AI from the ground up"
 cta:
   primary:
     label: "View Source on GitHub"
     url: "https://github.com/zzoohub/zzoo.dev"
 features:
+  - title: "6 Languages"
+    description: "Full i18n across EN, ES, PT-BR, ID, JA, KO with automatic locale fallback and hreflang alternates."
+    icon: "globe"
+  - title: "3-Layer Project Docs"
+    description: "Each project has a product brief, case study, and design doc — all Zod-validated and independently translated."
+    icon: "layers"
   - title: "SEO + AEO + GEO"
-    description: "Optimized for traditional search, AI answer engines, and generative AI simultaneously"
-    icon: "globe"
+    description: "JSON-LD schemas, llms.txt, RSS feed, semantic HTML — optimized for search, answer engines, and generative AI."
+    icon: "search"
   - title: "Edge-Served SSG"
-    description: "Every page statically generated, served from Cloudflare's global edge. Lighthouse 95+."
+    description: "Every page statically generated, served from Cloudflare Workers. Lighthouse 95+."
     icon: "zap"
-  - title: "Bilingual (EN/KO)"
-    description: "Full i18n with next-intl. Hreflang alternates, per-locale content, automatic routing."
-    icon: "globe"
 ---
 
-## The invisible developer problem
+## The site is the case study
 
-You build great things but nobody finds you. Your portfolio gets a dozen visits a month — all from people who already have your URL. Meanwhile, potential clients and hiring managers are searching Google, asking ChatGPT, or browsing Perplexity for developers just like you.
+Most developer portfolios showcase projects. This one is the project.
 
-If your site isn't optimized for these channels, you're invisible to 99% of the people looking for your skills.
+zzoo.dev is built by the same AI workflow described in the blog — 29 skills, 7 agents, 3 departments operating through a [CLAUDE.md constitution](/en/blog/my-claude-code-setup). Every page you're reading was produced, security-reviewed, and verified by that system. The site isn't just a portfolio. It's a living proof that one person can ship a production-grade, multilingual product using AI-driven development.
 
-## Built for three discovery channels
+## What makes this different
 
-zzoo.dev isn't just a pretty portfolio. It's engineered to be discovered:
+**Content architecture, not a template.** Each project in this portfolio has three document layers: a product brief, a case study, and a design doc. All frontmatter is validated through Zod schemas. Image paths are sanitized. Slugs are type-checked. This isn't a blog template with a projects page bolted on — it's a content system engineered for depth.
 
-**SEO** — Statically generated pages, semantic HTML, XML sitemap with hreflang, canonical URLs. The technical foundation that gets you indexed.
+**Six languages, not two.** Every piece of content exists in English, Spanish, Portuguese, Indonesian, Japanese, and Korean — with automatic locale fallback when a translation is missing. That's not a feature flag. It's a content pipeline that scales.
 
-**AEO** — JSON-LD schemas (`Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList`) give AI answer engines structured context about your expertise.
+**Built for three discovery channels.** SEO gets you indexed. AEO (JSON-LD schemas for `Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`) gets you cited by answer engines. GEO (`llms.txt` + clean MDX) gets you represented accurately by generative AI. Most portfolios handle one of these. This handles all three.
 
-**GEO** — `llms.txt` and clean MDX content let generative AI engines accurately represent your work when someone asks "who can build my app?"
+## Open source
 
-## Open source, fork-friendly
-
-The entire codebase is open source. It's built with Next.js 16, React 19, TypeScript, Tailwind CSS v4, and deployed to Cloudflare Workers. Clone it, customize it, ship your own version.
+The entire codebase is open source. Clone it, study the content architecture, adapt the AI workflow. The real value isn't the template — it's the system behind it.

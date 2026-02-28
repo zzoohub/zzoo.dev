@@ -4,9 +4,9 @@ title: "zzoo.dev — Documento de Design de Engenharia"
 
 ## Abordagem Técnica
 
-Toda página é gerada estaticamente (SSG) em tempo de build. Sem server-side rendering ou rotas de API, as páginas são servidas diretamente pela rede edge global do Cloudflare Pages — rápido independente de onde os visitantes se conectam.
+Toda página é gerada estaticamente (SSG) em tempo de build. Sem server-side rendering ou rotas de API, as páginas são servidas diretamente pela rede edge global do Cloudflare Workers — rápido independente de onde os visitantes se conectam.
 
-O conteúdo é gerenciado como arquivos MDX. Cada peça é dividida em `content/[type]/[slug]/en.mdx` e `ko.mdx`, mantendo as traduções independentes. Diagramas de arquitetura escritos em D2 são automaticamente compilados em SVGs nas variantes de tema claro e escuro em tempo de build.
+O conteúdo é gerenciado como arquivos MDX. Cada peça é dividida em `content/[type]/[slug]/{locale}.mdx` para cada um dos 6 idiomas suportados, mantendo as traduções independentes. Diagramas de arquitetura escritos em D2 são automaticamente compilados em SVGs nas variantes de tema claro e escuro em tempo de build.
 
 A UI é construída com Tailwind CSS v4 e shadcn/ui. O sistema de temas baseado em variáveis CSS torna as transições de dark mode suaves, e componentes construídos sobre primitivas Radix garantem acessibilidade por padrão.
 
@@ -30,7 +30,7 @@ O site implementa uma abordagem em camadas para visibilidade em busca, mirando t
 
 - **SSG + Entrega Edge** — Toda página é pré-renderizada em tempo de build e servida pela rede edge da Cloudflare, alcançando FCP abaixo de um segundo
 - **HTML Semântico** — Hierarquia correta de headings (`h1` → `h2` → `h3`), landmark roles e markup acessível
-- **Hreflang alternates** — Sitemap XML e tags `<link rel="alternate">` para EN/KO, para que motores de busca sirvam o idioma correto
+- **Hreflang alternates** — Sitemap XML e tags `<link rel="alternate">` para todos os 6 locales, para que motores de busca sirvam o idioma correto
 - **URLs Canônicas** — Cada página declara sua URL canônica para prevenir problemas de conteúdo duplicado entre locales
 - **Performance** — Target Lighthouse 95+, JS inicial < 100KB gzipado
 
@@ -45,4 +45,4 @@ O site implementa uma abordagem em camadas para visibilidade em busca, mirando t
 
 - **`llms.txt`** — Um arquivo de texto puro em `/llms.txt` descrevendo o propósito do site, autor, estrutura e inventário de conteúdo em um formato otimizado para consumo por LLMs
 - **Conteúdo MDX limpo** — Posts de blog e estudos de caso são escritos em MDX bem estruturado com headings claros, facilitando a extração e citação por modelos generativos
-- **Cobertura bilíngue** — Versões EN e KO de todo conteúdo dobram a área de superfície para queries de IA específicas por idioma
+- **Cobertura em 6 idiomas** — Todo conteúdo em EN, ES, PT-BR, ID, JA, KO com fallback automático de locale, multiplicando a área de superfície para queries de IA específicas por idioma

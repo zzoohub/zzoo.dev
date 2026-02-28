@@ -4,9 +4,9 @@ title: "zzoo.dev — Dokumen Desain Engineering"
 
 ## Pendekatan Teknis
 
-Setiap halaman statically generated (SSG) saat build time. Tanpa server-side rendering atau API route, halaman disajikan langsung dari jaringan edge global Cloudflare Pages — cepat dari manapun pengunjung terhubung.
+Setiap halaman statically generated (SSG) saat build time. Tanpa server-side rendering atau API route, halaman disajikan langsung dari jaringan edge global Cloudflare Workers — cepat dari manapun pengunjung terhubung.
 
-Konten dikelola sebagai file MDX. Setiap konten dibagi menjadi `content/[type]/[slug]/en.mdx` dan `ko.mdx`, menjaga terjemahan tetap independen. Diagram arsitektur yang ditulis dalam D2 secara otomatis dikompilasi menjadi SVG dalam varian tema terang dan gelap saat build time.
+Konten dikelola sebagai file MDX. Setiap konten dibagi menjadi `content/[type]/[slug]/{locale}.mdx` untuk masing-masing 6 bahasa yang didukung, menjaga terjemahan tetap independen. Diagram arsitektur yang ditulis dalam D2 secara otomatis dikompilasi menjadi SVG dalam varian tema terang dan gelap saat build time.
 
 UI dibangun dengan Tailwind CSS v4 dan shadcn/ui. Sistem theming berbasis CSS variable membuat transisi dark mode mulus, dan komponen yang dibangun di atas primitif Radix memastikan aksesibilitas secara default.
 
@@ -30,7 +30,7 @@ Situs ini mengimplementasikan pendekatan berlapis untuk visibilitas pencarian, m
 
 - **SSG + pengiriman Edge** — Setiap halaman di-pre-render saat build time dan disajikan dari jaringan edge Cloudflare, mencapai FCP di bawah satu detik
 - **HTML semantik** — Hierarki heading yang tepat (`h1` → `h2` → `h3`), landmark role, dan markup yang aksesibel
-- **Hreflang alternate** — XML sitemap dan tag `<link rel="alternate">` untuk EN/KO, supaya mesin pencari menyajikan bahasa yang tepat
+- **Hreflang alternate** — XML sitemap dan tag `<link rel="alternate">` untuk semua 6 locale, supaya mesin pencari menyajikan bahasa yang tepat
 - **URL kanonikal** — Setiap halaman mendeklarasikan URL kanonikalnya untuk mencegah masalah konten duplikat antar locale
 - **Performa** — Target Lighthouse 95+, JS awal < 100KB gzipped
 
@@ -45,4 +45,4 @@ Situs ini mengimplementasikan pendekatan berlapis untuk visibilitas pencarian, m
 
 - **`llms.txt`** — File teks biasa di `/llms.txt` yang menjelaskan tujuan situs, penulis, struktur, dan inventaris konten dalam format yang dioptimalkan untuk konsumsi LLM
 - **Konten MDX yang bersih** — Post blog dan studi kasus ditulis dalam MDX yang terstruktur dengan heading yang jelas, memudahkan model generatif untuk mengekstrak dan mengutip
-- **Cakupan bilingual** — Versi EN dan KO dari semua konten menggandakan luas permukaan untuk query AI yang spesifik bahasa
+- **Cakupan 6 bahasa** — Semua konten dalam EN, ES, PT-BR, ID, JA, KO dengan fallback locale otomatis, melipatgandakan luas permukaan untuk query AI yang spesifik bahasa

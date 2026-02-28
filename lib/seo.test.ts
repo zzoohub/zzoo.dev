@@ -625,7 +625,7 @@ describe("seo", () => {
       });
     });
 
-    it("includes applicationCategory when techStack provided", () => {
+    it("includes programmingLanguage when techStack provided", () => {
       const result = buildProjectJsonLd({
         title: "Test",
         description: "Description",
@@ -633,12 +633,12 @@ describe("seo", () => {
         datePublished: "2024-01-01T00:00:00Z",
         techStack: ["Next.js", "TypeScript", "Tailwind CSS"],
       });
-      expect(result.applicationCategory).toBe(
+      expect(result.programmingLanguage).toBe(
         "Next.js, TypeScript, Tailwind CSS"
       );
     });
 
-    it("excludes applicationCategory when techStack is empty array", () => {
+    it("excludes programmingLanguage when techStack is empty array", () => {
       const result = buildProjectJsonLd({
         title: "Test",
         description: "Description",
@@ -646,17 +646,17 @@ describe("seo", () => {
         datePublished: "2024-01-01T00:00:00Z",
         techStack: [],
       });
-      expect(result).not.toHaveProperty("applicationCategory");
+      expect(result).not.toHaveProperty("programmingLanguage");
     });
 
-    it("excludes applicationCategory when techStack is undefined", () => {
+    it("excludes programmingLanguage when techStack is undefined", () => {
       const result = buildProjectJsonLd({
         title: "Test",
         description: "Description",
         url: "https://zzoo.dev/en/projects/test",
         datePublished: "2024-01-01T00:00:00Z",
       });
-      expect(result).not.toHaveProperty("applicationCategory");
+      expect(result).not.toHaveProperty("programmingLanguage");
     });
 
     it("handles single tech stack item", () => {
@@ -667,7 +667,7 @@ describe("seo", () => {
         datePublished: "2024-01-01T00:00:00Z",
         techStack: ["React"],
       });
-      expect(result.applicationCategory).toBe("React");
+      expect(result.programmingLanguage).toBe("React");
     });
 
     it("includes keywords when keywords array provided", () => {

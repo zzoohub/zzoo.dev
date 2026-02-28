@@ -30,6 +30,14 @@
 - Tech: Chrome Extension, Manifest V3, declarativeNetRequest API
 - URL: https://zzoo.dev/en/projects/site-blocker
 
+### Idea Fork — Product Hunt for Problems
+- Category: Web App (SaaS)
+- Value: Automated product opportunity discovery from real user complaints across Reddit and app stores
+- Target: Solo developers, indie hackers, and product teams looking for validated product ideas
+- Differentiator: Daily automated pipeline across 44 subreddits, App Store, Play Store, and Product Hunt. AI briefs with source attribution.
+- Tech: Next.js, FastAPI, PostgreSQL, Neon, Google Gemini, GCP Cloud Run, Pulumi
+- URL: https://zzoo.dev/en/projects/idea-fork
+
 ### zzoo.dev — Personal Branding Site
 - Category: Website (Open Source)
 - Value: Developer portfolio optimized for SEO, AEO, and GEO — discoverable by both humans and AI
@@ -52,4 +60,8 @@
 
 ## Languages
 - English: https://zzoo.dev/en
+- Spanish: https://zzoo.dev/es
+- Portuguese (Brazil): https://zzoo.dev/pt-BR
+- Indonesian: https://zzoo.dev/id
+- Japanese: https://zzoo.dev/ja
 - Korean: https://zzoo.dev/ko

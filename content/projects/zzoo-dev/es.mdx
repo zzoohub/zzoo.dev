@@ -1,6 +1,6 @@
 ---
 title: "zzoo.dev — Sitio de Marca Personal"
-description: "Un portafolio de desarrollador construido para humanos y motores de IA por igual. Optimizado para SEO + AEO + GEO, bilingüe, generado estáticamente y open source."
+description: "Un portafolio de desarrollador construido por agentes de IA, en 6 idiomas, y diseñado para motores de búsqueda, motores de respuesta e IA generativa. Open source."
 status: "active"
 techStack:
   - Next.js 16
@@ -21,7 +21,7 @@ launchDate: "2026-01-01"
 links:
   github: "https://github.com/zzoohub/zzoo.dev"
 
-tagline: "Un portafolio de desarrollador construido para humanos y motores de IA por igual."
+tagline: "Un portafolio de desarrollador construido por agentes de IA, en 6 idiomas."
 category: "web"
 keywords:
   primary:
@@ -31,44 +31,45 @@ keywords:
     - "template de portafolio de desarrollador nextjs con SEO"
     - "cómo hacer un portafolio de desarrollador descubrible por IA"
 competitors:
-  - name: "Templates de portafolio genéricos"
-    differentiator: "La mayoría de templates se ven bien pero puntúan bajo en SEO — este está optimizado para búsqueda, motores de respuesta de IA y IA generativa desde el día uno"
-  - name: "Portafolios en WordPress"
-    differentiator: "WordPress es pesado y lento — esto está generado estáticamente, servido desde el edge, y puntúa 95+ en Lighthouse"
-  - name: "Portafolios en Notion"
-    differentiator: "Notion no se puede personalizar para SEO o datos estructurados — este sitio tiene schemas JSON-LD, llms.txt e i18n completo"
+  - name: "Templates de portafolio Next.js"
+    differentiator: "Los templates dan un punto de partida pero sin arquitectura de contenido — este tiene un sistema de documentos de 3 capas (brief de producto, caso de estudio, documento de diseño) con frontmatter validado por Zod por proyecto"
+  - name: "Sitios portafolio con Astro"
+    differentiator: "Astro es rápido pero mono-idioma por defecto — este tiene 6 locales con fallback automático, alternates hreflang y contenido MDX por locale"
+  - name: "Portafolios en Notion / WordPress"
+    differentiator: "Ninguno soporta datos estructurados, schemas JSON-LD ni llms.txt — este sitio está diseñado para SEO, motores de respuesta e IA generativa desde la base"
 cta:
   primary:
     label: "Ver Código en GitHub"
     url: "https://github.com/zzoohub/zzoo.dev"
 features:
+  - title: "6 Idiomas"
+    description: "i18n completo en EN, ES, PT-BR, ID, JA, KO con fallback automático de locale y alternates hreflang."
+    icon: "globe"
+  - title: "Documentos de Proyecto en 3 Capas"
+    description: "Cada proyecto tiene brief de producto, caso de estudio y documento de diseño — todos validados por Zod y traducidos independientemente."
+    icon: "layers"
   - title: "SEO + AEO + GEO"
-    description: "Optimizado para búsqueda tradicional, motores de respuesta de IA y IA generativa simultáneamente"
-    icon: "globe"
-  - title: "SSG Servido desde el Edge"
-    description: "Cada página generada estáticamente, servida desde el edge global de Cloudflare. Lighthouse 95+."
+    description: "Schemas JSON-LD, llms.txt, feed RSS, HTML semántico — optimizado para búsqueda, motores de respuesta e IA generativa."
+    icon: "search"
+  - title: "SSG en el Edge"
+    description: "Cada página generada estáticamente, servida desde Cloudflare Workers. Lighthouse 95+."
     icon: "zap"
-  - title: "Bilingüe (EN/KO)"
-    description: "i18n completo con next-intl. Alternates hreflang, contenido por locale, routing automático."
-    icon: "globe"
 ---
 
-## El problema del desarrollador invisible
+## El sitio es el caso de estudio
 
-Construyes cosas geniales pero nadie te encuentra. Tu portafolio recibe una docena de visitas al mes — todas de personas que ya tienen tu URL. Mientras tanto, clientes potenciales y reclutadores están buscando en Google, preguntándole a ChatGPT, o navegando Perplexity por desarrolladores justo como tú.
+La mayoría de portafolios de desarrollador muestran proyectos. Este es el proyecto.
 
-Si tu sitio no está optimizado para estos canales, eres invisible para el 99% de las personas buscando tus habilidades.
+zzoo.dev está construido con el mismo flujo de trabajo de IA descrito en el blog — 29 skills, 7 agentes, 3 departamentos operando a través de una [constitución CLAUDE.md](/es/blog/my-claude-code-setup). Cada página que estás leyendo fue producida, auditada y verificada por ese sistema. El sitio no es solo un portafolio. Es la prueba viva de que una persona puede lanzar un producto multilingüe de nivel producción usando desarrollo impulsado por IA.
 
-## Construido para tres canales de descubrimiento
+## Qué lo hace diferente
 
-zzoo.dev no es solo un portafolio bonito. Está diseñado para ser descubierto:
+**Arquitectura de contenido, no un template.** Cada proyecto en este portafolio tiene tres capas de documentos: un brief de producto, un caso de estudio y un documento de diseño. Todo el frontmatter se valida con schemas Zod. Las rutas de imágenes están sanitizadas. Los slugs tienen verificación de tipos. No es un template de blog con una página de proyectos añadida — es un sistema de contenido diseñado para la profundidad.
 
-**SEO** — Páginas generadas estáticamente, HTML semántico, sitemap XML con hreflang, URLs canónicas. La base técnica que te hace indexable.
+**Seis idiomas, no dos.** Cada pieza de contenido existe en inglés, español, portugués, indonesio, japonés y coreano — con fallback automático de locale cuando falta una traducción. No es un feature flag. Es un pipeline de contenido que escala.
 
-**AEO** — Schemas JSON-LD (`Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList`) dan a los motores de respuesta de IA contexto estructurado sobre tu expertise.
+**Construido para tres canales de descubrimiento.** SEO te indexa. AEO (schemas JSON-LD para `Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`) te cita en motores de respuesta. GEO (`llms.txt` + MDX limpio) te representa con precisión en IA generativa. La mayoría de portafolios manejan uno de estos. Este maneja los tres.
 
-**GEO** — `llms.txt` y contenido MDX limpio permiten que los motores de IA generativa representen tu trabajo con precisión cuando alguien pregunta "¿quién puede construir mi app?"
+## Open source
 
-## Open source, fácil de hacer fork
-
-Todo el codebase es open source. Está construido con Next.js 16, React 19, TypeScript, Tailwind CSS v4, y deployado en Cloudflare Workers. Clónalo, personalízalo, lanza tu propia versión.
+Todo el codebase es open source. Clónalo, estudia la arquitectura de contenido, adapta el flujo de trabajo de IA. El valor real no es el template — es el sistema detrás.

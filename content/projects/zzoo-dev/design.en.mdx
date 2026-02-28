@@ -4,9 +4,9 @@ title: "zzoo.dev — Engineering Design Doc"
 
 ## Technical Approach
 
-Every page is statically generated (SSG) at build time. With no server-side rendering or API routes, pages are served directly from Cloudflare Pages' global edge network — fast regardless of where visitors connect from.
+Every page is statically generated (SSG) at build time. With no server-side rendering or API routes, pages are served directly from Cloudflare Workers' global edge network — fast regardless of where visitors connect from.
 
-Content is managed as MDX files. Each piece is split into `content/[type]/[slug]/en.mdx` and `ko.mdx`, keeping translations independent. Architecture diagrams written in D2 are automatically compiled into SVGs in both light and dark theme variants at build time.
+Content is managed as MDX files. Each piece is split into `content/[type]/[slug]/{locale}.mdx` for each of the 6 supported languages, keeping translations independent. Architecture diagrams written in D2 are automatically compiled into SVGs in both light and dark theme variants at build time.
 
 The UI is built with Tailwind CSS v4 and shadcn/ui. The CSS variable-based theming system makes dark mode transitions seamless, and components built on Radix primitives ensure accessibility by default.
 
@@ -30,7 +30,7 @@ The site implements a layered approach to search visibility, targeting three dis
 
 - **SSG + Edge delivery** — Every page is pre-rendered at build time and served from Cloudflare's edge network, achieving sub-second FCP
 - **Semantic HTML** — Proper heading hierarchy (`h1` → `h2` → `h3`), landmark roles, and accessible markup
-- **Hreflang alternates** — XML sitemap and `<link rel="alternate">` tags for EN/KO, so search engines serve the right language
+- **Hreflang alternates** — XML sitemap and `<link rel="alternate">` tags for all 6 locales, so search engines serve the right language
 - **Canonical URLs** — Each page declares its canonical URL to prevent duplicate content issues across locales
 - **Performance** — Lighthouse 95+ target, initial JS < 100KB gzipped
 
@@ -45,4 +45,4 @@ The site implements a layered approach to search visibility, targeting three dis
 
 - **`llms.txt`** — A plain-text file at `/llms.txt` describing the site's purpose, author, structure, and content inventory in a format optimized for LLM consumption
 - **Clean MDX content** — Blog posts and case studies are written in well-structured MDX with clear headings, making it easy for generative models to extract and cite
-- **Bilingual coverage** — EN and KO versions of all content double the surface area for language-specific AI queries
+- **6-language coverage** — All content in EN, ES, PT-BR, ID, JA, KO with automatic locale fallback, multiplying the surface area for language-specific AI queries

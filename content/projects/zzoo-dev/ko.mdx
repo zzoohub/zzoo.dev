@@ -1,6 +1,6 @@
 ---
 title: "zzoo.dev — 개인 브랜딩 사이트"
-description: "사람과 AI 엔진 모두를 위해 만든 개발자 포트폴리오. SEO + AEO + GEO 최적화, 이중 언어, 정적 생성, 오픈 소스."
+description: "AI 에이전트가 만든 개발자 포트폴리오. 6개 언어, 검색 엔진 · 답변 엔진 · 생성형 AI 동시 최적화. 오픈소스."
 status: "active"
 techStack:
   - Next.js 16
@@ -21,7 +21,7 @@ launchDate: "2026-01-01"
 links:
   github: "https://github.com/zzoohub/zzoo.dev"
 
-tagline: "사람과 AI 엔진 모두를 위해 만든 개발자 포트폴리오"
+tagline: "AI 에이전트가 만든 개발자 포트폴리오, 6개 언어로."
 category: "web"
 keywords:
   primary:
@@ -31,44 +31,45 @@ keywords:
     - "Next.js 포트폴리오 만들기"
     - "AI에 발견되는 개발자 사이트"
 competitors:
-  - name: "일반 포트폴리오 템플릿"
-    differentiator: "대부분의 템플릿은 멋지지만 SEO 점수가 낮음 — 이 사이트는 검색, AI 답변 엔진, 생성형 AI 모두에 처음부터 최적화"
-  - name: "WordPress 포트폴리오"
-    differentiator: "WordPress는 무겁고 느림 — 정적 생성, 엣지 서빙, Lighthouse 95+"
-  - name: "Notion 포트폴리오"
-    differentiator: "Notion은 SEO나 구조화 데이터 커스텀이 불가 — JSON-LD 스키마, llms.txt, 완전한 i18n 지원"
+  - name: "Next.js 포트폴리오 템플릿"
+    differentiator: "템플릿은 시작점을 줄 뿐 콘텐츠 아키텍처가 없음 — 이 사이트는 프로젝트당 3-Layer 문서 시스템(프로덕트 브리프, 케이스 스터디, 설계 문서)과 Zod 검증 프론트매터를 갖추고 있음"
+  - name: "Astro 포트폴리오 사이트"
+    differentiator: "Astro는 빠르지만 기본 단일 언어 — 이 사이트는 자동 폴백과 hreflang 대체 링크, 로케일별 MDX 콘텐츠로 6개 언어를 지원"
+  - name: "Notion / WordPress 포트폴리오"
+    differentiator: "둘 다 구조화 데이터, JSON-LD 스키마, llms.txt를 지원하지 않음 — 이 사이트는 SEO, 답변 엔진, 생성형 AI를 처음부터 설계에 반영"
 cta:
   primary:
     label: "GitHub에서 소스 보기"
     url: "https://github.com/zzoohub/zzoo.dev"
 features:
+  - title: "6개 언어"
+    description: "EN, ES, PT-BR, ID, JA, KO 완전 i18n. 자동 로케일 폴백과 hreflang 대체 링크."
+    icon: "globe"
+  - title: "3-Layer 프로젝트 문서"
+    description: "프로젝트마다 프로덕트 브리프, 케이스 스터디, 설계 문서 — 모두 Zod 검증, 독립 번역."
+    icon: "layers"
   - title: "SEO + AEO + GEO"
-    description: "전통 검색, AI 답변 엔진, 생성형 AI 모두에 동시 최적화"
-    icon: "globe"
+    description: "JSON-LD 스키마, llms.txt, RSS 피드, 시맨틱 HTML — 검색, 답변 엔진, 생성형 AI 동시 최적화."
+    icon: "search"
   - title: "엣지 서빙 SSG"
-    description: "모든 페이지 정적 생성, Cloudflare 글로벌 엣지 서빙. Lighthouse 95+."
+    description: "모든 페이지 정적 생성, Cloudflare Workers 엣지 서빙. Lighthouse 95+."
     icon: "zap"
-  - title: "이중 언어 (EN/KO)"
-    description: "next-intl 기반 완전한 i18n. Hreflang 대체 링크, 로케일별 콘텐츠, 자동 라우팅."
-    icon: "globe"
 ---
 
-## 보이지 않는 개발자 문제
+## 이 사이트 자체가 케이스 스터디
 
-멋진 것들을 만들지만 아무도 당신을 찾지 못합니다. 포트폴리오는 한 달에 방문자 열몇 명 — 전부 이미 URL을 알고 있는 사람들. 그 사이 잠재 고객과 채용 담당자들은 구글에서 검색하고, ChatGPT에 물어보고, Perplexity에서 당신 같은 개발자를 찾고 있습니다.
+대부분의 개발자 포트폴리오는 프로젝트를 보여줍니다. 이 사이트는 그 자체가 프로젝트입니다.
 
-이 채널들에 최적화되지 않으면, 당신의 스킬을 찾는 사람들의 99%에게 보이지 않습니다.
+zzoo.dev는 블로그에서 설명하는 AI 워크플로우 — 29개 스킬, 7개 에이전트, 3개 부서가 [CLAUDE.md 헌법](/ko/blog/my-claude-code-setup)을 통해 동작하는 시스템 — 로 만들어졌습니다. 지금 읽고 있는 모든 페이지가 그 시스템으로 제작되고, 보안 리뷰되고, 검증되었습니다. 이 사이트는 단순한 포트폴리오가 아닙니다. 한 사람이 AI 기반 개발로 프로덕션 수준의 다국어 제품을 배포할 수 있다는 살아있는 증거입니다.
 
-## 세 가지 발견 채널에 맞춰 설계
+## 무엇이 다른가
 
-zzoo.dev는 그냥 예쁜 포트폴리오가 아닙니다. 발견되도록 엔지니어링되었습니다:
+**템플릿이 아닌 콘텐츠 아키텍처.** 이 포트폴리오의 각 프로젝트에는 프로덕트 브리프, 케이스 스터디, 설계 문서의 세 가지 문서 레이어가 있습니다. 모든 프론트매터는 Zod 스키마로 검증됩니다. 이미지 경로는 정제됩니다. 슬러그는 타입 체크됩니다. 프로젝트 페이지를 덧붙인 블로그 템플릿이 아니라, 깊이를 위해 설계된 콘텐츠 시스템입니다.
 
-**SEO** — 정적 생성 페이지, 시맨틱 HTML, hreflang이 포함된 XML 사이트맵, 캐노니컬 URL. 인덱싱의 기술적 기본기.
+**2개가 아닌 6개 언어.** 모든 콘텐츠는 영어, 스페인어, 포르투갈어, 인도네시아어, 일본어, 한국어로 존재합니다. 번역이 없는 경우 자동 로케일 폴백이 작동합니다. 피처 플래그가 아닙니다. 확장 가능한 콘텐츠 파이프라인입니다.
 
-**AEO** — JSON-LD 스키마(`Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList`)가 AI 답변 엔진에 전문성에 대한 구조화된 맥락을 제공.
+**세 가지 발견 채널에 맞춘 설계.** SEO로 인덱싱됩니다. AEO(JSON-LD 스키마: `Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`)로 답변 엔진에 인용됩니다. GEO(`llms.txt` + 깔끔한 MDX)로 생성형 AI가 정확하게 표현합니다. 대부분의 포트폴리오는 이 중 하나만 처리합니다. 이 사이트는 셋 다 처리합니다.
 
-**GEO** — `llms.txt`와 깔끔한 MDX 콘텐츠로 "앱을 만들어줄 개발자가 누구?" 질문에 생성형 AI가 정확하게 답할 수 있도록.
+## 오픈소스
 
-## 오픈소스, 포크 환영
-
-전체 코드베이스가 오픈소스입니다. Next.js 16, React 19, TypeScript, Tailwind CSS v4로 구축되어 Cloudflare Workers에 배포됩니다. 클론하고, 커스텀하고, 자신만의 버전을 배포하세요.
+전체 코드베이스가 오픈소스입니다. 클론하고, 콘텐츠 아키텍처를 공부하고, AI 워크플로우를 적용해보세요. 진짜 가치는 템플릿이 아니라 그 뒤의 시스템입니다.

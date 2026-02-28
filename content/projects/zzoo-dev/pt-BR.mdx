@@ -1,6 +1,6 @@
 ---
 title: "zzoo.dev — Site de Marca Pessoal"
-description: "Um portfólio de desenvolvedor construído para humanos e motores de IA igualmente. Otimizado para SEO + AEO + GEO, bilíngue, gerado estaticamente e open source."
+description: "Um portfólio de desenvolvedor construído por agentes de IA, em 6 idiomas, e projetado para motores de busca, motores de resposta e IA generativa. Open source."
 status: "active"
 techStack:
   - Next.js 16
@@ -21,7 +21,7 @@ launchDate: "2026-01-01"
 links:
   github: "https://github.com/zzoohub/zzoo.dev"
 
-tagline: "Um portfólio de desenvolvedor construído para humanos e motores de IA igualmente."
+tagline: "Um portfólio de desenvolvedor construído por agentes de IA, em 6 idiomas."
 category: "web"
 keywords:
   primary:
@@ -31,44 +31,45 @@ keywords:
     - "nextjs developer portfolio template with SEO"
     - "how to make developer portfolio discoverable by AI"
 competitors:
-  - name: "Templates genéricos de portfólio"
-    differentiator: "A maioria dos templates é bonita mas pontua mal em SEO — este é otimizado para busca, motores de resposta por IA e IA generativa desde o primeiro dia"
-  - name: "Portfólios WordPress"
-    differentiator: "WordPress é pesado e lento — este é gerado estaticamente, servido pela edge e pontua 95+ no Lighthouse"
-  - name: "Portfólios Notion"
-    differentiator: "Notion não pode ser customizado para SEO ou dados estruturados — este site tem schemas JSON-LD, llms.txt e i18n completo"
+  - name: "Templates de portfólio Next.js"
+    differentiator: "Templates dão um ponto de partida mas sem arquitetura de conteúdo — este tem um sistema de documentos de 3 camadas (product brief, estudo de caso, design doc) com frontmatter validado por Zod por projeto"
+  - name: "Sites portfólio com Astro"
+    differentiator: "Astro é rápido mas mono-idioma por padrão — este tem 6 locales com fallback automático, hreflang alternates e conteúdo MDX por locale"
+  - name: "Portfólios Notion / WordPress"
+    differentiator: "Nenhum suporta dados estruturados, schemas JSON-LD ou llms.txt — este site é projetado para SEO, motores de resposta e IA generativa desde a base"
 cta:
   primary:
     label: "Ver Código no GitHub"
     url: "https://github.com/zzoohub/zzoo.dev"
 features:
+  - title: "6 Idiomas"
+    description: "i18n completo em EN, ES, PT-BR, ID, JA, KO com fallback automático de locale e hreflang alternates."
+    icon: "globe"
+  - title: "Docs de Projeto em 3 Camadas"
+    description: "Cada projeto tem product brief, estudo de caso e design doc — todos validados por Zod e traduzidos independentemente."
+    icon: "layers"
   - title: "SEO + AEO + GEO"
-    description: "Otimizado para busca tradicional, motores de resposta por IA e IA generativa simultaneamente"
-    icon: "globe"
+    description: "Schemas JSON-LD, llms.txt, feed RSS, HTML semântico — otimizado para busca, motores de resposta e IA generativa."
+    icon: "search"
   - title: "SSG na Edge"
-    description: "Toda página gerada estaticamente, servida pela edge global da Cloudflare. Lighthouse 95+."
+    description: "Toda página gerada estaticamente, servida pela Cloudflare Workers. Lighthouse 95+."
     icon: "zap"
-  - title: "Bilíngue (EN/KO)"
-    description: "i18n completo com next-intl. Hreflang alternates, conteúdo por locale, roteamento automático."
-    icon: "globe"
 ---
 
-## O problema do desenvolvedor invisível
+## O site é o estudo de caso
 
-Você constrói coisas ótimas mas ninguém te encontra. Seu portfólio recebe uma dúzia de visitas por mês — todas de pessoas que já têm sua URL. Enquanto isso, potenciais clientes e recrutadores estão pesquisando no Google, perguntando ao ChatGPT ou navegando no Perplexity por desenvolvedores igualzinho a você.
+A maioria dos portfólios de desenvolvedor mostram projetos. Este é o projeto.
 
-Se seu site não está otimizado para esses canais, você é invisível para 99% das pessoas procurando suas habilidades.
+zzoo.dev é construído pelo mesmo workflow de IA descrito no blog — 29 skills, 7 agentes, 3 departamentos operando através de uma [constituição CLAUDE.md](/pt-BR/blog/my-claude-code-setup). Cada página que você está lendo foi produzida, auditada e verificada por esse sistema. O site não é apenas um portfólio. É a prova viva de que uma pessoa pode entregar um produto multilíngue de nível produção usando desenvolvimento orientado por IA.
 
-## Construído para três canais de descoberta
+## O que torna diferente
 
-zzoo.dev não é apenas um portfólio bonito. É projetado para ser descoberto:
+**Arquitetura de conteúdo, não um template.** Cada projeto neste portfólio tem três camadas de documentos: um product brief, um estudo de caso e um design doc. Todo o frontmatter é validado por schemas Zod. Caminhos de imagem são sanitizados. Slugs têm verificação de tipo. Não é um template de blog com uma página de projetos acoplada — é um sistema de conteúdo projetado para profundidade.
 
-**SEO** — Páginas geradas estaticamente, HTML semântico, sitemap XML com hreflang, URLs canônicas. A base técnica que te coloca no índice.
+**Seis idiomas, não dois.** Cada peça de conteúdo existe em inglês, espanhol, português, indonésio, japonês e coreano — com fallback automático de locale quando uma tradução está faltando. Não é um feature flag. É um pipeline de conteúdo que escala.
 
-**AEO** — Schemas JSON-LD (`Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList`) dão aos motores de resposta por IA contexto estruturado sobre sua expertise.
+**Construído para três canais de descoberta.** SEO te indexa. AEO (schemas JSON-LD para `Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`) te cita em motores de resposta. GEO (`llms.txt` + MDX limpo) te representa com precisão em IA generativa. A maioria dos portfólios lida com um desses. Este lida com os três.
 
-**GEO** — `llms.txt` e conteúdo MDX limpo permitem que motores de IA generativa representem seu trabalho com precisão quando alguém pergunta "quem pode construir meu app?"
+## Open source
 
-## Open source, fácil de fazer fork
-
-A codebase inteira é open source. É construída com Next.js 16, React 19, TypeScript, Tailwind CSS v4 e deployada na Cloudflare Workers. Clone, customize e publique sua própria versão.
+A codebase inteira é open source. Clone, estude a arquitetura de conteúdo, adapte o workflow de IA. O valor real não é o template — é o sistema por trás.
