@@ -25,10 +25,6 @@ const geistMono = Geist_Mono({
 
 const descriptions: Record<string, string> = {
   en: "Build the Whole Damn Thing — from idea to deployment.",
-  es: "Construye todo — de la idea al despliegue.",
-  "pt-BR": "Construa tudo — da ideia ao deploy.",
-  id: "Bangun semuanya — dari ide sampai deployment.",
-  ja: "アイデアからデプロイまで、全部つくる。",
   ko: "떠오르는 것들을 하나씩 만들고 있습니다.",
 };
 

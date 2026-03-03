@@ -33,10 +33,6 @@ export function buildAlternates(pathname: string): Metadata["alternates"] {
 
 const ogLocaleMap: Record<string, string> = {
   en: "en_US",
-  es: "es_ES",
-  "pt-BR": "pt_BR",
-  id: "id_ID",
-  ja: "ja_JP",
   ko: "ko_KR",
 };
 

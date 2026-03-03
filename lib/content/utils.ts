@@ -42,7 +42,7 @@ export function resolveContentLocale(dir: string, locale: string): string {
   return FALLBACK_LOCALE;
 }
 
-const CJK_LOCALES = new Set(["ko", "ja"]);
+const CJK_LOCALES = new Set(["ko"]);
 
 export function calculateReadingTime(content: string, locale: string): number {
   if (CJK_LOCALES.has(locale)) {

@@ -1,6 +1,6 @@
 # zzoo.dev
 
-Builder log for a solopreneur developer. Multilingual (6 locales), statically generated, deployed to Vercel.
+Builder log for a solopreneur developer. Bilingual (EN/KO), statically generated, deployed to Vercel.
 
 ## Tech Stack
 

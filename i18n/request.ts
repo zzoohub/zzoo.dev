@@ -4,10 +4,6 @@ import { routing } from "./routing";
 
 const MESSAGE_MAP: Record<string, () => Promise<{ default: Record<string, unknown> }>> = {
   en: () => import("../messages/en.json"),
-  es: () => import("../messages/es.json"),
-  "pt-BR": () => import("../messages/pt-BR.json"),
-  id: () => import("../messages/id.json"),
-  ja: () => import("../messages/ja.json"),
   ko: () => import("../messages/ko.json"),
 };
 

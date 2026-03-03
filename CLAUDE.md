@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Builder Log for a solopreneur developer. Multilingual (6 locales), statically generated, deployed to Vercel. See `docs/PRD.md` for full product requirements.
+Builder Log for a solopreneur developer. Multilingual (2 locales: en, ko), statically generated, deployed to Vercel. See `docs/PRD.md` for full product requirements.
 
 ## Principles (MUST FOLLOW)
 
@@ -14,7 +14,7 @@ Builder Log for a solopreneur developer. Multilingual (6 locales), statically ge
 2. Once the implementation is complete, run the two sub-agents below in parallel:
    - Run a **z-security-reviewer** sub-agent for security audit → fix
    - Run a **z-verifier** sub-agent for verifying changes (run tests, E2E, browser verify)
-3. Multilingual (en, es, pt-BR, id, ja, ko) based on user language preference
+3. Multilingual (en, ko) based on user language preference
 4. Mobile-first responsive design
 5. Content writing MUST use designated skills:
    - Blog posts → use **z-dev-essay** skill
@@ -88,7 +88,7 @@ content/projects/{slug}/
 
 Key behaviors:
 - **Locale fallback**: missing `{locale}.mdx` → falls back to `en.mdx`
-- **Reading time**: CJK (ko, ja) → `ceil(chars / 300)`, others → `ceil(words / 200)`
+- **Reading time**: CJK (ko) → `ceil(chars / 300)`, others → `ceil(words / 200)`
 - **Zod validation**: all frontmatter parsed via schemas in `schemas.ts`. Invalid optional fields silently drop (`.catch(undefined)`) rather than throwing. Date fields coerce `Date` objects to `"YYYY-MM-DD"` strings.
 - **Image path validation**: relative paths must match `/^[a-zA-Z0-9._-]+\.(png|jpg|jpeg|gif|webp|svg|avif)$/i`; absolute paths must start with `/images/` and cannot contain `..`
 - **Slug validation**: `/^[a-zA-Z0-9_-]+$/`
@@ -103,7 +103,7 @@ Project frontmatter: `title`, `description`, `status` (`active|completed|archive
 
 ### i18n (next-intl)
 
-- Config: `i18n/routing.ts` — locales: en, es, pt-BR, id, ja, ko; default: en
+- Config: `i18n/routing.ts` — locales: en, ko; default: en
 - Translations: `messages/{locale}.json` — UI strings only (not content)
 - Navigation: import `Link`, `redirect`, `usePathname` from `@/i18n/navigation` (locale-aware)
 - `i18n/request.ts` uses static `MESSAGE_MAP` (explicit imports) — intentional for SSG compatibility

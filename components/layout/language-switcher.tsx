@@ -6,10 +6,6 @@ import { routing } from "@/i18n/routing";
 
 const localeConfig: Record<string, { flag: string; label: string }> = {
   en: { flag: "\u{1F1FA}\u{1F1F8}", label: "EN" },
-  es: { flag: "\u{1F1EA}\u{1F1F8}", label: "ES" },
-  "pt-BR": { flag: "\u{1F1E7}\u{1F1F7}", label: "PT" },
-  id: { flag: "\u{1F1EE}\u{1F1E9}", label: "ID" },
-  ja: { flag: "\u{1F1EF}\u{1F1F5}", label: "JA" },
   ko: { flag: "\u{1F1F0}\u{1F1F7}", label: "KO" },
 };
 
