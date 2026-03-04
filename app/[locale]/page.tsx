@@ -15,7 +15,6 @@ import { AvailabilityBadge } from "@/components/shared/availability-badge";
 import { Section } from "@/components/shared/section";
 import { ProjectCard } from "@/components/project/project-card";
 import { Testimonial } from "@/components/shared/testimonial";
-import { CTASection } from "@/components/shared/cta-section";
 
 export async function generateMetadata({
   params,
@@ -118,12 +117,6 @@ function HomeContent({
         </section>
       )}
 
-      {/* Bottom CTA */}
-      <CTASection
-        title={t("home.bottom_cta_title")}
-        subtitle={t("home.bottom_cta_subtitle")}
-        buttonText={t("home.bottom_cta_button")}
-      />
     </>
   );
 }
