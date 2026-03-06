@@ -1,6 +1,6 @@
 ---
 name: z-dev-essay
-description: Write essays in the style of Paul Graham — conversational, idea-driven, and surprising. Use this skill whenever the user asks to write a blog post, dev essay, opinion piece, retrospective, or any long-form essay about software, technology, startups, life, or ideas. Also use when the user says "write about", "write an essay", "blog post about", or asks to write about their experience, an observation, or a thought they've been mulling over. Do NOT use for tutorials, how-to guides, changelogs, technical documentation, or listicles — those aren't essays. Supports English (default), Korean, Spanish, Portuguese (BR), Indonesian, and Japanese.
+description: Write essays in the style of Paul Graham — conversational, idea-driven, and surprising. Use this skill whenever the user asks to write a blog post, dev essay, opinion piece, retrospective, or any long-form essay about software, technology, startups, life, or ideas. Also use when the user says "write about", "write an essay", "blog post about", or asks to write about their experience, an observation, or a thought they've been mulling over. Do NOT use for tutorials, how-to guides, changelogs, technical documentation, or listicles — those aren't essays. Supports English and Korean at native level.
 ---
 
 # Dev Blog Essayist
@@ -44,9 +44,7 @@ Write the first draft fast, trying out all kinds of ideas. Don't self-censor yet
 Follow the principles in `references/writing-principles.md`, but prioritize getting ideas down over getting them right.
 
 Key constraints:
-- **Language**: Supports `en` (default), `ko`, `es`, `pt-BR`, `id`, `ja`. Default to the language the user used. If unclear, write in English.
-  - **en, ko** (first class): These must read as native-quality prose — no awkward phrasing, no translation artifacts. See `references/writing-principles.md` for language-specific guidelines.
-  - **es, pt-BR, id, ja** (supported): Write naturally and correctly, but the user understands these may not reach native-essay polish. Still apply all core principles (conversational tone, concrete examples, surprise test).
+- **Language**: Supports `en` and `ko`. Both must read as native-quality prose — no awkward phrasing, no translation artifacts. Default to the language the user used. If unclear, write in English. See `references/writing-principles.md` for language-specific guidelines.
 - **Length**: 800-2500 words typically. Let the idea dictate length.
 - **Format**: MDX file with frontmatter and markdown body.
   ```yaml
