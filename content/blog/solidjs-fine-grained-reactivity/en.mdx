@@ -1,0 +1,206 @@
+---
+title: "A UI Framework That Runs on One Closure — SolidJS"
+description: "I dug into SolidJS's reactivity and found something far simpler than React under the hood."
+date: "2026-03-06"
+tags:
+  - solidjs
+  - reactivity
+  - frontend
+  - javascript
+draft: false
+---
+
+People say SolidJS is harder than React. "The mental model is unfamiliar." But when I actually dug into how it works, I found the opposite. SolidJS is far simpler. The perceived difficulty is just React-brain resisting a different pattern.
+
+To see why, you need to understand what SolidJS actually does.
+
+React re-runs the entire component function when state changes. It creates a new Virtual DOM, diffs it against the previous one, and patches the real DOM with the differences. SolidJS skips all of that. When state changes, it directly updates the DOM nodes that use that state. No intermediate steps.
+
+Here's how that's possible.
+
+SolidJS's reactivity system runs on three primitives: Signal, createEffect, and createMemo. Signal is the core.
+
+```js
+const [count, setCount] = createSignal(0);
+
+count()      // read the value
+setCount(1)  // change the value
+```
+
+It looks like React's useState, but there's a crucial difference. `count` is a function, not a value. You call it each time you want the current value. This difference creates everything.
+
+Here's what a Signal looks like internally:
+
+```js
+let currentObserver = null;
+
+function createSignal(value) {
+  const subscribers = new Set();
+
+  const get = () => {
+    if (currentObserver) {
+      subscribers.add(currentObserver);
+    }
+    return value;
+  };
+
+  const set = (newValue) => {
+    value = newValue;
+    subscribers.forEach(sub => sub());
+  };
+
+  return [get, set];
+}
+```
+
+Each Signal carries its own subscribers via closure. No global registry. The get and set functions share the same subscribers through their shared closure, so when get adds a subscriber, set can notify it later. The subscribers are never directly accessible from outside — closure provides encapsulation for free.
+
+But what is `currentObserver`, and who sets it?
+
+That's createEffect's job.
+
+```js
+function createEffect(fn) {
+  const effect = () => {
+    currentObserver = effect;
+    fn();
+    currentObserver = null;
+  };
+  effect();
+}
+```
+
+createEffect takes a function and runs it, but before running it, it plants a flag in the global variable: "I'm executing right now." While that flag is up, any Signal's get that runs inside fn() sees the flag and adds the Effect to its subscriber list. When fn() finishes, the flag comes down.
+
+Follow the execution:
+
+```js
+const [count, setCount] = createSignal(0);
+
+createEffect(() => {
+  console.log(count());
+});
+```
+
+effect() fires → currentObserver is set → fn() runs → count() is called → "currentObserver exists?" → effect gets added to subscribers → currentObserver is cleared. Later, setCount(1) → iterate subscribers → effect() re-runs → console.log(1).
+
+The only global is currentObserver. Everything else lives inside each Signal's closure. And technically, currentObserver is a stack, not a single variable — Effects can nest.
+
+```js
+const observerStack = [];
+
+function createEffect(fn) {
+  const effect = () => {
+    observerStack.push(effect);
+    fn();
+    observerStack.pop();
+  };
+  effect();
+}
+```
+
+If effect A runs effect B inside it, B pops off the stack when done, and A is back on top. Each Signal registers whatever's on top of the stack.
+
+That's the entire reactivity system. Closures plus a global stack.
+
+React does vastly more: Virtual DOM creation, prev/current VDOM diffing, Fiber scheduler, reconciliation, Concurrent Mode internals... SolidJS does: Signal changes → subscriber Effects run → DOM updates directly. No middle layer.
+
+The JSX compilation makes this even more interesting. SolidJS's compiler runs at build time. It analyzes JSX and separates static parts from dynamic ones.
+
+```jsx
+<div class="container">
+  <h1>Title</h1>
+  <span>{count()}</span>
+</div>
+```
+
+After compilation, this becomes roughly:
+
+```js
+const _tmpl = template(`<div class="container"><h1>Title</h1><span></span></div>`);
+
+const div = _tmpl.cloneNode(true);
+const span = div.querySelector('span');
+createEffect(() => {
+  span.textContent = count();
+});
+```
+
+Static parts become HTML template strings, created once. Only dynamic `{}` expressions get wrapped in createEffect at runtime. Each `{}` gets its own Effect that directly modifies its connected DOM node. That's why Virtual DOM diffing isn't needed.
+
+createMemo is similarly straightforward once you see the pattern.
+
+```js
+function createMemo(fn) {
+  const [value, setValue] = createSignal();
+
+  createEffect(() => {
+    setValue(fn());
+  });
+
+  return value;
+}
+```
+
+It creates an internal Signal, wraps the computation in createEffect, stores the result, and returns only the getter. createMemo is just "a createEffect with a Signal inside."
+
+```js
+const [count, setCount] = createSignal(0);
+const doubled = createMemo(() => count() * 2);
+```
+
+When setCount(5) fires, the Memo's internal Effect runs, setValue(10) stores the result. Calling doubled() after that just reads the cached value — no recomputation. Since setValue isn't exposed, it's a read-only derived value.
+
+Once you understand this, SolidJS's gotchas explain themselves.
+
+```js
+const value = count(); // no reactivity
+return <div>{value}</div>;
+```
+
+Why does reactivity vanish? The component function body is plain function execution. It's not inside a createEffect. currentObserver is null when count() is called, so no subscription gets registered. value becomes the number 0 — a dead value. When count changes later, value stays 0.
+
+```js
+return <div>{count()}</div>; // reactive
+```
+
+This works because the compiler wraps `{}` in JSX with createEffect. count() runs inside an Effect context, so the subscription registers.
+
+Props destructuring follows the same principle.
+
+```js
+function Component(props) {
+  const { name } = props; // reactivity lost
+  return <div>{props.name}</div>; // reactivity preserved
+}
+```
+
+SolidJS props are Proxy objects. Accessing `props.name` triggers a getter that behaves like a Signal. But destructuring calls the getter once and extracts the value. The moment it lands in a variable, it's dead. Whether it's a Signal or props, "the act of reading IS the subscription" — if you can't intercept the read, reactivity disappears.
+
+This also explains why SolidJS has control flow components like Show and For.
+
+```jsx
+// Plain map
+{list().map(item => <div>{item}</div>)}
+```
+
+When list() changes, the entire Effect re-runs and recreates all DOM nodes. Even if only one item was added, everything gets torn down and rebuilt.
+
+```jsx
+// For tracks each item individually
+<For each={list()}>{item => <div>{item}</div>}</For>
+```
+
+For only touches the DOM for items that actually changed. It's the mechanism that preserves fine-grained reactivity for lists.
+
+When I first looked at SolidJS, I expected complexity. Instead, the entire system is explained by one closure pattern and one global stack. Explaining React's internals requires starting with the Fiber tree and going on for quite a while. SolidJS's internals fit in a few dozen lines of pseudocode.
+
+The "hard" reputation probably comes from React being the established standard. Once you've internalized "state changes, component re-renders," the SolidJS rule — "Signals must be read as functions, and only inside Effects for reactivity" — feels alien. But alien isn't complex. It's just different.
+
+If anything, SolidJS's mental model is closer to what the computer actually does. A value changes, and the places that use it update. No intermediate abstraction. No re-executing functions that already ran. Surgical updates to exactly what changed.
+
+SolidJS didn't solve the same problem as React. It made the problem not exist in the first place. Instead of re-rendering everything and computing a diff, it knows from the start which parts changed. useMemo, useCallback, React.memo — none of them are needed. There's nothing to optimize.
+
+Simple architecture doesn't always mean easy. When you make a mistake in SolidJS, you don't get an error. You get a silent bug where something just doesn't react. React throws when you misuse it; SolidJS silently continues with missing reactivity. That can be scarier.
+
+But once you understand the internals, every gotcha traces back to the same principle. "Reading a Signal is subscribing. Subscribing only happens inside an Effect." That single sentence explains nearly all of SolidJS's behavior. When a framework's core can be summarized in one sentence, that's a sign the design is genuinely good.

@@ -1,0 +1,206 @@
+---
+title: "클로저 하나로 돌아가는 UI 프레임워크 — SolidJS"
+description: "SolidJS의 반응성을 파헤쳐봤더니, React보다 훨씬 단순한 구조가 나왔다."
+date: "2026-03-06"
+tags:
+  - solidjs
+  - reactivity
+  - frontend
+  - javascript
+draft: false
+---
+
+SolidJS가 React보다 어렵다는 말을 종종 듣는다. "멘탈모델이 낯설다"는 거다. 근데 실제로 내부 구조를 파보니까 정반대였다. SolidJS가 훨씬 단순하다. "어렵다"고 느끼는 건 React에 익숙해진 뇌가 저항하는 것일 뿐이다.
+
+이 얘기를 하려면 먼저 SolidJS가 뭘 하는지부터 봐야 한다.
+
+React는 상태가 바뀌면 컴포넌트 함수 전체를 다시 실행한다. 새 Virtual DOM을 만들고, 이전 것과 비교(diff)하고, 다른 부분만 실제 DOM에 반영한다. SolidJS는 이 과정을 전부 건너뛴다. 상태가 바뀌면 그 상태를 쓰는 DOM 노드만 직접 고친다. 중간 단계가 없다.
+
+이게 어떻게 가능한지 알아보자.
+
+SolidJS의 반응성 시스템은 세 가지 원시값으로 돌아간다. Signal, createEffect, createMemo. 이 중 Signal이 핵심이다.
+
+```js
+const [count, setCount] = createSignal(0);
+
+count()      // 값을 읽는다
+setCount(1)  // 값을 바꾼다
+```
+
+React의 useState와 비슷해 보이지만 결정적인 차이가 있다. count는 값이 아니라 함수다. 호출할 때마다 현재 값을 반환한다. 이 차이가 모든 걸 만든다.
+
+Signal 내부를 코드로 보면 이렇다.
+
+```js
+let currentObserver = null;
+
+function createSignal(value) {
+  const subscribers = new Set();
+
+  const get = () => {
+    if (currentObserver) {
+      subscribers.add(currentObserver);
+    }
+    return value;
+  };
+
+  const set = (newValue) => {
+    value = newValue;
+    subscribers.forEach(sub => sub());
+  };
+
+  return [get, set];
+}
+```
+
+각 Signal이 자기만의 subscribers를 클로저로 들고 다닌다. 전역 레지스트리 같은 건 없다. get과 set이 같은 subscribers를 클로저로 공유하기 때문에, get이 구독자를 추가하면 set이 그 구독자들에게 알릴 수 있다. subscribers는 외부에서 직접 접근할 수 없고, get/set을 통해서만 간접적으로 조작된다. 클로저가 캡슐화를 해주는 셈이다.
+
+근데 여기서 의문이 생긴다. `currentObserver`는 뭐고, 누가 세팅하는 걸까?
+
+이게 createEffect의 역할이다.
+
+```js
+function createEffect(fn) {
+  const effect = () => {
+    currentObserver = effect;
+    fn();
+    currentObserver = null;
+  };
+  effect();
+}
+```
+
+createEffect는 함수를 받아서 실행하는데, 실행 전에 "나 지금 실행 중이야"라고 전역 변수에 깃발을 꽂는다. 그 상태에서 fn() 안의 코드가 Signal의 get을 호출하면, Signal은 "아, 지금 실행 중인 Effect가 있네"하고 구독자 목록에 추가한다. fn() 실행이 끝나면 깃발을 내린다.
+
+실행 흐름을 따라가 보면 이런 식이다.
+
+```js
+const [count, setCount] = createSignal(0);
+
+createEffect(() => {
+  console.log(count());
+});
+```
+
+effect() 호출 → currentObserver에 effect 세팅 → fn() 실행 → count() 호출 → "currentObserver 있네?" → subscribers에 effect 추가 → currentObserver 해제. 나중에 setCount(1) 호출 → subscribers 순회 → effect() 재실행 → console.log(1) 출력.
+
+전역인 건 currentObserver 하나뿐이다. 나머지는 전부 각 Signal의 클로저 안에 있다. 정확히 말하면 currentObserver는 단순 변수가 아니라 스택이다. Effect 안에 Effect가 중첩될 수 있으니까.
+
+```js
+const observerStack = [];
+
+function createEffect(fn) {
+  const effect = () => {
+    observerStack.push(effect);
+    fn();
+    observerStack.pop();
+  };
+  effect();
+}
+```
+
+effect A 안에서 effect B가 실행되면, B가 끝난 후 스택에서 pop되고 A가 다시 최상단이 된다. 각 Signal은 스택 최상단의 observer를 구독자로 등록한다.
+
+이게 SolidJS 반응성 시스템의 전부다. 클로저 + 전역 스택. 진짜 이게 끝이다.
+
+React는 이보다 훨씬 많은 걸 한다. Virtual DOM 생성, 이전/현재 VDOM diffing, Fiber 스케줄러, Reconciliation, Concurrent Mode 내부 구현... SolidJS는 Signal 변경 → 구독자 Effect 실행 → DOM 직접 수정. 중간 레이어가 없다.
+
+여기서 JSX가 어떻게 DOM이 되는지 보면 더 재밌다. SolidJS의 컴파일러는 빌드타임에 작동한다. JSX를 분석해서 정적인 부분과 동적인 부분을 나눈다.
+
+```jsx
+<div class="container">
+  <h1>타이틀</h1>
+  <span>{count()}</span>
+</div>
+```
+
+이게 빌드 후에는 대략 이렇게 된다.
+
+```js
+const _tmpl = template(`<div class="container"><h1>타이틀</h1><span></span></div>`);
+
+const div = _tmpl.cloneNode(true);
+const span = div.querySelector('span');
+createEffect(() => {
+  span.textContent = count();
+});
+```
+
+정적인 부분은 HTML 템플릿 문자열로 미리 만들어두고, 동적인 `{}` 부분만 런타임에 createEffect로 처리한다. 각 `{}`마다 Effect가 하나씩 생기고, 해당 Effect는 연결된 DOM 노드만 직접 수정한다. Virtual DOM diffing이 필요 없는 이유다.
+
+그럼 createMemo는 뭘까? 이것도 알고 보면 단순하다.
+
+```js
+function createMemo(fn) {
+  const [value, setValue] = createSignal();
+
+  createEffect(() => {
+    setValue(fn());
+  });
+
+  return value;
+}
+```
+
+내부에 Signal을 하나 만들고, createEffect로 감싸서 fn의 결과를 그 Signal에 저장한다. getter만 반환한다. createMemo는 "내부에 Signal을 가진 createEffect"일 뿐이다.
+
+```js
+const [count, setCount] = createSignal(0);
+const doubled = createMemo(() => count() * 2);
+```
+
+setCount(5)를 호출하면, count의 subscribers에 있는 Memo 내부 Effect가 실행되고, setValue(10)이 호출되어 내부 Signal에 10이 저장된다. 이후 doubled()를 호출하면 재계산 없이 캐시된 값을 꺼내는 것뿐이다. setValue를 외부에 노출하지 않으니 "읽기 전용 파생값"이 된다.
+
+여기까지 이해하면 SolidJS의 함정들도 자연스럽게 설명이 된다.
+
+```js
+const value = count(); // 반응성 없음
+return <div>{value}</div>;
+```
+
+왜 반응성이 사라질까? 컴포넌트 함수 본문은 그냥 일반 함수 실행이다. createEffect 안이 아니다. currentObserver가 null인 상태에서 count()를 호출하면 구독자 등록이 안 된다. 그냥 숫자 0이 value에 담길 뿐이다. 이후 count가 바뀌어도 value는 여전히 0이다. 죽은 값이다.
+
+```js
+return <div>{count()}</div>; // 반응성 있음
+```
+
+이건 왜 될까? JSX 안의 `{}`가 컴파일러에 의해 createEffect로 감싸지기 때문이다. count()가 Effect 컨텍스트 안에서 실행되니까 구독이 등록된다.
+
+props 구조분해도 같은 원리다.
+
+```js
+function Component(props) {
+  const { name } = props; // 반응성 사라짐
+  return <div>{props.name}</div>; // 반응성 유지
+}
+```
+
+SolidJS의 props는 Proxy 객체다. `props.name`에 접근하면 getter가 호출되면서 Signal처럼 동작한다. 그런데 구조분해하면 getter를 한 번 호출해서 값만 뽑아내는 거다. 변수에 담는 순간 죽은 값이 된다. Signal이든 props든, "읽는 행위 자체가 구독"이기 때문에 읽는 행위를 가로채지 못하면 반응성이 사라진다.
+
+SolidJS에 Show나 For 같은 제어 흐름 컴포넌트가 존재하는 이유도 여기에 있다.
+
+```jsx
+// map을 그냥 쓰면
+{list().map(item => <div>{item}</div>)}
+```
+
+list()가 바뀌면 Effect 전체가 재실행되면서 DOM 노드를 전부 새로 만든다. 아이템 하나가 추가됐을 뿐인데 전부 날리고 다시 만드는 거다.
+
+```jsx
+// For는 각 아이템을 개별 추적
+<For each={list()}>{item => <div>{item}</div>}</For>
+```
+
+For는 실제로 변한 아이템의 DOM만 건드린다. fine-grained reactivity를 유지시켜주는 장치인 셈이다.
+
+SolidJS를 처음 봤을 때 "이게 React보다 어렵다고?" 싶었다. 전체 시스템이 클로저 하나와 전역 스택 하나로 설명된다. React의 내부 구조를 설명하려면 Fiber 트리부터 시작해서 한참이 걸리는 것과 비교하면 놀라울 정도로 단순하다.
+
+"어렵다"는 평가가 붙는 이유는 아마 React가 먼저 표준이 됐기 때문인 것 같다. "상태가 바뀌면 다시 그린다"는 멘탈모델에 이미 익숙해진 상태에서 "Signal은 함수로 읽어야 하고, Effect 안에서 읽어야 반응성이 생긴다"는 규칙이 낯설게 느껴지는 거다. 근데 그 낯섦은 복잡함이 아니다. 그냥 다른 거다.
+
+오히려 SolidJS의 멘탈모델이 컴퓨터가 실제로 하는 일에 더 가깝다는 생각이 든다. 값이 바뀌면 그 값을 쓰는 곳만 업데이트한다. Virtual DOM이라는 중간 추상화 없이. 컴포넌트 함수 재실행 없이. 변경된 곳만 외과적으로 수정한다.
+
+결국 React가 해결하려 한 문제를 SolidJS는 아예 발생하지 않게 만든 거다. 전체를 다시 그리고 diff를 구하는 대신, 처음부터 바뀐 곳만 안다. useMemo, useCallback, React.memo 같은 최적화 도구가 필요 없는 이유다. 최적화할 게 없으니까.
+
+단순한 아키텍처가 항상 쉬운 건 아니다. SolidJS에서 실수하면 에러가 아니라 "그냥 반응을 안 하는" 조용한 버그가 된다. React는 잘못 쓰면 에러를 던지지만, SolidJS는 잘못 써도 아무 말 없이 동작한다. 그냥 반응성만 빠진 채로. 이게 더 무서울 수 있다.
+
+그래도 내부 구조를 이해하면 이 함정들이 전부 같은 원리에서 나온다는 걸 알 수 있다. "Signal을 읽는 행위가 구독이다. 구독은 Effect 안에서만 일어난다." 이 한 문장이면 SolidJS의 거의 모든 동작이 설명된다. 프레임워크의 핵심을 한 문장으로 요약할 수 있다는 건, 그 설계가 정말 잘 됐다는 뜻 아닐까.
