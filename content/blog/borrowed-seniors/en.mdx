@@ -1,0 +1,73 @@
+---
+title: "Borrowed Seniors"
+description: "I set out to build domain experts. What I got was a curriculum."
+date: "2026-03-07"
+tags:
+  - ai
+  - learning
+  - solo-developer
+  - career
+draft: false
+---
+
+A frontend developer with opinions about index strategies. That was a strange thing to become.
+
+Until a few months ago, databases were "make it work" territory for me. Set up a schema with an ORM, add an index when things got slow, copy a StackOverflow answer when they stayed slow. I never thought deeply about why that particular index was right.
+
+What changed was building a database design skill for Claude Code. "Capture the decision frameworks used by world-class database experts," I told it. This wasn't for my own study. It was a guide for the AI to follow when doing database work.
+
+Then I read the finished document. And I was learning from it.
+
+---
+
+Textbooks explain knowledge. What normalization is. What indexes are. What transactions are. This skill document was different. It captured how an expert judges a situation.
+
+When to break normalization. When removing an index is better than adding one. What distinguishes the right transaction isolation level from the wrong one. These are things you normally learn by sitting next to a senior for years. The answers to "why did you make that decision?" Knowledge that lives in experience, not textbooks. What people call tacit knowledge.
+
+When I told the AI "make this world-class," it structured that tacit knowledge and handed it back to me.
+
+---
+
+After this discovery, I expanded to other domains. Software architect, backend engineer, marketer, data analyst. I built a skill for each.
+
+Reading the marketer skill, I started understanding why feature priorities get set the way they do. Before, when a PM said "let's build this first," I just built it. After reading how marketers think, I could see it — where the biggest drop in the conversion funnel was, why the feature that reduced that drop came before everything else.
+
+After reading the data analyst skill, I could judge for myself which events to track. I used to just add tracking wherever an analyst pointed. Why that button and not another? No idea. Now when I look at a funnel, I have a sense of what needs measuring.
+
+I wasn't just learning "what marketers do." I was learning to think like one.
+
+---
+
+I found a way to push the quality higher. Reference sources.
+
+A plain "build me a DB architecture skill" produces textbook answers. Accurate but flat. The battle-tested judgment is missing. But change the prompt: "Analyze Uber's database migration decisions. Reference Discord's architecture for storing trillions of messages. Incorporate Netflix's data pipeline design philosophy."
+
+The density jumps. Instead of "do this," you get "at this scale, they chose this for these reasons, and it later caused these problems." Failure cases included. Edge cases that only emerge at scale.
+
+Top-tier engineering blogs are a different species from textbooks. Textbooks explain theory. Blogs confess practice. "We tried this and it broke" doesn't appear in textbooks. But that's where the richest learning lives.
+
+Same for marketing. Reference Reforge articles or Lenny's Newsletter, and actual growth team frameworks show up in the skill document. For data analysis, Airbnb or Spotify R&D blogs. For API design, Stripe's design philosophy. Good reference sources and good extraction methods — those two things set the ceiling for how good a skill document can get.
+
+---
+
+There was one more technique that made these documents significantly better. Asking the AI to extract generalizable frameworks from specific cases.
+
+Discord solved their Read States problem using a particular tradeoff analysis. Don't stop there. Ask: "Generalize this analysis method into a judgment framework applicable to similar situations."
+
+A specific case becomes a reusable thinking tool. That's what seniors actually carry around — patterns of judgment built from years of varied situations. "This reminds me of that other time, so let's approach it this way." When you explicitly extract those patterns, you get something that feels like compressed experience.
+
+---
+
+I've been thinking about what this approach really is. Structurally acquiring compressed domain experience through AI.
+
+Before, there were two ways to get this. Work on that team yourself, or read an enormous amount. Five domains at two years each is a decade. And most people stay in one or two domains for that entire stretch. Start as a frontend developer, end as a frontend developer.
+
+Now you can ask AI "how does a world-class expert in this domain think?" and get a structured answer. Add references to battle-tested decisions from top-tier companies, and you get a document that sits somewhere between a textbook and an apprenticeship. The entry cost has dropped dramatically.
+
+---
+
+Reading won't make you a senior. What you read and what you live through are different things. But the gap between "not knowing what you don't know" and "having read a structured framework" was bigger than I expected. At minimum, you learn what questions to ask. In my experience, that alone was significant.
+
+And these documents don't just sit on a shelf. They run in actual workflows. When the AI writes code, designs architecture, or plans a marketing strategy, it follows these skills. What I learned by reading gets applied in practice right in front of me. Reading and doing run in parallel.
+
+I set out to build experts. What I built was a curriculum. I didn't plan it that way. Looking back, it might have been the bigger gain.
