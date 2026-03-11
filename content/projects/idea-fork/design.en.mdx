@@ -4,119 +4,76 @@ title: "Idea Fork — Case Study"
 
 ## The Insight
 
-Every "find a startup idea" tool stops halfway. Gummysearch shows you Reddit threads. SparkToro shows you audiences. Exploding Topics shows you trend graphs. They all give you raw ingredients and assume you'll do the cooking.
+Every "find a startup idea" tool gives you ingredients and assumes you'll do the cooking. GummySearch shows Reddit threads. SparkToro shows audiences. Exploding Topics shows trend graphs. They all stop at collection.
 
-But the real bottleneck isn't finding complaints — it's connecting those complaints to what already exists and spotting the gap. The synthesis step is where ideas actually live, and no tool touches it.
+But complaints alone don't become ideas. The real bottleneck is the synthesis step — connecting what people complain about to what already exists, and spotting the gap between the two. That's where product opportunities live, and no tool goes there.
 
-Idea Fork's bet: **map demand against supply, then let AI synthesize the gap into actionable briefs — with receipts.**
+Idea Fork's bet: automate the full journey. Map demand against supply, then let AI synthesize the gap into briefs — with every claim linking back to the original post.
 
 ## Who This Is For
 
-**The Side-Project Scout** — A developer with a full-time job and 10 hours a week to build something. They've shipped before, they know what "good enough to start" looks like, but they don't have time to spend 5 hours browsing Reddit for signal. They want curated, pre-digested opportunities that let them skip straight to "should I build this?"
+**Jinho, the side-project scout.** Full-time developer, 10 hours a week to build something. He's shipped before and knows what "good enough to start" looks like. What he doesn't have is 5 hours to browse Reddit hunting for signal. He wants pre-digested opportunities that let him skip straight to "should I build this?"
 
-**The Validation-First Founder** — Someone who's been burned by building before validating. They're allergic to "I think people want this" reasoning. They need evidence: real complaints, real numbers, real source links. Before committing 3 months to an idea, they want to see that 47 people across 5 communities are independently frustrated by the same problem.
+**Sarah, the validation-first founder.** She's been burned by building before validating. "I think people want this" makes her flinch. She needs evidence: real complaints, real numbers, real source links. Before committing 3 months to an idea, she wants to see 47 people across 5 communities independently frustrated by the same problem.
 
-**The Internal Innovator** — A PM at a mid-size company who needs to pitch new features or products to leadership. Internal feedback channels are an echo chamber. They need external demand signals — what are users complaining about to strangers, not to customer support?
+**Dohyun, the internal innovator.** PM at a mid-size company, pitching new features to leadership. Internal feedback channels are an echo chamber. He needs external demand signals — what users complain about to strangers, not to customer support.
 
 ## The Core Loop
 
-The product's user journey follows a deliberate narrowing pattern — wide exploration that converges into specific, actionable insight:
+The user journey follows a deliberate narrowing: wide exploration converging into specific, actionable insight.
 
-1. **Browse the Feed** — A stream of tagged user complaints from Reddit, app stores, and RSS. Filter by type (Need, Complaint, Feature Request) and category. This is the raw demand signal — hundreds of posts a day, organized so you can scan rather than search.
+**Feed** builds intuition. A stream of tagged complaints from Reddit, app stores, and RSS — hundreds a day, organized by type and category so you scan rather than search. This is raw demand signal.
 
-2. **Explore Products** — Trending products from Product Hunt, App Store, and Play Store, each paired with their complaint count. You see what exists and where it's failing. The supply side of the equation.
+**Products** add context. Trending products paired with their complaint counts. You see what exists and where it's failing. The supply side of the equation.
 
-3. **Read AI Briefs** — Where demand meets supply. The system clusters related complaints, cross-references them against existing products, and synthesizes a brief: problem statement, demand signals (how many posts, from how many communities, over what timeframe), and suggested solution directions. Every claim has a superscript linking to the source post.
+**Briefs** deliver the punchline. The system clusters related complaints, cross-references them against existing products, and synthesizes a brief: problem statement, demand signals (how many posts, from how many communities, over what timeframe), and solution directions. Every claim has a superscript linking to the source.
 
-4. **Verify** — Tap any source link to read the original post. The brief is an argument, but the evidence is always one click away.
+Most users enter through Briefs — it's the SEO landing page. Power users develop a habit of browsing the Feed for signal that hasn't been synthesized yet. Both paths lead to the same action: verify the sources, then decide.
 
-The progression is intentional: Feed builds intuition, Products add context, Briefs deliver the punchline. Most users enter through Briefs (the landing page for SEO), but power users develop a habit of browsing the Feed for signal that hasn't been synthesized yet.
+## Product Decisions
 
-## Product Design Decisions
-
-### Zero-Friction Anonymous Access
+### No login wall
 
 No signup. No paywall. No onboarding flow. Open the site, see the feed.
 
-This wasn't just a UX preference — it was a strategic bet. The product's value is only demonstrable by using it. A login wall before the user has experienced the core value kills conversion. Let them browse 10 briefs first. Once they're hooked, premium features (alerts, exports, custom pipelines) can justify an account.
+This wasn't a UX preference — it was a strategic bet. The product's value is only demonstrable by using it. A login wall before the user experiences the core value kills conversion. Let them browse 10 briefs first. Once they're hooked, premium features (alerts, exports, custom pipelines) can justify an account.
 
-The only "write" action in the entire MVP is rating briefs (thumbs up/down), and even that works via anonymous session cookies. No PII collected, no GDPR headache, no auth system to build or maintain.
+The trade-off: no personalization, no saved preferences, no notification system. The only "write" action in the MVP is rating briefs — and even that works via anonymous session cookies. No PII, no GDPR headache, no auth system to build.
 
-### Three-Part Structure: Feed / Products / Briefs
+### Three tabs, not just Briefs
 
-Why not just show briefs? Because trust requires transparency.
+Why not show only the AI-generated briefs? Because trust requires transparency.
 
-Briefs are AI-generated summaries. If that's all you see, you're trusting a black box. The Feed exists so users can see the raw material. Products exist so they can evaluate the supply landscape themselves. Briefs are the synthesis, but the other two tabs are the receipts.
+If all you see are AI summaries, you're trusting a black box. The Feed exists so users can see the raw material. Products exist so they can evaluate the supply landscape themselves. Briefs are the synthesis; the other two tabs are the receipts.
 
-This structure also serves different user intents: some users want to browse raw signal (Feed), some want competitive intelligence (Products), some want pre-digested opportunities (Briefs). The three-tab IA maps cleanly to these intents without requiring the user to understand the system's pipeline.
+The alternative was a single-page brief experience — simpler to build, easier to explain. But an AI product making unsourced claims about "market opportunities" felt indistinguishable from a hallucination. Showing the full pipeline — raw data, supply context, synthesized output — earns trust that a polished summary alone cannot.
 
-### Evidence-First AI
+### Evidence-first AI
 
-Every claim in a brief links to a real source post. This isn't a nice-to-have — it's the core trust mechanism.
+Every claim in a brief links to a real source post. This shaped the entire data architecture: briefs store `source_snapshots` so citations render without a join, with a normalized table underneath for referential integrity.
 
-The alternative was "trust us, the AI analyzed 47 posts and concluded X." That works for ChatGPT (where users expect unsourced opinions), but fails for a product whose value proposition is data-driven discovery. If a brief says "users across 5 communities are frustrated with mobile note-taking performance," you should be able to click through and read what they actually said.
+The tempting alternative was "trust us, the AI analyzed 47 posts and concluded X." That works for ChatGPT where users expect unsourced opinions. It fails for a product whose value proposition is data-driven discovery. If a brief says "users across 5 communities are frustrated with mobile note-taking performance," you should be able to click through and read what they actually said.
 
-This constraint shaped the entire data architecture: every brief stores `source_snapshots` so that citations render without a join, and the normalized `brief_source` table maintains referential integrity underneath.
+### Mobile-first, content-first
 
-### Mobile-First, Thumb-First
+No splash screen. No hero section. No welcome modal. The first thing you see is the latest complaint stream. Content is the interface.
 
-Primary actions sit in the thumb zone. The mobile bottom tab bar has three tabs (Feed, Briefs, Products) — matching the three core experiences. Desktop uses a horizontal top bar with inline search.
+Primary actions sit in the thumb zone. Mobile bottom tab bar mirrors the three core experiences. Cards show title, source badge, and sentiment indicator — long text is line-clamped at 2 lines with expand/collapse. Progressive depth without information overload.
 
-Progressive depth means the mobile card shows a title, source badge, and sentiment indicator. Tap for the full post. Long text is line-clamped at 2 lines with expand/collapse. No information overload on first glance.
-
-## UX Principles
-
-Six rules that shaped every screen:
-
-1. **Content is the interface** — Feed is the homepage. No splash screen, no hero section, no "Welcome to Idea Fork" modal. The first thing you see is the latest complaint stream.
-
-2. **One action per screen** — Each page has one primary action. Brief detail's primary action is "verify the source." Product detail's primary action is "explore the complaints." Secondary actions (rating, sharing) are visually subdued.
-
-3. **Progressive depth** — Listing pages show card-level summaries. Detail pages show full content. Source links go to the original post. Each layer adds depth without forcing it.
-
-4. **Evidence is visible** — AI claims have inline citation superscripts. Demand signals show exact numbers (47 posts, 5 communities, 142 avg score). No vague "many users report..."
-
-5. **Zero friction** — No login, no onboarding, no popups. Not even a cookie consent banner (because no tracking cookies are set — analytics use first-party, privacy-respecting tools).
-
-6. **Mobile-first, thumb-first** — Every touch target is 44x44pt minimum. Filter chips scroll horizontally. Infinite scroll with intersection observer. No pagination controls to tap on a phone screen.
-
-## Information Architecture
-
-```
-idea-fork.com
-├── / (Feed)              ← Landing page. Complaint stream.
-├── /briefs               ← Brief listing. Grid of opportunity cards.
-│   └── /briefs/[slug]    ← Brief detail. Full synthesis + sources.
-├── /products             ← Product listing. Trending products + complaints.
-│   └── /products/[slug]  ← Product detail. Complaints, themes, related briefs.
-└── /search?q=...         ← Cross-entity search. Tabs: All, Briefs, Products, Posts.
-```
-
-Three top-level tabs in navigation. Search is a utility, not a tab — accessible from the header on desktop, full-screen overlay on mobile. Every entity links to related entities: posts link to briefs they appear in, briefs link to source posts, products link to their complaints and related briefs. No dead ends.
+The rejected alternative: a marketing landing page that explains Idea Fork before letting you use it. But the product's pitch is more convincing when experienced than when described.
 
 ## Competitive Positioning
 
-| Tool | What it does well | Where it stops | Idea Fork's angle |
-|------|------------------|----------------|-------------------|
-| Gummysearch | Deep Reddit community exploration | Requires manual query writing, no synthesis | Zero setup — pipeline runs daily, delivers briefs |
-| SparkToro | Audience research and demographics | Marketing-focused, no product opportunity path | Maps demand-supply gaps, not audiences |
-| Exploding Topics | Trend data and emerging topics | Shows what's growing, not why or what to build | Feed-first discovery with AI-generated briefs |
-| Manual browsing + ChatGPT | Flexible, free | No aggregated data, no longitudinal signal | Multi-source pipeline with real attribution |
+The key insight isn't better data collection — it's end-to-end coverage. Every competitor gives you one half: demand OR supply, raw data OR synthesis.
 
-The key differentiator is end-to-end coverage. Others give you one half of the equation (demand OR supply, raw data OR synthesis). Idea Fork covers the full pipeline: raw signal → aggregation → synthesis → brief with source links.
+GummySearch goes deep on Reddit but requires manual queries and doesn't synthesize. SparkToro maps audiences but has no product opportunity path. Exploding Topics shows growth trends but not what to build about them. Manual browsing with ChatGPT is flexible but gives you no aggregated data and no attribution.
+
+Idea Fork covers the full pipeline. Raw signal to aggregation to synthesis to brief with source links. The synthesis step — where complaints become opportunities — is what no one else automates.
 
 ## Business Model
 
-**Phase 1 (Current): Free browsing, validate demand.** No login, no paywall. Measure engagement: do users read briefs? Do they click source links? Do they come back weekly? Premium waitlist collects intent signals.
+**Phase 1 (current):** Free browsing, validate demand. No login, no paywall. Measure engagement: do users read briefs? Do they click sources? Do they return weekly?
 
-**Phase 2 (Planned): Freemium.** Free tier = public briefs and feed. Premium = custom alerts (get notified when a new brief matches your interests), brief export (PDF/Notion), historical trend data, and API access for building workflows on top.
+**Phase 2 (planned):** Freemium. Free tier keeps public briefs and feed. Premium adds custom alerts, brief export, historical trend data, and API access.
 
-**Why not paid from day one?** The product needs proof of retention before it needs revenue. A paywall on an unvalidated product filters out exactly the users whose behavior would tell you whether the product works.
-
-## Roadmap
-
-**Phase 1 — MVP (shipped):** Full pipeline, all three experiences (Feed, Products, Briefs), search, anonymous ratings. 8-week build.
-
-**Phase 2 — Validate and iterate:** User interviews, brief quality scoring, prompt tuning based on rating feedback. Add X/Twitter as a demand source. +4 weeks.
-
-**Phase 3 — Monetization:** Premium features, user accounts, custom pipelines. Timeline TBD based on Phase 2 signals.
+Why not paid from day one? A paywall on an unvalidated product filters out exactly the users whose behavior would tell you whether the product works. Retention proof comes before revenue.

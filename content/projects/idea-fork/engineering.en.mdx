@@ -2,67 +2,53 @@
 title: "Idea Fork — Engineering Design Doc"
 ---
 
-## System Architecture
+## Architecture
 
-Idea Fork uses a split-path architecture built around one key observation: the data pipeline and the user-facing read path have completely different requirements. The pipeline needs Python's ML ecosystem, scheduled execution, and heavy LLM API integration. The read path needs low-latency page rendering and costs nothing when idle. Forcing both through the same server wastes money and adds latency.
+Idea Fork uses a split-path architecture built around one observation: the data pipeline and the read path have completely different requirements. The pipeline needs Python's ML ecosystem, scheduled execution, and heavy LLM integration. The read path needs low-latency rendering and should cost nothing when idle.
 
-**The split:**
-
-- **Web App (Next.js on Vercel)** — Queries Neon PostgreSQL directly via `@neondatabase/serverless`. No API server in the production read path.
-- **API + Pipeline (FastAPI on GCP Cloud Run)** — Runs only as a daily scheduled pipeline. Fetches data from 5+ sources, tags posts via LLM, clusters them, and synthesizes briefs. Not deployed for serving user requests.
-- **Database (Neon PostgreSQL)** — Single source of truth. Scale-to-zero pricing means near-zero cost when idle.
-
-The data access layer is switchable via the `DATA_SOURCE` env var (`neon` for production, `api` for local dev). Switching back to the API server for production reads requires only changing an environment variable.
+- **Web App (Next.js on Vercel)** — queries Neon PostgreSQL directly via `@neondatabase/serverless`. No API server in the production read path.
+- **Pipeline (FastAPI on GCP Cloud Run)** — runs daily on a schedule. Fetches from 5+ sources, tags posts via LLM, clusters them, synthesizes briefs. Not deployed for user-facing requests.
+- **Database (Neon PostgreSQL)** — single source of truth. Scale-to-zero pricing.
 
 ```
 User → Next.js (Vercel) → Neon DB ← FastAPI Pipeline (Cloud Run)
          ↑ reads directly                  ↑ writes on schedule
 ```
 
-## Key Architecture Decisions
+The data access layer switches via a `DATA_SOURCE` env var. Production uses `neon` (direct DB). Local dev uses `api` (proxies to FastAPI). Flipping back to API-served reads requires changing one variable.
 
-### ADR-1: Python for the Pipeline
+## HDBSCAN Over LLM Clustering
 
-The pipeline does LLM tagging, embedding vectorization, density-based clustering (scikit-learn), and multi-source data ingestion. Python's ML/data ecosystem made this straightforward. TypeScript end-to-end was considered, but scikit-learn, numpy, and the google-genai SDK are significantly more mature in Python.
+The original approach sent all posts to the LLM and asked it to group them. This hit three walls: O(n) token cost, context window limits (around 50 posts per call), and accuracy degrading with volume.
 
-The bottleneck is LLM API latency (30s+ for batch synthesis), not compute. Rust's speed advantage would be invisible here. Trade-off: higher memory and 1-2s cold starts on Cloud Run, acceptable because the pipeline is not user-facing.
+The replacement: vectorize posts via Gemini Embedding API, then cluster with HDBSCAN (density-based, scikit-learn). HDBSCAN determines cluster count automatically, handles noise points, and scales to thousands of posts. The LLM is used only for labeling each cluster — a short, cheap call per cluster instead of a massive prompt containing all posts. This cut clustering costs by roughly 10x.
 
-### ADR-7: HDBSCAN over LLM Clustering
+K-means was rejected because it requires specifying cluster count upfront — impossible when you don't know how many distinct complaint themes exist in today's batch. Local sentence-transformers were rejected because Gemini embeddings are higher quality at negligible API cost.
 
-The original approach sent all posts to the LLM and asked it to group them. This hit three walls: O(n) token cost, context window limits (around 50 posts per call), and degrading accuracy with volume.
+## Direct Neon Access from Next.js
 
-The replacement: vectorize posts via Gemini Embedding API, then cluster via HDBSCAN (density-based, from scikit-learn). HDBSCAN automatically determines cluster count, handles noise points, and scales to thousands of posts. The LLM is used only for labeling each cluster — a short, cheap call per cluster instead of a massive prompt containing all posts. This cut clustering costs by roughly 10x.
+In production, Next.js queries Neon directly, eliminating a network hop. The `server-only` package prevents accidental client-side imports of database code. Rating writes use Server Actions that write to Neon directly.
 
-K-means was rejected because it requires specifying cluster count upfront. Local sentence-transformers were rejected because Gemini embeddings are higher quality at negligible API cost.
+Trade-off: SQL queries are duplicated in TypeScript (ported from Python originals). Acceptable because the query surface is small — about 10 queries — and stable. The alternative was keeping the API server running 24/7 to serve reads, which costs money for a pipeline that writes once daily.
 
-### ADR-8: Direct Neon Access from Next.js
+PostgreSQL handles everything without additional infrastructure: relational data, full-text search (tsvector + pg_trgm), JSON storage (JSONB for denormalized brief data), and cursor-based pagination. At MVP scale, adding Redis or Elasticsearch would add ops complexity with no measurable benefit.
 
-In production, Next.js queries Neon directly using `@neondatabase/serverless`, eliminating a network hop (Next.js to Cloud Run to Neon becomes Next.js to Neon). The `server-only` package prevents accidental client-side imports of database code. Rating writes use Next.js Server Actions that write to Neon directly.
+## The Pipeline
 
-Trade-off: SQL queries are duplicated in TypeScript (ported from the Python originals). Acceptable because the query surface is small and stable.
+Five stages, running daily via Cloud Scheduler, processing around 4K posts per run. An advisory lock prevents overlapping executions.
 
-PostgreSQL handles everything with no additional infrastructure: relational data, full-text search (tsvector + pg_trgm), JSON storage (JSONB for denormalized brief data), and cursor-based pagination. At MVP scale, adding Redis or a dedicated search service would only increase ops complexity for a pipeline that writes once daily.
+1. **Fetch** — concurrent collection from Reddit, RSS (Hacker News, TechCrunch), App Store, Play Store, Product Hunt. Upserts via `ON CONFLICT` to deduplicate.
+2. **Tag** — batches of 20 posts sent to Gemini Flash Lite. Each post gets a type (7 actionable + 3 non-actionable categories), sentiment, and topic tags.
+3. **Score** — updates trending scores and complaint counts on products via shared tags.
+4. **Cluster** — batches of 200 tagged posts vectorized, then clustered via HDBSCAN. Each cluster labeled by a short LLM call.
+5. **Synthesize** — for each cluster, fetches Google Trends data and related products, then Gemini Flash generates a complete brief (problem statement, opportunity analysis, solution directions, competitive landscape).
 
-## Data Pipeline
+Each brief stores source references in two places: a normalized `brief_source` table for referential integrity and a `source_snapshots` JSONB column for join-free reads. The read path never needs cross-table joins for a brief detail page.
 
-The pipeline runs daily via GCP Cloud Scheduler, processing around 4K posts per run. An advisory lock prevents overlapping runs.
+## Key Decisions
 
-**Five stages:**
+**Python for the pipeline, not TypeScript end-to-end.** The pipeline does LLM tagging, embedding, and HDBSCAN clustering — scikit-learn and numpy are significantly more mature in Python. The bottleneck is LLM API latency (30s+ for batch synthesis), not compute. Rust's speed advantage would be invisible. Trade-off: 1-2s cold starts on Cloud Run, acceptable because the pipeline is not user-facing.
 
-1. **Fetch** — Concurrent collection from Reddit, RSS (Hacker News, TechCrunch), App Store, Play Store, and Product Hunt. Posts are upserted via `ON CONFLICT` to avoid duplicates.
-2. **Tag** — Batches of 20 posts sent to Gemini Flash Lite. Each post receives a type classification (7 actionable + 3 non-actionable categories), sentiment, and 2-3 topic tags.
-3. **Score** — Updates trending scores and complaint counts on products based on shared tags with posts.
-4. **Cluster** — Batches of 200 tagged posts vectorized via Gemini Embedding API, then clustered via HDBSCAN. Each cluster gets a label from a short LLM call.
-5. **Synthesize** — For each cluster, fetches Google Trends data and related products, then sends everything to Gemini Flash to generate a complete opportunity brief (problem statement, opportunity analysis, solution directions, competitive landscape).
+**No staging environment.** Neon's database branching provides sufficient isolation. Dev, preview, and production each get their own branch. Adding a full staging environment would double infrastructure cost for a solo-developer project that deploys from main.
 
-Each brief stores source references in two places: a normalized `brief_source` table (referential integrity) and a `source_snapshots` JSONB column (fast reads without joins). This dual storage is intentional — the read path never needs cross-table joins for a brief detail page.
-
-## Infrastructure
-
-- **Web App**: Vercel (auto-deploy on push to main, preview deploys on PRs)
-- **Pipeline**: GCP Cloud Run (1 vCPU, 1Gi RAM, scale-to-zero)
-- **Database**: Neon PostgreSQL (scale-to-zero, branching for dev environments)
-- **IaC**: Pulumi (TypeScript) for declarative management of GCP + Neon + Vercel
-- **CI/CD**: GitHub Actions — web via Vercel integration, API via Docker to Artifact Registry to Cloud Run
-
-No staging environment. Neon's branching model provides sufficient isolation across development, preview, and production.
+**Pulumi over Terraform.** Infrastructure is managed in TypeScript via Pulumi, matching the web app's language. The GCP + Neon + Vercel stack is declared in one place. Terraform was rejected because HCL adds a third language to the project for no functional benefit.

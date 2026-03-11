@@ -4,95 +4,48 @@ title: "Narrex — Engineering"
 
 ## Architecture
 
-**Modular Monolith + Hexagonal (Rust / Axum)**
+Rust/Axum modular monolith with hexagonal architecture. One developer, one deployable unit. Projects, scenes, characters, and AI generation all share data heavily — microservices would mean every generation request fans out across 4 services. A monolith with domain-separated modules (Rust traits as port boundaries) avoids that overhead while staying extractable later.
 
-Solo developer building tightly coupled domains — projects, scenes, characters, and generation all share data extensively. A monolith avoids deployment overhead. Modules are separated by domain with clean interfaces (Rust traits as ports), extractable to services later if needed. Sub-ms responses, 10–30MB memory, compile-time safety.
-
-The `llm` crate is a separate workspace crate — the compiler physically prevents it from importing API internals. This enforces the boundary between "how to talk to LLMs" and "what to ask them."
+The frontend is TanStack Start with SolidJS, chosen over React specifically for the timeline. Fine-grained reactivity means each scene node updates independently during drag-and-drop — no virtual DOM diffing across hundreds of elements. Deployed to Cloudflare Workers via Nitro adapter.
 
 ```
 apps/api/
-├── crates/llm/              # LLM provider abstraction (standalone)
-├── src/domain/               # Business logic (no infra deps)
+├── crates/llm/              # LLM provider abstraction (standalone crate)
+├── src/domain/               # Business logic (zero infra dependencies)
 │   ├── project/              # Project CRUD, story config
-│   ├── timeline/             # Tracks, scenes, branch/merge
+│   ├── timeline/             # Tracks, scenes, NLE positioning
 │   ├── character/            # Characters, relationships
-│   └── ai/                   # Prompt assembly, generation
-├── src/inbound/http/         # HTTP adapters (Axum handlers)
-└── src/outbound/             # Infra adapters (SQLx, R2, JWT)
+│   └── ai/                   # Prompt assembly, context compression
+├── src/inbound/http/         # Axum handlers
+└── src/outbound/             # SQLx, R2, JWT adapters
 ```
 
-**Frontend: TanStack Start + SolidJS**
+## What's Interesting
 
-SolidJS was chosen over React specifically for the timeline UI. Fine-grained reactivity means each scene node updates independently during drag-and-drop — no virtual DOM diffing across hundreds of elements. Deployed to Cloudflare Workers via Nitro adapter.
+### Scenes as Clips, Not List Items
 
-## Database Design
+Scenes use `start_position` and `duration` as `DOUBLE PRECISION` — the NLE (non-linear editor) model. This is not a sorted list. Scenes have extent, which enables two things: midpoint insertion without reindexing (initial spacing of 1024.0 allows around 50 insertions before rebalancing), and automatic simultaneity detection across tracks via overlapping ranges. When generating prose for a scene, the system queries for scenes on other tracks with overlapping time ranges and includes them as "simultaneous events" in the prompt. The timeline structure literally shapes the AI context.
 
-**11 tables in Phase 1.** Core design choices:
+### The LLM Crate Boundary
 
-- **NLE positioning** — `scene.start_position` and `scene.duration` as `DOUBLE PRECISION`. Scenes are clips with extent, not list items. Initial spacing of 1024.0 allows ~50 midpoint insertions before rebalancing. Simultaneity across tracks via overlapping ranges.
+The `llm` crate lives in a separate Cargo workspace. The compiler physically prevents it from importing API internals — it knows how to talk to LLM providers, nothing more. The API's `ai` module handles what to ask: prompt construction, context assembly, orchestration. This separation is enforced at compile time, not by convention.
 
-- **Draft versioning** — Separate `draft` table with `(scene_id, version)`. Preserves full edit history, separates large text blobs from frequently-read scene metadata. Each draft records source (`ai_generation`, `ai_edit`, `manual`), model, and token counts.
+Two provider implementations sit behind a single `LlmProvider` trait: Gemini Flash-Lite (primary, $0.10/1M tokens) and CF Workers AI (fallback, free tier). `LlmGateway` handles failover — if Gemini returns a timeout, 5xx, or 429, the request automatically retries on Workers AI. No sidecar, no gateway service. Just in-process Rust with zero latency overhead.
 
-- **Context compression** — `scene_summary` table (1:1 with scene) stores AI-compressed summaries (~200–300 tokens). Preceding summaries replace full scene text in generation prompts, keeping context manageable at 15+ scenes.
+### Context Assembly
 
-- **Generation cost tracking** — `generation_log` with `ON DELETE SET NULL` for project/scene FKs. Cost data survives entity deletion for billing analytics.
+Each scene generation assembles a prompt from six structured sources: story config, scene details, character cards with relationships, compressed summaries of preceding scenes, simultaneous events from parallel tracks, and a preview of the next scene. Total: 2,500 to 5,000 tokens, deterministic given the same data.
 
-## Data Flows
+The critical piece is context compression. After each draft completes, the system generates a 200-300 token summary preserving plot events, character states, and foreshadowing. These summaries replace full scene text in subsequent generation prompts. At 15 scenes with 250-token summaries, that's roughly 3,750 tokens — well within context limits. Without compression, 15 scenes of full text would blow past any reasonable context window.
 
-Four primary flows, all streaming via SSE through `LlmGateway`:
+### Draft Versioning Separated from Scene Metadata
 
-1. **Idea to project** — User pastes a story idea. LLM returns structured JSON (project config, tracks, scenes, characters). Written to Postgres in a single transaction. Vague idea becomes a visual timeline in seconds.
-
-2. **Scene draft generation** — System assembles context from six sources: story config, scene details, character cards, compressed preceding summaries, simultaneous events from parallel tracks, and next scene preview (~2,500–5,000 tokens total). Draft is versioned on completion; auto-applies if no existing content, otherwise user confirms.
-
-3. **Direction-based edit** — User selects a passage and types a direction like "more tension." Same context assembly as generation, plus the selected text. New draft version recorded as `ai_edit`.
-
-4. **Editor auto-save** — Edits debounce for 1–2 seconds, then PATCH directly. Scene status transitions from `ai_draft` to `edited` on first manual modification.
-
-## AI / LLM Architecture
-
-**Provider abstraction via `crates/llm`:**
-
-```rust
-#[async_trait]
-pub trait LlmProvider: Send + Sync {
-    async fn generate(&self, req: GenerateRequest) -> Result<GenerateResponse>;
-    async fn generate_stream(&self, req: GenerateRequest)
-        -> Result<Pin<Box<dyn Stream<Item = Result<String>> + Send>>>;
-}
-```
-
-`LlmGateway` handles failover: Gemini Flash-Lite first, CF Workers AI on failure (timeout, 5xx, 429).
-
-**Context assembly per scene (~2,500–5,000 tokens):**
-
-| Source | Data | Tokens |
-|--------|------|--------|
-| System instruction | Generation rules, output format | ~500 |
-| Global config | Genre, theme, era, POV, mood | ~100 |
-| Scene details | Title, summary, location, mood | ~200 |
-| Characters + relationships | Cards for involved characters | ~350–700 |
-| Preceding summaries | Compressed prior scene summaries | ~1,000–3,000 |
-| Simultaneous events | Overlapping scenes on other tracks | ~200–400 |
-| Next scene preview | Title + summary | ~100 |
-
-Assembly is deterministic given the same data — no randomness in prompt construction.
-
-**Context compression:** After each draft completes, the system generates a ~200–300 token summary preserving key plot events, character states, and foreshadowing. Stored in Postgres (durable) and cached in Redis (fast reads). At 15 scenes with 250-token summaries, that is roughly 3,750 tokens — well within context limits.
-
-**Streaming:** SSE via Axum's native `Sse` type + `async-stream`. Three endpoints: scene generation, direction-based edit, and project auto-structuring (3-phase: world, characters, timeline). Frontend consumes via custom `fetch` + `ReadableStream` parser in SolidJS — no Vercel AI SDK dependency since no SolidJS adapter exists.
+Drafts live in a separate table with `(scene_id, version)` — not inline in the scene row. Each draft records its source (`ai_generation`, `ai_edit`, `manual`), the model used, and token counts. This keeps the frequently-read scene metadata table lean while preserving full generation history. Generation cost tracking uses `ON DELETE SET NULL` on project/scene foreign keys, so cost data survives entity deletion for billing analytics.
 
 ## Key Decisions
 
-**Rust/Axum over FastAPI** — No Python-only libraries needed. LLM calls are HTTP via `reqwest`. Rust gives sub-ms latency, 10–30MB memory, and compile-time safety at the lowest cloud cost.
+**Rust over Python** — No Python-only libraries needed. LLM calls are HTTP via `reqwest` + `serde`. Rust gives sub-ms latency, 10-30MB memory footprint, and compile-time safety. At launch traffic, the entire API runs on Cloud Run's free tier.
 
-**Monolith over microservices** — One developer, one deployable unit. Generation reads from every other module. One deployment = one CI pipeline, one container, one log stream. Revisit if the team grows or generation needs GPU compute.
+**Neon over Supabase** — Scale-to-zero pricing (free at launch), branch-based dev workflow for migrations, pgvector available for future embeddings. Co-located with Cloud Run in Virginia. Supabase Seoul was considered but rejected — the target is a global audience, and the 1-3ms cross-cloud latency between Neon and Cloud Run matters more than geographic proximity to Korea.
 
-**Neon over Supabase** — Scale-to-zero pricing (free at launch), branch-based dev workflow, pgvector for future embeddings. Co-located with Cloud Run in Virginia for low cross-cloud latency.
-
-**`llm` as a separate workspace crate** — Compiler-enforced boundary. Independently testable with mock providers. Reusable across CLI tools or workers. Zero runtime cost — it is a library, not a service.
-
-**SSE over WebSocket** — Token delivery only needs server-to-client streaming. SSE is stateless, HTTP-native, trivially handled by Cloud Run. WebSocket adds connection management for no benefit. Revisit when real-time collaboration is added.
-
-**Google OAuth only (Phase 1)** — Simplest implementation. Adding Kakao is a two-way door — just another OAuth provider, addable in weeks. Revisit if acquisition data shows bounce at login.
+**SSE over WebSocket** — Token delivery only needs server-to-client streaming. SSE is stateless and HTTP-native. Cloud Run handles it without connection management overhead. WebSocket adds complexity for zero benefit. The frontend parses SSE via custom `fetch` + `ReadableStream` in SolidJS — no Vercel AI SDK since no SolidJS adapter exists.

@@ -2,79 +2,51 @@
 title: "Mealio — Engineering"
 ---
 
-## System Architecture
+## Architecture
 
-Mealio is a three-package monorepo: `mobile` (React Native/Expo), `api` (Rust/Axum), and `infra` (Pulumi/TypeScript). Each package deploys independently through path-filtered CI/CD pipelines.
+Mealio is a three-package monorepo: `mobile` (React Native/Expo), `api` (Rust/Axum), and `infra` (Pulumi). Each deploys independently through path-filtered CI/CD.
 
-The data flow is straightforward: **Mobile --&gt; API --&gt; PostgreSQL + R2**. Photos upload directly from the mobile client to Cloudflare R2 via presigned URLs -- the API server never touches photo bytes. AI analysis runs asynchronously in a background Tokio task, fully decoupled from the request-response cycle.
+The data flow is simple: **Mobile --&gt; API --&gt; PostgreSQL + R2**. One critical rule: photo bytes never touch the API server. They upload directly from the client to Cloudflare R2 via presigned URLs. AI analysis runs in a background Tokio task, fully decoupled from the request-response cycle.
 
 ```
-Mobile Client (React Native / Expo 55)
+Mobile Client (React Native / Expo)
   |
-  |-- HTTPS --> API Server (Rust / Axum 0.8 on Cloud Run)
-  |                |-- SQLx --> Neon PostgreSQL 18
+  |-- HTTPS --> API Server (Rust / Axum on Cloud Run)
+  |                |-- SQLx --> Neon PostgreSQL
   |                |-- AWS SDK --> Cloudflare R2
   |                |-- reqwest --> Gemini Vision API
   |
   |-- Presigned PUT --> Cloudflare R2 (direct upload)
 ```
 
-## Dual-Mode Data Flow
+## Dual-Mode Data Architecture
 
-The app works in two modes -- guest (no account) and authenticated -- but the UI layer never knows which path is active. A `useEntryData()` hook abstracts the difference.
+The app runs in two modes — guest (MMKV local storage) and authenticated (API + TanStack Query) — but the UI layer never knows which is active. A `useEntryData()` hook abstracts the difference completely.
 
-**Guest mode** stores everything locally in MMKV. On capture, the entry is saved to device storage, and a Zustand version bump triggers a re-render.
+Guest mode writes entries to device storage and triggers re-renders via a Zustand version bump. Auth mode enqueues captures into a background upload processor that uploads photos to R2 in parallel, creates the server entry, triggers AI analysis, and invalidates cached queries.
 
-**Auth mode** enqueues captures into an upload queue. A background processor picks up pending items, uploads photos to R2 in parallel via presigned URLs, creates the entry on the server, fires off an AI analysis request, and invalidates cached queries.
+The interesting part is login migration: all guest entries transfer to the server in a single batch, then local storage clears. This sounds simple, but it means every feature — capture, feed, search, statistics — needs to work against two different data sources with different ID formats (UUID for guest, integer for auth). The `useEntryData` abstraction keeps this from leaking into 30+ UI components.
 
-On login, a migration hook transfers all guest entries to the server in a single batch, then clears local storage. The user never loses data regardless of when they decide to create an account.
+## Presigned Upload Pipeline
 
-## Upload Pipeline
+Photos bypass the API entirely. This was deliberate — keeping photo bytes off the server means lower memory usage, lower bandwidth costs, and simpler horizontal scaling on Cloud Run.
 
-Photos never pass through the API server. This was a deliberate decision -- keeping photo bytes off the server means lower memory, lower bandwidth costs, and simpler horizontal scaling.
+The flow: mobile requests a presigned URL, API generates a 15-minute PUT URL for R2, mobile uploads directly, then links the photo to the entry via API. Photos upload in parallel per entry, but entries process sequentially to prevent race conditions in the upload queue.
 
-1. Mobile requests a presigned URL from the API
-2. API generates a 15-minute presigned PUT URL for R2
-3. Mobile uploads directly to R2 via PUT (JPEG, PNG, WebP, HEIC)
-4. Mobile links the uploaded photo to the diary entry
+One platform quirk worth noting: on Android, `XMLHttpRequest` is used instead of `fetch()` because `fetch()` cannot read `file://` URIs. This kind of detail doesn't show up in architecture diagrams but costs real debugging time.
 
-One platform quirk: on Android, `XMLHttpRequest` is used instead of `fetch()` because `fetch()` cannot read `file://` URIs. Photos upload in parallel per entry, but entries process sequentially to prevent race conditions.
+## Trigger-and-Poll AI Analysis
 
-## AI Analysis Pipeline
+AI analysis avoids long-lived HTTP connections entirely. The client calls `POST /diary/{id}/analyze`, the API validates ownership, inserts a pending analysis record, spawns a background Tokio task, and returns 202 immediately. The endpoint is idempotent — it returns existing results if already pending or completed, only retries on failure.
 
-Analysis is fully asynchronous using a trigger-and-poll pattern. This avoids long-lived HTTP connections and lets the client remain responsive.
+The background task downloads entry photos (validating each URL against the R2 prefix to prevent SSRF), sends them to Gemini Vision API with a structured JSON schema, and writes parsed nutrition data back to the database.
 
-**Trigger:** The client calls `POST /diary/{entry_id}/analyze`. The API validates ownership, checks for photos, inserts a pending analysis record, spawns a background Tokio task, and immediately returns 202 Accepted. The endpoint is idempotent -- it returns the existing result if one is already pending or completed, and only retries on failure.
+The client polls with TanStack Query every 3 seconds. This polling serves double duty on Cloud Run: it keeps the instance alive while the background Tokio task runs (typically 5-30 seconds), preventing the instance from scaling to zero mid-analysis. On server startup, a recovery query resets analyses stuck in processing for over 5 minutes.
 
-**Background task:** Downloads entry photos (validating each URL against the R2 prefix to prevent SSRF), encodes them as base64, sends them to Gemini Vision API with a structured JSON schema, and writes the parsed nutrition data back to the database.
+## Key Decisions
 
-**Client polling:** A TanStack Query hook polls every 3 seconds, showing a spinner while processing, nutrition results on completion, or a retry button on failure.
+**Rust over Node.js for the API** — The API is mostly HTTP handlers and SQL queries — nothing that requires Rust's systems programming strengths. But on Cloud Run, Rust gives roughly 100ms cold starts, 512MB memory is plenty, and SQLx provides compile-time checked SQL. No query typos, no column mismatches, no type coercion bugs at runtime. The trade-off is slower development velocity, which matters less for a solo project with a stable API surface.
 
-**Reliability:** On server startup, a recovery query finds analyses stuck in pending/processing for over 5 minutes and resets them. Client polling also keeps the Cloud Run instance alive while the background task runs (typically 5-30 seconds).
+**Cloudflare R2 over S3** — Zero egress fees are essential for a photo-heavy app where every diary view loads multiple images. The S3-compatible API means standard AWS SDK tooling works unchanged.
 
-## Authentication Flow
-
-```
-Mobile (native OAuth SDK)
-  --> POST /api/v1/auth/sign-in with ID token
-  --> API verifies via JWKS (Google: tokeninfo; Apple: cached JWKS, 1-hour TTL)
-  --> Find or create user + link auth provider
-  --> Issue JWT (HS256) + refresh token (BLAKE3 hashed in DB)
-  --> Return: { access_token, refresh_token, expires_in, user }
-```
-
-Tokens are stored in expo-secure-store (iOS Keychain / Android Keystore). The client refreshes pre-emptively 30 seconds before expiry, mutex-protected to avoid duplicate refreshes. On 401, it retries once after refreshing -- no further retries.
-
-A single user can link both Google and Apple accounts via a junction table, so switching sign-in providers never creates a duplicate account.
-
-## Key Architecture Decisions
-
-**Rust for the API** -- A meal tracking app is photo-heavy and latency-sensitive. Rust on Cloud Run gives roughly 100ms cold starts, low memory (512MB is plenty), and the confidence of compile-time checked SQL via SQLx. No query typos, no column mismatches, no type coercion bugs at runtime.
-
-**Cloudflare R2 for storage** -- Zero egress fees are essential for a photo-heavy app. The S3-compatible API means standard tooling works out of the box.
-
-**Scale-to-zero infrastructure** -- Cloud Run, Neon (serverless Postgres), and R2 all scale to zero. The entire stack costs $0 at idle, with costs proportional to actual usage.
-
-**All errors as RFC 9457 Problem Detail** -- Database errors auto-map to HTTP status codes (RowNotFound to 404, UniqueViolation to 409, etc.). No stack traces leak in production; 5xx errors auto-report to Sentry.
-
-**Workload Identity Federation for CI/CD** -- GitHub Actions authenticates to GCP via short-lived OIDC tokens scoped to the repository. No long-lived service account keys to rotate or leak.
+**Scale-to-zero everything** — Cloud Run, Neon (serverless Postgres), and R2 all scale to zero. The entire stack costs $0 at idle. For a solo project without predictable traffic, paying only for actual usage is the only sustainable model.

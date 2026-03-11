@@ -4,96 +4,85 @@ title: "Permanent Site Blocker — Design"
 
 ## The Willpower Paradox
 
-At 9am, you block Twitter. You feel disciplined, focused, productive. By 2pm, the same you -- tired, bored, stuck on a problem -- types the password, clicks "disable for 5 minutes," and the afternoon is gone.
+At 9am, you block Twitter. Disciplined, focused, productive. At 2pm, the same you -- tired, bored, stuck on a problem -- types the password, clicks "disable for 5 minutes," and the afternoon vanishes.
 
-Every site blocker on the market assumes willpower at the moment of temptation. Passwords, timers, cooldown periods -- they all give you a door. And a door, no matter how heavy, will eventually be opened by the person who really wants through.
+Every site blocker on the market assumes willpower at the moment of temptation. Passwords, timers, cooldowns -- they all give you a door. And a door, no matter how heavy, will eventually be opened by the person who really wants through.
 
-The insight behind Permanent Site Blocker is simple: **irreversibility is not a missing feature. It is the product.**
+The insight behind Permanent Site Blocker: **irreversibility is not a missing feature. It is the product.**
 
 ## The Self-Aware Procrastinator
 
 The target user isn't someone who lacks self-awareness. It's someone who has too much of it.
 
-Meet Minsoo. He's a 30-something remote developer who loses 30+ minutes daily to YouTube Shorts during work hours. He knows it's a problem. He's tried solutions. BlockSite lasted three days before he typed in his unlock password mid-afternoon. He edited his hosts file once, but he only wanted to block Shorts -- not all of YouTube. StayFocusd's timer gave him permission to "earn" distraction time, which made things worse.
+Meet Minsoo. He's a 30-something remote developer who loses 30+ minutes daily to YouTube Shorts during work hours. He knows it's a problem. He's tried solutions. BlockSite lasted three days before he typed his unlock password mid-afternoon. He edited his hosts file once, but he only wanted to block Shorts -- not all of YouTube. StayFocusd's timer gave him permission to "earn" distraction time, which made things worse.
 
 Minsoo doesn't need more features. He needs fewer options. His ideal tool is one he can't negotiate with.
 
-Key traits of this persona:
+Key traits:
 - Works in unsupervised environments (home office, coworking spaces)
-- Has specific, identifiable distraction patterns -- not all browsing is the problem
+- Has specific distraction patterns -- not all browsing is the problem
 - Has tried and failed with willpower-based approaches
-- Actively wants to remove their own agency over blocking decisions
+- Actively wants to remove his own agency over the unblock decision
 
 ## Why No Unblock Button
 
-This is the decision that defines the product. Every competitor offers some version of "disable blocking" -- password, timer, cooldown, or simple toggle. Each mechanism exists because it seems reasonable: what if you blocked the wrong site? What if you need access for work?
+This is the decision that defines the product.
 
-These are valid concerns. But they share a fatal assumption: that the user at the moment of unblocking is making a rational, considered decision. They're not. They're making an impulsive one -- and every unblock mechanism is a door for that impulse.
+Every competitor offers some form of "disable blocking" -- password, timer, cooldown, or simple toggle. Each mechanism exists because it seems reasonable: what if you blocked the wrong site? What if you need access for work?
+
+Valid concerns. But they share a fatal assumption: that the user at the moment of unblocking is making a rational decision. They're not. They're making an impulsive one.
 
 The alternatives we rejected:
-- **Password-protected unblock** -- Users set simple passwords or store them in their browser. The friction is cosmetic.
-- **24-hour cooldown** -- Still provides an escape hatch. The impulsive brain is patient enough to wait, or will simply switch to another browser.
-- **Time-based scheduling** -- "Block Twitter from 9-5" sounds reasonable until you realize it reframes distraction as something you've earned after hours.
+- **Password-protected unblock** -- Users set simple passwords or store them in the browser. The friction is cosmetic.
+- **24-hour cooldown** -- Still an escape hatch. The impulsive brain is patient enough to wait, or switches to another browser.
+- **Time-based scheduling** -- "Block Twitter 9-5" sounds reasonable until you realize it reframes distraction as something earned after hours.
 
-The only way to remove a block is to reinstall the extension entirely, which wipes the entire blocklist. That friction is deliberate. It transforms blocking from a suggestion into a commitment.
-
-## Competitive Positioning
-
-The site blocker market is crowded. Here's what each competitor does well -- and the flaw they all share.
-
-**BlockSite** has the highest awareness and the richest feature set: scheduling, focus mode, custom block pages. But the free tier caps you at 6 sites, and the premium unlock button is always one click away. High awareness, zero commitment.
-
-**Freedom** takes the most aggressive approach: VPN-based blocking across all apps and devices. It genuinely works -- but it routes your traffic through their servers, drains battery, adds network latency, and costs $7/month. It solves a browser-level problem with infrastructure-level overhead.
-
-**Cold Turkey** has perhaps the strongest blocking enforcement of any tool. But it's Windows-only, paid, and the UI complexity reflects years of feature accumulation. It's powerful but heavy.
-
-**StayFocusd** pioneered the Chrome extension blocker category. But it's built on legacy Manifest V2, the UI is complex, and its core mechanic -- time-based allowances -- subtly encourages users to think of distraction as a reward they earn.
-
-The shared fatal flaw: **reversibility**. Every one of these tools lets you undo your own decision, which means every one of them is ultimately a willpower tool disguised as a structural one.
-
-Permanent Site Blocker takes the opposite position. No unblock, no timer, no whitelist, no scheduling. The feature list is deliberately small because every feature is a potential escape hatch.
+The only way to remove a block is to reinstall the extension, which wipes the entire blocklist. That transforms blocking from a suggestion into a commitment.
 
 ## Precision Over Bluntness
 
-Most blockers operate at the domain level: block youtube.com, block all of YouTube. But real distraction is more nuanced. YouTube tutorials are productive. YouTube Shorts is a time sink. Reddit's programming subreddits are useful. Reddit's front page is a rabbit hole.
+Most blockers work at the domain level: block youtube.com, lose all of YouTube. But real distraction is more specific. YouTube tutorials are productive. Shorts is a time sink. Reddit's programming subreddits are useful. The front page is a rabbit hole.
 
-The extension supports three levels of precision:
-- **Domain blocking** -- `twitter.com` blocks everything, including `www.` variants
-- **Path-specific blocking** -- `youtube.com/shorts` blocks only the Shorts feed
-- **Regex patterns** -- `youtube\.com.*[가-힣]` blocks Korean-language YouTube content using RE2 syntax
+Three levels of precision solve this:
+- **Domain** -- `twitter.com` blocks everything, including `www.` variants
+- **Path-specific** -- `youtube.com/shorts` blocks only the Shorts feed
+- **Regex** -- `youtube\.com.*[가-힣]` blocks Korean-language YouTube content
 
 This precision is what makes irreversibility tolerable. You're not making a dramatic all-or-nothing choice. You're surgically removing the specific patterns that waste your time.
 
-## Privacy as a Design Constraint
+## The Competitive Gap
 
-Zero analytics. Zero telemetry. Zero external servers. Zero npm dependencies. The extension doesn't know how many sites you've blocked, how often you visit blocked pages, or whether you're still using it.
+The site blocker market is crowded, but every product shares one fatal flaw: reversibility.
 
-This isn't just a privacy stance -- it's a design constraint that simplifies everything. No server means no accounts, no login, no data breaches, no GDPR obligations. Cross-device sync happens through Chrome's own storage infrastructure, which the user already trusts.
+**BlockSite** has the richest features -- scheduling, focus mode, custom block pages -- but the premium unlock button is always one click away. **Freedom** takes the most aggressive approach with VPN-based blocking, but routes your traffic through their servers at $7/month. **Cold Turkey** has the strongest enforcement, but it's Windows-only, paid, and heavy with years of feature accumulation. **StayFocusd** pioneered the Chrome extension category, but its time-based allowances subtly teach users that distraction is a reward.
 
-The entire codebase is ~300 lines of vanilla JavaScript with no build step. Any user can read the source and verify exactly what the extension does. For a tool that asks users to make irreversible decisions, auditability matters.
+They're all willpower tools disguised as structural ones. Permanent Site Blocker takes the opposite position: no unblock, no timer, no whitelist, no scheduling. The feature list is deliberately small because every feature is a potential escape hatch.
+
+## Privacy as Design Constraint
+
+Zero analytics. Zero telemetry. Zero external servers. Zero npm dependencies. The extension doesn't know how many sites you've blocked or whether you're still using it.
+
+This isn't just a privacy stance -- it's a constraint that simplifies everything. No server means no accounts, no login, no data breaches, no GDPR obligations. Cross-device sync happens through Chrome's own storage, which the user already trusts. The entire codebase is ~300 lines of vanilla JavaScript with no build step. Any user can read the source and verify exactly what runs in their browser. For a tool that asks users to make irreversible decisions, auditability matters.
 
 ## The Blocked Page
 
-When a user visits a blocked site, the experience matters. A harsh "ACCESS DENIED" message would feel punitive -- like the extension is punishing you. Instead, the blocked page displays a gradient background, the site's favicon, the blocked URL, and a simple message: "Stay focused and productive!"
+When you visit a blocked site, the experience matters. A harsh "ACCESS DENIED" would feel punitive. Instead, the page shows a gradient background, the site's favicon, the blocked URL, and a simple message: "Stay focused and productive!"
 
-The tone is motivational, not confrontational. The goal is to make the blocked page feel like a gentle redirect rather than a slap on the wrist. You already made the decision to block this site. The page just reminds you why.
+Motivational, not confrontational. You already made the decision. The page just reminds you why.
 
 ## Deliberate Non-Features
-
-What the extension doesn't do is as important as what it does:
 
 - **No unblock** -- The core commitment
 - **No timer** -- Always-on blocking is the value proposition
 - **No whitelist** -- Exceptions are the beginning of bypass
 - **No scheduling** -- "Block during work hours" implies distraction is fine after hours
-- **No usage analytics** -- Contradicts privacy-first principles
-- **No categories or tags** -- Organizational complexity isn't the problem worth solving
+- **No usage analytics** -- Contradicts privacy-first design
+- **No categories** -- Organizational complexity isn't the problem worth solving
 
-Each missing feature was a conscious decision, not an oversight. The product stays small because small is the point.
+Each omission was a conscious choice. The product stays small because small is the point.
 
 ## Results
 
-- **1,100+ active installs** on the Chrome Web Store
+- **1,100+ active installs** on Chrome Web Store
 - **5.0 average rating** across user reviews
-- **Zero reported bypasses** through the extension's own UI
-- **Under 5% of reviews** mention irreversibility negatively -- most cite it as the reason they chose this extension
+- **Under 5% of reviews** mention irreversibility negatively -- most cite it as why they chose this extension

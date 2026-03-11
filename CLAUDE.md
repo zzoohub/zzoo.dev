@@ -18,8 +18,7 @@ Builder Log for a solopreneur developer. Multilingual (2 locales: en, ko), stati
 4. Mobile-first responsive design
 5. Content writing MUST use designated skills:
    - Blog posts → use **z-dev-essay** skill
-   - Project pages → use **z-copywriting** skill
-6. Engineering tab writing: see `docs/project-writing-guide.md` Tab 3 section for guidelines (100–150 lines, focus on why not what).
+   - Project pages (overview, design, engineering tabs) → use **z-project-writing** skill
 
 ## Commands
 

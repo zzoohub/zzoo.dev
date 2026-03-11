@@ -2,139 +2,82 @@
 title: "Narrex — Product Design"
 ---
 
-## Core Insight
+## The Observation That Started Everything
 
-Writers think in scenes and plot arcs — not sentences. Every existing AI writing tool ignores this. Sentence-level autocomplete makes you do all the structural work. Fully automated generators strip your creative control. Neither addresses the real bottleneck: developing dozens of interconnected scenes into a consistent, multi-episode narrative.
+Writers think in scenes and plot arcs, not sentences. Every AI writing tool ignores this. Sentence autocomplete makes the writer do all the structural work. Fully automated generators strip creative control. Neither touches the real bottleneck: turning dozens of interconnected scenes into a consistent, multi-episode narrative.
 
-Narrex makes the scene the unit of AI generation, and the visual structure the prompt.
+The insight behind Narrex: if the unit of AI generation is a scene inside a visual structure, and the structure itself assembles the prompt, then authors never write prompts. They just arrange their story.
 
-## Who This Is For
+## Who Narrex Is For
 
 **Ji-yeon — The Aspiring Writer**
 
-University student with a regression-fantasy story she's been imagining for months. Characters have names, the opening is vivid in her head. But between the idea and 40 episodes of finished prose, there's a wall she's never climbed. She tried ChatGPT — output was inconsistent after a few chapters. She doesn't lack creativity. She lacks a production system.
+University student. She's been imagining a regression-fantasy for months. Characters have names, the opening scene is vivid. But between the idea and 40 episodes of finished prose, there's a wall she's never climbed. She tried ChatGPT — the output was fine for 2 chapters, then characters forgot who they were and a subplot evaporated. She doesn't lack imagination. She lacks a system that can hold her story together while she builds it.
 
-*"I want to turn my story idea into a real, readable novel — without needing to master prose writing."*
+*"I want to see my story exist as something people can actually read — without needing years of prose writing practice."*
 
 **Min-ho — The Struggling Serializer**
 
-Published 8 episodes on Novelpia. Readers liked the premise but caught inconsistencies — a character's eye color changed, a subplot was forgotten. He writes 2–3 hours per night and barely produces one episode per week. He knows his story. He can't maintain quality at the pace readers expect.
+Published 8 episodes on Novelpia. Readers liked the premise but caught inconsistencies — a character's eye color changed, a subplot was forgotten. He writes 2-3 hours after work and barely produces one episode per week. He knows his story. He just can't maintain quality at the pace readers expect.
 
-*"I want the tool to remember everything that happened before and generate a draft that's consistent with my established story."*
+*"I need the tool to remember everything that's happened and generate drafts that are consistent with the established story."*
 
 ## The Core Loop
 
-Every design decision flows from one user journey:
+Every design decision traces back to one journey:
 
-1. **Paste a story idea** — any starting point, even a rough paragraph
-2. **Get auto-generated structure** — config, timeline with scenes, character map with relationships
-3. **Arrange the story visually** — drag scenes, add tracks for parallel storylines, edit characters
-4. **Generate prose per scene** — AI assembles full context automatically and drafts the scene
-5. **Direct and refine** — edit freely, or give direction like "add more tension"
+1. **Paste an idea** — rough paragraph, Notion dump, one-liner
+2. **Get structure instantly** — config, timeline with scenes, character map with relationships
+3. **Arrange the story visually** — drag scenes, add parallel tracks, edit characters
+4. **Generate prose per scene** — AI assembles full context and drafts
+5. **Direct and refine** — edit freely, or give a direction like "add more tension"
 
-Three clicks to first value: create project, enter idea, click "Structure My Story." The hardest part of novel writing — going from "I have an idea" to "I have a plan" — happens in the first session.
+Three clicks to first value. The hardest part of novel writing — going from "I have an idea" to "I have a plan" — happens in the first session.
 
-## Key Product Decisions
+## Product Decisions as Trade-Offs
 
-### Scene-Level Granularity
+### Why Scenes, Not Sentences or Chapters
 
 The fundamental question: what unit does the AI generate?
 
-- **Sentence-level** (Sudowrite, TypeTak): Writer does all structural work. AI just finishes sentences.
-- **Full auto-generation** (ChatGPT, standalone generators): No author control. Consistency dies after a few exchanges.
-- **Scene-level** (Narrex): Writer builds the structure visually. AI generates prose within that structure, with full narrative context.
+Sentence-level (Sudowrite, TypeTak) makes the writer do all the structural work. The AI just finishes sentences. Full auto-generation (ChatGPT) gives you no creative control. Consistency dies after a few exchanges. Scene-level is the sweet spot: enough context for coherent output, enough granularity for the author to stay in control.
 
-Scene-level is the sweet spot — enough context for coherent output, enough granularity for author control.
+The consequence: Narrex can't help with line-level prose polishing the way Sudowrite can. That's an acceptable trade-off — the bottleneck for aspiring novelists is scene development, not sentence-level craft.
 
-### NLE Timeline as Mental Model
+### Why a Video Editor, Not a Word Processor
 
-The workspace is modeled after a video editor. The timeline has multi-track clips (scenes), a preview window (editor), and a media library (character map). This metaphor was chosen because:
+The workspace is modeled after an NLE (non-linear editor) like Premiere or CapCut. Scenes are clips on a multi-track timeline, not paragraphs in a document. This was chosen because:
 
-- Writers naturally think in parallel storylines — multi-track supports this directly
-- Scenes have extent (duration), not just position — enabling simultaneity detection across tracks
-- The NLE metaphor is intuitive for digital-native users who've used Premiere, CapCut, or GarageBand
+- Writers naturally think in parallel storylines — multi-track supports that directly
+- Scenes have extent (duration), not just position — enabling automatic simultaneity detection across tracks
+- The NLE metaphor is intuitive for digital-native users who've edited a video or built a GarageBand track
 
-### Event-Episode Separation
+What was rejected: a traditional chapter-based document view. Chapters conflate "what happens" with "how it's packaged for readers." Narrex separates events from episodes — multiple small events can merge into one episode, one large event can span several. Dragging an episode divider on the timeline re-partitions chapters, and the AI prompt auto-rebuilds. No other tool makes this distinction.
 
-Scenes (what happens in the story) and episodes (how it's packaged for readers) are independent layers. This is a critical product decision:
+### Why "Director," Not "Writer"
 
-- Multiple small events can merge into one episode
-- One large event can span multiple episodes
-- Dragging an episode divider on the timeline re-partitions chapters, and the AI prompt auto-rebuilds
+AI generates drafts. The author directs and refines. This framing is deliberate — it shifts the user from "writer who can't write" to "director who shapes the output." Direction-based editing ("add more tension," "increase dialogue") lowers the craft barrier without removing creative ownership.
 
-No other tool makes this distinction. Every competitor treats chapters as the primary unit.
+The risk: users may over-rely on AI drafts instead of developing their own voice. Phase 1 validates whether users spend more time editing than generating — the signal that drafts are good enough to refine, not discard.
 
-### "Revise, Don't Write from Scratch"
+## Progressive Disclosure
 
-The AI generates drafts. The author directs and refines. This framing is deliberate — it shifts the user's role from "writer who can't write" to "director who shapes the output." Direction-based editing ("add more tension", "increase dialogue") lowers the craft barrier without removing creative ownership.
+The primary users are non-technical hobbyist writers. The interface must not overwhelm on first contact.
 
-## UX Design
+First load shows a single-track timeline, the config bar, and the character map. Multi-track, branch/merge, and keyboard shortcuts are hidden until the user interacts with the timeline. Direction-based editing only appears after the first draft is generated. Features reveal themselves as the user's needs grow — never before.
 
-### Workspace: Single Page, Panel-Based
+Scene visual states use fill pattern, icon, and text label together — not color alone. Empty, AI Draft, Edited, Needs Revision. Accessibility is not an afterthought.
 
-No deep navigation. Users switch between panels, not pages. Every core action is at most 2 clicks from the workspace.
+## Competitive Landscape
 
-```
-+---------------------------------------------------------------+
-| Header · Project Title              [Config v]  [theme]  Saved |
-+----------+------------------------------------+---------------+
-| Character| Editor                             | Scene Detail  |
-| Map      | (prose preview + editing)          | (metadata)    |
-+----------+--------+---------------------------+---------------+
-| Timeline (multi-track, horizontal scroll, drag-and-drop)      |
-| Track 1: [scene]--[scene]--[scene]--[scene]--[+]             |
-| Track 2:         [scene]--[scene]--[+]                        |
-+---------------------------------------------------------------+
-```
+8 tools reviewed — 4 international, 4 Korean. The gap: no tool combines a visual timeline, scene-level AI generation, and Korean web novel specialization.
 
-### Progressive Disclosure
-
-Non-technical hobbyist writers are the primary users. The interface must not overwhelm.
-
-| Step | Visible | Hidden | Revealed When |
-|------|---------|--------|---------------|
-| First load | Single-track timeline, config bar, character map | Multi-track, branch/merge, context menus | User interacts with timeline |
-| First scene selected | Scene detail panel auto-opens | Direction-based editing, shortcuts | First draft generated |
-| First draft generated | Standard text editing | "Edit with AI" | User selects text |
-
-### Scene Visual States
-
-Not color-only — each state uses fill pattern + icon + label for accessibility:
-
-- **Empty** — hollow clip, no icon
-- **AI Draft** — half-filled clip, pen icon
-- **Edited** — solid clip, checkmark
-- **Needs Revision** — filled with warning border, triangle icon (config changed since last draft)
-
-### Auto-Save, No Save Button
-
-All edits auto-save with 1-second debounce. Status indicator: "Saving..." → "All changes saved." Single-user product, so last-write-wins is sufficient.
-
-## Competitive Positioning
-
-8 tools reviewed (4 international, 4 Korean). None combine visual timeline + scene-level AI + Korean web novel specialization.
-
-| Gap | International Tools | Korean Tools | Narrex |
-|-----|-------------------|-------------|--------|
-| Visual timeline | None offer it | None offer it | Multi-track NLE |
-| AI generation unit | Sentence (Sudowrite) or none (Novelcrafter) | Full auto (standalone generators) or sentence (TypeTak) | Scene-level with full context |
-| Korean web novel genres | English-only | Weak output quality | Built for regression, romance-fantasy, murim conventions |
-| Author control | Varies | Minimal | Structure is the prompt — full control |
-
-## Business Model
-
-| Plan | Price | Included |
-|------|-------|----------|
-| Free | $0 | Unlimited structure editing. 50 AI generations/month. |
-| Basic | ~$12/mo | 100 generations/month. 2 draft variations. Tone sliders. |
-| Pro | ~$25/mo | Unlimited generations. 3 variations. Advanced model access. Revision tools. |
-
-Cost per scene: ~$0.03–0.06 with prompt caching. Cost per complete 40-episode novel: ~$3.60–9.60. Free-to-paid conversion driven by users hitting the generation ceiling.
+International tools (Sudowrite, Novelcrafter) are English-only with no visual timeline. Korean tools (AIWC, TypeTak) offer either full auto-generation with no quality control, or sentence-level assist with weak output. The scene-level sweet spot inside a visual structure is unoccupied.
 
 ## Phase Strategy
 
-**Phase 1 (current):** Core loop validation — idea → structure → generate → edit. Single question: do users keep editing the AI drafts, or discard them?
+**Phase 1 (current):** Core loop validation. One question: do users keep editing AI drafts, or discard them? If they edit, the product works. If they discard, the generation quality needs to improve before anything else matters.
 
-**Phase 2:** Episode organization layer, draft variations, tone sliders, export.
+**Phase 2:** Episode organization layer, draft variations with tone sliders, export to DOCX/EPUB.
 
 **Phase 3:** World map, temporal relationship tracking, revision tools, AI Surprise mode.

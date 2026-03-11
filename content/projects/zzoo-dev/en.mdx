@@ -56,22 +56,30 @@ features:
     icon: "zap"
 ---
 
-Building this site, two things mattered most. First, not just humans but also AI systems should be able to read and understand this site. Second, it should be naturally accessible to users in any language. These two considerations shaped the site's structure and technical choices.
+Most developer portfolios have a quiet problem: humans can read them, but machines cannot. Google might index them, but AI answer engines and LLMs have no structured way to understand who this person is, what they have built, or why it matters.
 
-## Content architecture
+This site is the experiment: can a portfolio be pure static HTML — no server, no database, no runtime — and still be rich enough for humans, structured enough for AI, and naturally bilingual?
 
-Each project has three document layers: product brief, case study, and design doc. Not just a feature list, but a structure that captures context and decision-making.
+## Three discovery channels, one architecture
 
-All frontmatter is validated through Zod schemas. Content is managed as MDX files split by locale — English and Korean with automatic fallback when a translation is missing.
+The content is designed to be found three different ways:
 
-## Search visibility
+1. **Search engines** — Static generation, semantic HTML, XML sitemap with hreflang, canonical URLs. The result: Lighthouse 95+, sub-second load times.
+2. **Answer engines** — JSON-LD schemas (`Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList`) give Perplexity and Google AI Overviews machine-readable context about every page.
+3. **Generative AI** — An `llms.txt` file at the site root and clean MDX content let LLMs extract and cite accurately.
 
-The site targets three discovery channels — Google search, AI answer engines, and generative AI — so content can be found wherever people look:
+Most sites optimize for one of these. This one treats all three as first-class constraints.
 
-- **SEO** — Static generation, semantic HTML, XML sitemap with hreflang alternates, canonical URLs. Lighthouse 95+.
-- **AEO** — JSON-LD schemas (`Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList`) for AI answer engines. RSS feed for content indexing.
-- **GEO** — `llms.txt` and clean MDX content for generative AI engines.
+## Content that captures decisions, not just output
 
-## Open source
+Each project gets three tabs — Overview, Design, Engineering — each for a different reader. A hiring manager scans the Overview. A product thinker reads the Design tab for trade-offs. A fellow engineer checks Engineering for architecture decisions.
 
-The entire codebase is [open source](https://github.com/zzoohub/zzoo.dev). Built with Next.js 16, React 19, TypeScript, Tailwind CSS v4, deployed to Vercel. Anyone can fork it, adapt the content structure, and make it their own.
+All frontmatter is Zod-validated. Content lives as per-locale MDX files with automatic English fallback when a Korean translation is missing. No CMS, no database — just files in a git repo.
+
+## Bilingual by default
+
+English and Korean are not bolted on. Every page, every project tab, every UI string exists in both languages. The language switcher is a single button — with only two locales, a dropdown would be slower. Missing translations fall back to English gracefully, so new content can ship in one language first.
+
+## The whole thing is open source
+
+The [entire codebase](https://github.com/zzoohub/zzoo.dev) is public. Built with Next.js 16, React 19, TypeScript, and Tailwind CSS v4. Fork it, swap the content, deploy to Vercel. The content architecture — the three-tab project system, Zod schemas, triple-channel SEO — is the part worth stealing.

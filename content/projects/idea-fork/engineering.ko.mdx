@@ -2,67 +2,53 @@
 title: "Idea Fork — 설계 문서"
 ---
 
-## 시스템 아키텍처
+## 아키텍처
 
-Idea Fork는 하나의 핵심 관찰에 기반한 분리 경로 아키텍처를 사용합니다: 데이터 파이프라인과 사용자 대면 읽기 경로의 요구사항이 완전히 다릅니다. 파이프라인은 Python의 ML 생태계, 스케줄 실행, 대규모 LLM API 통합이 필요합니다. 읽기 경로는 저지연 페이지 렌더링이 필요하고 유휴 시 비용이 0이어야 합니다. 둘을 같은 서버에 밀어넣으면 돈을 낭비하고 지연만 추가됩니다.
+Idea Fork는 하나의 관찰에서 출발한 분리 경로 아키텍처를 사용한다. 데이터 파이프라인과 읽기 경로의 요구사항이 완전히 다르다는 것. 파이프라인은 Python ML 생태계, 스케줄 실행, 대량 LLM 통합이 필요하다. 읽기 경로는 저지연 렌더링이 필요하고 유휴 시 비용이 0이어야 한다.
 
-**분리 구조:**
-
-- **웹 앱 (Next.js on Vercel)** — `@neondatabase/serverless`를 통해 Neon PostgreSQL에 직접 쿼리. 프로덕션 읽기 경로에 API 서버 없음.
-- **API + 파이프라인 (FastAPI on GCP Cloud Run)** — 일일 스케줄 파이프라인으로만 실행. 5개 이상의 소스에서 데이터를 가져오고, LLM으로 태깅하고, 클러스터링한 후 브리프를 합성. 사용자 요청 서빙을 위해 배포되지 않음.
-- **데이터베이스 (Neon PostgreSQL)** — 단일 진실 소스. Scale-to-zero 가격으로 유휴 시 비용이 거의 0.
-
-데이터 액세스 레이어는 `DATA_SOURCE` 환경 변수로 전환 가능합니다(프로덕션은 `neon`, 로컬 개발은 `api`). API 서버로 프로덕션 읽기를 되돌리려면 환경 변수만 바꾸면 됩니다.
+- **웹 앱 (Next.js on Vercel)** — `@neondatabase/serverless`로 Neon PostgreSQL에 직접 쿼리. 프로덕션 읽기 경로에 API 서버가 없다.
+- **파이프라인 (FastAPI on GCP Cloud Run)** — 매일 스케줄로 실행. 5개 이상 소스에서 데이터를 가져오고, LLM으로 태깅하고, 클러스터링한 후 브리프를 합성한다. 사용자 요청 서빙용이 아니다.
+- **데이터베이스 (Neon PostgreSQL)** — 단일 진실 소스. Scale-to-zero 가격.
 
 ```
 사용자 → Next.js (Vercel) → Neon DB ← FastAPI 파이프라인 (Cloud Run)
            ↑ 직접 읽기                      ↑ 스케줄에 따라 쓰기
 ```
 
-## 주요 아키텍처 결정
+데이터 액세스 레이어는 `DATA_SOURCE` 환경 변수로 전환된다. 프로덕션은 `neon`(직접 DB), 로컬 개발은 `api`(FastAPI 프록시). API 서빙으로 되돌리려면 변수 하나만 바꾸면 된다.
 
-### ADR-1: 파이프라인에 Python 선택
+## LLM 클러스터링 대신 HDBSCAN
 
-파이프라인은 LLM 태깅, 임베딩 벡터화, 밀도 기반 클러스터링(scikit-learn), 다중 소스 데이터 수집을 수행합니다. Python의 ML/데이터 생태계 덕분에 이 모든 게 수월했습니다. TypeScript 엔드투엔드를 고려했지만, scikit-learn, numpy, google-genai SDK는 Python에서 상당히 더 성숙합니다.
+원래 접근법은 모든 게시물을 LLM에 보내 그룹화를 요청하는 것이었다. 세 가지 벽에 부딪혔다: O(n) 토큰 비용, 컨텍스트 윈도우 제한(호출당 약 50개), 볼륨 증가에 따른 정확도 저하.
 
-병목은 LLM API 지연(배치 합성에 30초 이상)이지 컴퓨팅이 아닙니다. Rust의 속도 이점은 여기서 보이지 않습니다. 트레이드오프: 더 높은 메모리와 Cloud Run에서 1-2초 콜드 스타트. 파이프라인이 사용자 대면이 아니므로 수용 가능.
+대체: Gemini Embedding API로 벡터화한 후 HDBSCAN(밀도 기반, scikit-learn)으로 클러스터링. HDBSCAN은 클러스터 수를 자동 결정하고, 노이즈를 처리하며, 수천 개 게시물로 확장된다. LLM은 각 클러스터에 라벨을 붙이는 데만 사용 — 모든 게시물을 담은 거대 프롬프트 대신 클러스터당 짧고 저렴한 호출. 클러스터링 비용이 약 10배 줄었다.
 
-### ADR-7: LLM 클러스터링 대신 HDBSCAN
+K-means는 클러스터 수를 미리 지정해야 해서 기각했다 — 오늘 배치에 불만 테마가 몇 개인지 모르는 상황에서 불가능하다. 로컬 sentence-transformers는 Gemini 임베딩이 품질이 더 높고 API 비용이 무시할 수준이라 기각했다.
 
-원래 접근법은 모든 게시물을 LLM에 보내고 그룹화를 요청하는 것이었습니다. 세 가지 벽에 부딪혔습니다: O(n) 토큰 비용, 컨텍스트 윈도우 제한(호출당 약 50개 게시물), 볼륨 증가에 따른 정확도 저하.
+## Next.js에서 Neon 직접 접근
 
-대체: Gemini Embedding API로 게시물을 벡터화한 후 HDBSCAN(밀도 기반, scikit-learn)으로 클러스터링. HDBSCAN은 자동으로 클러스터 수를 결정하고, 노이즈 포인트를 처리하며, 수천 개 게시물로 스케일됩니다. LLM은 각 클러스터에 라벨을 붙이는 데만 사용 — 모든 게시물이 담긴 거대 프롬프트 대신 클러스터당 짧고 저렴한 호출. 클러스터링 비용을 약 10배 절감했습니다.
+프로덕션에서 Next.js가 Neon에 직접 쿼리해서 네트워크 홉 하나를 제거한다. `server-only` 패키지가 데이터베이스 코드의 클라이언트 사이드 임포트를 방지한다. 평가 쓰기는 Server Actions가 Neon에 직접 쓴다.
 
-K-means는 클러스터 수를 미리 지정해야 해서 기각. 로컬 sentence-transformers는 Gemini 임베딩이 품질이 더 높고 API 비용이 무시할 수준이라 기각.
+트레이드오프: SQL 쿼리가 TypeScript에 중복된다(Python 원본에서 포팅). 쿼리 표면이 10개 정도로 작고 안정적이라 수용 가능하다. 대안은 API 서버를 24시간 돌려서 읽기를 서빙하는 것인데, 하루에 한 번 쓰는 파이프라인에 그 비용은 맞지 않는다.
 
-### ADR-8: Next.js에서 Neon 직접 접근
+PostgreSQL이 추가 인프라 없이 모든 것을 처리한다. 관계형 데이터, 전문 검색(tsvector + pg_trgm), JSON 저장(JSONB), 커서 기반 페이지네이션. MVP 규모에서 Redis나 Elasticsearch를 추가하면 측정 가능한 이득 없이 운영 복잡성만 늘어난다.
 
-프로덕션에서 Next.js는 `@neondatabase/serverless`를 사용해 Neon에 직접 쿼리합니다. 네트워크 홉 하나를 제거합니다(Next.js에서 Cloud Run을 거쳐 Neon으로 가던 것이 Next.js에서 Neon으로 직접). `server-only` 패키지가 데이터베이스 코드의 우발적 클라이언트 사이드 임포트를 방지합니다. 평가 쓰기는 Next.js Server Actions가 Neon에 직접 씁니다.
+## 파이프라인
 
-트레이드오프: SQL 쿼리가 TypeScript에 중복됨(Python 원본에서 포팅). 쿼리 표면이 작고 안정적이므로 수용 가능.
+5단계, Cloud Scheduler로 매일 실행, 실행당 약 4K 게시물 처리. Advisory lock이 중복 실행을 방지한다.
 
-PostgreSQL이 추가 인프라 없이 모든 것을 처리합니다: 관계형 데이터, 전문 검색(tsvector + pg_trgm), JSON 저장(브리프 비정규화 데이터를 위한 JSONB), 커서 기반 페이지네이션. MVP 규모에서 Redis나 전용 검색 서비스를 추가하면 하루에 한 번 쓰는 파이프라인의 운영 복잡성만 늘어납니다.
+1. **Fetch** — Reddit, RSS(Hacker News, TechCrunch), App Store, Play Store, Product Hunt에서 동시 수집. `ON CONFLICT`로 upsert해서 중복 방지.
+2. **Tag** — 20개 배치로 Gemini Flash Lite에 전송. 각 게시물에 유형(실행 가능 7개 + 비실행 3개), 감성, 토픽 태그 할당.
+3. **Score** — 공유 태그 기반으로 제품의 트렌딩 점수와 불만 수 업데이트.
+4. **Cluster** — 200개 태그 게시물 배치를 벡터화, HDBSCAN으로 클러스터링. 각 클러스터는 짧은 LLM 호출로 라벨링.
+5. **Synthesize** — 각 클러스터에 Google Trends와 관련 제품을 가져온 후, Gemini Flash가 완전한 브리프를 생성(문제 정의, 기회 분석, 솔루션 방향, 경쟁 환경).
 
-## 데이터 파이프라인
+각 브리프는 소스 참조를 두 곳에 저장한다: 정규화된 `brief_source` 테이블(참조 무결성)과 `source_snapshots` JSONB 컬럼(join 없는 빠른 읽기). 브리프 상세 페이지의 읽기 경로에서 테이블 간 join이 필요 없다.
 
-파이프라인은 GCP Cloud Scheduler에 의해 매일 실행되며, 실행당 약 4K 게시물을 처리합니다. Advisory lock이 중복 실행을 방지합니다.
+## 주요 결정
 
-**5단계:**
+**파이프라인에 Python, TypeScript 엔드투엔드 아님.** 파이프라인은 LLM 태깅, 임베딩, HDBSCAN 클러스터링을 수행한다 — scikit-learn과 numpy가 Python에서 상당히 더 성숙하다. 병목은 LLM API 지연(배치 합성에 30초 이상)이지 컴퓨팅이 아니다. Rust의 속도 이점은 여기서 보이지 않는다. 트레이드오프: Cloud Run에서 1-2초 콜드 스타트, 파이프라인이 사용자 대면이 아니므로 수용 가능.
 
-1. **Fetch** — Reddit, RSS(Hacker News, TechCrunch), App Store, Play Store, Product Hunt에서 동시 수집. `ON CONFLICT`로 upsert하여 중복 방지.
-2. **Tag** — 20개 게시물 배치를 Gemini Flash Lite로 전송. 각 게시물에 유형 분류(7개 실행 가능 + 3개 비실행 가능 카테고리), 감성, 2-3개 토픽 태그 할당.
-3. **Score** — 게시물과의 공유 태그를 기반으로 제품의 트렌딩 점수와 불만 수 업데이트.
-4. **Cluster** — 200개 태그된 게시물 배치를 Gemini Embedding API로 벡터화, HDBSCAN으로 클러스터링. 각 클러스터는 짧은 LLM 호출로 라벨을 받음.
-5. **Synthesize** — 각 클러스터에 대해 Google Trends 데이터와 관련 제품을 가져온 후, 모든 것을 Gemini Flash에 전송하여 완전한 기회 브리프를 생성(문제 정의, 기회 분석, 솔루션 방향, 경쟁 환경).
+**스테이징 환경 없음.** Neon의 데이터베이스 브랜칭이 충분한 격리를 제공한다. 개발, 프리뷰, 프로덕션 각각 자체 브랜치를 갖는다. 풀 스테이징 환경은 main에서 배포하는 솔로 개발자 프로젝트의 인프라 비용을 두 배로 늘린다.
 
-각 브리프는 소스 참조를 두 곳에 저장합니다: 정규화된 `brief_source` 테이블(참조 무결성)과 `source_snapshots` JSONB 컬럼(join 없는 빠른 읽기). 이 이중 저장은 의도적 — 브리프 상세 페이지의 읽기 경로는 테이블 간 join이 필요하지 않습니다.
-
-## 인프라
-
-- **웹 앱**: Vercel (main 푸시 시 자동 배포, PR에 프리뷰 배포)
-- **파이프라인**: GCP Cloud Run (1 vCPU, 1Gi RAM, scale-to-zero)
-- **데이터베이스**: Neon PostgreSQL (scale-to-zero, 개발 환경용 브랜칭)
-- **IaC**: Pulumi (TypeScript)로 GCP + Neon + Vercel 선언적 관리
-- **CI/CD**: GitHub Actions — 웹은 Vercel 통합, API는 Docker에서 Artifact Registry를 거쳐 Cloud Run으로
-
-스테이징 환경 없음. Neon의 브랜칭 모델이 개발, 프리뷰, 프로덕션 간 충분한 격리를 제공합니다.
+**Terraform 대신 Pulumi.** 인프라를 TypeScript로 관리해서 웹 앱 언어와 일치시켰다. GCP + Neon + Vercel 스택을 한곳에서 선언한다. Terraform은 기각했다 — 기능적 이득 없이 프로젝트에 세 번째 언어(HCL)를 추가하는 셈이다.

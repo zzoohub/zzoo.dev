@@ -2,126 +2,68 @@
 title: "zzoo.dev — Design"
 ---
 
-Every design decision on this site traces back to one question: can a visitor determine whether this developer can solve their problem within five seconds, and then take the shortest path to making contact?
+The insight behind this site is simple: a developer's portfolio has two audiences now, and most sites serve only one. Humans visit to evaluate competence. Machines visit to extract structured facts. A portfolio that only works for humans is half-invisible.
 
-That question — and the five principles derived from it — shaped the information architecture, content strategy, visual design, and search visibility approach documented here.
+That realization drove every design decision — from the information architecture to the content format to what was deliberately left out.
 
-## Design Philosophy: Credibility in Five Seconds
+## Who reads this site
 
-The site follows five UX principles, applied in priority order when they conflict:
+**The evaluator.** A startup founder or hiring manager, scanning for signal. They land on a project page, need to know within five seconds whether this developer can solve their problem, and want a clear path to make contact. They will not read the engineering tab. They might not scroll past the fold.
 
-1. **Credibility in Five Seconds** — The hero section carries the full weight of first impression. Value proposition, a single CTA, and one proof point (availability badge or outcome metric) must be visible above the fold on every viewport. No decorative filler. No ambiguity.
+**The peer.** A fellow developer, curious about how something was built. They skip the overview entirely and go straight to the Engineering or Design tab. They care about trade-offs and decisions, not outcomes or CTAs.
 
-2. **Outcomes Over Features** — Content is framed around what the client gets, not what the developer knows. Case studies lead with results, not tech stacks. Blog posts have clear takeaways. Technology is supporting evidence, never the headline.
+**The machine.** A search crawler, an AI answer engine, an LLM building a response about "developers who specialize in X." It needs structured data — JSON-LD, clean headings, semantic HTML — not visual polish.
 
-3. **Progressive Disclosure** — Show only what is needed for the current decision. The home page is a curated summary. Each page goes one level deeper. Users who need depth can find it; users who don't are never overwhelmed.
+These three audiences want completely different things from the same URL. The three-tab system exists to serve all of them without forcing any one to wade through content meant for another.
 
-4. **Friction-Free Contact** — Every page has a clear, low-effort path to making contact. Since contact is email-only (no forms, no backend), the pattern is a `mailto` link styled as a primary button, plus a copy-to-clipboard fallback for mobile users.
+## The five-second test
 
-5. **Performance as UX** — A slow site signals carelessness. Every design decision is constrained by the performance budget: initial JS under 100KB gzipped, FCP under 1.0s, Lighthouse 95+. This rules out heavy animation libraries, client-side routing transitions, and large image carousels. Motion is CSS-only.
+Every page answers one question above the fold: can this developer solve my problem? The hero section carries the entire weight of first impression — value proposition, a single CTA, and one proof point (availability badge or a concrete outcome). No decorative filler.
 
-## Information Architecture
+This sounds obvious, but it rules out a lot of common portfolio patterns. No full-screen hero images. No animated transitions before content appears. No "About Me" paragraphs above the project list. The visitor's first five seconds are spent reading, not waiting.
 
-The site map is intentionally compact. Primary navigation has only four items — Home, Projects, Blog, About — keeping cognitive load low. Secondary pages (Now, Contact) are accessible from the footer and contextual CTAs but never compete for attention in the header.
+## Progressive disclosure as structure
 
-Every page is designed with a conversion funnel in mind:
+The site map is deliberately compact: four items in the primary nav (Home, Projects, Blog, About). Secondary pages — Now and Contact — live in the footer and contextual CTAs, never competing for header space.
 
-- **Awareness** — Visitor arrives via search, AI answer, or referral
-- **Interest** — Hero establishes credibility in under 5 seconds
-- **Evaluation** — Case studies prove outcomes; blog demonstrates expertise
-- **Trust** — Testimonials, technical depth, and About page build confidence
-- **Action** — CTA buttons throughout lead to email contact
+Within each project, the three-tab structure is progressive disclosure made concrete:
 
-Breadcrumbs appear only on detail pages (project and blog post) where the user is two levels deep, using a simple `Projects / Project Name` format.
+- **Overview** — What is this, why does it exist, what were the results. Scannable, short, outcome-focused.
+- **Design** — Product thinking: UX decisions, trade-offs, what was rejected and why.
+- **Engineering** — Architecture, technical choices, interesting implementation details.
 
-## Content Strategy: 3-Layer Project Documentation
+A hiring manager reads one tab. A product designer reads two. A fellow engineer reads all three. Nobody reads content meant for someone else.
 
-Each project is documented across three tabs, each serving a different audience and depth level:
+## Content format: why three tabs instead of one long page
 
-- **Overview** — Product brief for anyone: what is this, why does it exist, what are the results. Scannable, outcome-focused, short.
-- **Design** — Product design decisions for design-minded visitors: UX philosophy, information architecture, content strategy, search visibility approach.
-- **Engineering** — Technical deep-dive for engineers: architecture, framework choices, build pipeline, deployment.
+The alternative was a single scrolling page per project — problem, solution, tech stack, architecture, all in sequence. Most portfolio sites do this.
 
-This structure follows the progressive disclosure principle. A hiring manager reads the Overview. A product designer clicks through to Design. A fellow engineer goes to Engineering. Each audience gets exactly what they need without wading through content meant for someone else.
+The problem: it forces every reader through every section. An engineer sits through the business context to reach the architecture diagram. A non-technical evaluator hits a code block and bounces.
 
-All frontmatter is validated through Zod schemas. Content is managed as locale-specific MDX files with automatic English fallback when a translation is missing.
+Tabs let each audience self-select. The tradeoff is discoverability — some visitors might not realize the Design or Engineering tabs exist. The mitigation: the tab bar is always visible, and the Overview gently references what the other tabs contain.
 
-## Search Visibility as a Design Decision
+## Search visibility as a design constraint
 
-Search visibility is not an afterthought — it is a design constraint that shapes the site's HTML structure, content format, and metadata architecture. The site targets three discovery channels simultaneously.
+SEO is usually an afterthought — something a developer adds after the site is built. Here, it is a structural constraint that shaped the HTML, the content format, and the metadata architecture from day one.
 
-### SEO — Traditional Search
+The site targets three discovery channels simultaneously: traditional search (semantic HTML, sitemaps, hreflang), answer engines (JSON-LD schemas for every entity type), and generative AI (an `llms.txt` file plus clean, well-structured MDX that LLMs can extract and cite).
 
-Structured HTML with proper heading hierarchy, semantic landmarks, and accessible markup. Every page declares canonical URLs and hreflang alternates for both locales. XML sitemap covers all routes. Static generation ensures sub-second load times that search engines reward.
+The design consequence: every heading must be meaningful (not clever), every page must have a single clear topic, and every piece of metadata must be machine-readable. This rules out creative-but-vague section titles, multi-topic pages, and JavaScript-rendered content that crawlers cannot parse.
 
-### AEO — Answer Engine Optimization
+## Bilingual UX: two locales, not a translation layer
 
-When AI systems like Google's AI Overviews or Perplexity extract answers, they rely on structured data. The site embeds JSON-LD schemas — `WebSite`, `Person`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList` — giving answer engines machine-readable context. RSS feeds provide a content pipeline for indexing. Every page carries Open Graph and Twitter Card metadata.
+With only two languages, the language switcher is a single button — "KO" when on English, "EN" when on Korean. A dropdown would add a click for zero benefit.
 
-### GEO — Generative Engine Optimization
+The deeper design decision: English and Korean are not translations of each other. They are parallel content, written natively in each language. The structure is the same, but the phrasing is natural to each language. This avoids the stilted quality of translated text.
 
-For LLMs powering ChatGPT or Claude, the site serves `llms.txt` at the root — a plain-text file describing the site's purpose, structure, and content in a format LLMs can directly consume. Clean, well-structured MDX content with clear headings makes it easy for generative models to extract and cite accurately. Bilingual coverage (EN/KO) ensures relevance across language boundaries.
+When a Korean translation is missing, the system falls back to English content rather than showing a 404. This means new content can ship in one language first — the constraint is "always available," not "always bilingual."
 
-## Bilingual UX
+## What was left out
 
-The language switcher is a single text button showing the alternate locale ("KO" when on English, "EN" when on Korean). Not a dropdown — with only two locales, a tap-to-switch button is faster and eliminates a click.
+**No contact form.** A form needs a backend, which means a server, which means attack surface, maintenance, and spam. A `mailto` link does the job. For mobile users, there is a copy-to-clipboard fallback.
 
-Switching preserves the current page path. If a translated version doesn't exist, the site falls back to English content rather than showing a 404.
+**No animation library.** Every transition is CSS-only — 150ms for hovers, 200ms for mobile nav, 300ms for the floating CTA. The performance budget (initial JS under 100KB gzipped, FCP under 1.0 second) does not leave room for Framer Motion or similar.
 
-Typography handles both scripts: Geist Sans for Latin text, with system Korean fonts as fallback. Korean content applies `word-break: keep-all` to prevent mid-word line breaks. Korean text is generally more compact, so button padding (`px-6`) accommodates both languages without layout shifts.
+**No image carousel.** Project images are static, intentionally. A carousel adds JavaScript, interaction complexity, and accessibility burden for minimal information gain. A single well-chosen hero image communicates more than six auto-rotating ones.
 
-## Dark/Light Mode
-
-Theme switching follows system preference by default, with manual override persisted via `localStorage`. The `next-themes` blocking script prevents flash of incorrect theme on load.
-
-The toggle icon shows what you will switch TO (sun in dark mode, moon in light mode), following the convention of displaying the action rather than the state. All components, D2 diagrams, and code blocks are styled for both themes. Color contrast passes WCAG AA in both modes — text on background at roughly 18:1, muted text at 4.6:1 or above.
-
-The site respects `prefers-reduced-motion` by collapsing all animation durations to near-zero when the user has requested reduced motion.
-
-## CTA Hierarchy and Placement
-
-CTAs follow a three-tier hierarchy:
-
-| Tier | Style | Usage |
-|------|-------|-------|
-| Primary | Solid background, high contrast | One per section, max 2-3 per page |
-| Secondary | Border outline | Supporting alternatives |
-| Inline | Text link with arrow | Within content, cards, and lists |
-
-CTA copy adapts to context: "See My Work" on the home page, "Facing a similar challenge?" on project detail pages, "Want to work together?" on blog posts. The availability badge — a color-coded pill with a pulsing dot — appears in three sizes across the home hero, contact page, and footer.
-
-On long pages, a floating CTA appears after scrolling past the hero: a fixed pill on desktop (bottom-right), a full-width bottom bar on mobile with a dismiss option.
-
-## Mobile-First Responsive Strategy
-
-The design is built mobile-first across three breakpoints: mobile (default), tablet (`md:` at 768px), and desktop (`lg:` at 1024px). Content maxes out at `max-w-5xl` (1024px) — wider viewports show more margin, never wider content.
-
-Key responsive behaviors:
-
-- **Navigation** — Hamburger menu on mobile, collapsing to a full-width dropdown that pushes content down (not overlaying). Four horizontal links on desktop.
-- **Hero** — Centered with stacked buttons on mobile; left-aligned with inline buttons on desktop. Heading scales from 36px to 48px.
-- **Project cards** — Single column on mobile, two-column grid on desktop.
-- **Footer** — Single column on mobile, three-column grid on desktop.
-
-All interactive elements meet 44x44px minimum touch targets. Buttons are full-width on mobile. Icon buttons use padding to reach the minimum target area.
-
-## Accessibility
-
-The site targets WCAG 2.1 AA compliance across every interaction:
-
-- **Document structure** — One `h1` per page, strict heading hierarchy, semantic landmarks (`header`, `nav`, `main`, `footer`) with distinct `aria-label` on each navigation region.
-- **Skip link** — Hidden until focused, appears at top-left as the first focusable element on every page.
-- **Focus management** — `:focus-visible` rings (not `:focus`), tab order follows visual order, mobile nav traps focus when open.
-- **Screen readers** — Icon-only buttons carry `aria-label`, decorative elements are hidden, reading time uses `aria-label` for full text, D2 diagrams have meaningful alt text.
-- **Color independence** — No information conveyed through color alone. The availability badge uses both color and text. Status indicators supplement color with weight or fill changes.
-- **Keyboard navigation** — Full flow: skip link, logo, nav links, language switcher, theme toggle, main content, footer links. `Escape` closes the mobile menu and returns focus.
-
-## Component Patterns
-
-The component system uses consistent spacing and styling tokens:
-
-- **Cards** — `border border-border rounded-xl` with `p-6` (standard) or `p-8` (featured). Hover state shifts border color and adds subtle shadow over 150ms.
-- **Sections** — `py-16 md:py-20` vertical padding, content in `max-w-5xl` container with responsive horizontal padding.
-- **Typography** — Hero h1 at 36/48px, section h2 at 28/32px, card h3 at 20/24px, body prose at 16px with 1.75 line height, code at 14px in Geist Mono.
-- **Tags** — Small pills (`bg-muted px-2 py-0.5 text-xs rounded-md`) for content tags; interactive pills with border for filters.
-- **Motion** — CSS-only transitions at 150ms for hover states, 200ms for mobile nav, 300ms for floating CTA. No animation libraries.
+These omissions are not limitations. They are the product of a constraint that IS the product: zero backend, zero runtime, minimal attack surface — and still rich, bilingual, and content-driven.

@@ -2,79 +2,51 @@
 title: "Mealio -- 엔지니어링"
 ---
 
-## 시스템 아키텍처
+## 아키텍처
 
-Mealio는 3개 패키지 모노레포입니다: `mobile` (React Native/Expo), `api` (Rust/Axum), `infra` (Pulumi/TypeScript). 각 패키지는 경로 필터링된 CI/CD 파이프라인을 통해 독립 배포됩니다.
+Mealio는 3개 패키지 모노레포다: `mobile` (React Native/Expo), `api` (Rust/Axum), `infra` (Pulumi). 각 패키지는 경로 필터링된 CI/CD로 독립 배포된다.
 
-데이터 흐름은 단순합니다: **Mobile --&gt; API --&gt; PostgreSQL + R2**. 사진은 presigned URL을 통해 모바일에서 Cloudflare R2로 직접 업로드됩니다 -- API 서버는 사진 바이트를 절대 만지지 않습니다. AI 분석은 백그라운드 Tokio 태스크에서 비동기 실행되며, 요청-응답 사이클과 완전히 분리되어 있습니다.
+데이터 흐름은 단순하다: **Mobile --&gt; API --&gt; PostgreSQL + R2**. 핵심 규칙 하나: 사진 바이트는 API 서버를 절대 거치지 않는다. presigned URL을 통해 클라이언트에서 Cloudflare R2로 직접 업로드된다. AI 분석은 백그라운드 Tokio 태스크에서 실행되며 요청-응답 사이클과 완전히 분리되어 있다.
 
 ```
-Mobile Client (React Native / Expo 55)
+Mobile Client (React Native / Expo)
   |
-  |-- HTTPS --> API Server (Rust / Axum 0.8 on Cloud Run)
-  |                |-- SQLx --> Neon PostgreSQL 18
+  |-- HTTPS --> API Server (Rust / Axum on Cloud Run)
+  |                |-- SQLx --> Neon PostgreSQL
   |                |-- AWS SDK --> Cloudflare R2
   |                |-- reqwest --> Gemini Vision API
   |
   |-- Presigned PUT --> Cloudflare R2 (직접 업로드)
 ```
 
-## 듀얼 모드 데이터 플로우
+## 듀얼 모드 데이터 아키텍처
 
-앱은 게스트(계정 없음)와 인증 두 가지 모드로 동작하지만, UI 레이어는 어떤 경로가 활성인지 모릅니다. `useEntryData()` 훅이 차이를 추상화합니다.
+앱은 게스트(MMKV 로컬 저장)와 인증(API + TanStack Query) 두 모드로 동작하지만, UI 레이어는 어떤 모드인지 모른다. `useEntryData()` 훅이 차이를 완전히 추상화한다.
 
-**게스트 모드**는 모든 것을 MMKV에 로컬 저장합니다. 캡처 시 항목이 디바이스 저장소에 저장되고, Zustand 버전 범프가 리렌더를 트리거합니다.
+게스트 모드는 디바이스 저장소에 항목을 쓰고 Zustand 버전 범프로 리렌더를 트리거한다. 인증 모드는 캡처를 백그라운드 업로드 프로세서에 넣어서 R2에 사진을 병렬 업로드하고, 서버 항목을 생성하고, AI 분석을 트리거하고, 캐시를 무효화한다.
 
-**인증 모드**는 캡처를 업로드 큐에 넣습니다. 백그라운드 프로세서가 대기 항목을 처리하여 presigned URL로 R2에 사진을 병렬 업로드하고, 서버에 항목을 생성하고, AI 분석 요청을 보내고, 캐시된 쿼리를 무효화합니다.
+재미있는 부분은 로그인 마이그레이션이다. 모든 게스트 항목이 단일 배치로 서버에 전송되고 로컬 저장소가 클리어된다. 단순해 보이지만, 이건 모든 기능 — 캡처, 피드, 검색, 통계 — 이 서로 다른 ID 형식(게스트는 UUID, 인증은 integer)의 두 데이터 소스에 대해 동작해야 한다는 뜻이다. `useEntryData` 추상화가 이걸 30개 넘는 UI 컴포넌트에 새어나가지 않게 막는다.
 
-로그인 시, 마이그레이션 훅이 모든 게스트 항목을 단일 배치로 서버에 전송한 후 로컬 저장소를 클리어합니다. 사용자가 언제 계정을 만들든 데이터를 잃지 않습니다.
+## Presigned 업로드 파이프라인
 
-## 업로드 파이프라인
+사진은 API를 완전히 우회한다. 의도된 설계다 — 사진 바이트를 서버에서 처리하지 않으면 메모리 사용이 줄고, 대역폭 비용이 낮아지고, Cloud Run 수평 스케일링이 단순해진다.
 
-사진은 절대 API 서버를 거치지 않습니다. 의도된 설계입니다 -- 사진 바이트를 서버에서 처리하지 않으면 메모리 사용이 줄고, 대역폭 비용이 낮아지고, 수평 스케일링이 단순해집니다.
+흐름: 모바일이 presigned URL을 요청하고, API가 15분짜리 PUT URL을 R2용으로 생성하고, 모바일이 직접 업로드한 뒤 API를 통해 사진을 항목에 연결한다. 항목당 사진은 병렬 업로드되지만, 항목 자체는 업로드 큐의 레이스 컨디션 방지를 위해 순차 처리된다.
 
-1. 모바일이 API에 presigned URL을 요청
-2. API가 15분짜리 presigned PUT URL을 R2용으로 생성
-3. 모바일이 R2에 직접 PUT 업로드 (JPEG, PNG, WebP, HEIC)
-4. 모바일이 업로드된 사진을 다이어리 항목에 연결
+플랫폼 특이사항 하나: Android에서는 `fetch()`가 `file://` URI를 읽지 못해서 `XMLHttpRequest`를 사용한다. 아키텍처 다이어그램에는 안 나오지만 실제 디버깅 시간을 잡아먹는 종류의 디테일이다.
 
-플랫폼 특이사항: Android에서는 `fetch()`가 `file://` URI를 읽을 수 없어서 `XMLHttpRequest`를 사용합니다. 항목당 사진은 병렬 업로드되지만, 항목 자체는 레이스 컨디션 방지를 위해 순차 처리됩니다.
+## Trigger-and-Poll AI 분석
 
-## AI 분석 파이프라인
+AI 분석은 장시간 HTTP 연결을 완전히 피한다. 클라이언트가 `POST /diary/{id}/analyze`를 호출하면, API가 소유권을 확인하고, pending 분석 레코드를 삽입하고, 백그라운드 Tokio 태스크를 생성한 뒤 즉시 202를 반환한다. 엔드포인트는 멱등성을 보장한다 — pending이나 completed면 기존 결과를 반환하고 failed일 때만 재시도한다.
 
-분석은 trigger-and-poll 패턴으로 완전 비동기 실행됩니다. 이 방식은 장시간 HTTP 연결을 피하고 클라이언트의 반응성을 유지합니다.
+백그라운드 태스크는 항목 사진을 다운로드하고(각 URL을 R2 접두사와 대조해 SSRF 방어), Gemini Vision API에 구조화된 JSON 스키마와 함께 전송한 뒤, 파싱된 영양 데이터를 DB에 기록한다.
 
-**트리거:** 클라이언트가 `POST /diary/{entry_id}/analyze`를 호출합니다. API가 소유권을 확인하고, 사진 유무를 검사하고, pending 분석 레코드를 삽입하고, 백그라운드 Tokio 태스크를 생성한 뒤 즉시 202 Accepted를 반환합니다. 엔드포인트는 멱등성을 보장합니다 -- pending이나 completed 상태면 기존 결과를 반환하고, failed일 때만 재시도합니다.
+클라이언트는 TanStack Query로 3초마다 폴링한다. 이 폴링은 Cloud Run에서 이중 역할을 한다: 백그라운드 Tokio 태스크가 실행되는 동안(보통 5-30초) 인스턴스를 활성 상태로 유지해서 분석 중에 인스턴스가 제로로 스케일 다운되는 걸 방지한다. 서버 시작 시에는 복구 쿼리가 5분 이상 processing 상태인 분석을 리셋한다.
 
-**백그라운드 태스크:** 항목 사진을 다운로드하고(각 URL을 R2 접두사와 대조하여 SSRF 방어), base64로 인코딩하고, 구조화된 JSON 스키마와 함께 Gemini Vision API에 전송한 뒤, 파싱된 영양 데이터를 데이터베이스에 기록합니다.
+## 핵심 결정
 
-**클라이언트 폴링:** TanStack Query 훅이 3초마다 폴링하며, 처리 중에는 스피너를, 완료 시에는 영양 결과를, 실패 시에는 재시도 버튼을 표시합니다.
+**API에 Node.js 대신 Rust** — API는 대부분 HTTP 핸들러와 SQL 쿼리다. Rust의 시스템 프로그래밍 강점이 필요한 건 아니다. 하지만 Cloud Run 위에서 Rust는 약 100ms 콜드 스타트, 512MB면 충분한 메모리, 그리고 SQLx의 컴파일 타임 SQL 검증을 제공한다. 쿼리 오타, 컬럼 불일치, 런타임 타입 변환 버그가 없다. 트레이드오프는 개발 속도가 느리다는 건데, API 표면이 안정된 1인 프로젝트에서는 덜 중요하다.
 
-**안정성:** 서버 시작 시 복구 쿼리가 5분 이상 pending/processing 상태인 분석을 찾아 리셋합니다. 클라이언트 폴링 요청도 백그라운드 태스크가 실행되는 동안(보통 5-30초) Cloud Run 인스턴스를 활성 상태로 유지합니다.
+**S3 대신 Cloudflare R2** — 사진 중심 앱에서 이그레스 비용 제로는 필수다. 다이어리를 볼 때마다 여러 이미지를 로드하니까. S3 호환 API 덕분에 표준 AWS SDK 도구가 그대로 동작한다.
 
-## 인증 플로우
-
-```
-Mobile (네이티브 OAuth SDK)
-  --> POST /api/v1/auth/sign-in에 ID 토큰 전송
-  --> API가 JWKS로 토큰 검증 (Google: tokeninfo; Apple: 캐시된 JWKS, 1시간 TTL)
-  --> 사용자 찾기 또는 생성 + auth provider 연결
-  --> JWT (HS256) + 리프레시 토큰 발행 (BLAKE3 해시로 DB 저장)
-  --> 반환: { access_token, refresh_token, expires_in, user }
-```
-
-토큰은 expo-secure-store(iOS Keychain / Android Keystore)에 저장됩니다. 클라이언트는 만료 30초 전에 선제적으로 갱신하며, 중복 갱신 방지를 위해 mutex로 보호됩니다. 401 발생 시 갱신 후 1회 재시도 -- 추가 재시도는 없습니다.
-
-단일 사용자가 연결 테이블을 통해 Google과 Apple 계정을 모두 연결할 수 있어, 로그인 프로바이더를 바꿔도 중복 계정이 생기지 않습니다.
-
-## 핵심 아키텍처 결정
-
-**API에 Rust 선택** -- 식사 추적 앱은 사진이 많고 지연 시간에 민감합니다. Cloud Run 위의 Rust는 약 100ms 콜드 스타트, 낮은 메모리(512MB면 충분), 그리고 SQLx를 통한 컴파일 타임 SQL 검증의 확신을 제공합니다. 쿼리 오타도, 컬럼 불일치도, 런타임 타입 변환 버그도 없습니다.
-
-**스토리지에 Cloudflare R2** -- 사진 중심 앱에서 이그레스 비용 제로는 필수입니다. S3 호환 API 덕분에 표준 도구가 그대로 동작합니다.
-
-**제로 스케일 인프라** -- Cloud Run, Neon(서버리스 Postgres), R2 모두 제로로 스케일 다운됩니다. 유휴 시 전체 스택 비용이 $0이며, 실제 사용량에 비례하여 과금됩니다.
-
-**모든 에러를 RFC 9457 Problem Detail로** -- 데이터베이스 에러가 HTTP 상태 코드로 자동 매핑됩니다 (RowNotFound는 404, UniqueViolation은 409 등). 프로덕션에서 스택 트레이스가 노출되지 않으며, 5xx 에러는 Sentry에 자동 리포트됩니다.
-
-**CI/CD에 Workload Identity Federation** -- GitHub Actions가 리포지토리로 스코프된 단기 OIDC 토큰으로 GCP에 인증합니다. 교체하거나 유출될 장기 서비스 계정 키가 없습니다.
+**전부 제로 스케일** — Cloud Run, Neon(서버리스 Postgres), R2 모두 제로로 스케일 다운된다. 유휴 시 전체 스택 비용이 $0이다. 트래픽을 예측할 수 없는 1인 프로젝트에서는 실제 사용량에만 과금되는 것이 유일하게 지속 가능한 모델이다.

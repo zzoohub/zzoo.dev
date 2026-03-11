@@ -2,57 +2,50 @@
 title: "zzoo.dev — Engineering"
 ---
 
-This is a purely static site. No server-side rendering, no API routes, no database, no backend of any kind. Every page is pre-rendered at build time and served as static HTML from Vercel's global edge network. The architectural constraint is intentional: a minimal attack surface, near-instant load times, and a deployment model that is essentially "push to main and forget."
+No server. No database. No API routes. No runtime. Every page is pre-rendered at build time and served as static HTML from Vercel's edge network. This is not a limitation — it is the central architectural decision. Zero backend means a minimal attack surface, near-instant load times, and a deployment model where pushing to `main` is the entire workflow.
 
-## Architecture: SSG-Only
+## Why SSG, not SSR
 
-The entire site is statically generated via Next.js 16's App Router. At build time, `generateStaticParams()` pre-renders every combination of locale and slug. The build output shows `●` (static) for every route — never `ƒ` (dynamic).
+The content changes when the developer pushes a commit, not when a visitor arrives. There is no user-specific data, no authentication, no form submissions. SSR would add cold starts, server costs, and caching strategies — complexity with zero benefit for this use case.
 
-Why SSG over SSR? The content changes when the developer pushes a commit, not when a user visits. There is no user-specific data, no authentication, no form submissions. SSR would add complexity (cold starts, server costs, caching strategies) with zero benefit for this use case.
+The tradeoff: every content change requires a rebuild. But Vercel's GitHub integration turns a push to `main` into a deployed site in under two minutes. For a content site with no real-time requirements, that is fast enough.
 
-The tradeoff: any content change requires a rebuild. But with Vercel's GitHub integration, pushing to `main` triggers an automatic build and deploy in under two minutes.
+The build output confirms the constraint: every route shows `●` (static) in the Next.js build log. If `ƒ` (dynamic) ever appears, something is wrong.
 
-## Server Components First
+## The SSG gotcha with next-intl
 
-React 19 Server Components are the default. Most pages ship zero client-side JavaScript beyond the framework runtime. Client components are used sparingly — blog tag filter, theme toggle, mobile nav, clipboard copy, D2 diagram switcher — each a thin interactive wrapper around a server-rendered parent.
+Internationalization uses `next-intl` with two locales. The implementation is straightforward — except for one trap that silently breaks static generation.
 
-## Content System
+Server components must call `setRequestLocale(locale)` from the page's `params`. The intuitive alternative, `getLocale()`, relies on request-time context that does not exist during static generation. The build succeeds, but the locale is wrong at runtime.
 
-Content is file-based MDX stored alongside the code. Blog posts, project pages, and the about page each have per-locale MDX files. Projects support a three-tab structure: Overview (required), Design (optional), and Engineering (optional).
+A second constraint: async server components cannot call `useTranslations()` directly. The workaround splits each page into an async outer component (resolves params, fetches data) and a sync inner component (calls hooks). The translation config uses explicit static imports instead of dynamic `import()` — another SSG compatibility requirement.
 
-Two design decisions worth noting:
+## Content system: Zod as the safety net
 
-**Locale fallback.** When a requested locale is missing, the system falls back to `en.mdx`. English is always the baseline, and Korean translations can be added incrementally without breaking any routes.
+Content is file-based MDX stored in the repository. No CMS, no database. Blog posts, project pages, and the about page each have per-locale MDX files. Projects support three tabs: Overview (always present), Design (optional), Engineering (optional).
 
-**Zod-validated frontmatter.** All frontmatter is parsed through Zod schemas. Required fields throw on missing values. Optional fields use `.catch(undefined)` — invalid optional data is silently dropped rather than breaking the build. This means a single malformed optional field never takes down the entire site.
+Two Zod decisions matter:
 
-**Reading time by script.** English uses word count (200 WPM), Korean uses character count (300 CPM for CJK). Detection is locale-based, not content-based — simple and predictable.
+**Graceful degradation for optional fields.** Required fields throw on missing values — a project without a title breaks the build intentionally. Optional fields use `.catch(undefined)`, silently dropping invalid data. A malformed `video` URL in frontmatter does not take down the entire site.
 
-## i18n and the SSG Constraint
+**Reading time by locale.** English uses word count at 200 WPM. Korean uses character count at 300 CPM for CJK text. The detection is locale-based, not content-based — simple, predictable, and correct for bilingual content where a single post is always in one language.
 
-Internationalization uses `next-intl` with two locales: `en` and `ko`. UI strings live in JSON translation files; content translations are separate MDX files.
+## D2 diagrams: build-time, dual-theme
 
-The critical SSG gotcha: server components must call `setRequestLocale(locale)` from the page's `params`, not `getLocale()`. The latter relies on request-time context that does not exist during static generation — it silently breaks the build.
+Architecture diagrams use D2, a declarative diagramming language. Each `.d2` file is compiled twice at build time — once for light theme, once for dark — producing paired SVGs in `/public/diagrams/`.
 
-For async server components that need translations, the workaround is splitting into an async outer component (resolves params, fetches data) and a sync inner component (calls `useTranslations()`). The translation config also uses explicit static imports rather than dynamic `import()` for SSG compatibility.
+The rendering component uses `useSyncExternalStore` for hydration safety. On the server, it always renders the light variant. On client mount, it switches to match the user's theme. This avoids the hydration mismatch that would occur if the server tried to guess the theme.
 
-## D2 Diagram Pipeline
+## Triple-channel SEO
 
-Architecture diagrams are authored in D2, a declarative diagramming language. At build time, each `.d2` file is compiled twice — once for light theme, once for dark — producing paired SVGs.
+The SEO implementation is not a plugin — it is a module (`lib/seo.ts`) that every page calls through `generateMetadata()`. Each page produces locale-specific titles, descriptions, canonical URLs, hreflang alternates, and Open Graph tags.
 
-The `D2Diagram` component uses `useSyncExternalStore` for hydration safety: it renders the light theme on the server, then switches to the user's theme on client mount. This avoids hydration mismatches while keeping diagrams theme-aware.
+JSON-LD schemas cover five entity types: `WebSite`, `Person`, `BlogPosting`, `SoftwareApplication`, and `BreadcrumbList`. The output is sanitized — angle brackets and ampersands are escaped in the JSON-LD script tags to prevent XSS injection.
 
-```tsx
-<img src="/diagrams/arch-light.svg" className="dark:hidden" />
-<img src="/diagrams/arch-dark.svg" className="hidden dark:block" />
-```
+The `llms.txt` file at the site root gives LLMs a plain-text summary of the site's structure and content — a convention that is still emerging, but costs nothing to support.
 
-## SEO
+## Security through absence
 
-Every page uses `generateMetadata()` to produce per-locale titles, descriptions, canonical URLs, hreflang alternates, and Open Graph tags. A centralized `lib/seo.ts` module provides builders for page metadata, canonical URLs, alternate links, and structured data (JSON-LD for website, person, article, project, breadcrumb, and FAQ types).
+Security headers — CSP, HSTS, X-Frame-Options — are configured in `next.config.ts`. The CSP `frame-src` allows only YouTube (for project videos) and Giscus (for blog comments). Everything else is blocked.
 
-JSON-LD output is sanitized by escaping angle brackets and ampersands to prevent XSS in script tags. Additional SEO infrastructure includes an auto-generated XML sitemap with hreflang, an RSS feed built from English blog posts, robots.txt, and an llms.txt file for LLM discovery.
-
-## Security
-
-Security headers (CSP, HSTS, X-Frame-Options) are configured in `next.config.ts`. The CSP `frame-src` allows only YouTube and Giscus. The "no backend" constraint means the attack surface is minimal by design — no API endpoints, no form handling, no user input processing, no database connections.
+But the real security story is what does not exist. No API endpoints. No form handling. No user input processing. No database connections. The attack surface of a static site is the CDN itself — and that is Vercel's problem, not mine.

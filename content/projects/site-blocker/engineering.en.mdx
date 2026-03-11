@@ -4,7 +4,7 @@ title: "Permanent Site Blocker — Engineering"
 
 ## Architecture
 
-Permanent Site Blocker runs entirely within Chrome's extension sandbox -- no server, no database, no network. Three isolated runtime contexts communicate through Chrome's event system rather than direct function calls.
+The extension runs entirely within Chrome's sandbox -- no server, no database, no network calls. Three isolated runtime contexts communicate through Chrome's event system, not direct function calls.
 
 ```
 Popup (popup.html/js)          → User input, validation, list rendering
@@ -12,77 +12,40 @@ Service Worker (background.js) → Rule management, tab monitoring
 Blocked Page (blocked.html/js) → URL display, favicon, motivational message
 ```
 
-The popup writes to `chrome.storage.sync`; the service worker listens for `storage.onChanged` events and reacts. This isolation is Chrome's security model, not an architectural choice -- but it happens to produce clean separation of concerns.
+The popup writes to `chrome.storage.sync`; the service worker listens for `storage.onChanged` events and reacts. This isolation is Chrome's security model, not an architectural choice -- but it produces clean separation of concerns as a side effect.
 
-Total codebase: ~300 lines of vanilla JavaScript across 3 files. No framework, no build step, no TypeScript. The entire system is readable in 10 minutes.
+Total codebase: ~300 lines of vanilla JavaScript across 3 files. No framework, no build step, no TypeScript. Readable in 10 minutes.
 
 ## Dual-Layer Blocking
 
-A single blocking mechanism leaves gaps. The extension uses two independent layers that each catch what the other misses.
+A single blocking mechanism leaves gaps. Two independent layers catch what the other misses.
 
-### Layer 1: declarativeNetRequest (Network-Level)
+**Layer 1: declarativeNetRequest** registers rules directly with Chrome's network stack. Requests die before reaching the server -- zero latency, no page load, no flash of content. Rules target `main_frame` only, so images or scripts from blocked domains on other pages load normally. The key property: these rules persist independently of the service worker. Chrome can terminate the worker anytime, and blocking continues.
 
-Chrome's `declarativeNetRequest` API registers blocking rules directly with the browser's network stack. Requests are killed before they reach the server -- zero latency, no page load, no flash of content.
+**Layer 2: tabs.onUpdated** evaluates every tab URL change against the blocklist. If a match is found, the tab redirects to `blocked.html`. This layer exists because declarativeNetRequest has known gaps: cached pages served without network requests, Chrome's speculative prerendering, and certain address bar navigations that skip network-level rules.
 
-Rules target `main_frame` only, so images or scripts from blocked domains on other pages are unaffected. The key advantage: these rules persist independently of the service worker. Chrome can terminate the worker anytime, and blocking continues uninterrupted.
+Both layers firing for the same URL is harmless -- the network block prevents loading, and the tab redirect only triggers if the page loaded anyway. The minor UX inconsistency: network blocks show Chrome's generic error page, while tab blocks show the custom motivational page. Accepted for coverage completeness.
 
-### Layer 2: tabs.onUpdated (Tab-Level Fallback)
+## Rule Generation: Full Rebuild Over Incremental
 
-A `tabs.onUpdated` listener evaluates every tab URL change against the blocked list. If a match is found, the tab redirects to `blocked.html`.
+When a site is added, the popup writes to `chrome.storage.sync`, triggering `storage.onChanged`. The service worker responds with `updateBlockRules()` -- a full regeneration of all blocking rules from scratch.
 
-This layer exists because declarativeNetRequest has known gaps:
-- **Cached pages** -- served without a network request
-- **Prerendered pages** -- Chrome's speculative prerendering can bypass network rules
-- **Browser-internal navigations** -- certain address bar navigations skip network-level rules
+Standard entries generate 2 rules each (exact domain + `www.` variant). Regex entries generate 1 rule using `regexFilter` with RE2 syntax. Every rule is registered as both a dynamic rule (persists across restarts) and a session rule (ID offset +1000) for defense in depth.
 
-### Why Both Layers
+Why full regeneration instead of incremental? Incremental updates would require tracking rule IDs mapped to sites, handling ID reuse, and diffing state -- more complexity and more bug surface for marginal gain. Full regeneration is O(n) where n is blocked sites. Chrome caps at 5,000 dynamic rules; with ~50 bytes per entry, worst case is well within capacity.
 
-The redundancy is intentional. Both layers firing for the same URL is harmless -- the network block prevents loading, and the tab redirect only triggers if the page somehow loaded anyway. Each layer fails independently.
+## URL Matching and the Encoding Problem
 
-The minor UX trade-off: network-level blocks show Chrome's generic error page, while tab-level blocks show the custom `blocked.html` with a motivational message. This inconsistency is accepted for coverage completeness.
+The `isUrlBlocked()` function runs on every `tabs.onUpdated` event. Standard mode strips `www.` from the hostname, matches against stored patterns with subdomain support, and checks path prefixes. Regex mode applies case-insensitive RegExp matching. Invalid patterns are silently skipped -- one bad regex doesn't disable all blocking.
 
-## Rule Generation
+The interesting edge case: URL decoding. When a user blocks `youtube\.com.*[가-힣]` to target Korean content, the browser encodes those characters in the URL. Without decoding first, the regex would never match encoded forms like `%ED%95%9C%EA%B8%80`. The tab-level layer decodes URLs before matching; the network-level layer works on raw URLs through RE2. Both paths are needed because each handles what the other can't.
 
-When a site is added, the popup writes to `chrome.storage.sync`, triggering a `storage.onChanged` event. The service worker runs `updateBlockRules()` -- a full regeneration of all blocking rules from scratch.
+## Key Decisions
 
-**Standard entries** generate 2 rules each: one for the exact domain and one for the `www.` variant. **Regex entries** generate 1 rule using `regexFilter` with RE2 syntax. **Dual registration**: every rule is registered as both a dynamic rule (persists across restarts) and a session rule (ID offset +1000) for defense in depth.
+**No build system** -- A 320px popup with one input and one list doesn't need React. Three files at ~300 lines don't need TypeScript or a bundler. The source is human-readable in production. For a privacy-focused extension, this is a feature: users can inspect exactly what runs in their browser.
 
-### Full Regeneration Over Incremental
+**chrome.storage.sync over storage.local** -- Cross-device sync with zero infrastructure. The trade-off is capacity: 100KB limit vs. 10MB. Each entry is ~50 bytes, supporting roughly 2,000 entries. For a tool where users block 10-50 sites, more than sufficient.
 
-On every change, the service worker deletes all existing rules and recreates the complete set. The alternative -- incremental updates -- would require tracking rule IDs mapped to sites, handling ID reuse, and diffing state. More complexity and more bug surface for marginal gain. Full regeneration is O(n) where n is blocked sites. With Chrome's 5,000 rule cap, worst case is ~10,000 rule operations -- well within capacity.
+**Manifest V3** -- Required for new Chrome Web Store submissions. The service worker model (replacing persistent background pages) demands stateless design -- which turned out to be the right constraint. Chrome can terminate the worker anytime; on restart, it reads from storage and reconstructs all state. No in-memory persistence needed.
 
-## Data Storage
-
-**Why `chrome.storage.sync` over `storage.local`**: cross-device synchronization with zero infrastructure. The user signs into Chrome, and their blocklist appears on every device automatically. No accounts, no server.
-
-The trade-off is capacity: `storage.sync` has a 100KB limit vs. `storage.local`'s 10MB. Each entry is ~50 bytes, supporting roughly 2,000 entries. For a tool where users typically block 10-50 sites, this is more than sufficient.
-
-```json
-[
-  { "url": "twitter.com", "isRegex": false },
-  { "url": "youtube.com/shorts", "isRegex": false },
-  { "url": "youtube\\.com.*[가-힣]", "isRegex": true }
-]
-```
-
-The service worker is stateless by design. Chrome can terminate it anytime. When an event fires, Chrome restarts the worker, which reads from storage and reconstructs all state. No in-memory persistence needed.
-
-## URL Matching
-
-The `isUrlBlocked()` function runs on every `tabs.onUpdated` event, checking each URL against the blocked list.
-
-**Standard mode**: strip `www.` from the hostname, match against stored hostnames with subdomain support, and check path prefixes if specified.
-
-**Regex mode**: decode the full URL first, then apply case-insensitive RegExp matching. Invalid patterns are silently skipped -- one bad pattern does not disable blocking for everything else.
-
-The URL decoding step is critical. When a user blocks `youtube\.com.*[가-힣]` to target Korean-language content, the browser encodes those characters in the URL (e.g., `%ED%95%9C%EA%B8%80` becomes `한글`). Without decoding, the regex would never match.
-
-## Architecture Decisions
-
-**No build system or framework** -- A 320px popup with one input and one list does not need React. Three files totaling ~300 lines do not need TypeScript or a bundler. The entire source is human-readable in production. For a privacy-focused extension, this is a feature: users can inspect exactly what the code does.
-
-**Manifest V3 over V2** -- MV3 is required for new Chrome Web Store submissions. The service worker model (replacing persistent background pages) demands stateless design -- which turned out to be the right constraint anyway.
-
-**Chrome extension over native app or VPN** -- Avoids the battery drain, network overhead, and privacy concerns of VPN-based blocking. The trade-off: locked into the Chromium ecosystem, and users can uninstall the extension. Both are accepted limitations.
-
-**Security posture** -- CSP restricts all scripts to `'self'`. Regex patterns go through `new RegExp()` (safe constructor) and Chrome's RE2 validator. User input is never executed as code, and no data is sent to external servers beyond favicon fetches.
+**Chrome extension over native app or VPN** -- Avoids battery drain, network overhead, and privacy concerns of VPN-based blocking. The trade-off: locked into the Chromium ecosystem, and users can uninstall the extension. Both are accepted limitations for a tool meant to be simple and transparent.

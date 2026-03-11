@@ -68,39 +68,22 @@ features:
     icon: "globe"
 ---
 
-## Spent hours scrolling Reddit for product ideas?
+Every morning, a pipeline scans 44 subreddits, RSS feeds, App Store reviews, Play Store reviews, and Product Hunt. It tags every complaint by type and topic, tracks what products exist, clusters demand signals, and synthesizes the gaps into product briefs — each backed by links to the original posts.
 
-You open 20 tabs. Skim r/SaaS, r/startups, r/selfhosted. Check Product Hunt for what just launched. Cross-reference app store reviews. Try to spot the gap between what people complain about and what exists.
+The output: a feed of product opportunities where real user demand exists but current supply falls short. Not "AI says users are frustrated" — you click through and read what they actually wrote.
 
-Five hours later, you have a messy spreadsheet and a vague hunch. Maybe.
+## The synthesis step no one automates
 
-**The research is valuable. The manual process isn't.**
+Finding complaints is easy. Connecting them to existing products and spotting what's missing — that's where ideas live. You could do it manually: 20 tabs, 5 hours, a messy spreadsheet, a vague hunch. GummySearch shows Reddit threads but needs manual queries and doesn't synthesize. SparkToro maps audiences, not product gaps. Exploding Topics shows growth, not what to build.
 
-## Demand meets supply, automatically
+Idea Fork automates the full pipeline: collection, tagging, clustering, and synthesis. End-to-end, no manual step.
 
-Idea Fork runs a daily pipeline that does what you do manually — but across 44 subreddits, RSS feeds, App Store reviews, Play Store reviews, and Product Hunt — all at once.
+## Three ways in
 
-It collects the **demand** (what people actually complain about), tracks the **supply** (what products exist), and uses AI to synthesize the **gap** into actionable product briefs. Every claim links back to the real source post. No hallucinations — AI with receipts.
+- **Signal Feed** — raw complaints and feature requests, filtered by type and category. The demand side.
+- **Product Tracker** — trending products with their complaint counts. The supply side, and where it's failing.
+- **AI Briefs** — synthesized opportunities with problem statements, evidence, solution directions, and competitive landscape. Every claim links to its source.
 
-## How it works
+## No signup. No paywall.
 
-1. **Browse the Feed** — scroll through tagged user signals filtered by type (Need, Complaint, Feature Request) and category
-2. **Explore Products** — see trending products paired with their user complaint signal counts
-3. **Read AI Briefs** — get synthesized product opportunities with problem statements, demand signals, and solution directions
-4. **Verify the sources** — every brief links back to the original posts, so you can judge for yourself
-
-## The pipeline behind the scenes
-
-Every day, a 5-stage pipeline runs automatically:
-
-- **Fetch** — pulls from Reddit, RSS, App Store, Play Store, and Product Hunt in parallel
-- **Tag** — Gemini Flash Lite classifies each post by type, sentiment, and topic tags
-- **Score** — updates product trending scores and complaint counts
-- **Cluster** — HDBSCAN groups related complaints, Gemini generates cluster labels
-- **Synthesize** — Gemini Flash writes full briefs from demand-supply gaps, with source attribution
-
-No manual curation. No editorial bias. Just data-driven opportunity discovery.
-
-## Try it now
-
-Idea Fork is free to browse. No signup, no paywall. Open the feed and start exploring what people are actually asking for — then decide what to build next.
+Open the feed, browse what people are actually asking for, and decide what to build next.
