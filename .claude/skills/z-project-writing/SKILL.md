@@ -34,15 +34,13 @@ A portfolio project page tells a story in three chapters — each for a differen
 
 ### Step 1: Understand the Project
 
-Before writing, read:
-- The project's source code or design doc (if referenced by the user)
-- Existing content in `content/projects/{slug}/` (if any)
-- `docs/project-writing-guide.md` for the structural reference
+Analyze the project autonomously — don't ask the user what to write. Each project lives at `~/apps/{project-name}/`. Before writing, read:
 
-Ask the user:
-- Which tab(s) to write? (Overview / Design / Engineering / all three)
-- What's the one thing that makes this project interesting?
-- Who's the reader? (If unclear, default: Overview → potential users, Design → product thinkers, Engineering → fellow engineers)
+- The project's source code — README, CLAUDE.md, key config files, and skim the architecture to understand what it does, how it's built, and what makes it interesting
+- Existing content in `content/projects/{slug}/` (if any)
+- `references/tab-guidelines.md` for writing guidance on each tab
+
+Write all three tabs (Overview + Design + Engineering) unless the user specifies otherwise.
 
 ### Step 2: Find the Story
 
@@ -112,7 +110,7 @@ featured: true
 launchDate: "2025-06-01"
 tagline: "One-line pitch"
 category: "web"           # mobile-app | chrome-extension | web | cli
-# See docs/project-writing-guide.md for all optional fields:
+# Optional fields (see lib/content/schemas.ts for full spec):
 # thumbnail, heroImage, images, d2Diagram, video, links,
 # keywords, competitors, cta, features
 ---

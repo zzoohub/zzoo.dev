@@ -95,7 +95,7 @@ Key behaviors:
 
 Blog frontmatter: `title`, `description`, `date` (ISO), `tags` (string[]), `draft` (optional bool)
 
-Project frontmatter: `title`, `description`, `status` (`active|completed|archived`), `tags`, `techStack`, `featured`, `launchDate`, `thumbnail`, `images`, `heroImage`, `d2Diagram`, `links` (`{live?, github?, docs?}`), `video` (YouTube embed URL only), `tagline`, `category` (`mobile-app|chrome-extension|web|cli`), `keywords` (`{primary?, longTail?}`), `competitors` (`[{name, differentiator}]`), `cta` (`{primary?, secondary?}`), `features` (`[{title, description, icon?}]`). See `docs/project-writing-guide.md` for writing guidance.
+Project frontmatter: `title`, `description`, `status` (`active|completed|archived`), `tags`, `techStack`, `featured`, `launchDate`, `thumbnail`, `images`, `heroImage`, `d2Diagram`, `links` (`{live?, github?, docs?}`), `video` (YouTube embed URL only), `tagline`, `category` (`mobile-app|chrome-extension|web|cli`), `keywords` (`{primary?, longTail?}`), `competitors` (`[{name, differentiator}]`), `cta` (`{primary?, secondary?}`), `features` (`[{title, description, icon?}]`). See `lib/content/schemas.ts` for full validation spec.
 
 ### Static Params
 

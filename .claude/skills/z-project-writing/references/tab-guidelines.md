@@ -37,7 +37,7 @@ Every overview should still cover these, but the sequence and emphasis should va
 
 - **A hook** in the first 1–2 sentences that creates curiosity
 - **What the product does** — concrete, not abstract
-- **What makes it different** — name competitors or alternatives, name the gap
+- **What makes it different** — what's the unique approach or constraint? Be specific
 - **A next step** — CTA: try it, view source, download
 
 ### Voice
@@ -50,7 +50,7 @@ Conversational. Short paragraphs. No corporate-speak. This is a builder talking 
 - Opening with "Project X is a Y that does Z" (boring — lead with something specific)
 - Listing every feature (pick the 2–3 that show the core tension)
 - Forgetting the CTA (don't leave the reader with nothing to do)
-- Being vague about what makes it different (name the competitors, name the gap)
+- Being vague about what makes it different (be specific about the unique approach)
 
 ---
 
@@ -61,15 +61,15 @@ Conversational. Short paragraphs. No corporate-speak. This is a builder talking 
 **Audience**: Product managers, designers, founders
 **Core question**: "How did you think about users and trade-offs?"
 
-### The Shape of a Good Design Tab
+### Default Structure
 
-A design tab reveals the product thinking that's invisible in the final product. It follows the logic of decisions:
+A design tab reveals the product thinking that's invisible in the final product. Follow this structure — adapt section depth based on what's interesting, but keep the order:
 
 1. **Core insight** — The one observation that shaped everything. Not a description of the product, but the realization that preceded it. "Writers think in scenes and plot flow, not sentences." "The moment you want to unblock a site, you're making an impulsive decision, not a rational one."
 
 2. **Who it's for** — Vivid, specific personas. Not "users who want to block sites" but "Minsu, a self-aware procrastinator who understands the problem but has burned through every blocker that offers an escape route." Give them a name, a specific pain point, a behavior pattern.
 
-3. **Core loop** — How do users interact with the product? What's the habit cycle? Map the journey from first contact to repeated use. Show the moments of delight and the moments of friction you deliberately chose to keep.
+3. **Core interaction** (optional) — How do users interact with the product? For habit-forming products, map the loop from first contact to repeated use. For one-shot tools or pipelines, describe the primary interaction flow. Show the moments of delight and the moments of friction you deliberately chose to keep. Skip this if the interaction is obvious from the Overview.
 
 4. **Product decisions as trade-offs** — This is the heart of the design tab. Each decision should name:
    - What you chose
@@ -79,9 +79,7 @@ A design tab reveals the product thinking that's invisible in the final product.
 
    Example: "No timer, no whitelist, no scheduling — these are deliberate omissions. A timer means the extension becomes a countdown to distraction. A whitelist means you spend your willpower deciding what to unblock instead of working."
 
-5. **Competitive positioning** — Not a market analysis. A sharp statement of what exists and why it's insufficient. "Every blocker has an escape route — that's the problem they all share."
-
-6. **Business model** (optional) — If the monetization strategy reveals product thinking (e.g., free tier calibrated to let users experience the core loop before hitting limits), include it. If it's a standard SaaS pricing page, skip it.
+5. **Business model** (optional) — If the monetization strategy reveals product thinking (e.g., free tier calibrated to let users experience the core loop before hitting limits), include it. If it's a standard SaaS pricing page, skip it.
 
 ### Voice
 
@@ -117,27 +115,27 @@ Think "smart colleague explaining their thinking over coffee," not "PM presentin
 **Audience**: Fellow engineers, hiring managers, technical co-founders
 **Core question**: "What engineering decisions did you make and why?"
 
-### The Shape of a Good Engineering Tab
+### Default Structure
 
-An engineering tab shows technical judgment, not technical inventory. It answers: "What's interesting about how this was built?"
+An engineering tab shows technical judgment, not technical inventory. Follow this structure:
 
-1. **Architecture overview** — Orient the reader in 1–2 paragraphs. What are the major components? How do they connect? Include a brief code structure or ASCII diagram if it helps, but keep it minimal — the goal is orientation, not exhaustive documentation.
+1. **Architecture** — Orient the reader in 1–2 paragraphs. Structure, data flow, how components connect, processing model. Not tech stack justification — that's a resume, not a story. Focus on the shape of the system: what are the boundaries, how does data move through them, what are the interesting constraints on that flow.
 
-2. **2–4 interesting technical details** — These are the stories. Pick the aspects where:
+2. **Implementation stories** — The "how" — 2–4 stories about problems you actually hit and how you solved them. Pick aspects where:
    - You solved a problem in a non-obvious way (NLE positioning for timeline scenes, dual-layer browser blocking)
    - The data model reveals the domain (scenes as clips with extent, not list items)
-   - The system design has an interesting constraint (presigned uploads that bypass the API server entirely)
    - A pipeline does something clever (HDBSCAN clustering instead of asking an LLM to group posts)
+   - You hit a wall and had to rethink (presigned uploads after the API server became a bottleneck)
 
-   Each detail should be self-contained: what the problem was, how you solved it, and why this approach over the obvious alternative.
+   Each story should be self-contained: what the problem was, how you solved it, and why this approach over the obvious alternative.
 
-3. **Key decisions** — Architecture Decision Records, compressed to their essence. Each one: what was chosen, over what, and why. 1–3 sentences max. No "Revisit when" — if the reader wants to know when you'd change your mind, the "why" should make it obvious.
+3. **Architecture decisions** — Structural choices about how the system is organized: monolith vs microservices, sync vs async, where boundaries are drawn, what's separated vs co-located. Each one: what was chosen, over what, and why. 1–3 sentences max.
 
 ### What to Include
 
-- Architecture overview with component relationships
-- Design decisions with trade-offs (the star content)
-- Unique technical challenges and how they were solved
+- System structure, data flow, component boundaries
+- Implementation stories — problems hit, solutions found, why this approach
+- Structural decisions with trade-offs (monolith vs micro, sync vs async, etc.)
 - Key code snippets that show design intent (e.g., a trait definition that enforces a boundary)
 - Data flow descriptions when they reveal interesting constraints
 
@@ -170,6 +168,19 @@ Keep it approachable:
 **한국어 — 딱딱함** ❌: "본 시스템은 프리사인드 URL 업로드 메커니즘을 활용하여 API 서버를 우회함으로써, 서버 부하를 감소시키고 클라이언트-스토리지 간 직접 전송을 가능하게 한다."
 
 **한국어 — 자연스러움** ✅: "업로드는 presigned URL로 R2에 바로 올라간다. API 서버는 파일을 건드리지 않는다 — 서명만 해주고 비켜난다."
+
+### D2 Architecture Diagrams
+
+Projects can include a D2 architecture diagram that renders at the bottom of the Engineering tab. The diagram is declared in the **Overview** frontmatter (not the Engineering file):
+
+```yaml
+# in en.mdx (overview)
+d2Diagram: "project-name-architecture-simplified"
+```
+
+The D2 source file lives alongside the MDX content at `content/projects/{slug}/{name}.d2`. During build (`bun run build:diagrams`), it compiles to light and dark SVGs at `/public/diagrams/{name}-{theme}.svg`. The `D2Diagram` component auto-switches based on the user's theme.
+
+When a project has meaningful architecture worth visualizing, use the `d2:diagram` skill to create the `.d2` file and add the `d2Diagram` frontmatter field. Keep diagrams simplified — show major components and data flows, not every internal detail.
 
 ### Common Mistakes
 
