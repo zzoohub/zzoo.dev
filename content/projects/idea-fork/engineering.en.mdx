@@ -2,53 +2,30 @@
 title: "Idea Fork — Engineering"
 ---
 
-## Architecture
+## System Overview
 
-The data pipeline and the read path have completely different requirements. The pipeline needs Python's ML ecosystem, scheduled execution, and heavy LLM integration. The read path needs low-latency rendering and should cost nothing when idle. So they're split.
+A daily pipeline collects posts from Reddit, RSS, app stores, and Product Hunt, tags them via LLM, clusters complaints into themes, and synthesizes opportunity briefs. A Next.js frontend reads from Neon PostgreSQL directly — no API server in the read path. The pipeline writes on schedule; users read whenever they visit.
 
-- **Web App (Next.js on Vercel)** — queries Neon PostgreSQL directly via `@neondatabase/serverless`. No API server in the production read path.
-- **Pipeline (FastAPI on GCP Cloud Run)** — runs daily on schedule. Fetches from 5+ sources, tags posts via LLM, clusters them, synthesizes briefs. Not deployed for user-facing requests.
-- **Database (Neon PostgreSQL)** — single source of truth. Scale-to-zero pricing.
+## Clustering Thousands of Posts Without an LLM
 
-```
-User --> Next.js (Vercel) --> Neon DB <-- FastAPI Pipeline (Cloud Run)
-           reads directly                  writes on schedule
-```
+The first approach sent all posts to an LLM and asked it to group complaints into themes. Three walls: O(n) token cost, context window limit of ~50 posts per call, and accuracy degrading as volume grew.
 
-A `DATA_SOURCE` env var switches the data layer. Production: `neon` (direct DB). Local dev: `api` (proxies to FastAPI). Flipping back requires one variable change.
+The replacement splits the work by what each tool does best. Gemini Embedding API vectorizes posts. HDBSCAN (density-based clustering, scikit-learn) groups the vectors — it determines cluster count automatically, handles noise, and scales to thousands. The LLM only labels each cluster after grouping — one short call per cluster instead of one massive prompt. Clustering cost dropped ~10x.
 
-## HDBSCAN Over LLM Clustering
+K-means was ruled out because it requires specifying cluster count upfront — impossible when today's batch could contain 3 complaint themes or 30. HDBSCAN discovers the structure from the data.
 
-The original approach sent all posts to the LLM and asked it to group them. Three walls: O(n) token cost, context window limits (~50 posts per call), and accuracy degrading with volume.
+## Eliminating the Read-Path Server
 
-The replacement: vectorize posts via Gemini Embedding API, then cluster with HDBSCAN (density-based, scikit-learn). HDBSCAN determines cluster count automatically, handles noise, and scales to thousands of posts. The LLM is used only for labeling each cluster — a short call per cluster instead of a massive prompt containing all posts. Clustering costs dropped ~10x.
+The pipeline needs Python's ML ecosystem, scheduled execution, and heavy LLM integration. The read path needs sub-second rendering and zero cost at idle. These pull in opposite directions, so the system splits: the pipeline (FastAPI on Cloud Run) writes to Neon on schedule, and Next.js on Vercel queries Neon directly via `@neondatabase/serverless`.
 
-K-means was rejected because it requires specifying cluster count upfront — impossible when you don't know how many complaint themes exist in today's batch. Local sentence-transformers were rejected because Gemini embeddings are higher quality at negligible API cost.
+This means SQL lives in two languages — Python for writes, TypeScript for reads. The query surface is ~10 stable queries, so the duplication is manageable. The alternative — keeping an API server running 24/7 to serve reads — costs money for a pipeline that writes once daily.
 
-## Direct Neon Access from Next.js
+`server-only` prevents accidental client-side database imports. PostgreSQL handles everything without extra infrastructure: relational data, full-text search (tsvector + pg_trgm), JSON storage (JSONB), and cursor-based pagination.
 
-In production, Next.js queries Neon directly, eliminating a network hop. `server-only` prevents accidental client-side imports. Rating writes use Server Actions straight to Neon.
+## From Raw Posts to Briefs — The Pipeline
 
-Trade-off: SQL queries are duplicated in TypeScript (ported from Python originals). Acceptable because the query surface is small (~10 queries) and stable. The alternative — keeping the API server running 24/7 for reads — costs money for a pipeline that writes once daily.
+Five stages, ~4K posts per run, triggered daily by Cloud Scheduler. An advisory lock prevents overlapping executions.
 
-PostgreSQL handles everything without extra infrastructure: relational data, full-text search (tsvector + pg_trgm), JSON storage (JSONB for denormalized brief data), and cursor-based pagination.
+Fetch pulls concurrently from five source types, upserting via `ON CONFLICT`. Tag sends batches of 20 to Gemini Flash Lite for type classification (7 actionable + 3 non-actionable), sentiment, and topic tagging. Score updates trending metrics on products based on shared tags. Cluster vectorizes tagged posts in batches of 200, runs HDBSCAN, and labels each cluster via LLM. Synthesize fetches Google Trends data and related products per cluster, then Gemini Flash generates a full brief — problem statement, analysis, potential directions, competitive landscape.
 
-## The Pipeline
-
-Five stages, daily via Cloud Scheduler, ~4K posts per run. An advisory lock prevents overlapping executions.
-
-1. **Fetch** — concurrent collection from Reddit, RSS, App Store, Play Store, Product Hunt. Upserts via `ON CONFLICT`.
-2. **Tag** — batches of 20 to Gemini Flash Lite. Type (7 actionable + 3 non-actionable), sentiment, topic tags.
-3. **Score** — update trending scores and complaint counts on products via shared tags.
-4. **Cluster** — batches of 200 vectorized, HDBSCAN clustered, each cluster labeled by LLM.
-5. **Synthesize** — per cluster: Google Trends data + related products, then Gemini Flash generates a full brief (problem, analysis, directions, competitive landscape).
-
-Each brief stores source references in two places: a normalized `brief_source` table for integrity and a `source_snapshots` JSONB column for join-free reads.
-
-## Key Decisions
-
-**Python for the pipeline, not TypeScript end-to-end.** scikit-learn and numpy are far more mature in Python. The bottleneck is LLM API latency (30s+ for synthesis), not compute. Trade-off: 1–2s cold starts on Cloud Run, acceptable since the pipeline isn't user-facing.
-
-**No staging environment.** Neon's database branching provides sufficient isolation. Dev, preview, and production each get their own branch. Full staging would double infra cost for a solo project deploying from main.
-
-**Pulumi over Terraform.** Infrastructure managed in TypeScript, matching the web app. GCP + Neon + Vercel declared in one place. HCL would add a third language for zero functional benefit.
+Each brief stores source references in two places: a normalized `brief_source` table for referential integrity and a `source_snapshots` JSONB column for join-free reads. The read path needs fast denormalized access; the write path needs referential safety. Intentional duplication, each copy optimized for its access pattern.

@@ -121,29 +121,23 @@ An engineering tab shows how you solved hard problems, not what tools you used. 
 
 1. **System overview** — 1 paragraph + optional architecture diagram. Major components, how they connect, what data flows where. Quick orientation so the reader has a mental map before diving into stories. Not a tech stack listing — the reader already knows what you use. If the project has a D2 diagram, place it here — the reader needs the system picture first, then the stories make sense against that map.
 
-2. **Requirement-driven stories** — 2–4 stories. This is the heart of the tab. Each story follows:
-   - **Requirement or constraint** — what the system needed to do, or what problem emerged
-   - **Design reasoning** — how you thought about it from a software engineering perspective: where to draw boundaries, how to separate concerns, which direction dependencies should flow, what to hide vs expose, how to model the domain
-   - **Resulting structure, data flow, or processing approach** — the concrete outcome: how data moves, how components are wired, how the system handles the requirement
+2. **Requirement-driven stories** — 2–3 stories, each 10–20 lines. This is the heart of the tab. Each story: **requirement or constraint → design reasoning → resulting structure/flow**. Keep it tight — this is a highlight reel, not a design doc. One paragraph per beat, not one section.
 
-   Pick stories where the engineering is genuinely interesting:
-   - A boundary decision that shaped everything downstream (e.g., separating generation orchestration from domain logic so either can change independently)
-   - A data model that reveals the domain (scenes as clips with extent, not list items)
-   - A processing pipeline where the flow itself is the insight (HDBSCAN clustering instead of asking an LLM to group posts)
-   - A constraint that forced a non-obvious structure (presigned uploads after the API server became a bottleneck)
-   - Dependency direction choices that prevent coupling (domain doesn't know about infrastructure)
+   Pick the 2–3 where the engineering is most interesting. Examples of good picks:
+   - A boundary decision that shaped everything downstream
+   - A data model that reveals the domain
+   - A processing flow where the pipeline design is the insight
+   - A constraint that forced a non-obvious structure
 
-   The design principles — separation of concerns, dependency inversion, boundary setting, data flow control — should emerge naturally from the stories, not be listed as abstract theory.
+   Design principles (separation of concerns, dependency direction, encapsulation) should emerge from the story, not be stated as labels.
 
-3. **Smaller structural decisions** (optional) — Choices that don't warrant a full story but still show judgment. 1–3 sentences each: what was chosen, the alternative, and why. Examples: sync vs async processing, co-locating vs separating modules, how error propagation crosses boundaries.
+   **Scope guard**: 60–100 lines total. System overview ~5–10 lines. Each story ~15–25 lines. 2–3 stories is the right amount — if you have 4 interesting ones, pick the best 3. This is a highlight reel, not a design doc.
 
 ### What to Include
 
 - Requirement-driven narratives: constraint → design reasoning → resulting structure
-- Software design reasoning: separation of concerns, dependency direction, boundary decisions, encapsulation, data flow control
-- Key code snippets that show design intent (e.g., a trait definition that enforces a boundary, a port interface that decouples layers)
+- Key code snippets that show design intent — only when the snippet makes the story clearer than prose alone
 - Data flow descriptions when they reveal interesting constraints
-- How the system handles edge cases, concurrency, or failure modes
 
 ### What to Exclude
 

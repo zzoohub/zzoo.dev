@@ -2,44 +2,30 @@
 title: "Permanent Site Blocker — Engineering"
 ---
 
-## Architecture
+## System Overview
 
-Three isolated runtime contexts, communicating only through `chrome.storage.sync`. Chrome enforces the isolation — no direct function calls between them.
-
-```
-Popup (popup.js)           → User adds sites, validates input
-Service Worker (background.js) → Manages blocking rules, monitors tabs
-Blocked Page (blocked.js)  → Displays motivational message on redirect
-```
-
-The popup writes to storage. The service worker reacts to `storage.onChanged` events. No message passing, no shared state. The entire codebase is ~860 lines across 4 files — no framework, no build step, no TypeScript.
+Three isolated runtime contexts — popup, service worker, blocked page — communicating only through `chrome.storage.sync`. Chrome enforces the isolation; no direct function calls between them. The popup writes to storage, the service worker reacts to changes and manages blocking rules, the blocked page displays on redirect. The entire codebase is ~860 lines of vanilla JavaScript across 4 files.
 
 ## Dual-Layer Blocking
 
-One layer isn't enough. Chrome's `declarativeNetRequest` blocks requests before they reach the server — fast and reliable. But cached pages, prerendered content, and certain address-bar navigations slip through because they never hit the network.
+One blocking layer isn't enough. Chrome's `declarativeNetRequest` kills requests at the network level before they reach the server — fast, reliable, and independent of the service worker's lifecycle. But cached pages, prerendered content, and certain address-bar navigations slip through because they never hit the network.
 
-The second layer — `tabs.onUpdated` — checks every URL change against the blocklist and redirects matches to `blocked.html`. Two independent systems, each covering the other's gaps.
+The second layer — a `tabs.onUpdated` listener — checks every URL change against the blocklist and redirects matches to `blocked.html`. Two independent systems, each covering the other's blind spots.
 
-The trade-off: network blocks show Chrome's generic error page, tab blocks show the custom motivational page. A minor UX inconsistency, accepted for zero gaps in coverage.
+The trade-off: network blocks show Chrome's generic error page, tab blocks show the custom motivational page. A minor UX inconsistency, accepted for complete coverage. Both layers firing on the same URL is harmless — the network block prevents loading, the tab redirect only triggers if the page somehow loaded anyway.
 
-Both layers firing on the same URL is harmless. The network block prevents loading; the tab redirect only triggers if the page loaded anyway.
+Every rule registers as both a dynamic rule (persists across restarts) and a session rule (ID offset +1000). If one mechanism fails silently, the other still blocks.
 
 ## Full Rebuild Over Incremental Updates
 
-When the blocklist changes, the service worker deletes every rule and regenerates the complete set from scratch. Standard entries produce two rules each (domain + `www.` variant). Regex entries produce one `regexFilter` rule. Every rule is registered as both a dynamic rule (survives restarts) and a session rule (offset ID +1000) for defense in depth.
+When the blocklist changes, the service worker deletes every existing rule and regenerates the complete set from scratch. Standard entries produce two rules each (domain + `www.` variant). Regex entries produce one `regexFilter` rule.
 
-Incremental updates would require tracking rule IDs per site, handling reuse, diffing state between storage and the rule engine. More code, more edge cases, marginal gain. The typical user has fewer than 50 entries — full regeneration takes under 100ms.
+Incremental updates would require tracking which rule IDs map to which sites, handling ID reuse when entries are removed, and diffing state between storage and the rule engine. More code, more edge cases, marginal performance gain. The typical user blocks fewer than 50 sites — full regeneration completes in under 100ms. Simplicity over cleverness.
 
 ## The Encoding Problem
 
-When a user blocks Korean YouTube content with `youtube\.com.*[가-힣]`, the browser percent-encodes those characters in the URL. Without decoding first, the regex never matches `%ED%95%9C%EA%B8%80`.
+A user blocks Korean YouTube content with `youtube\.com.*[가-힣]`. The browser percent-encodes those characters in the URL: `%ED%95%9C%EA%B8%80`. Without decoding first, the regex never matches.
 
-The tab-monitoring layer decodes URLs via `decodeURIComponent` before matching. The network layer uses Chrome's RE2 engine on raw URLs. Both paths are needed — each handles what the other can't. This single detail — decoding before matching — cost more debugging time than the rest of the matching logic combined.
+The tab-monitoring layer decodes URLs via `decodeURIComponent` before matching. The network layer uses Chrome's RE2 engine on raw URLs — RE2 handles the encoding differently. Both paths are needed; each handles what the other can't.
 
-## Key Decisions
-
-**No build system.** Three files, ~860 lines, vanilla JavaScript. The source ships exactly as written. For a security-sensitive extension with the `tabs` permission, auditability beats developer convenience.
-
-**`storage.sync` over `storage.local`.** Cross-device sync for free. The 100KB quota supports ~2,000 entries — a tool where users block 10–50 sites will never hit it.
-
-**Manifest V3.** Required for new Chrome Web Store submissions. The service worker model demands stateless design — Chrome can kill the worker anytime. On restart, it reads storage and rebuilds all rules. Turned out to be the right constraint: no in-memory state to lose.
+This single detail — decoding before regex matching — cost more debugging time than the rest of the matching logic combined. The fix was one line. Finding it took a day.
