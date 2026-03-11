@@ -8,17 +8,17 @@ Builder Log for a solopreneur developer. Multilingual (2 locales: en, ko), stati
 
 ## Principles (MUST FOLLOW)
 
-1. All implementation must use skills:
-   - Use **vercel-react-best-practices** skill
-   - Use **z-search-visibility** skill
-2. Once the implementation is complete, run the two sub-agents below in parallel:
-   - Run a **z-security-reviewer** sub-agent for security audit → fix
-   - Run a **z-verifier** sub-agent for verifying changes (run tests, E2E, browser verify)
-3. Multilingual (en, ko) based on user language preference
-4. Mobile-first responsive design
-5. Content writing MUST use designated skills:
+1. Content writing MUST use designated skills:
    - Blog posts → use **z-dev-essay** skill
    - Project pages (overview, design, engineering tabs) → use **z-project-writing** skill
+2. All implementation must use skills:
+   - Use **vercel-react-best-practices** skill
+   - Use **z-search-visibility** skill
+3. Once the implementation is complete, run the two sub-agents below in parallel:
+   - Run a **z-security-reviewer** sub-agent for security audit → fix
+   - Run a **z-verifier** sub-agent for verifying changes (run tests, E2E, browser verify)
+4. Multilingual (en, ko) based on user language preference
+5. Mobile-first responsive design
 
 ## Commands
 
