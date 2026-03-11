@@ -1,5 +1,6 @@
 import { Link } from "@/i18n/navigation";
 import type { ProjectMeta } from "@/lib/types";
+import { ProjectTitle } from "@/components/project/project-title";
 
 const CATEGORY_LABELS: Record<string, string> = {
   "mobile-app": "Mobile App",
@@ -33,7 +34,7 @@ export function ProjectCard({ project }: { project: ProjectMeta }) {
       </div>
 
       <h3 className="mt-3 text-xl font-semibold group-hover:text-primary transition-colors duration-150 md:text-2xl">
-        {project.title}
+        <ProjectTitle title={project.title} />
       </h3>
 
       <p className="mt-3 text-sm text-muted-foreground leading-relaxed">

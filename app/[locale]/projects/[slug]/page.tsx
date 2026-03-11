@@ -31,6 +31,7 @@ import { compileMDX } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import type { ProjectMeta } from "@/lib/types";
 import { Comments } from "@/components/shared/comments";
+import { ProjectTitle } from "@/components/project/project-title";
 import { proseClassName } from "@/lib/utils";
 import { generateContentStaticParams } from "@/lib/static-params";
 
@@ -218,7 +219,7 @@ function ProjectDetailContent({
         {/* Header */}
         <header>
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-            {meta.title}
+            <ProjectTitle title={meta.title} />
           </h1>
 
           <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
