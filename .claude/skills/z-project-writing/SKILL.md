@@ -10,11 +10,13 @@ description: |
 
 # Project Writing
 
-A portfolio project page tells a story in three chapters — each for a different reader, each answering a different question. The three tabs share one principle: **show thinking, not just output.**
+A portfolio project page tells a story in three chapters — each for a different reader, each answering a different question. The three tabs share two principles: **show thinking, not just output** — and above all, **be easy to read and easy to understand.**
 
 ## First Principles
 
-1. **A project page is a story, not documentation.** Documentation describes what exists. A story reveals why it exists and what you learned building it. Every section should have narrative tension — a problem that needed solving, a choice that had consequences.
+1. **Readability is the highest priority.** A brilliant insight buried in dense prose is a wasted insight. Every sentence should be immediately clear on first read. If the reader has to re-read a paragraph to get it, the writing failed — no matter how good the content is. Professional depth and simple language are not in conflict. The harder the idea, the simpler the sentence should be.
+
+2. **A project page is a story, not documentation.** Documentation describes what exists. A story reveals why it exists and what you learned building it. Every section should have narrative tension — a problem that needed solving, a choice that had consequences.
 
 2. **The reader decides in 10 seconds.** Every tab needs a hook in the first two sentences. If the opening doesn't create curiosity, nothing else matters.
 
@@ -84,10 +86,15 @@ Share the draft. Ask the user:
 
 Detect language from user input. Default to English.
 
-- **English**: Direct, concise. Short sentences. Active voice.
-- **Korean**: 한다체 by default. Avoid 번역투 (translation artifacts). Keep sentences short — Korean runs long naturally. Use English technical terms where natural (API, SSE, HDBSCAN) but don't code-switch unnecessarily.
+- **English**: Direct, concise. Short sentences. Active voice. But not robotic — vary sentence length, let personality show.
+- **Korean**: 한다체. 딱딱함의 원인은 어미가 아니라 문장 구조다 — 아래를 지킬 것:
+  - **번역투 금지**: "~를 통해", "~에 대해서", "~하는 것이 가능하다", "~함으로써" → 자연스러운 한국어로 바꾸기
+  - **명사 덩어리 금지**: "메커니즘 활용을 통한 부하 감소" → "부하를 줄인다" — 동사로 풀기
+  - **문장 짧게**: 한 문장에 절이 3개 이상 이어지면 끊기. 접속사("-고", "-며", "-면서")가 두 번 나오면 길다는 신호
+  - **구어 리듬 허용**: "근데", "그냥", "딱" 같은 구어체 단어를 적절히 섞으면 글이 숨을 쉰다
+  - 기술 용어(API, SSE, HDBSCAN)는 영어 그대로 쓰되 불필요한 코드스위칭은 피하기
 
-Both languages: conversational but not casual. Write like you're explaining to a smart friend over coffee — not lecturing, not selling.
+Both languages share one principle: **write like you're explaining to a smart friend**. Expert content doesn't require expert-sounding prose. The harder the concept, the simpler the sentence should be. If a paragraph feels like a textbook, rewrite it as something you'd actually say out loud.
 
 ## File Format
 

@@ -85,7 +85,20 @@ A design tab reveals the product thinking that's invisible in the final product.
 
 ### Voice
 
-Strategic but not abstract. Every claim should be grounded in a specific user behavior or market observation. Avoid design jargon unless it earns its place ("progressive disclosure" is fine if you show how it manifests; "design thinking" is never fine).
+Think "smart colleague explaining their thinking over coffee," not "PM presenting to stakeholders." The content is strategic, but the delivery should feel like a conversation.
+
+- Ground every claim in a specific user behavior or observation — not theory
+- Skip design jargon unless it earns its place ("progressive disclosure" is fine if you show how it manifests; "design thinking" is never fine)
+- Vary rhythm. A short punchy sentence after a longer explanation lands harder than three medium sentences in a row
+- Ask rhetorical questions when they genuinely help: "So why not add a timer?" pulls readers in. But don't overdo it
+
+**Stiff** ❌: "The decision to omit a timer was predicated on the observation that countdown mechanisms introduce anticipatory distraction, thereby undermining the core value proposition."
+
+**Natural** ✅: "We considered adding a timer. But think about it — a countdown to when you can browse again? That's not focus. That's just waiting."
+
+**한국어 — 딱딱함** ❌: "타이머를 제거한 것은 카운트다운 메커니즘이 기대감 기반의 산만함을 유발하여 핵심 가치 제안을 약화시킨다는 관찰에 기반한다."
+
+**한국어 — 자연스러움** ✅: "타이머를 넣을까 고민했다. 근데 생각해보면, '10분 뒤에 유튜브 볼 수 있다'는 카운트다운이 집중일까? 그냥 기다리는 거다."
 
 ### Common Mistakes
 
@@ -93,6 +106,7 @@ Strategic but not abstract. Every claim should be grounded in a specific user be
 - Generic personas ("busy professionals who want productivity") — be specific enough that the reader can picture the person
 - Listing UX principles as platitudes ("simplicity", "consistency") without showing how they drove real decisions
 - Treating the design tab as a second overview (don't repeat the pitch — go deeper into the thinking)
+- Writing like a design doc instead of a story — if it reads like something you'd submit to a VP, rewrite it
 
 ---
 
@@ -141,7 +155,21 @@ An engineering tab shows technical judgment, not technical inventory. It answers
 
 ### Voice
 
-Technical and concise. The reader knows what PostgreSQL is — you don't need to explain it. But do explain YOUR choices: why Neon over Supabase, why a monolith over microservices, why SSE over WebSocket. Assume competence, explain judgment.
+Talk engineer-to-engineer. The reader knows what PostgreSQL is — skip the intro. But they don't know why YOU picked Neon over Supabase, or why you went with a monolith instead of microservices. That's what they came to read.
+
+Keep it approachable:
+- Assume the reader is competent but unfamiliar with your codebase
+- Explain the "why" like you're pair programming — not writing a thesis
+- Let yourself be surprised or amused by what you found. "Turns out HDBSCAN just... worked" is more honest than "HDBSCAN proved to be an effective clustering algorithm"
+- Use code snippets to show intent, not implementation. A trait definition that enforces a boundary is interesting. A 40-line function body is not
+
+**Stiff** ❌: "The system employs a presigned URL upload mechanism that bypasses the API server, thereby reducing server load and enabling direct client-to-storage transfers with enhanced throughput characteristics."
+
+**Natural** ✅: "Uploads go straight to R2 via presigned URLs. The API server never touches the file — it just signs a permission slip and gets out of the way."
+
+**한국어 — 딱딱함** ❌: "본 시스템은 프리사인드 URL 업로드 메커니즘을 활용하여 API 서버를 우회함으로써, 서버 부하를 감소시키고 클라이언트-스토리지 간 직접 전송을 가능하게 한다."
+
+**한국어 — 자연스러움** ✅: "업로드는 presigned URL로 R2에 바로 올라간다. API 서버는 파일을 건드리지 않는다 — 서명만 해주고 비켜난다."
 
 ### Common Mistakes
 
@@ -149,3 +177,4 @@ Technical and concise. The reader knows what PostgreSQL is — you don't need to
 - Including generic sections because "every project should have auth/security/observability" (only include what's genuinely interesting)
 - Listing technologies without explaining why they were chosen (a tech stack table without trade-offs is a resume bullet point, not engineering writing)
 - Being too detailed about infrastructure (Cloud Run config, Docker settings) — this is ops, not engineering storytelling
+- Sounding like a paper. "The architecture leverages..." → "The app is split into..." — use the simplest verb that works
