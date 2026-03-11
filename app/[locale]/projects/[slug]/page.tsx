@@ -5,12 +5,12 @@ import { hasLocale, useTranslations } from "next-intl";
 import { routing } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
 import {
-  getAllCaseStudies,
-  getCaseStudy,
-  getCaseStudyContent,
-  hasCaseStudy,
-  getDesignDoc,
-  hasDesignDoc,
+  getAllProjects,
+  getProject,
+  getDesignContent,
+  hasDesignContent,
+  getEngineeringDoc,
+  hasEngineeringDoc,
 } from "@/lib/content";
 import {
   buildPageMeta,
@@ -29,7 +29,7 @@ import { ProductCTA } from "@/components/project/product-cta";
 import { VideoEmbed } from "@/components/project/video-embed";
 import { compileMDX } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
-import type { CaseStudyMeta } from "@/lib/types";
+import type { ProjectMeta } from "@/lib/types";
 import { Comments } from "@/components/shared/comments";
 import { proseClassName } from "@/lib/utils";
 import { generateContentStaticParams } from "@/lib/static-params";
@@ -40,7 +40,7 @@ const mdxOptions = {
 };
 
 export async function generateStaticParams() {
-  return generateContentStaticParams((locale) => getAllCaseStudies(locale));
+  return generateContentStaticParams((locale) => getAllProjects(locale));
 }
 
 export async function generateMetadata({
@@ -49,20 +49,20 @@ export async function generateMetadata({
   params: Promise<{ slug: string; locale: string }>;
 }): Promise<Metadata> {
   const { slug, locale } = await params;
-  const study = getCaseStudy(locale, slug);
-  if (!study) return {};
+  const project = getProject(locale, slug);
+  if (!project) return {};
 
   const allKeywords = [
-    ...(study.meta.keywords?.primary ?? []),
-    ...(study.meta.keywords?.longTail ?? []),
+    ...(project.meta.keywords?.primary ?? []),
+    ...(project.meta.keywords?.longTail ?? []),
   ];
 
   return {
     ...buildPageMeta({
       locale,
       pathname: `/projects/${slug}`,
-      title: study.meta.title,
-      description: study.meta.description,
+      title: project.meta.title,
+      description: project.meta.description,
     }),
     ...(allKeywords.length > 0 ? { keywords: allKeywords } : {}),
   };
@@ -76,53 +76,53 @@ export default async function ProjectDetailPage({
   const { slug, locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
-  const study = getCaseStudy(locale, slug);
+  const project = getProject(locale, slug);
 
-  if (!study) notFound();
+  if (!project) notFound();
 
-  // Compile main marketing content (en.mdx / ko.mdx)
-  const { content: productMdx } = await compileMDX({
-    source: study.content,
+  // Compile main overview content (en.mdx / ko.mdx)
+  const { content: overviewMdx } = await compileMDX({
+    source: project.content,
     options: mdxOptions,
   });
 
-  // Compile case study content (casestudy.en.mdx / casestudy.ko.mdx)
-  const caseStudyDoc = getCaseStudyContent(locale, slug);
-  let caseStudyMdx: React.ReactNode = null;
-  if (caseStudyDoc) {
-    const { content: compiled } = await compileMDX({
-      source: caseStudyDoc.content,
-      options: mdxOptions,
-    });
-    caseStudyMdx = compiled;
-  }
-
-  // Compile design doc (design.en.mdx / design.ko.mdx)
-  const designDoc = getDesignDoc(locale, slug);
-  let designDocMdx: React.ReactNode = null;
+  // Compile design content (design.en.mdx / design.ko.mdx)
+  const designDoc = getDesignContent(locale, slug);
+  let designMdx: React.ReactNode = null;
   if (designDoc) {
     const { content: compiled } = await compileMDX({
       source: designDoc.content,
       options: mdxOptions,
     });
-    designDocMdx = compiled;
+    designMdx = compiled;
+  }
+
+  // Compile engineering doc (engineering.en.mdx / engineering.ko.mdx)
+  const engineeringDoc = getEngineeringDoc(locale, slug);
+  let engineeringMdx: React.ReactNode = null;
+  if (engineeringDoc) {
+    const { content: compiled } = await compileMDX({
+      source: engineeringDoc.content,
+      options: mdxOptions,
+    });
+    engineeringMdx = compiled;
   }
 
   const pageUrl = buildCanonicalUrl(locale, `/projects/${slug}`);
   const breadcrumbLabel = locale === "ko" ? "프로젝트" : "Projects";
 
   const projectJsonLd = buildProjectJsonLd({
-    title: study.meta.title,
-    description: study.meta.description,
+    title: project.meta.title,
+    description: project.meta.description,
     url: pageUrl,
-    datePublished: study.meta.launchDate,
-    techStack: study.meta.techStack,
+    datePublished: project.meta.launchDate,
+    techStack: project.meta.techStack,
     keywords: [
-      ...study.meta.tags,
-      ...(study.meta.keywords?.primary ?? []),
-      ...(study.meta.keywords?.longTail ?? []),
+      ...project.meta.tags,
+      ...(project.meta.keywords?.primary ?? []),
+      ...(project.meta.keywords?.longTail ?? []),
     ],
-    category: study.meta.category,
+    category: project.meta.category,
   });
 
   return (
@@ -132,16 +132,16 @@ export default async function ProjectDetailPage({
         data={buildBreadcrumbJsonLd([
           { name: "Home", url: siteConfig.url },
           { name: breadcrumbLabel, url: buildCanonicalUrl(locale, "/projects") },
-          { name: study.meta.title, url: pageUrl },
+          { name: project.meta.title, url: pageUrl },
         ])}
       />
       <ProjectDetailContent
-        meta={study.meta}
-        productContent={productMdx}
-        caseStudyContent={caseStudyMdx}
-        designDocContent={designDocMdx}
-        hasCaseStudyContent={hasCaseStudy(locale, slug)}
-        hasDesign={hasDesignDoc(locale, slug)}
+        meta={project.meta}
+        overviewContent={overviewMdx}
+        designContent={designMdx}
+        engineeringContent={engineeringMdx}
+        hasDesign={hasDesignContent(locale, slug)}
+        hasEngineering={hasEngineeringDoc(locale, slug)}
         slug={slug}
       />
     </>
@@ -150,29 +150,29 @@ export default async function ProjectDetailPage({
 
 function ProjectDetailContent({
   meta,
-  productContent,
-  caseStudyContent,
-  designDocContent,
-  hasCaseStudyContent,
+  overviewContent,
+  designContent,
+  engineeringContent,
   hasDesign,
+  hasEngineering,
 }: {
-  meta: CaseStudyMeta;
-  productContent: React.ReactNode;
-  caseStudyContent: React.ReactNode;
-  designDocContent: React.ReactNode;
-  hasCaseStudyContent: boolean;
+  meta: ProjectMeta;
+  overviewContent: React.ReactNode;
+  designContent: React.ReactNode;
+  engineeringContent: React.ReactNode;
   hasDesign: boolean;
+  hasEngineering: boolean;
   slug: string;
 }) {
   const t = useTranslations("project");
 
-  const hasMultipleTabs = hasCaseStudyContent || hasDesign;
+  const hasMultipleTabs = hasDesign || hasEngineering;
 
-  // Build the full product tab content with marketing components
-  const fullProductContent = (
+  // Build the full overview tab content with marketing components
+  const fullOverviewContent = (
     <div className="space-y-12">
       {/* MDX body */}
-      <div className={proseClassName}>{productContent}</div>
+      <div className={proseClassName}>{overviewContent}</div>
 
       {/* Feature grid */}
       {meta.features && meta.features.length > 0 && (
@@ -263,14 +263,14 @@ function ProjectDetailContent({
         {/* Content — tabs if case study or design doc exists, otherwise just product content */}
         {hasMultipleTabs ? (
           <ProjectDetailTabs
-            productLabel={t("tab_product")}
-            caseStudyLabel={t("tab_case_study")}
-            designDocLabel={t("tab_design_doc")}
-            productContent={fullProductContent}
-            caseStudyContent={caseStudyContent}
-            designDocContent={
+            overviewLabel={t("tab_overview")}
+            designLabel={t("tab_design")}
+            engineeringLabel={t("tab_engineering")}
+            overviewContent={fullOverviewContent}
+            designContent={designContent}
+            engineeringContent={
               <>
-                {designDocContent}
+                {engineeringContent}
                 {meta.d2Diagram && (
                   <section className="mt-12">
                     <h2 className="text-xl font-bold tracking-tight sm:text-2xl">
@@ -283,18 +283,11 @@ function ProjectDetailContent({
                 )}
               </>
             }
-            hasCaseStudy={hasCaseStudyContent}
-            hasDesignDoc={hasDesign}
+            hasDesign={hasDesign}
+            hasEngineering={hasEngineering}
           />
         ) : (
-          fullProductContent
-        )}
-
-        {/* Tech Stack */}
-        {meta.techStack.length > 0 && (
-          <p className="mt-12 text-sm text-muted-foreground">
-            {t("built_with")}: {meta.techStack.join(", ")}
-          </p>
+          fullOverviewContent
         )}
 
         {/* Comments */}

@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import type { CaseStudyMeta } from "@/lib/types";
+import type { ProjectMeta } from "@/lib/types";
 
 const CATEGORY_LABELS: Record<string, string> = {
   "mobile-app": "Mobile App",
@@ -8,7 +8,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   cli: "CLI",
 };
 
-export function ProjectCard({ project }: { project: CaseStudyMeta }) {
+export function ProjectCard({ project }: { project: ProjectMeta }) {
   const categoryLabel = project.category ? CATEGORY_LABELS[project.category] ?? project.category : undefined;
   return (
     <Link

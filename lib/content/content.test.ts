@@ -2,14 +2,14 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import {
   getAllBlogPosts,
   getBlogPost,
-  getAllCaseStudies,
-  getCaseStudy,
+  getAllProjects,
+  getProject,
   getTestimonials,
-  hasDesignDoc,
-  getDesignDoc,
+  hasEngineeringDoc,
+  getEngineeringDoc,
   getAboutContent,
-  hasCaseStudy,
-  getCaseStudyContent,
+  hasDesignContent,
+  getDesignContent,
 } from ".";
 
 // Mock fs module
@@ -357,10 +357,10 @@ describe("content", () => {
     });
   });
 
-  describe("getAllCaseStudies", () => {
+  describe("getAllProjects", () => {
     it("returns empty array when directory does not exist", () => {
       mockFs.existsSync.mockReturnValue(false);
-      const studies = getAllCaseStudies("en");
+      const studies = getAllProjects("en");
       expect(studies).toEqual([]);
       expect(mockFs.existsSync).toHaveBeenCalledWith(
         expect.stringContaining("content/projects")
@@ -370,7 +370,7 @@ describe("content", () => {
     it("returns empty array when directory exists but has no slug dirs", () => {
       mockFs.existsSync.mockReturnValue(true);
       mockFs.readdirSync.mockReturnValue([]);
-      const studies = getAllCaseStudies("en");
+      const studies = getAllProjects("en");
       expect(studies).toEqual([]);
     });
 
@@ -392,7 +392,7 @@ launchDate: 2023-06-01
 Content`
       );
 
-      const studies = getAllCaseStudies("en");
+      const studies = getAllProjects("en");
       expect(studies).toHaveLength(1);
       expect(studies[0]).toMatchObject({
         slug: "project",
@@ -420,7 +420,7 @@ launchDate: 2024-01-01
 Content`
       );
 
-      const studies = getAllCaseStudies("en");
+      const studies = getAllProjects("en");
       expect(studies[0].techStack).toEqual([]);
     });
 
@@ -439,7 +439,7 @@ launchDate: 2024-01-01
 Content`
       );
 
-      const studies = getAllCaseStudies("en");
+      const studies = getAllProjects("en");
       expect(studies[0].featured).toBe(false);
     });
 
@@ -459,7 +459,7 @@ launchDate: 2023-01-01
 Content`
       );
 
-      const studies = getAllCaseStudies("en");
+      const studies = getAllProjects("en");
       expect(studies[0].featured).toBe(true);
     });
 
@@ -487,7 +487,7 @@ status: completed`;
         }
       });
 
-      const studies = getAllCaseStudies("en");
+      const studies = getAllProjects("en");
       expect(studies).toHaveLength(3);
       expect(studies[0].title).toBe("New");
       expect(studies[1].title).toBe("Middle");
@@ -520,7 +520,7 @@ launchDate: 2024-01-01`;
         }
       });
 
-      const studies = getAllCaseStudies("en");
+      const studies = getAllProjects("en");
       expect(studies[0].status).toBe("active");
       expect(studies[1].status).toBe("completed");
       expect(studies[2].status).toBe("archived");
@@ -541,7 +541,7 @@ launchDate: 2024-01-01
 내용`
       );
 
-      const studies = getAllCaseStudies("ko");
+      const studies = getAllProjects("ko");
       expect(studies).toHaveLength(1);
       expect(mockFs.existsSync).toHaveBeenCalledWith(
         expect.stringContaining("content/projects")
@@ -557,7 +557,7 @@ launchDate: 2024-01-01
         return false; // no locale files
       });
 
-      const studies = getAllCaseStudies("en");
+      const studies = getAllProjects("en");
       expect(studies).toEqual([]);
     });
 
@@ -577,7 +577,7 @@ d2Diagram: architecture.d2
 Content`
       );
 
-      const studies = getAllCaseStudies("en");
+      const studies = getAllProjects("en");
       expect(studies[0].d2Diagram).toBe("architecture.d2");
     });
 
@@ -600,7 +600,7 @@ links:
 Content`
       );
 
-      const studies = getAllCaseStudies("en");
+      const studies = getAllProjects("en");
       expect(studies[0].links).toEqual({
         live: "https://example.com",
         github: "https://github.com/example/repo",
@@ -623,7 +623,7 @@ launchDate: 2024-01-01
 Content`
       );
 
-      const studies = getAllCaseStudies("en");
+      const studies = getAllProjects("en");
       expect(studies[0].d2Diagram).toBeUndefined();
     });
 
@@ -642,27 +642,27 @@ launchDate: 2024-01-01
 Content`
       );
 
-      const studies = getAllCaseStudies("en");
+      const studies = getAllProjects("en");
       expect(studies[0].links).toBeUndefined();
     });
   });
 
-  describe("getCaseStudy", () => {
+  describe("getProject", () => {
     it("returns null for invalid slug", () => {
-      const study = getCaseStudy("en", "../../../etc/passwd");
+      const study = getProject("en", "../../../etc/passwd");
       expect(study).toBeNull();
       expect(mockFs.existsSync).not.toHaveBeenCalled();
     });
 
     it("returns null for slug with special characters", () => {
-      const study = getCaseStudy("en", "project@name!");
+      const study = getProject("en", "project@name!");
       expect(study).toBeNull();
       expect(mockFs.existsSync).not.toHaveBeenCalled();
     });
 
     it("returns null when file does not exist", () => {
       mockFs.existsSync.mockReturnValue(false);
-      const study = getCaseStudy("en", "nonexistent");
+      const study = getProject("en", "nonexistent");
       expect(study).toBeNull();
     });
 
@@ -681,7 +681,7 @@ launchDate: 2024-01-01
 Project details here`
       );
 
-      const study = getCaseStudy("en", "test-project");
+      const study = getProject("en", "test-project");
       expect(study).not.toBeNull();
       expect(study?.meta).toMatchObject({
         slug: "test-project",
@@ -697,7 +697,7 @@ Project details here`
 
     it("checks correct file path for en locale", () => {
       mockFs.existsSync.mockReturnValue(false);
-      getCaseStudy("en", "my-project");
+      getProject("en", "my-project");
       expect(mockFs.existsSync).toHaveBeenCalledWith(
         expect.stringContaining("content/projects/my-project/en.mdx")
       );
@@ -705,7 +705,7 @@ Project details here`
 
     it("checks correct file path for ko locale", () => {
       mockFs.existsSync.mockReturnValue(false);
-      getCaseStudy("ko", "my-project");
+      getProject("ko", "my-project");
       expect(mockFs.existsSync).toHaveBeenCalledWith(
         expect.stringContaining("content/projects/my-project/ko.mdx")
       );
@@ -725,7 +725,7 @@ d2Diagram: diagram.d2
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.d2Diagram).toBe("diagram.d2");
     });
 
@@ -745,7 +745,7 @@ links:
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.links).toEqual({
         live: "https://live.example.com",
         github: "https://github.com/example",
@@ -826,72 +826,72 @@ Content`
     });
   });
 
-  describe("hasDesignDoc", () => {
-    it("returns true when design.{locale}.mdx file exists", () => {
+  describe("hasEngineeringDoc", () => {
+    it("returns true when engineering.{locale}.mdx file exists", () => {
       mockFs.existsSync.mockReturnValue(true);
-      const result = hasDesignDoc("en", "e-commerce-rebuild");
+      const result = hasEngineeringDoc("en", "e-commerce-rebuild");
       expect(result).toBe(true);
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/projects/e-commerce-rebuild/design.en.mdx")
+        expect.stringContaining("content/projects/e-commerce-rebuild/engineering.en.mdx")
       );
     });
 
-    it("returns false when design.{locale}.mdx file does not exist", () => {
+    it("returns false when engineering.{locale}.mdx file does not exist", () => {
       mockFs.existsSync.mockReturnValue(false);
-      const result = hasDesignDoc("en", "no-design-project");
+      const result = hasEngineeringDoc("en", "no-design-project");
       expect(result).toBe(false);
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/projects/no-design-project/design.en.mdx")
+        expect.stringContaining("content/projects/no-design-project/engineering.en.mdx")
       );
     });
 
     it("returns false for invalid slug", () => {
-      const result = hasDesignDoc("en", "../../../etc/passwd");
+      const result = hasEngineeringDoc("en", "../../../etc/passwd");
       expect(result).toBe(false);
       expect(mockFs.existsSync).not.toHaveBeenCalled();
     });
 
     it("returns false for slug with special characters", () => {
-      const result = hasDesignDoc("en", "project@name");
+      const result = hasEngineeringDoc("en", "project@name");
       expect(result).toBe(false);
       expect(mockFs.existsSync).not.toHaveBeenCalled();
     });
 
     it("checks correct path for ko locale", () => {
       mockFs.existsSync.mockReturnValue(false);
-      hasDesignDoc("ko", "test-project");
+      hasEngineeringDoc("ko", "test-project");
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/projects/test-project/design.ko.mdx")
+        expect.stringContaining("content/projects/test-project/engineering.ko.mdx")
       );
     });
 
     it("handles slug with hyphens and underscores", () => {
       mockFs.existsSync.mockReturnValue(true);
-      const result = hasDesignDoc("en", "test_project-v2");
+      const result = hasEngineeringDoc("en", "test_project-v2");
       expect(result).toBe(true);
     });
 
     it("handles slug with numbers", () => {
       mockFs.existsSync.mockReturnValue(true);
-      const result = hasDesignDoc("en", "project123");
+      const result = hasEngineeringDoc("en", "project123");
       expect(result).toBe(true);
     });
   });
 
-  describe("getDesignDoc", () => {
-    it("returns null when design doc file does not exist", () => {
+  describe("getEngineeringDoc", () => {
+    it("returns null when engineering doc file does not exist", () => {
       mockFs.existsSync.mockReturnValue(false);
-      const result = getDesignDoc("en", "nonexistent");
+      const result = getEngineeringDoc("en", "nonexistent");
       expect(result).toBeNull();
     });
 
     it("returns null for invalid slug", () => {
-      const result = getDesignDoc("en", "../../../etc/passwd");
+      const result = getEngineeringDoc("en", "../../../etc/passwd");
       expect(result).toBeNull();
       expect(mockFs.existsSync).not.toHaveBeenCalled();
     });
 
-    it("returns null when parent case study does not exist", () => {
+    it("returns null when parent project does not exist", () => {
       let callCount = 0;
       mockFs.existsSync.mockImplementation(() => {
         callCount++;
@@ -900,21 +900,21 @@ Content`
       });
 
       mockFs.readFileSync.mockReturnValue(
-        "---\ntitle: Design Doc Only\n---\nDesign content"
+        "---\ntitle: Engineering Doc Only\n---\nEngineering content"
       );
 
-      const result = getDesignDoc("en", "orphan-design");
+      const result = getEngineeringDoc("en", "orphan-engineering");
       expect(result).toBeNull();
     });
 
-    it("returns design doc content with parent case study meta when both exist", () => {
+    it("returns engineering doc content with parent project meta when both exist", () => {
       mockFs.existsSync.mockReturnValue(true);
 
       let callCount = 0;
       mockFs.readFileSync.mockImplementation(() => {
         callCount++;
         if (callCount === 1) {
-          return "---\ntitle: Design Doc Title\n---\nDesign doc detailed content here";
+          return "---\ntitle: Engineering Doc Title\n---\nEngineering doc detailed content here";
         }
         return `---
 title: E-commerce Rebuild
@@ -925,12 +925,12 @@ techStack:
   - Next.js
 launchDate: 2023-06-01
 ---
-Parent case study content`;
+Parent project content`;
       });
 
-      const result = getDesignDoc("en", "e-commerce-rebuild");
+      const result = getEngineeringDoc("en", "e-commerce-rebuild");
       expect(result).not.toBeNull();
-      expect(result?.content).toBe("Design doc detailed content here");
+      expect(result?.content).toBe("Engineering doc detailed content here");
       expect(result?.meta).toMatchObject({
         slug: "e-commerce-rebuild",
         title: "E-commerce Rebuild",
@@ -943,17 +943,17 @@ Parent case study content`;
 
     it("checks correct file path for en locale", () => {
       mockFs.existsSync.mockReturnValue(false);
-      getDesignDoc("en", "test-project");
+      getEngineeringDoc("en", "test-project");
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/projects/test-project/design.en.mdx")
+        expect.stringContaining("content/projects/test-project/engineering.en.mdx")
       );
     });
 
     it("checks correct file path for ko locale", () => {
       mockFs.existsSync.mockReturnValue(false);
-      getDesignDoc("ko", "test-project");
+      getEngineeringDoc("ko", "test-project");
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/projects/test-project/design.ko.mdx")
+        expect.stringContaining("content/projects/test-project/engineering.ko.mdx")
       );
     });
 
@@ -984,7 +984,7 @@ links:
 Content`;
       });
 
-      const result = getDesignDoc("en", "featured-project");
+      const result = getEngineeringDoc("en", "featured-project");
       expect(result?.meta.featured).toBe(true);
       expect(result?.meta.d2Diagram).toBe("diagram.d2");
       expect(result?.meta.links).toEqual({
@@ -1066,116 +1066,116 @@ About me content here`
     });
   });
 
-  describe("hasCaseStudy", () => {
+  describe("hasDesignContent", () => {
     it("returns false for invalid slug", () => {
-      const result = hasCaseStudy("en", "../../../etc/passwd");
+      const result = hasDesignContent("en", "../../../etc/passwd");
       expect(result).toBe(false);
       expect(mockFs.existsSync).not.toHaveBeenCalled();
     });
 
     it("returns false for slug with special characters", () => {
-      const result = hasCaseStudy("en", "project@name!");
+      const result = hasDesignContent("en", "project@name!");
       expect(result).toBe(false);
       expect(mockFs.existsSync).not.toHaveBeenCalled();
     });
 
-    it("returns true when casestudy.{locale}.mdx exists", () => {
+    it("returns true when design.{locale}.mdx exists", () => {
       mockFs.existsSync.mockReturnValue(true);
-      const result = hasCaseStudy("en", "my-project");
+      const result = hasDesignContent("en", "my-project");
       expect(result).toBe(true);
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/projects/my-project/casestudy.en.mdx")
+        expect.stringContaining("content/projects/my-project/design.en.mdx")
       );
     });
 
-    it("returns false when casestudy.{locale}.mdx does not exist", () => {
+    it("returns false when design.{locale}.mdx does not exist", () => {
       mockFs.existsSync.mockReturnValue(false);
-      const result = hasCaseStudy("en", "my-project");
+      const result = hasDesignContent("en", "my-project");
       expect(result).toBe(false);
     });
 
     it("checks correct path for ko locale", () => {
       mockFs.existsSync.mockReturnValue(false);
-      hasCaseStudy("ko", "my-project");
+      hasDesignContent("ko", "my-project");
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/projects/my-project/casestudy.ko.mdx")
+        expect.stringContaining("content/projects/my-project/design.ko.mdx")
       );
     });
 
     it("handles slug with hyphens and underscores", () => {
       mockFs.existsSync.mockReturnValue(true);
-      const result = hasCaseStudy("en", "my_project-v2");
+      const result = hasDesignContent("en", "my_project-v2");
       expect(result).toBe(true);
     });
 
     it("handles slug with numbers", () => {
       mockFs.existsSync.mockReturnValue(true);
-      const result = hasCaseStudy("en", "project123");
+      const result = hasDesignContent("en", "project123");
       expect(result).toBe(true);
     });
   });
 
-  describe("getCaseStudyContent", () => {
+  describe("getDesignContent", () => {
     it("returns null for invalid slug", () => {
-      const result = getCaseStudyContent("en", "../../../etc/passwd");
+      const result = getDesignContent("en", "../../../etc/passwd");
       expect(result).toBeNull();
       expect(mockFs.existsSync).not.toHaveBeenCalled();
     });
 
     it("returns null for slug with special characters", () => {
-      const result = getCaseStudyContent("en", "project@name!");
+      const result = getDesignContent("en", "project@name!");
       expect(result).toBeNull();
       expect(mockFs.existsSync).not.toHaveBeenCalled();
     });
 
-    it("returns null when casestudy file does not exist", () => {
+    it("returns null when design file does not exist", () => {
       mockFs.existsSync.mockReturnValue(false);
-      const result = getCaseStudyContent("en", "nonexistent");
+      const result = getDesignContent("en", "nonexistent");
       expect(result).toBeNull();
     });
 
     it("checks correct file path for en locale", () => {
       mockFs.existsSync.mockReturnValue(false);
-      getCaseStudyContent("en", "my-project");
+      getDesignContent("en", "my-project");
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/projects/my-project/casestudy.en.mdx")
+        expect.stringContaining("content/projects/my-project/design.en.mdx")
       );
     });
 
     it("checks correct file path for ko locale", () => {
       mockFs.existsSync.mockReturnValue(false);
-      getCaseStudyContent("ko", "my-project");
+      getDesignContent("ko", "my-project");
       expect(mockFs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining("content/projects/my-project/casestudy.ko.mdx")
+        expect.stringContaining("content/projects/my-project/design.ko.mdx")
       );
     });
 
-    it("returns null when parent case study does not exist", () => {
+    it("returns null when parent project does not exist", () => {
       let callCount = 0;
       mockFs.existsSync.mockImplementation(() => {
         callCount++;
-        // casestudy file exists, but parent en.mdx does not
+        // design file exists, but parent en.mdx does not
         if (callCount === 1) return true;
         return false;
       });
 
       mockFs.readFileSync.mockReturnValue(
-        "---\ntitle: Case Study Only\n---\nCase study content"
+        "---\ntitle: Design Only\n---\nDesign content"
       );
 
-      const result = getCaseStudyContent("en", "orphan-casestudy");
+      const result = getDesignContent("en", "orphan-design");
       expect(result).toBeNull();
     });
 
-    it("returns case study content with parent meta when both exist", () => {
+    it("returns design content with parent meta when both exist", () => {
       mockFs.existsSync.mockReturnValue(true);
 
       let callCount = 0;
       mockFs.readFileSync.mockImplementation(() => {
         callCount++;
         if (callCount === 1) {
-          // casestudy.en.mdx content
-          return "---\ntitle: Case Study Detail\n---\nDetailed case study analysis here";
+          // design.en.mdx content
+          return "---\ntitle: Design Detail\n---\nDetailed design analysis here";
         }
         // parent en.mdx content
         return `---
@@ -1191,9 +1191,9 @@ launchDate: 2024-01-01
 Parent project content`;
       });
 
-      const result = getCaseStudyContent("en", "my-project");
+      const result = getDesignContent("en", "my-project");
       expect(result).not.toBeNull();
-      expect(result?.content).toBe("Detailed case study analysis here");
+      expect(result?.content).toBe("Detailed design analysis here");
       expect(result?.meta).toMatchObject({
         slug: "my-project",
         title: "My Project",
@@ -1204,14 +1204,14 @@ Parent project content`;
       });
     });
 
-    it("reads case study content from casestudy file, not parent", () => {
+    it("reads design content from design file, not parent", () => {
       mockFs.existsSync.mockReturnValue(true);
 
       let callCount = 0;
       mockFs.readFileSync.mockImplementation(() => {
         callCount++;
         if (callCount === 1) {
-          return "---\n---\nThis is unique case study text";
+          return "---\n---\nThis is unique design text";
         }
         return `---
 title: Project
@@ -1223,8 +1223,8 @@ launchDate: 2024-01-01
 Parent content`;
       });
 
-      const result = getCaseStudyContent("en", "project");
-      expect(result?.content).toBe("This is unique case study text");
+      const result = getDesignContent("en", "project");
+      expect(result?.content).toBe("This is unique design text");
     });
 
     it("inherits all parent meta fields including optional ones", () => {
@@ -1234,7 +1234,7 @@ Parent content`;
       mockFs.readFileSync.mockImplementation(() => {
         callCount++;
         if (callCount === 1) {
-          return "---\n---\nCase study content";
+          return "---\n---\nDesign content";
         }
         return `---
 title: Featured Project
@@ -1252,14 +1252,14 @@ links:
 Content`;
       });
 
-      const result = getCaseStudyContent("en", "featured-project");
+      const result = getDesignContent("en", "featured-project");
       expect(result?.meta.featured).toBe(true);
       expect(result?.meta.d2Diagram).toBe("arch.d2");
       expect(result?.meta.links).toEqual({ live: "https://example.com" });
     });
   });
 
-  describe("parseCaseStudyMeta (via getCaseStudy)", () => {
+  describe("parseProjectMeta (via getProject)", () => {
     it("parses valid category: mobile-app", () => {
       mockFs.existsSync.mockReturnValue(true);
       mockFs.readFileSync.mockReturnValue(
@@ -1274,7 +1274,7 @@ category: mobile-app
 Content`
       );
 
-      const study = getCaseStudy("en", "app");
+      const study = getProject("en", "app");
       expect(study?.meta.category).toBe("mobile-app");
     });
 
@@ -1292,7 +1292,7 @@ category: chrome-extension
 Content`
       );
 
-      const study = getCaseStudy("en", "ext");
+      const study = getProject("en", "ext");
       expect(study?.meta.category).toBe("chrome-extension");
     });
 
@@ -1310,7 +1310,7 @@ category: web
 Content`
       );
 
-      const study = getCaseStudy("en", "webapp");
+      const study = getProject("en", "webapp");
       expect(study?.meta.category).toBe("web");
     });
 
@@ -1328,7 +1328,7 @@ category: cli
 Content`
       );
 
-      const study = getCaseStudy("en", "cli-tool");
+      const study = getProject("en", "cli-tool");
       expect(study?.meta.category).toBe("cli");
     });
 
@@ -1346,7 +1346,7 @@ category: invalid-category
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.category).toBeUndefined();
     });
 
@@ -1363,7 +1363,7 @@ launchDate: 2024-01-01
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.category).toBeUndefined();
     });
 
@@ -1381,7 +1381,7 @@ tagline: "The best tool ever"
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.tagline).toBe("The best tool ever");
     });
 
@@ -1398,7 +1398,7 @@ launchDate: 2024-01-01
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.tagline).toBeUndefined();
     });
 
@@ -1416,7 +1416,7 @@ thumbnail: /images/custom/thumb.png
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.thumbnail).toBe("/images/custom/thumb.png");
     });
 
@@ -1434,7 +1434,7 @@ thumbnail: thumb.png
 Content`
       );
 
-      const study = getCaseStudy("en", "my-project");
+      const study = getProject("en", "my-project");
       expect(study?.meta.thumbnail).toBe("/images/projects/my-project/thumb.png");
     });
 
@@ -1451,7 +1451,7 @@ launchDate: 2024-01-01
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.thumbnail).toBeUndefined();
     });
 
@@ -1469,7 +1469,7 @@ heroImage: hero.jpg
 Content`
       );
 
-      const study = getCaseStudy("en", "my-project");
+      const study = getProject("en", "my-project");
       expect(study?.meta.heroImage).toBe("/images/projects/my-project/hero.jpg");
     });
 
@@ -1487,7 +1487,7 @@ heroImage: /images/hero/shot.png
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.heroImage).toBe("/images/hero/shot.png");
     });
 
@@ -1504,7 +1504,7 @@ launchDate: 2024-01-01
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.heroImage).toBeUndefined();
     });
 
@@ -1522,7 +1522,7 @@ video: https://www.youtube.com/embed/dQw4w9WgXcQ
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.video).toBe("https://www.youtube.com/embed/dQw4w9WgXcQ");
     });
 
@@ -1540,7 +1540,7 @@ video: https://vimeo.com/123456
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.video).toBeUndefined();
     });
 
@@ -1558,7 +1558,7 @@ video: https://www.youtube.com/watch?v=dQw4w9WgXcQ
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.video).toBeUndefined();
     });
 
@@ -1576,7 +1576,7 @@ video: 12345
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.video).toBeUndefined();
     });
 
@@ -1596,7 +1596,7 @@ images:
 Content`
       );
 
-      const study = getCaseStudy("en", "my-project");
+      const study = getProject("en", "my-project");
       expect(study?.meta.images).toEqual([
         "/images/projects/my-project/shot1.png",
         "/images/projects/my-project/shot2.png",
@@ -1616,7 +1616,7 @@ launchDate: 2024-01-01
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.images).toBeUndefined();
     });
 
@@ -1634,12 +1634,12 @@ images: []
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.images).toBeUndefined();
     });
   });
 
-  describe("sanitizeCta (via getCaseStudy)", () => {
+  describe("sanitizeCta (via getProject)", () => {
     it("parses primary and secondary CTA buttons", () => {
       mockFs.existsSync.mockReturnValue(true);
       mockFs.readFileSync.mockReturnValue(
@@ -1660,7 +1660,7 @@ cta:
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.cta).toEqual({
         primary: { label: "Get Started", url: "https://example.com/start" },
         secondary: { label: "Learn More", url: "https://example.com/docs" },
@@ -1684,7 +1684,7 @@ cta:
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.cta).toEqual({
         primary: { label: "Try Now", url: "https://example.com" },
       });
@@ -1704,7 +1704,7 @@ launchDate: 2024-01-01
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.cta).toBeUndefined();
     });
 
@@ -1722,7 +1722,7 @@ cta: null
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.cta).toBeUndefined();
     });
 
@@ -1746,7 +1746,7 @@ cta:
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.cta).toEqual({
         secondary: { label: "Good CTA", url: "https://example.com" },
       });
@@ -1769,7 +1769,7 @@ cta:
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.cta).toBeUndefined();
     });
 
@@ -1789,12 +1789,12 @@ cta:
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.cta).toBeUndefined();
     });
   });
 
-  describe("sanitizeCompetitors (via getCaseStudy)", () => {
+  describe("sanitizeCompetitors (via getProject)", () => {
     it("parses valid competitors array", () => {
       mockFs.existsSync.mockReturnValue(true);
       mockFs.readFileSync.mockReturnValue(
@@ -1813,7 +1813,7 @@ competitors:
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.competitors).toEqual([
         { name: "Competitor A", differentiator: "We are faster" },
         { name: "Competitor B", differentiator: "We are cheaper" },
@@ -1833,7 +1833,7 @@ launchDate: 2024-01-01
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.competitors).toBeUndefined();
     });
 
@@ -1851,7 +1851,7 @@ competitors: []
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.competitors).toBeUndefined();
     });
 
@@ -1873,7 +1873,7 @@ competitors:
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.competitors).toBeUndefined();
     });
 
@@ -1893,7 +1893,7 @@ competitors:
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.competitors).toBeUndefined();
     });
 
@@ -1911,12 +1911,12 @@ competitors: "not an array"
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.competitors).toBeUndefined();
     });
   });
 
-  describe("sanitizeFeatures (via getCaseStudy)", () => {
+  describe("sanitizeFeatures (via getProject)", () => {
     it("parses valid features array", () => {
       mockFs.existsSync.mockReturnValue(true);
       mockFs.readFileSync.mockReturnValue(
@@ -1937,7 +1937,7 @@ features:
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.features).toEqual([
         { title: "Fast", description: "Lightning-fast performance", icon: "zap" },
         { title: "Secure", description: "End-to-end encryption", icon: "shield" },
@@ -1960,7 +1960,7 @@ features:
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.features).toEqual([
         { title: "Feature One", description: "A nice feature" },
       ]);
@@ -1979,7 +1979,7 @@ launchDate: 2024-01-01
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.features).toBeUndefined();
     });
 
@@ -1997,7 +1997,7 @@ features: []
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.features).toBeUndefined();
     });
 
@@ -2019,7 +2019,7 @@ features:
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.features).toBeUndefined();
     });
 
@@ -2040,7 +2040,7 @@ features:
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.features).toBeUndefined();
     });
 
@@ -2058,12 +2058,12 @@ features: "not an array"
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.features).toBeUndefined();
     });
   });
 
-  describe("sanitizeKeywords (via getCaseStudy)", () => {
+  describe("sanitizeKeywords (via getProject)", () => {
     it("parses primary and longTail keywords", () => {
       mockFs.existsSync.mockReturnValue(true);
       mockFs.readFileSync.mockReturnValue(
@@ -2084,7 +2084,7 @@ keywords:
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.keywords).toEqual({
         primary: ["web development", "react"],
         longTail: ["best react development tool", "how to build react apps"],
@@ -2107,7 +2107,7 @@ keywords:
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.keywords).toEqual({
         primary: ["keyword one"],
       });
@@ -2129,7 +2129,7 @@ keywords:
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.keywords).toEqual({
         longTail: ["long tail keyword"],
       });
@@ -2148,7 +2148,7 @@ launchDate: 2024-01-01
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.keywords).toBeUndefined();
     });
 
@@ -2166,7 +2166,7 @@ keywords: null
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.keywords).toBeUndefined();
     });
 
@@ -2189,7 +2189,7 @@ keywords:
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.keywords?.primary).toEqual(["valid keyword", "another valid"]);
     });
 
@@ -2207,7 +2207,7 @@ keywords: "not an object"
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.keywords).toBeUndefined();
     });
 
@@ -2227,7 +2227,7 @@ keywords:
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.keywords).toBeUndefined();
     });
 
@@ -2248,12 +2248,12 @@ keywords:
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.keywords).toBeUndefined();
     });
   });
 
-  describe("resolveProjectImage edge cases (via getCaseStudy)", () => {
+  describe("resolveProjectImage edge cases (via getProject)", () => {
     it("drops thumbnail starting with //", () => {
       mockFs.existsSync.mockReturnValue(true);
       mockFs.readFileSync.mockReturnValue(
@@ -2268,7 +2268,7 @@ thumbnail: "//cdn.example.com/image.jpg"
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.thumbnail).toBeUndefined();
     });
 
@@ -2286,7 +2286,7 @@ thumbnail: "../../etc/passwd"
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.thumbnail).toBeUndefined();
     });
 
@@ -2304,7 +2304,7 @@ heroImage: "//cdn.example.com/hero.jpg"
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.heroImage).toBeUndefined();
     });
 
@@ -2322,12 +2322,12 @@ heroImage: "../relative/path.jpg"
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.heroImage).toBeUndefined();
     });
   });
 
-  describe("isYouTubeEmbedUrl (via getCaseStudy)", () => {
+  describe("isYouTubeEmbedUrl (via getProject)", () => {
     it("accepts youtube.com embed URL", () => {
       mockFs.existsSync.mockReturnValue(true);
       mockFs.readFileSync.mockReturnValue(
@@ -2342,7 +2342,7 @@ video: https://youtube.com/embed/abc123
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.video).toBe("https://youtube.com/embed/abc123");
     });
 
@@ -2360,7 +2360,7 @@ video: "://invalid"
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.video).toBeUndefined();
     });
 
@@ -2378,7 +2378,7 @@ video: true
 Content`
       );
 
-      const study = getCaseStudy("en", "project");
+      const study = getProject("en", "project");
       expect(study?.meta.video).toBeUndefined();
     });
   });
@@ -2402,7 +2402,7 @@ links:
 Content`
       );
 
-      const studies = getAllCaseStudies("en");
+      const studies = getAllProjects("en");
       expect(studies[0].links).toBeUndefined();
     });
 
@@ -2425,7 +2425,7 @@ links:
 Content`
       );
 
-      const studies = getAllCaseStudies("en");
+      const studies = getAllProjects("en");
       expect(studies[0].links).toBeUndefined();
     });
 
@@ -2448,7 +2448,7 @@ links:
 Content`
       );
 
-      const studies = getAllCaseStudies("en");
+      const studies = getAllProjects("en");
       expect(studies[0].links).toBeUndefined();
     });
 
@@ -2468,7 +2468,7 @@ links: null
 Content`
       );
 
-      const studies = getAllCaseStudies("en");
+      const studies = getAllProjects("en");
       expect(studies[0].links).toBeUndefined();
     });
 
@@ -2490,7 +2490,7 @@ links:
 Content`
       );
 
-      const studies = getAllCaseStudies("en");
+      const studies = getAllProjects("en");
       expect(studies[0].links).toEqual({
         live: "https://example.com",
         github: "https://github.com/user/repo",
@@ -2514,7 +2514,7 @@ links:
 Content`
       );
 
-      const studies = getAllCaseStudies("en");
+      const studies = getAllProjects("en");
       expect(studies[0].links).toEqual({
         live: "http://example.com",
       });
@@ -2539,7 +2539,7 @@ links:
 Content`
       );
 
-      const studies = getAllCaseStudies("en");
+      const studies = getAllProjects("en");
       expect(studies[0].links).toEqual({
         live: "https://example.com",
         docs: "https://docs.example.com",

@@ -1,0 +1,101 @@
+---
+title: "Narrex — Engineering"
+---
+
+## Architecture
+
+**Modular Monolith + Hexagonal (Rust / Axum)**
+
+Solo developer building tightly coupled domains — projects, scenes, characters, and generation all share data extensively. A monolith avoids deployment overhead. Modules are separated by domain with clean interfaces (Rust traits as ports), extractable to services later if needed. Sub-ms responses, 10–30MB memory, compile-time safety.
+
+The `llm` crate is a separate workspace crate — the compiler physically prevents it from importing API internals. This enforces the boundary between "how to talk to LLMs" and "what to ask them."
+
+```
+apps/api/
+├── crates/llm/              # LLM provider abstraction (standalone)
+│   ├── provider.rs           # LlmProvider trait
+│   ├── gemini.rs             # Gemini Flash-Lite implementation
+│   ├── cf_workers.rs         # CF Workers AI implementation
+│   └── gateway.rs            # Failover routing
+├── src/domain/               # Business logic (no infra deps)
+│   ├── auth/                 # Google OAuth, JWT, sessions
+│   ├── project/              # Project CRUD, story config
+│   ├── timeline/             # Tracks, scenes, branch/merge
+│   ├── character/            # Characters, relationships
+│   ├── ai/                   # Prompt assembly, generation
+│   └── sample/               # Sample project seeding
+├── src/inbound/http/         # HTTP adapters (Axum handlers)
+└── src/outbound/             # Infra adapters (SQLx, R2, JWT)
+```
+
+**Frontend: TanStack Start + SolidJS**
+
+SolidJS was chosen over React specifically for the timeline UI. Fine-grained reactivity means each scene node updates independently during drag-and-drop — no virtual DOM diffing across hundreds of elements. Deployed to Cloudflare Workers via Nitro adapter.
+
+## Tech Stack
+
+| Layer | Technology | Why |
+|-------|-----------|-----|
+| Backend | Rust + Axum | Sub-ms latency, 10–30MB memory, compile-time safety, native SSE streaming |
+| Frontend | TanStack Start + SolidJS | Fine-grained reactivity for timeline, smaller bundles than React |
+| Database | Neon PostgreSQL (us-east-1) | Scale-to-zero, branch-based dev, pgvector for future embeddings |
+| Cache | Upstash Redis | HTTP API, scale-to-zero, rate limiting + context cache |
+| LLM (primary) | Gemini 2.5 Flash-Lite | Best Korean prose quality at lowest cost ($0.10/1M tokens) |
+| LLM (fallback) | CF Workers AI | Zero-cost fallback, automatic failover |
+| API Hosting | GCP Cloud Run (us-east4) | Container-based, auto-scale to zero, 300s timeout for streaming |
+| Web Hosting | Cloudflare Workers | Edge-first via Nitro, free plan |
+| Storage | Cloudflare R2 | User avatars, S3-compatible, zero egress |
+
+## Database Design
+
+**11 tables in Phase 1.** Core design choices:
+
+- **NLE positioning** — `scene.start_position` and `scene.duration` as `DOUBLE PRECISION`. Scenes are clips with extent, not list items. Initial spacing of 1024.0 allows ~50 midpoint insertions before rebalancing. Simultaneity across tracks via overlapping ranges.
+
+- **Draft versioning** — Separate `draft` table with `(scene_id, version)`. Preserves full edit history, separates large text blobs from frequently-read scene metadata. Each draft records source (`ai_generation`, `ai_edit`, `manual`), model, token counts, and cost.
+
+- **Context compression** — `scene_summary` table (1:1 with scene) stores AI-compressed summaries (~200–300 tokens). Preceding summaries replace full scene text in generation prompts, keeping context manageable at 15+ scenes.
+
+- **Generation cost tracking** — `generation_log` with `ON DELETE SET NULL` for project/scene FKs. Cost data survives entity deletion for billing analytics.
+
+## AI / LLM Architecture
+
+**Provider abstraction via `crates/llm`:**
+
+```rust
+#[async_trait]
+pub trait LlmProvider: Send + Sync {
+    async fn generate(&self, req: GenerateRequest) -> Result<GenerateResponse>;
+    async fn generate_stream(&self, req: GenerateRequest)
+        -> Result<Pin<Box<dyn Stream<Item = Result<String>> + Send>>>;
+}
+```
+
+`LlmGateway` handles failover: Gemini Flash-Lite first, CF Workers AI on failure (timeout >30s, 5xx, 429).
+
+**Context assembly per scene (~2,500–5,000 tokens):**
+
+| Source | Data | Tokens |
+|--------|------|--------|
+| System instruction | Generation rules, output format | ~500 |
+| Global config | Genre, theme, era, POV, mood | ~100 |
+| Scene details | Title, summary, location, mood | ~200 |
+| Characters + relationships | Cards for involved characters | ~350–700 |
+| Preceding summaries | Compressed prior scene summaries | ~1,000–3,000 |
+| Simultaneous events | Overlapping scenes on other tracks | ~200–400 |
+| Next scene preview | Title + summary | ~100 |
+
+**Streaming:** SSE via Axum's native `Sse` type + `async-stream`. Cloud Run timeout set to 300s for generation endpoints.
+
+## Infrastructure & Cost
+
+| Component | Launch (~100 DAU) | Growth (~1K DAU) |
+|-----------|-------------------|------------------|
+| Cloud Run | ~$0 (free tier) | ~$15–30 |
+| Neon PostgreSQL | ~$0 (free tier) | ~$19 |
+| Upstash Redis | ~$0 (free tier) | ~$10 |
+| Gemini Flash-Lite | ~$2–5 | ~$20–50 |
+| CF Workers + CDN + R2 | ~$0 (free plan) | ~$5 |
+| **Total** | **~$2–5/mo** | **~$70–115/mo** |
+
+CI/CD via GitHub Actions: Rust binary in Docker → Cloud Run, web build → CF Workers on push to main.

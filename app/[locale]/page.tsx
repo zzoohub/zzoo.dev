@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Link } from "@/i18n/navigation";
 import { hasLocale, useTranslations } from "next-intl";
-import { getAllCaseStudies, getTestimonials } from "@/lib/content";
+import { getAllProjects, getTestimonials } from "@/lib/content";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
@@ -39,7 +39,7 @@ export default async function HomePage({
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
-  const projects = getAllCaseStudies(locale).filter((p) => p.featured);
+  const projects = getAllProjects(locale).filter((p) => p.featured);
   const testimonials = getTestimonials().filter((t) => t.featured);
 
   return (
@@ -55,7 +55,7 @@ function HomeContent({
   projects,
   testimonial,
 }: {
-  projects: Awaited<ReturnType<typeof getAllCaseStudies>>;
+  projects: Awaited<ReturnType<typeof getAllProjects>>;
   testimonial?: Awaited<ReturnType<typeof getTestimonials>>[number];
 }) {
   const t = useTranslations();

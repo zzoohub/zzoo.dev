@@ -3,7 +3,7 @@ import { hasLocale, useTranslations } from "next-intl";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
-import { getAllCaseStudies } from "@/lib/content";
+import { getAllProjects } from "@/lib/content";
 import { buildPageMeta } from "@/lib/seo";
 import { ProjectCard } from "@/components/project/project-card";
 
@@ -30,7 +30,7 @@ export default async function ProjectsPage({
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
-  const projects = getAllCaseStudies(locale);
+  const projects = getAllProjects(locale);
 
   return <ProjectsContent projects={projects} />;
 }
@@ -38,7 +38,7 @@ export default async function ProjectsPage({
 function ProjectsContent({
   projects,
 }: {
-  projects: Awaited<ReturnType<typeof getAllCaseStudies>>;
+  projects: Awaited<ReturnType<typeof getAllProjects>>;
 }) {
   const t = useTranslations("projects");
 

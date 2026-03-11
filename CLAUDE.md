@@ -58,7 +58,7 @@ lib/content/
 ├── types.ts         # TypeScript types derived from Zod schemas
 ├── utils.ts         # resolveContentPath, calculateReadingTime, resolveProjectImage, etc.
 ├── blog.ts          # getAllBlogPosts, getBlogPost
-├── projects.ts      # getAllCaseStudies, getCaseStudy, hasCaseStudy, getCaseStudyContent, hasDesignDoc, getDesignDoc
+├── projects.ts      # getAllProjects, getProject, hasDesignContent, getDesignContent, hasEngineeringDoc, getEngineeringDoc
 ├── about.ts         # getAboutContent
 ├── testimonials.ts  # getTestimonials
 └── content.test.ts  # Tests
@@ -74,16 +74,16 @@ content/
 └── testimonials.json    # Array of { quote, authorName, authorRole, authorCompany, featured? }
 ```
 
-Project content structure (three document types, three tabs in UI):
+Project content structure (three tabs: Overview · Design · Engineering):
 
 ```
 content/projects/{slug}/
-├── en.mdx               # Product brief (REQUIRED)
-├── {locale}.mdx         # Translated product brief
-├── casestudy.{locale}.mdx  # Case study narrative (OPTIONAL → "Case Study" tab)
-├── design.{locale}.mdx     # Design doc (OPTIONAL → "Design Doc" tab)
-├── images/              # Source images → copied to public/images/projects/{slug}/
-└── *.d2                 # D2 diagram sources
+├── en.mdx                    # Overview (REQUIRED → "Overview" tab)
+├── {locale}.mdx              # Translated overview
+├── design.{locale}.mdx      # Product design (OPTIONAL → "Design" tab)
+├── engineering.{locale}.mdx  # Engineering (OPTIONAL → "Engineering" tab)
+├── images/                   # Source images → copied to public/images/projects/{slug}/
+└── *.d2                      # D2 diagram sources
 ```
 
 Key behaviors:
@@ -114,7 +114,8 @@ Project frontmatter: `title`, `description`, `status` (`active|completed|archive
 
 - **Server Components first** → client interactive wrappers (e.g., `BlogPage` → `BlogListClient`)
 - **Static generation**: all pages use `generateStaticParams()` for all locales
-- **D2 diagrams**: `.d2` → prebuild → `/public/diagrams/{name}-{theme}.svg` → `D2Diagram` component (uses `useSyncExternalStore` for SSR hydration — always renders light theme on server, switches on client mount)
+- **D2 diagrams**: `.d2` → prebuild → `/public/diagrams/{name}-{theme}.svg` → `D2Diagram` component (uses `useSyncExternalStore` for SSR hydration — always renders light theme on server, switches on client mount). Rendered in the Engineering tab.
+- **Project 3-tab system**: `ProjectDetailTabs` component renders Overview (always) + Design (if `design.{locale}.mdx` exists) + Engineering (if `engineering.{locale}.mdx` exists). Tab props: `overviewLabel/Content`, `designLabel/Content`, `engineeringLabel/Content`, `hasDesign`, `hasEngineering`.
 - **SEO**: `lib/seo.ts` — `buildPageMeta()`, `buildCanonicalUrl()`, `buildAlternates()`, JSON-LD builders (`buildWebSiteJsonLd`, `buildPersonJsonLd`, `buildArticleJsonLd`, `buildProjectJsonLd`, `buildBreadcrumbJsonLd`, `buildFAQJsonLd`). Every page uses `generateMetadata()` (not static export).
 - **JSON-LD sanitization**: `components/shared/json-ld.tsx` escapes `<`, `>`, `&` to prevent XSS
 - **Styling**: `cn()` and `proseClassName` from `@/lib/utils` (import, don't duplicate); CSS vars in `app/globals.css`

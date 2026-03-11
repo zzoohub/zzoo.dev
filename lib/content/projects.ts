@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
-import type { CaseStudyMeta } from "./types";
+import type { ProjectMeta } from "./types";
 import { projectFrontmatterSchema } from "./schemas";
 import {
   contentDir,
@@ -11,7 +11,7 @@ import {
   resolveProjectImage,
 } from "./utils";
 
-function parseCaseStudyMeta(data: Record<string, unknown>, slug: string): CaseStudyMeta {
+function parseProjectMeta(data: Record<string, unknown>, slug: string): ProjectMeta {
   const parsed = projectFrontmatterSchema.parse(data);
 
   return {
@@ -23,7 +23,7 @@ function parseCaseStudyMeta(data: Record<string, unknown>, slug: string): CaseSt
   };
 }
 
-export function getAllCaseStudies(locale: string): CaseStudyMeta[] {
+export function getAllProjects(locale: string): ProjectMeta[] {
   const dir = path.join(contentDir, "projects");
   if (!fs.existsSync(dir)) return [];
 
@@ -33,7 +33,7 @@ export function getAllCaseStudies(locale: string): CaseStudyMeta[] {
   });
 
   const seen = new Set<string>();
-  const studies = slugDirs
+  const projects = slugDirs
     .map((slug) => {
       const slugDir = path.join(dir, slug);
       const effectiveLocale = resolveContentLocale(slugDir, locale);
@@ -43,19 +43,19 @@ export function getAllCaseStudies(locale: string): CaseStudyMeta[] {
       seen.add(slug);
       const raw = fs.readFileSync(filePath, "utf-8");
       const { data } = matter(raw);
-      return parseCaseStudyMeta(data, slug);
+      return parseProjectMeta(data, slug);
     })
-    .filter(Boolean) as CaseStudyMeta[];
+    .filter(Boolean) as ProjectMeta[];
 
-  return studies.sort(
+  return projects.sort(
     (a, b) => new Date(b.launchDate).getTime() - new Date(a.launchDate).getTime()
   );
 }
 
-export function getCaseStudy(
+export function getProject(
   locale: string,
   slug: string
-): { meta: CaseStudyMeta; content: string } | null {
+): { meta: ProjectMeta; content: string } | null {
   if (!isValidSlug(slug)) return null;
   const slugDir = path.join(contentDir, "projects", slug);
   const effectiveLocale = resolveContentLocale(slugDir, locale);
@@ -66,48 +66,21 @@ export function getCaseStudy(
   const { data, content } = matter(raw);
 
   return {
-    meta: parseCaseStudyMeta(data, slug),
+    meta: parseProjectMeta(data, slug),
     content,
   };
 }
 
-export function hasCaseStudy(locale: string, slug: string): boolean {
-  if (!isValidSlug(slug)) return false;
-  const dir = path.join(contentDir, "projects", slug);
-  return resolveContentPath(dir, locale, `casestudy.${locale}.mdx`) !== null;
-}
-
-export function getCaseStudyContent(
-  locale: string,
-  slug: string
-): { meta: CaseStudyMeta; content: string } | null {
-  if (!isValidSlug(slug)) return null;
-  const dir = path.join(contentDir, "projects", slug);
-  const filePath = resolveContentPath(dir, locale, `casestudy.${locale}.mdx`);
-  if (!filePath) return null;
-
-  const raw = fs.readFileSync(filePath, "utf-8");
-  const { content } = matter(raw);
-
-  const parentStudy = getCaseStudy(locale, slug);
-  if (!parentStudy) return null;
-
-  return {
-    meta: parentStudy.meta,
-    content,
-  };
-}
-
-export function hasDesignDoc(locale: string, slug: string): boolean {
+export function hasDesignContent(locale: string, slug: string): boolean {
   if (!isValidSlug(slug)) return false;
   const dir = path.join(contentDir, "projects", slug);
   return resolveContentPath(dir, locale, `design.${locale}.mdx`) !== null;
 }
 
-export function getDesignDoc(
+export function getDesignContent(
   locale: string,
   slug: string
-): { meta: CaseStudyMeta; content: string } | null {
+): { meta: ProjectMeta; content: string } | null {
   if (!isValidSlug(slug)) return null;
   const dir = path.join(contentDir, "projects", slug);
   const filePath = resolveContentPath(dir, locale, `design.${locale}.mdx`);
@@ -116,11 +89,52 @@ export function getDesignDoc(
   const raw = fs.readFileSync(filePath, "utf-8");
   const { content } = matter(raw);
 
-  const parentStudy = getCaseStudy(locale, slug);
-  if (!parentStudy) return null;
+  const project = getProject(locale, slug);
+  if (!project) return null;
 
   return {
-    meta: parentStudy.meta,
+    meta: project.meta,
     content,
   };
 }
+
+export function hasEngineeringDoc(locale: string, slug: string): boolean {
+  if (!isValidSlug(slug)) return false;
+  const dir = path.join(contentDir, "projects", slug);
+  return resolveContentPath(dir, locale, `engineering.${locale}.mdx`) !== null;
+}
+
+export function getEngineeringDoc(
+  locale: string,
+  slug: string
+): { meta: ProjectMeta; content: string } | null {
+  if (!isValidSlug(slug)) return null;
+  const dir = path.join(contentDir, "projects", slug);
+  const filePath = resolveContentPath(dir, locale, `engineering.${locale}.mdx`);
+  if (!filePath) return null;
+
+  const raw = fs.readFileSync(filePath, "utf-8");
+  const { content } = matter(raw);
+
+  const project = getProject(locale, slug);
+  if (!project) return null;
+
+  return {
+    meta: project.meta,
+    content,
+  };
+}
+
+// Backward-compatible aliases
+/** @deprecated Use getAllProjects */
+export const getAllCaseStudies = getAllProjects;
+/** @deprecated Use getProject */
+export const getCaseStudy = getProject;
+/** @deprecated Use hasDesignContent */
+export const hasCaseStudy = hasDesignContent;
+/** @deprecated Use getDesignContent */
+export const getCaseStudyContent = getDesignContent;
+/** @deprecated Use hasEngineeringDoc */
+export const hasDesignDoc = hasEngineeringDoc;
+/** @deprecated Use getEngineeringDoc */
+export const getDesignDoc = getEngineeringDoc;

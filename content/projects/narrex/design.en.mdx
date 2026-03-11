@@ -1,99 +1,140 @@
 ---
-title: "Narrex — Engineering Design Doc"
+title: "Narrex — Product Design"
 ---
 
-## Architecture
+## Core Insight
 
-**Modular Monolith + Hexagonal (Rust / Axum)**
+Writers think in scenes and plot arcs — not sentences. Every existing AI writing tool ignores this. Sentence-level autocomplete makes you do all the structural work. Fully automated generators strip your creative control. Neither addresses the real bottleneck: developing dozens of interconnected scenes into a consistent, multi-episode narrative.
 
-Single Cloud Run service with domain-separated modules. Domain logic has zero infrastructure dependencies — ports (Rust traits) define boundaries, adapters implement them. The `llm` crate is a separate workspace crate with compiler-enforced isolation.
+Narrex makes the scene the unit of AI generation, and the visual structure the prompt.
+
+## Who This Is For
+
+**Ji-yeon — The Aspiring Writer**
+
+University student with a regression-fantasy story she's been imagining for months. Characters have names, the opening is vivid in her head. But between the idea and 40 episodes of finished prose, there's a wall she's never climbed. She tried ChatGPT — output was inconsistent after a few chapters. She doesn't lack creativity. She lacks a production system.
+
+*"I want to turn my story idea into a real, readable novel — without needing to master prose writing."*
+
+**Min-ho — The Struggling Serializer**
+
+Published 8 episodes on Novelpia. Readers liked the premise but caught inconsistencies — a character's eye color changed, a subplot was forgotten. He writes 2–3 hours per night and barely produces one episode per week. He knows his story. He can't maintain quality at the pace readers expect.
+
+*"I want the tool to remember everything that happened before and generate a draft that's consistent with my established story."*
+
+## The Core Loop
+
+Every design decision flows from one user journey:
+
+1. **Paste a story idea** — any starting point, even a rough paragraph
+2. **Get auto-generated structure** — config, timeline with scenes, character map with relationships
+3. **Arrange the story visually** — drag scenes, add tracks for parallel storylines, edit characters
+4. **Generate prose per scene** — AI assembles full context automatically and drafts the scene
+5. **Direct and refine** — edit freely, or give direction like "add more tension"
+
+Three clicks to first value: create project, enter idea, click "Structure My Story." The hardest part of novel writing — going from "I have an idea" to "I have a plan" — happens in the first session.
+
+## Key Product Decisions
+
+### Scene-Level Granularity
+
+The fundamental question: what unit does the AI generate?
+
+- **Sentence-level** (Sudowrite, TypeTak): Writer does all structural work. AI just finishes sentences.
+- **Full auto-generation** (ChatGPT, standalone generators): No author control. Consistency dies after a few exchanges.
+- **Scene-level** (Narrex): Writer builds the structure visually. AI generates prose within that structure, with full narrative context.
+
+Scene-level is the sweet spot — enough context for coherent output, enough granularity for author control.
+
+### NLE Timeline as Mental Model
+
+The workspace is modeled after a video editor. The timeline has multi-track clips (scenes), a preview window (editor), and a media library (character map). This metaphor was chosen because:
+
+- Writers naturally think in parallel storylines — multi-track supports this directly
+- Scenes have extent (duration), not just position — enabling simultaneity detection across tracks
+- The NLE metaphor is intuitive for digital-native users who've used Premiere, CapCut, or GarageBand
+
+### Event-Episode Separation
+
+Scenes (what happens in the story) and episodes (how it's packaged for readers) are independent layers. This is a critical product decision:
+
+- Multiple small events can merge into one episode
+- One large event can span multiple episodes
+- Dragging an episode divider on the timeline re-partitions chapters, and the AI prompt auto-rebuilds
+
+No other tool makes this distinction. Every competitor treats chapters as the primary unit.
+
+### "Revise, Don't Write from Scratch"
+
+The AI generates drafts. The author directs and refines. This framing is deliberate — it shifts the user's role from "writer who can't write" to "director who shapes the output." Direction-based editing ("add more tension", "increase dialogue") lowers the craft barrier without removing creative ownership.
+
+## UX Design
+
+### Workspace: Single Page, Panel-Based
+
+No deep navigation. Users switch between panels, not pages. Every core action is at most 2 clicks from the workspace.
 
 ```
-apps/api/
-├── crates/llm/              # LLM provider abstraction (standalone)
-│   ├── provider.rs           # LlmProvider trait
-│   ├── gemini.rs             # Gemini Flash-Lite implementation
-│   ├── cf_workers.rs         # CF Workers AI implementation
-│   └── gateway.rs            # Failover routing
-├── src/domain/               # Business logic (no infra deps)
-│   ├── auth/                 # Google OAuth, JWT, sessions
-│   ├── project/              # Project CRUD, story config
-│   ├── timeline/             # Tracks, scenes, branch/merge
-│   ├── character/            # Characters, relationships
-│   ├── ai/                   # Prompt assembly, generation
-│   └── sample/               # Sample project seeding
-├── src/inbound/http/         # HTTP adapters (Axum handlers)
-└── src/outbound/             # Infra adapters (SQLx, R2, JWT)
++---------------------------------------------------------------+
+| Header · Project Title              [Config v]  [theme]  Saved |
++----------+------------------------------------+---------------+
+| Character| Editor                             | Scene Detail  |
+| Map      | (prose preview + editing)          | (metadata)    |
++----------+--------+---------------------------+---------------+
+| Timeline (multi-track, horizontal scroll, drag-and-drop)      |
+| Track 1: [scene]--[scene]--[scene]--[scene]--[+]             |
+| Track 2:         [scene]--[scene]--[+]                        |
++---------------------------------------------------------------+
 ```
 
-**Frontend: TanStack Start + SolidJS**
+### Progressive Disclosure
 
-Fine-grained reactivity for timeline UI — many DOM nodes update independently during drag-and-drop. Deployed to Cloudflare Workers via Nitro adapter.
+Non-technical hobbyist writers are the primary users. The interface must not overwhelm.
 
-## Tech Stack
+| Step | Visible | Hidden | Revealed When |
+|------|---------|--------|---------------|
+| First load | Single-track timeline, config bar, character map | Multi-track, branch/merge, context menus | User interacts with timeline |
+| First scene selected | Scene detail panel auto-opens | Direction-based editing, shortcuts | First draft generated |
+| First draft generated | Standard text editing | "Edit with AI" | User selects text |
 
-| Layer | Technology | Why |
-|-------|-----------|-----|
-| Backend | Rust + Axum | Sub-ms latency, 10–30MB memory, compile-time safety, native SSE streaming |
-| Frontend | TanStack Start + SolidJS | Fine-grained reactivity for timeline, smaller bundles than React |
-| Database | Neon PostgreSQL (us-east-1) | Scale-to-zero, branch-based dev, pgvector for future embeddings |
-| Cache | Upstash Redis | HTTP API, scale-to-zero, rate limiting + context cache |
-| LLM (primary) | Gemini 2.5 Flash-Lite | Best Korean prose quality at lowest cost ($0.10/1M tokens) |
-| LLM (fallback) | CF Workers AI | Zero-cost fallback, automatic failover |
-| API Hosting | GCP Cloud Run (us-east4) | Container-based, auto-scale to zero, 300s timeout for streaming |
-| Web Hosting | Cloudflare Workers | Edge-first via Nitro, free plan |
-| Storage | Cloudflare R2 | User avatars, S3-compatible, zero egress |
+### Scene Visual States
 
-## Database Design
+Not color-only — each state uses fill pattern + icon + label for accessibility:
 
-**11 tables in Phase 1.** Core design choices:
+- **Empty** — hollow clip, no icon
+- **AI Draft** — half-filled clip, pen icon
+- **Edited** — solid clip, checkmark
+- **Needs Revision** — filled with warning border, triangle icon (config changed since last draft)
 
-- **NLE positioning** — `scene.start_position` and `scene.duration` as `DOUBLE PRECISION`. Scenes are clips with extent, not list items. Initial spacing of 1024.0 allows ~50 midpoint insertions before rebalancing. Simultaneity across tracks via overlapping ranges.
+### Auto-Save, No Save Button
 
-- **Draft versioning** — Separate `draft` table with `(scene_id, version)`. Preserves full edit history, separates large text blobs from frequently-read scene metadata. Each draft records source (`ai_generation`, `ai_edit`, `manual`), model, token counts, and cost.
+All edits auto-save with 1-second debounce. Status indicator: "Saving..." → "All changes saved." Single-user product, so last-write-wins is sufficient.
 
-- **Context compression** — `scene_summary` table (1:1 with scene) stores AI-compressed summaries (~200–300 tokens). Preceding summaries replace full scene text in generation prompts, keeping context manageable at 15+ scenes.
+## Competitive Positioning
 
-- **Generation cost tracking** — `generation_log` with `ON DELETE SET NULL` for project/scene FKs. Cost data survives entity deletion for billing analytics.
+8 tools reviewed (4 international, 4 Korean). None combine visual timeline + scene-level AI + Korean web novel specialization.
 
-## AI / LLM Architecture
+| Gap | International Tools | Korean Tools | Narrex |
+|-----|-------------------|-------------|--------|
+| Visual timeline | None offer it | None offer it | Multi-track NLE |
+| AI generation unit | Sentence (Sudowrite) or none (Novelcrafter) | Full auto (standalone generators) or sentence (TypeTak) | Scene-level with full context |
+| Korean web novel genres | English-only | Weak output quality | Built for regression, romance-fantasy, murim conventions |
+| Author control | Varies | Minimal | Structure is the prompt — full control |
 
-**Provider abstraction via `crates/llm`:**
+## Business Model
 
-```rust
-#[async_trait]
-pub trait LlmProvider: Send + Sync {
-    async fn generate(&self, req: GenerateRequest) -> Result<GenerateResponse>;
-    async fn generate_stream(&self, req: GenerateRequest)
-        -> Result<Pin<Box<dyn Stream<Item = Result<String>> + Send>>>;
-}
-```
+| Plan | Price | Included |
+|------|-------|----------|
+| Free | $0 | Unlimited structure editing. 50 AI generations/month. |
+| Basic | ~$12/mo | 100 generations/month. 2 draft variations. Tone sliders. |
+| Pro | ~$25/mo | Unlimited generations. 3 variations. Advanced model access. Revision tools. |
 
-`LlmGateway` handles failover: Gemini Flash-Lite first, CF Workers AI on failure (timeout >30s, 5xx, 429).
+Cost per scene: ~$0.03–0.06 with prompt caching. Cost per complete 40-episode novel: ~$3.60–9.60. Free-to-paid conversion driven by users hitting the generation ceiling.
 
-**Context assembly per scene (~2,500–5,000 tokens):**
+## Phase Strategy
 
-| Source | Data | Tokens |
-|--------|------|--------|
-| System instruction | Generation rules, output format | ~500 |
-| Global config | Genre, theme, era, POV, mood | ~100 |
-| Scene details | Title, summary, location, mood | ~200 |
-| Characters + relationships | Cards for involved characters | ~350–700 |
-| Preceding summaries | Compressed prior scene summaries | ~1,000–3,000 |
-| Simultaneous events | Overlapping scenes on other tracks | ~200–400 |
-| Next scene preview | Title + summary | ~100 |
+**Phase 1 (current):** Core loop validation — idea → structure → generate → edit. Single question: do users keep editing the AI drafts, or discard them?
 
-**Streaming:** SSE via Axum's native `Sse` type + `async-stream`. Cloud Run timeout set to 300s for generation endpoints.
+**Phase 2:** Episode organization layer, draft variations, tone sliders, export.
 
-## Infrastructure & Cost
-
-| Component | Launch (~100 DAU) | Growth (~1K DAU) |
-|-----------|-------------------|------------------|
-| Cloud Run | ~$0 (free tier) | ~$15–30 |
-| Neon PostgreSQL | ~$0 (free tier) | ~$19 |
-| Upstash Redis | ~$0 (free tier) | ~$10 |
-| Gemini Flash-Lite | ~$2–5 | ~$20–50 |
-| CF Workers + CDN + R2 | ~$0 (free plan) | ~$5 |
-| **Total** | **~$2–5/mo** | **~$70–115/mo** |
-
-CI/CD via GitHub Actions: Rust binary in Docker → Cloud Run, web build → CF Workers on push to main.
+**Phase 3:** World map, temporal relationship tracking, revision tools, AI Surprise mode.

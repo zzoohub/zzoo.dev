@@ -1,48 +1,127 @@
 ---
-title: "zzoo.dev — Engineering Design Doc"
+title: "zzoo.dev — Design"
 ---
 
-## Technical Approach
+Every design decision on this site traces back to one question: can a visitor determine whether this developer can solve their problem within five seconds, and then take the shortest path to making contact?
 
-Every page is statically generated (SSG) at build time. With no server-side rendering or API routes, pages are served directly from Vercel's global edge network — fast regardless of where visitors connect from.
+That question — and the five principles derived from it — shaped the information architecture, content strategy, visual design, and search visibility approach documented here.
 
-Content is managed as MDX files. Each piece is split into `content/[type]/[slug]/{locale}.mdx` for each supported language (EN/KO), keeping translations independent. Architecture diagrams written in D2 are automatically compiled into SVGs in both light and dark theme variants at build time.
+## Design Philosophy: Credibility in Five Seconds
 
-The UI is built with Tailwind CSS v4 and shadcn/ui. The CSS variable-based theming system makes dark mode transitions seamless, and components built on Radix primitives ensure accessibility by default.
+The site follows five UX principles, applied in priority order when they conflict:
 
-## Tech Stack
+1. **Credibility in Five Seconds** — The hero section carries the full weight of first impression. Value proposition, a single CTA, and one proof point (availability badge or outcome metric) must be visible above the fold on every viewport. No decorative filler. No ambiguity.
 
-| Layer | Technology | Why |
-|-------|-----------|-----|
-| Framework | Next.js 16 (App Router) | React 19 support, ecosystem optimized for static generation |
-| Styling | Tailwind CSS v4 + shadcn/ui | Utility-first + accessible components |
-| Content | MDX + gray-matter | React components inside markdown |
-| i18n | next-intl | Battle-tested i18n with static export support |
-| Diagrams | D2 | Version-controllable declarative diagrams |
-| Hosting | Vercel | Global edge CDN, native Next.js support |
-| Testing | Vitest + Testing Library | Fast unit tests |
+2. **Outcomes Over Features** — Content is framed around what the client gets, not what the developer knows. Case studies lead with results, not tech stacks. Blog posts have clear takeaways. Technology is supporting evidence, never the headline.
 
-## Search Visibility Strategy
+3. **Progressive Disclosure** — Show only what is needed for the current decision. The home page is a curated summary. Each page goes one level deeper. Users who need depth can find it; users who don't are never overwhelmed.
 
-The site implements a layered approach to search visibility, targeting three distinct discovery channels.
+4. **Friction-Free Contact** — Every page has a clear, low-effort path to making contact. Since contact is email-only (no forms, no backend), the pattern is a `mailto` link styled as a primary button, plus a copy-to-clipboard fallback for mobile users.
 
-### SEO Layer
+5. **Performance as UX** — A slow site signals carelessness. Every design decision is constrained by the performance budget: initial JS under 100KB gzipped, FCP under 1.0s, Lighthouse 95+. This rules out heavy animation libraries, client-side routing transitions, and large image carousels. Motion is CSS-only.
 
-- **SSG + Edge delivery** — Every page is pre-rendered at build time and served from Vercel's edge network, achieving sub-second FCP
-- **Semantic HTML** — Proper heading hierarchy (`h1` → `h2` → `h3`), landmark roles, and accessible markup
-- **Hreflang alternates** — XML sitemap and `<link rel="alternate">` tags for both locales, so search engines serve the right language
-- **Canonical URLs** — Each page declares its canonical URL to prevent duplicate content issues across locales
-- **Performance** — Lighthouse 95+ target, initial JS < 100KB gzipped
+## Information Architecture
 
-### AEO Layer
+The site map is intentionally compact. Primary navigation has only four items — Home, Projects, Blog, About — keeping cognitive load low. Secondary pages (Now, Contact) are accessible from the footer and contextual CTAs but never compete for attention in the header.
 
-- **JSON-LD schemas** — `WebSite`, `Person`, `BlogPosting`, `SoftwareApplication`, and `BreadcrumbList` are embedded on relevant pages via `<script type="application/ld+json">`
-- **RSS feed** — Auto-generated from EN blog posts at build time, giving answer engines a real-time content pipeline
-- **`robots.txt`** — Generated via Next.js route handler, allowing all major crawlers
-- **Open Graph + Twitter Cards** — Every page has OG metadata with a default 1200x630 image
+Every page is designed with a conversion funnel in mind:
 
-### GEO Layer
+- **Awareness** — Visitor arrives via search, AI answer, or referral
+- **Interest** — Hero establishes credibility in under 5 seconds
+- **Evaluation** — Case studies prove outcomes; blog demonstrates expertise
+- **Trust** — Testimonials, technical depth, and About page build confidence
+- **Action** — CTA buttons throughout lead to email contact
 
-- **`llms.txt`** — A plain-text file at `/llms.txt` describing the site's purpose, author, structure, and content inventory in a format optimized for LLM consumption
-- **Clean MDX content** — Blog posts and case studies are written in well-structured MDX with clear headings, making it easy for generative models to extract and cite
-- **Bilingual coverage** — All content in EN and KO with automatic locale fallback, covering the primary audience languages
+Breadcrumbs appear only on detail pages (project and blog post) where the user is two levels deep, using a simple `Projects / Project Name` format.
+
+## Content Strategy: 3-Layer Project Documentation
+
+Each project is documented across three tabs, each serving a different audience and depth level:
+
+- **Overview** — Product brief for anyone: what is this, why does it exist, what are the results. Scannable, outcome-focused, short.
+- **Design** — Product design decisions for design-minded visitors: UX philosophy, information architecture, content strategy, search visibility approach.
+- **Engineering** — Technical deep-dive for engineers: architecture, framework choices, build pipeline, deployment.
+
+This structure follows the progressive disclosure principle. A hiring manager reads the Overview. A product designer clicks through to Design. A fellow engineer goes to Engineering. Each audience gets exactly what they need without wading through content meant for someone else.
+
+All frontmatter is validated through Zod schemas. Content is managed as locale-specific MDX files with automatic English fallback when a translation is missing.
+
+## Search Visibility as a Design Decision
+
+Search visibility is not an afterthought — it is a design constraint that shapes the site's HTML structure, content format, and metadata architecture. The site targets three discovery channels simultaneously.
+
+### SEO — Traditional Search
+
+Structured HTML with proper heading hierarchy, semantic landmarks, and accessible markup. Every page declares canonical URLs and hreflang alternates for both locales. XML sitemap covers all routes. Static generation ensures sub-second load times that search engines reward.
+
+### AEO — Answer Engine Optimization
+
+When AI systems like Google's AI Overviews or Perplexity extract answers, they rely on structured data. The site embeds JSON-LD schemas — `WebSite`, `Person`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList` — giving answer engines machine-readable context. RSS feeds provide a content pipeline for indexing. Every page carries Open Graph and Twitter Card metadata.
+
+### GEO — Generative Engine Optimization
+
+For LLMs powering ChatGPT or Claude, the site serves `llms.txt` at the root — a plain-text file describing the site's purpose, structure, and content in a format LLMs can directly consume. Clean, well-structured MDX content with clear headings makes it easy for generative models to extract and cite accurately. Bilingual coverage (EN/KO) ensures relevance across language boundaries.
+
+## Bilingual UX
+
+The language switcher is a single text button showing the alternate locale ("KO" when on English, "EN" when on Korean). Not a dropdown — with only two locales, a tap-to-switch button is faster and eliminates a click.
+
+Switching preserves the current page path. If a translated version doesn't exist, the site falls back to English content rather than showing a 404.
+
+Typography handles both scripts: Geist Sans for Latin text, with system Korean fonts as fallback. Korean content applies `word-break: keep-all` to prevent mid-word line breaks. Korean text is generally more compact, so button padding (`px-6`) accommodates both languages without layout shifts.
+
+## Dark/Light Mode
+
+Theme switching follows system preference by default, with manual override persisted via `localStorage`. The `next-themes` blocking script prevents flash of incorrect theme on load.
+
+The toggle icon shows what you will switch TO (sun in dark mode, moon in light mode), following the convention of displaying the action rather than the state. All components, D2 diagrams, and code blocks are styled for both themes. Color contrast passes WCAG AA in both modes — text on background at roughly 18:1, muted text at 4.6:1 or above.
+
+The site respects `prefers-reduced-motion` by collapsing all animation durations to near-zero when the user has requested reduced motion.
+
+## CTA Hierarchy and Placement
+
+CTAs follow a three-tier hierarchy:
+
+| Tier | Style | Usage |
+|------|-------|-------|
+| Primary | Solid background, high contrast | One per section, max 2-3 per page |
+| Secondary | Border outline | Supporting alternatives |
+| Inline | Text link with arrow | Within content, cards, and lists |
+
+CTA copy adapts to context: "See My Work" on the home page, "Facing a similar challenge?" on project detail pages, "Want to work together?" on blog posts. The availability badge — a color-coded pill with a pulsing dot — appears in three sizes across the home hero, contact page, and footer.
+
+On long pages, a floating CTA appears after scrolling past the hero: a fixed pill on desktop (bottom-right), a full-width bottom bar on mobile with a dismiss option.
+
+## Mobile-First Responsive Strategy
+
+The design is built mobile-first across three breakpoints: mobile (default), tablet (`md:` at 768px), and desktop (`lg:` at 1024px). Content maxes out at `max-w-5xl` (1024px) — wider viewports show more margin, never wider content.
+
+Key responsive behaviors:
+
+- **Navigation** — Hamburger menu on mobile, collapsing to a full-width dropdown that pushes content down (not overlaying). Four horizontal links on desktop.
+- **Hero** — Centered with stacked buttons on mobile; left-aligned with inline buttons on desktop. Heading scales from 36px to 48px.
+- **Project cards** — Single column on mobile, two-column grid on desktop.
+- **Footer** — Single column on mobile, three-column grid on desktop.
+
+All interactive elements meet 44x44px minimum touch targets. Buttons are full-width on mobile. Icon buttons use padding to reach the minimum target area.
+
+## Accessibility
+
+The site targets WCAG 2.1 AA compliance across every interaction:
+
+- **Document structure** — One `h1` per page, strict heading hierarchy, semantic landmarks (`header`, `nav`, `main`, `footer`) with distinct `aria-label` on each navigation region.
+- **Skip link** — Hidden until focused, appears at top-left as the first focusable element on every page.
+- **Focus management** — `:focus-visible` rings (not `:focus`), tab order follows visual order, mobile nav traps focus when open.
+- **Screen readers** — Icon-only buttons carry `aria-label`, decorative elements are hidden, reading time uses `aria-label` for full text, D2 diagrams have meaningful alt text.
+- **Color independence** — No information conveyed through color alone. The availability badge uses both color and text. Status indicators supplement color with weight or fill changes.
+- **Keyboard navigation** — Full flow: skip link, logo, nav links, language switcher, theme toggle, main content, footer links. `Escape` closes the mobile menu and returns focus.
+
+## Component Patterns
+
+The component system uses consistent spacing and styling tokens:
+
+- **Cards** — `border border-border rounded-xl` with `p-6` (standard) or `p-8` (featured). Hover state shifts border color and adds subtle shadow over 150ms.
+- **Sections** — `py-16 md:py-20` vertical padding, content in `max-w-5xl` container with responsive horizontal padding.
+- **Typography** — Hero h1 at 36/48px, section h2 at 28/32px, card h3 at 20/24px, body prose at 16px with 1.75 line height, code at 14px in Geist Mono.
+- **Tags** — Small pills (`bg-muted px-2 py-0.5 text-xs rounded-md`) for content tags; interactive pills with border for filters.
+- **Motion** — CSS-only transitions at 150ms for hover states, 200ms for mobile nav, 300ms for floating CTA. No animation libraries.

@@ -1,0 +1,101 @@
+---
+title: "Narrex — 엔지니어링"
+---
+
+## 아키텍처
+
+**모듈러 모놀리스 + 헥사고날 (Rust / Axum)**
+
+솔로 개발자가 긴밀하게 결합된 도메인을 구축합니다 — 프로젝트, 장면, 캐릭터, 생성이 모두 데이터를 공유합니다. 모놀리스로 배포 오버헤드를 없애고, 도메인별 모듈은 Rust trait을 포트로 사용해 깔끔하게 분리합니다. 필요하면 서비스로 추출 가능. 서브밀리초 응답, 10~30MB 메모리, 컴파일 타임 안전성.
+
+`llm` 크레이트는 별도 워크스페이스 크레이트입니다 — 컴파일러가 API 내부를 물리적으로 임포트하지 못하게 강제합니다. "LLM과 어떻게 대화할지"와 "무엇을 물어볼지"의 경계를 강제하는 구조입니다.
+
+```
+apps/api/
+├── crates/llm/              # LLM 프로바이더 추상화 (독립)
+│   ├── provider.rs           # LlmProvider 트레이트
+│   ├── gemini.rs             # Gemini Flash-Lite 구현
+│   ├── cf_workers.rs         # CF Workers AI 구현
+│   └── gateway.rs            # 페일오버 라우팅
+├── src/domain/               # 비즈니스 로직 (인프라 의존성 없음)
+│   ├── auth/                 # Google OAuth, JWT, 세션
+│   ├── project/              # 프로젝트 CRUD, 스토리 설정
+│   ├── timeline/             # 트랙, 장면, 분기/병합
+│   ├── character/            # 캐릭터, 관계
+│   ├── ai/                   # 프롬프트 조립, 생성
+│   └── sample/               # 샘플 프로젝트 시딩
+├── src/inbound/http/         # HTTP 어댑터 (Axum 핸들러)
+└── src/outbound/             # 인프라 어댑터 (SQLx, R2, JWT)
+```
+
+**프론트엔드: TanStack Start + SolidJS**
+
+타임라인 UI 때문에 React 대신 SolidJS를 선택했습니다. 파인그레인드 반응성으로 드래그 앤 드롭 시 각 장면 노드가 독립적으로 업데이트됩니다 — 수백 개 엘리먼트에 걸친 가상 DOM 디핑이 필요 없습니다. Nitro 어댑터를 통해 Cloudflare Workers에 배포.
+
+## 기술 스택
+
+| 레이어 | 기술 | 선택 이유 |
+|--------|------|----------|
+| 백엔드 | Rust + Axum | 서브밀리초 레이턴시, 10~30MB 메모리, 컴파일 타임 안전성, 네이티브 SSE 스트리밍 |
+| 프론트엔드 | TanStack Start + SolidJS | 타임라인을 위한 파인그레인드 반응성, React보다 작은 번들 |
+| 데이터베이스 | Neon PostgreSQL (us-east-1) | 제로 스케일, 브랜치 기반 개발, 향후 임베딩용 pgvector |
+| 캐시 | Upstash Redis | HTTP API, 제로 스케일, 레이트 리미팅 + 컨텍스트 캐시 |
+| LLM (주력) | Gemini 2.5 Flash-Lite | 최저 비용($0.10/1M 토큰)에서 최고의 한국어 산문 품질 |
+| LLM (폴백) | CF Workers AI | 무료 폴백, 자동 페일오버 |
+| API 호스팅 | GCP Cloud Run (us-east4) | 컨테이너 기반, 제로 오토스케일, 스트리밍용 300초 타임아웃 |
+| 웹 호스팅 | Cloudflare Workers | Nitro 통한 엣지 우선, 무료 플랜 |
+| 스토리지 | Cloudflare R2 | 사용자 아바타, S3 호환, 이그레스 비용 제로 |
+
+## 데이터베이스 설계
+
+**Phase 1에 11개 테이블.** 핵심 설계 결정:
+
+- **NLE 포지셔닝** — `scene.start_position`과 `scene.duration`을 `DOUBLE PRECISION`으로. 장면은 리스트 항목이 아니라 범위를 가진 클립입니다. 초기 간격 1024.0으로 리밸런싱 없이 ~50회 중간점 삽입 가능. 트랙 간 동시성은 범위 겹침으로 판단.
+
+- **초안 버전 관리** — 별도 `draft` 테이블에 `(scene_id, version)`. 전체 편집 히스토리를 보존하고, 빈번히 읽는 장면 메타데이터에서 큰 텍스트 블롭을 분리합니다. 각 초안은 소스(`ai_generation`, `ai_edit`, `manual`), 모델, 토큰 수, 비용을 기록합니다.
+
+- **컨텍스트 압축** — `scene_summary` 테이블(장면과 1:1)에 AI 압축 요약(~200~300 토큰) 저장. 생성 프롬프트에서 전체 장면 텍스트 대신 이전 요약을 사용하여 15개 이상의 장면에서도 컨텍스트를 관리 가능하게 유지합니다.
+
+- **생성 비용 추적** — `generation_log`의 프로젝트/장면 FK에 `ON DELETE SET NULL` 적용. 엔티티 삭제 후에도 비용 데이터가 과금 분석용으로 보존됩니다.
+
+## AI / LLM 아키텍처
+
+**`crates/llm`을 통한 프로바이더 추상화:**
+
+```rust
+#[async_trait]
+pub trait LlmProvider: Send + Sync {
+    async fn generate(&self, req: GenerateRequest) -> Result<GenerateResponse>;
+    async fn generate_stream(&self, req: GenerateRequest)
+        -> Result<Pin<Box<dyn Stream<Item = Result<String>> + Send>>>;
+}
+```
+
+`LlmGateway`가 페일오버 처리: Gemini Flash-Lite 우선, 실패 시(타임아웃 >30초, 5xx, 429) CF Workers AI로 전환.
+
+**장면당 컨텍스트 어셈블리 (~2,500~5,000 토큰):**
+
+| 소스 | 데이터 | 토큰 |
+|------|--------|------|
+| 시스템 인스트럭션 | 생성 규칙, 출력 포맷 | ~500 |
+| 글로벌 설정 | 장르, 테마, 시대, 시점, 분위기 | ~100 |
+| 장면 상세 | 제목, 줄거리, 장소, 분위기 | ~200 |
+| 캐릭터 + 관계 | 관련 캐릭터 카드 | ~350~700 |
+| 이전 장면 요약 | 압축된 선행 장면 요약 | ~1,000~3,000 |
+| 동시 사건 | 다른 트랙의 겹치는 장면 | ~200~400 |
+| 다음 장면 프리뷰 | 제목 + 줄거리 | ~100 |
+
+**스트리밍:** Axum 네이티브 `Sse` 타입 + `async-stream`으로 SSE. 생성 엔드포인트의 Cloud Run 타임아웃은 300초.
+
+## 인프라 & 비용
+
+| 컴포넌트 | 출시 (~100 DAU) | 성장 (~1K DAU) |
+|----------|----------------|----------------|
+| Cloud Run | ~$0 (무료 티어) | ~$15~30 |
+| Neon PostgreSQL | ~$0 (무료 티어) | ~$19 |
+| Upstash Redis | ~$0 (무료 티어) | ~$10 |
+| Gemini Flash-Lite | ~$2~5 | ~$20~50 |
+| CF Workers + CDN + R2 | ~$0 (무료 플랜) | ~$5 |
+| **합계** | **~$2~5/월** | **~$70~115/월** |
+
+CI/CD는 GitHub Actions: Rust 바이너리를 Docker로 빌드 → Cloud Run, 웹 빌드 → CF Workers. main 브랜치 푸시 시 자동 배포.

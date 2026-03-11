@@ -1,0 +1,179 @@
+---
+title: "zzoo.dev — Engineering"
+---
+
+This is a purely static site. No server-side rendering, no API routes, no database, no backend of any kind. Every page is pre-rendered at build time and served as static HTML from Vercel's global edge network. The architectural constraint is intentional: a minimal attack surface, near-instant load times, and a deployment model that is essentially "push to main and forget."
+
+## Architecture: SSG-Only
+
+The entire site is statically generated via Next.js 16's App Router. At build time, `generateStaticParams()` pre-renders every combination of locale and slug. The build output shows `●` (static) for every route — never `ƒ` (dynamic).
+
+Why SSG over SSR? The content changes when the developer pushes a commit, not when a user visits. There is no user-specific data, no authentication, no form submissions. SSR would add complexity (cold starts, server costs, caching strategies) with zero benefit for this use case.
+
+The tradeoff: any content change requires a rebuild. But with Vercel's GitHub integration, pushing to `main` triggers an automatic build and deploy in under two minutes.
+
+## Framework: Next.js 16 + React 19
+
+Next.js 16 with the App Router provides the static generation pipeline, file-based routing, and `generateMetadata()` for per-page SEO. React 19 enables Server Components as the default — most pages ship zero client-side JavaScript beyond the framework runtime.
+
+Client components are used sparingly and only where interactivity is required: the blog tag filter, the theme toggle, the mobile navigation menu, the copy-to-clipboard button, and the D2 diagram theme switcher. Each is a thin interactive wrapper around a server-rendered parent.
+
+TypeScript is set to strict mode across the codebase. All content frontmatter, site config, and component props are fully typed.
+
+## Content System
+
+Content is file-based MDX, managed in the repository alongside the code:
+
+```
+content/
+├── blog/{slug}/{locale}.mdx
+├── projects/{slug}/
+│   ├── {locale}.mdx              # Overview (required)
+│   ├── design.{locale}.mdx       # Design tab (optional)
+│   └── engineering.{locale}.mdx  # Engineering tab (optional)
+├── about/{locale}.mdx
+└── testimonials.json
+```
+
+### Frontmatter Validation
+
+All frontmatter is parsed through Zod schemas defined in `lib/content/schemas.ts`. Required fields throw on missing values. Optional fields use `.catch(undefined)` — invalid optional data is silently dropped rather than breaking the build. Date fields coerce `Date` objects to `"YYYY-MM-DD"` strings.
+
+Image paths are validated against strict patterns: relative paths must match `/^[a-zA-Z0-9._-]+\.(png|jpg|jpeg|gif|webp|svg|avif)$/i`, and absolute paths must start with `/images/` with no `..` traversal allowed. Slugs are validated against `/^[a-zA-Z0-9_-]+$/`.
+
+### Locale Fallback
+
+Each content file exists per locale. When a requested locale is missing, the system falls back to `en.mdx`. The `resolveContentLocale()` utility checks for `{locale}.mdx` first, then `en.mdx`. This means English content is always the baseline, and Korean translations can be added incrementally without breaking routes.
+
+### Reading Time
+
+Reading time is calculated differently by script: English uses `ceil(words / 200)` (200 WPM), Korean uses `ceil(chars / 300)` (300 characters per minute for CJK). The detection is based on the locale, not the content — keeping the logic simple and predictable.
+
+## i18n: next-intl
+
+Internationalization uses `next-intl` with two locales: `en` and `ko`. English is the default.
+
+UI strings live in `messages/{locale}.json` — translation files for labels, buttons, and navigation. Content translations are separate MDX files per locale.
+
+The critical SSG pattern: server components must call `setRequestLocale(locale)` from the page's `params`, not `getLocale()`. Using `getLocale()` in a statically generated page would break the build because it relies on request-time context that doesn't exist during static generation.
+
+For async server components that need translations, the pattern is an async wrapper that resolves params and passes data to a sync inner component that calls `useTranslations()`:
+
+```tsx
+// Async outer — resolves params, fetches data
+async function Page({ params }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const data = await fetchData();
+  return <PageContent data={data} />;
+}
+
+// Sync inner — uses hooks
+function PageContent({ data }: { data: Data }) {
+  const t = useTranslations("page");
+  return <div>{t("heading")}</div>;
+}
+```
+
+The `i18n/request.ts` config uses a static `MESSAGE_MAP` with explicit imports rather than dynamic `import()` — intentional for SSG compatibility, since dynamic imports in this context would require server-side resolution.
+
+## D2 Diagram Pipeline
+
+Architecture diagrams are authored in D2, a declarative diagramming language. The pipeline:
+
+1. Write `.d2` source files in `content/projects/{slug}/`
+2. At build time, `bun run build:diagrams` compiles each `.d2` file twice — once for light theme, once for dark — outputting SVGs to `public/diagrams/{name}-light.svg` and `public/diagrams/{name}-dark.svg`
+3. The `D2Diagram` component renders the appropriate SVG based on the current theme
+
+The component uses `useSyncExternalStore` for SSR hydration safety: it always renders the light theme on the server, then switches to the correct theme on client mount. This avoids hydration mismatches while still supporting theme-aware diagrams.
+
+```tsx
+<img src="/diagrams/arch-light.svg" className="dark:hidden" />
+<img src="/diagrams/arch-dark.svg" className="hidden dark:block" />
+```
+
+## SEO Implementation
+
+Every page uses `generateMetadata()` (never a static metadata export) to produce per-locale, per-page titles, descriptions, canonical URLs, hreflang alternates, and Open Graph metadata.
+
+The `lib/seo.ts` module provides builders:
+
+- `buildPageMeta()` — Assembles the full `Metadata` object with canonical URL, alternates, OG tags, and locale-specific metadata
+- `buildCanonicalUrl()` — Constructs `{siteUrl}/{locale}{pathname}`
+- `buildAlternates()` — Generates `hreflang` links for all locales plus `x-default`
+- JSON-LD builders — `buildWebSiteJsonLd`, `buildPersonJsonLd`, `buildArticleJsonLd`, `buildProjectJsonLd`, `buildBreadcrumbJsonLd`, `buildFAQJsonLd`
+
+JSON-LD is rendered via `components/shared/json-ld.tsx`, which sanitizes output by escaping `<`, `>`, and `&` to prevent XSS injection in `<script type="application/ld+json">` tags.
+
+Additional SEO infrastructure:
+
+- **XML Sitemap** — Auto-generated by Next.js with hreflang alternates for both locales
+- **RSS Feed** — Built at `bun run build:rss` from English blog posts, output to `public/rss.xml`
+- **robots.txt** — Generated via Next.js, allowing all major crawlers
+- **llms.txt** — Static file at site root for LLM consumption
+
+## Styling: Tailwind CSS v4
+
+The styling layer uses Tailwind CSS v4 with oklch color theming, configured through CSS custom properties in `app/globals.css`. The `cn()` utility from `lib/utils` merges class names with `clsx` + `tailwind-merge` for conditional styling without conflicts.
+
+shadcn/ui provides the component library — built on Radix primitives for accessibility, styled with Tailwind using the new-york variant. Components are added individually via `bunx --bun shadcn@latest add <component>`, keeping the bundle lean.
+
+Dark mode uses the `.dark` class strategy via `next-themes`. Theme transitions apply `color` and `background-color` at 150ms on major containers — deliberately not applied to all elements to avoid performance overhead.
+
+The `proseClassName` constant from `lib/utils` provides consistent MDX content styling across blog posts, project descriptions, and about page content.
+
+## Build Pipeline
+
+The full build sequence, triggered on every push to `main`:
+
+```
+bun install
+  → bun run build:images    (copy project images from content/ to public/images/)
+  → bun run build:diagrams  (compile .d2 to light/dark SVGs)
+  → bun run build:rss       (generate public/rss.xml from EN blog posts)
+  → next build              (static generation of all pages)
+```
+
+Vercel runs this pipeline automatically. Preview deployments are generated for every pull request. The build verifies that all routes output as static (`●`) — any dynamic route (`ƒ`) would be a build failure.
+
+Project images follow a specific flow: source images live in `content/projects/{slug}/images/`, and `build:images` copies them to `public/images/projects/{slug}/`. The `resolveProjectImage()` utility maps relative frontmatter paths to the public URL.
+
+## Testing
+
+Tests use Vitest with Testing Library (jsdom environment). Test files live alongside source: `foo.test.tsx`.
+
+`vitest.setup.ts` provides mocks for:
+- `next-intl` — Returns the translation key as-is, with a special case for the `"booked"` key that interpolates values
+- `next-intl/routing` — Mocks `defineRouting`
+- `next-themes` — Returns `"light"` as the default theme
+
+Key testing pattern: `vi.useFakeTimers()` must be called without `{ shouldAdvanceTime: true }` — that option causes CI flakes. For async code with fake timers, use `vi.advanceTimersByTimeAsync(0)` inside `act()` to flush promises.
+
+Coverage targets `lib/**/*.{ts,tsx}` and `components/**/*.{ts,tsx}`, excluding type definition files.
+
+## Deployment
+
+The site deploys to Vercel via GitHub integration:
+
+| Environment | Trigger | URL |
+|-------------|---------|-----|
+| Production | Push to `main` | zzoo.dev |
+| Preview | Pull request | `{hash}.vercel.app` |
+| Local | `bun dev` | `localhost:3000` |
+
+Security headers are configured in `next.config.ts` via the `headers()` function: Content Security Policy, HSTS, X-Frame-Options, and related headers. The CSP `frame-src` allows only YouTube (for project videos) and Giscus (for blog comments).
+
+The "no backend" constraint means the attack surface is minimal: no API endpoints, no form handling, no user input processing, no database connections. The only dynamic client-side behavior is theme switching, locale switching, tag filtering, and clipboard copy.
+
+## Performance Targets
+
+| Metric | Target |
+|--------|--------|
+| Lighthouse Performance | 95+ |
+| Lighthouse SEO | 100 |
+| First Contentful Paint | < 1.0s |
+| Total Blocking Time | < 200ms |
+| Cumulative Layout Shift | < 0.1 |
+| Initial JS (gzipped) | < 100KB |
+
+These targets are enforced by design: SSG eliminates server response time, the minimal client JS budget rules out heavy libraries, and image optimization happens at build time. The performance budget is a design constraint, not an optimization target — the architecture makes it difficult to violate.

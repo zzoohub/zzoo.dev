@@ -36,8 +36,8 @@ yarn-error.log*
 # vercel
 .vercel
 
-# generated diagrams (rebuilt from content/diagrams/*.d2)
-/public/diagrams/
+# generated diagrams (committed for Vercel — d2 CLI not available in CI)
+# Locally rebuilt via `bun run build:diagrams`
 
 # generated project images (copied from content/projects/*/images/)
 /public/images/projects/

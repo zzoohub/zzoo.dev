@@ -17,12 +17,17 @@ export interface BlogPost extends BlogPostMeta {
 }
 
 export type ProjectFrontmatter = z.infer<typeof projectFrontmatterSchema>;
-export type CaseStudyMeta = ProjectFrontmatter & {
+export type ProjectMeta = ProjectFrontmatter & {
   slug: string;
 };
-export interface CaseStudy extends CaseStudyMeta {
+export interface Project extends ProjectMeta {
   content: string;
 }
+
+/** @deprecated Use ProjectMeta instead */
+export type CaseStudyMeta = ProjectMeta;
+/** @deprecated Use Project instead */
+export type CaseStudy = Project;
 
 export type ExperienceEntry = z.infer<typeof aboutFrontmatterSchema>["experience"][number];
 export type AboutData = z.infer<typeof aboutFrontmatterSchema> & {

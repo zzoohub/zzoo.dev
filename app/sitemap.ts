@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/lib/site-config";
-import { getAllBlogPosts, getAllCaseStudies } from "@/lib/content";
+import { getAllBlogPosts, getAllProjects } from "@/lib/content";
 import { routing } from "@/i18n/routing";
 
 const locales = routing.locales;
@@ -40,7 +40,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     entry(`/blog/${post.slug}`, "monthly", 0.7, post.date)
   );
 
-  const projects = getAllCaseStudies("en").map((project) =>
+  const projects = getAllProjects("en").map((project) =>
     entry(`/projects/${project.slug}`, "monthly", 0.8, project.launchDate)
   );
 

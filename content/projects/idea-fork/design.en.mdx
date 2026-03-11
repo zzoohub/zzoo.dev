@@ -1,66 +1,122 @@
 ---
-title: "Idea Fork — Engineering Design Doc"
+title: "Idea Fork — Case Study"
 ---
 
-## Architecture
+## The Insight
 
-Idea Fork uses a split-path architecture: the Next.js web app reads directly from Neon PostgreSQL for all user-facing queries, while a FastAPI backend runs only as a daily data pipeline. This eliminates read-path latency and keeps the API server cost at near-zero when idle.
+Every "find a startup idea" tool stops halfway. Gummysearch shows you Reddit threads. SparkToro shows you audiences. Exploding Topics shows you trend graphs. They all give you raw ingredients and assume you'll do the cooking.
 
-**Web App (Next.js on Vercel)**
-- App Router with SSR/ISR, Feature-Sliced Design (FSD) architecture
-- Dual data access: `@neondatabase/serverless` for direct SQL reads, Server Actions for writes (ratings)
-- next-intl for 6 locales (en, es, pt-BR, id, ja, ko)
-- GSAP animations, dark/light theme
+But the real bottleneck isn't finding complaints — it's connecting those complaints to what already exists and spotting the gap. The synthesis step is where ideas actually live, and no tool touches it.
 
-**API + Pipeline (FastAPI on GCP Cloud Run)**
-- Hexagonal architecture: domain ports/adapters pattern with Protocol ABCs
-- 5-stage daily pipeline: Fetch, Tag, Score, Cluster, Synthesize
-- Advisory lock prevents overlapping pipeline runs
-- Inbound adapters: separate public-facing and internal routing layers
-- Outbound adapters: PostgreSQL (asyncpg), Gemini LLM, Reddit, RSS, App Store, Play Store, Product Hunt, Google Trends
+Idea Fork's bet: **map demand against supply, then let AI synthesize the gap into actionable briefs — with receipts.**
 
-**Database (Neon PostgreSQL)**
-- 10 tables: post, tag, post_tag, cluster, cluster_post, brief, brief_source, product, product_tag, rating
-- Cursor-based keyset pagination (base64-encoded JSON cursors)
-- Partial indexes on `deleted_at IS NULL` for soft deletes
-- Full-text search via `tsvector` on posts
+## Who This Is For
 
-## Tech Stack Deep Dive
+**The Side-Project Scout** — A developer with a full-time job and 10 hours a week to build something. They've shipped before, they know what "good enough to start" looks like, but they don't have time to spend 5 hours browsing Reddit for signal. They want curated, pre-digested opportunities that let them skip straight to "should I build this?"
 
-| Layer | Technology | Why |
-|-------|-----------|-----|
-| Web | Next.js 16 + React 19 | App Router SSR/ISR, streaming, Server Actions for writes |
-| Styling | Tailwind CSS v4 | Utility-first, dark mode with oklch theming |
-| Animation | GSAP + @gsap/react | High-performance scroll and entrance animations |
-| API | Python 3.12 + FastAPI | Rich ML/LLM ecosystem (scikit-learn, google-genai) |
-| Architecture | Hexagonal (ports/adapters) | Multiple swappable external adapters, testable domain logic |
-| LLM | Google Gemini (Flash Lite + Flash + Embeddings) | Tagging, clustering, brief synthesis at low cost |
-| Clustering | HDBSCAN (scikit-learn) | Auto-detects cluster count, handles noise, O(n log n) |
-| Database | PostgreSQL 18 (Neon) | Scale-to-zero pricing, serverless driver for direct web access |
-| IaC | Pulumi (TypeScript) | Declarative management for GCP, Neon, and Vercel |
-| Analytics | PostHog | Product analytics with 9 custom events |
-| Error Tracking | Sentry | Full-stack error monitoring (Next.js + FastAPI) |
+**The Validation-First Founder** — Someone who's been burned by building before validating. They're allergic to "I think people want this" reasoning. They need evidence: real complaints, real numbers, real source links. Before committing 3 months to an idea, they want to see that 47 people across 5 communities are independently frustrated by the same problem.
 
-## Data Pipeline Details
+**The Internal Innovator** — A PM at a mid-size company who needs to pitch new features or products to leadership. Internal feedback channels are an echo chamber. They need external demand signals — what are users complaining about to strangers, not to customer support?
 
-The pipeline is triggered daily by GCP Cloud Scheduler and runs on Cloud Run (1 vCPU, 1Gi, 0-3 instances).
+## The Core Loop
 
-**Stage 1: Fetch** — Concurrent data collection via `asyncio.gather()` with semaphore-controlled review fetching (3 concurrent). Sources: Reddit (~44 subreddits), RSS (HN 50+ pts, TechCrunch), App Store (iTunes API, 20 keyword categories), Play Store (scraper, 20 keywords), Product Hunt (GraphQL, 30 products/run).
+The product's user journey follows a deliberate narrowing pattern — wide exploration that converges into specific, actionable insight:
 
-**Stage 2: Tag** — Batches of 20 posts sent to Gemini Flash Lite. Assigns `post_type` (10 types), `sentiment` (4 values), and 2-3 topic tags. Few-shot prompt with existing tag reuse. Failed batches marked for retry.
+1. **Browse the Feed** — A stream of tagged user complaints from Reddit, app stores, and RSS. Filter by type (Need, Complaint, Feature Request) and category. This is the raw demand signal — hundreds of posts a day, organized so you can scan rather than search.
 
-**Stage 3: Score** — Updates `trending_score` and `complaint_count` on products based on matched post tags.
+2. **Explore Products** — Trending products from Product Hunt, App Store, and Play Store, each paired with their complaint count. You see what exists and where it's failing. The supply side of the equation.
 
-**Stage 4: Cluster** — Batches of 200 tagged posts vectorized via Gemini Embedding API, then clustered via HDBSCAN (`min_cluster_size=3`, `min_samples=2`). Noise posts grouped as "Miscellaneous." Cluster labels generated by Gemini Flash Lite.
+3. **Read AI Briefs** — Where demand meets supply. The system clusters related complaints, cross-references them against existing products, and synthesizes a brief: problem statement, demand signals (how many posts, from how many communities, over what timeframe), and suggested solution directions. Every claim has a superscript linking to the source post.
 
-**Stage 5: Synthesize** — For each cluster: fetches Google Trends data and related products in parallel, then Gemini Flash (temperature 0.9) writes a full brief with title, summary, problem statement, opportunity, solution directions, demand signals, competitive landscape, and source snapshots.
+4. **Verify** — Tap any source link to read the original post. The brief is an argument, but the evidence is always one click away.
 
-## Security
+The progression is intentional: Feed builds intuition, Products add context, Briefs deliver the punchline. Most users enter through Briefs (the landing page for SEO), but power users develop a habit of browsing the Feed for signal that hasn't been synthesized yet.
 
-- CSP headers with strict `default-src 'self'`
-- CORS restricted to production domain only
-- Rate limiting: 10 ratings/min per session, 100 req/min per IP
-- No PII collected — anonymous session-based ratings via httpOnly cookies
-- All secrets in GCP Secret Manager
-- Pydantic validation + SQLAlchemy parameterized queries
-- `server-only` package prevents client-side DB imports
+## Product Design Decisions
+
+### Zero-Friction Anonymous Access
+
+No signup. No paywall. No onboarding flow. Open the site, see the feed.
+
+This wasn't just a UX preference — it was a strategic bet. The product's value is only demonstrable by using it. A login wall before the user has experienced the core value kills conversion. Let them browse 10 briefs first. Once they're hooked, premium features (alerts, exports, custom pipelines) can justify an account.
+
+The only "write" action in the entire MVP is rating briefs (thumbs up/down), and even that works via anonymous session cookies. No PII collected, no GDPR headache, no auth system to build or maintain.
+
+### Three-Part Structure: Feed / Products / Briefs
+
+Why not just show briefs? Because trust requires transparency.
+
+Briefs are AI-generated summaries. If that's all you see, you're trusting a black box. The Feed exists so users can see the raw material. Products exist so they can evaluate the supply landscape themselves. Briefs are the synthesis, but the other two tabs are the receipts.
+
+This structure also serves different user intents: some users want to browse raw signal (Feed), some want competitive intelligence (Products), some want pre-digested opportunities (Briefs). The three-tab IA maps cleanly to these intents without requiring the user to understand the system's pipeline.
+
+### Evidence-First AI
+
+Every claim in a brief links to a real source post. This isn't a nice-to-have — it's the core trust mechanism.
+
+The alternative was "trust us, the AI analyzed 47 posts and concluded X." That works for ChatGPT (where users expect unsourced opinions), but fails for a product whose value proposition is data-driven discovery. If a brief says "users across 5 communities are frustrated with mobile note-taking performance," you should be able to click through and read what they actually said.
+
+This constraint shaped the entire data architecture: every brief stores `source_snapshots` so that citations render without a join, and the normalized `brief_source` table maintains referential integrity underneath.
+
+### Mobile-First, Thumb-First
+
+Primary actions sit in the thumb zone. The mobile bottom tab bar has three tabs (Feed, Briefs, Products) — matching the three core experiences. Desktop uses a horizontal top bar with inline search.
+
+Progressive depth means the mobile card shows a title, source badge, and sentiment indicator. Tap for the full post. Long text is line-clamped at 2 lines with expand/collapse. No information overload on first glance.
+
+## UX Principles
+
+Six rules that shaped every screen:
+
+1. **Content is the interface** — Feed is the homepage. No splash screen, no hero section, no "Welcome to Idea Fork" modal. The first thing you see is the latest complaint stream.
+
+2. **One action per screen** — Each page has one primary action. Brief detail's primary action is "verify the source." Product detail's primary action is "explore the complaints." Secondary actions (rating, sharing) are visually subdued.
+
+3. **Progressive depth** — Listing pages show card-level summaries. Detail pages show full content. Source links go to the original post. Each layer adds depth without forcing it.
+
+4. **Evidence is visible** — AI claims have inline citation superscripts. Demand signals show exact numbers (47 posts, 5 communities, 142 avg score). No vague "many users report..."
+
+5. **Zero friction** — No login, no onboarding, no popups. Not even a cookie consent banner (because no tracking cookies are set — analytics use first-party, privacy-respecting tools).
+
+6. **Mobile-first, thumb-first** — Every touch target is 44x44pt minimum. Filter chips scroll horizontally. Infinite scroll with intersection observer. No pagination controls to tap on a phone screen.
+
+## Information Architecture
+
+```
+idea-fork.com
+├── / (Feed)              ← Landing page. Complaint stream.
+├── /briefs               ← Brief listing. Grid of opportunity cards.
+│   └── /briefs/[slug]    ← Brief detail. Full synthesis + sources.
+├── /products             ← Product listing. Trending products + complaints.
+│   └── /products/[slug]  ← Product detail. Complaints, themes, related briefs.
+└── /search?q=...         ← Cross-entity search. Tabs: All, Briefs, Products, Posts.
+```
+
+Three top-level tabs in navigation. Search is a utility, not a tab — accessible from the header on desktop, full-screen overlay on mobile. Every entity links to related entities: posts link to briefs they appear in, briefs link to source posts, products link to their complaints and related briefs. No dead ends.
+
+## Competitive Positioning
+
+| Tool | What it does well | Where it stops | Idea Fork's angle |
+|------|------------------|----------------|-------------------|
+| Gummysearch | Deep Reddit community exploration | Requires manual query writing, no synthesis | Zero setup — pipeline runs daily, delivers briefs |
+| SparkToro | Audience research and demographics | Marketing-focused, no product opportunity path | Maps demand-supply gaps, not audiences |
+| Exploding Topics | Trend data and emerging topics | Shows what's growing, not why or what to build | Feed-first discovery with AI-generated briefs |
+| Manual browsing + ChatGPT | Flexible, free | No aggregated data, no longitudinal signal | Multi-source pipeline with real attribution |
+
+The key differentiator is end-to-end coverage. Others give you one half of the equation (demand OR supply, raw data OR synthesis). Idea Fork covers the full pipeline: raw signal → aggregation → synthesis → brief with source links.
+
+## Business Model
+
+**Phase 1 (Current): Free browsing, validate demand.** No login, no paywall. Measure engagement: do users read briefs? Do they click source links? Do they come back weekly? Premium waitlist collects intent signals.
+
+**Phase 2 (Planned): Freemium.** Free tier = public briefs and feed. Premium = custom alerts (get notified when a new brief matches your interests), brief export (PDF/Notion), historical trend data, and API access for building workflows on top.
+
+**Why not paid from day one?** The product needs proof of retention before it needs revenue. A paywall on an unvalidated product filters out exactly the users whose behavior would tell you whether the product works.
+
+## Roadmap
+
+**Phase 1 — MVP (shipped):** Full pipeline, all three experiences (Feed, Products, Briefs), search, anonymous ratings. 8-week build.
+
+**Phase 2 — Validate and iterate:** User interviews, brief quality scoring, prompt tuning based on rating feedback. Add X/Twitter as a demand source. +4 weeks.
+
+**Phase 3 — Monetization:** Premium features, user accounts, custom pipelines. Timeline TBD based on Phase 2 signals.
