@@ -6,7 +6,7 @@ title: "Mealio — Engineering"
 
 Mealio is a three-package monorepo: `mobile` (React Native/Expo), `api` (Rust/Axum), and `infra` (Pulumi/TypeScript). Each package deploys independently through path-filtered CI/CD pipelines.
 
-The data flow is straightforward: **Mobile --> API --> PostgreSQL + R2**. Photos upload directly from the mobile client to Cloudflare R2 via presigned URLs -- the API server never touches photo bytes. AI analysis runs asynchronously in a background Tokio task, fully decoupled from the request-response cycle.
+The data flow is straightforward: **Mobile --&gt; API --&gt; PostgreSQL + R2**. Photos upload directly from the mobile client to Cloudflare R2 via presigned URLs -- the API server never touches photo bytes. AI analysis runs asynchronously in a background Tokio task, fully decoupled from the request-response cycle.
 
 ```
 Mobile Client (React Native / Expo 55)
@@ -19,418 +19,62 @@ Mobile Client (React Native / Expo 55)
   |-- Presigned PUT --> Cloudflare R2 (direct upload)
 ```
 
-## Mobile Architecture
+## Dual-Mode Data Flow
 
-### Framework Choices
+The app works in two modes -- guest (no account) and authenticated -- but the UI layer never knows which path is active. A `useEntryData()` hook abstracts the difference.
 
-| Component | Choice | Rationale |
-|-----------|--------|-----------|
-| Runtime | React Native 0.83 + Expo 55 | Cross-platform with native camera access; EAS for OTA updates and cloud builds |
-| Navigation | Expo Router (file-based) | Convention over configuration; built-in deep linking support |
-| Language | TypeScript (strict) | Compile-time safety across the entire mobile codebase |
+**Guest mode** stores everything locally in MMKV. On capture, the entry is saved to device storage, and a Zustand version bump triggers a re-render.
 
-### Three-Layer State Management
+**Auth mode** enqueues captures into an upload queue. A background processor picks up pending items, uploads photos to R2 in parallel via presigned URLs, creates the entry on the server, fires off an AI analysis request, and invalidates cached queries.
 
-The app separates state into three distinct layers, each optimized for its domain:
-
-**Client state -- Zustand v5**
-- `useGuestEntryStore` -- local-only entries for guest mode (persisted via MMKV)
-- `useUploadQueueStore` -- photo upload queue with retry tracking (persisted via MMKV)
-
-**Server state -- TanStack Query v5**
-- `useEntryListQuery` / `useEntryDetailQuery` -- paginated fetching with background refetch
-- `useCreateEntryMutation` / `useUpdateEntryMutation` / `useDeleteEntryMutation` -- optimistic mutations
-- `useAiAnalysisQuery` -- polls analysis status every 3 seconds until `completed` or `failed`
-- `useNutritionStatsQuery` / `useOverviewQuery` -- aggregated statistics
-
-**Local persistence -- MMKV**
-- Auth tokens, user preferences, guest entries, upload queue state
-- MMKV was chosen over AsyncStorage for synchronous read/write -- critical for the capture flow where any async delay breaks the 1-second target (MMKV is roughly 30x faster)
-
-Query configuration: `staleTime: 5min`, `gcTime: 30min`. After mutations, both `diary.all()` and `statistics.all()` query keys are invalidated.
-
-### Feature-Sliced Design Layers
-
-```
-src/
-  app/              # Providers, error boundaries, overlay system
-  widgets/          # Composite blocks (entry-grid, recent-entries)
-  features/         # User interactions (auth, capture-meal, entry-feed, settings)
-  entities/         # Domain objects (entry, meal, user) with API + model layers
-  shared/           # Infrastructure (api, i18n, storage, design tokens, UI primitives)
-```
-
-Import rule: each layer can only import from layers below it. `features/` --> `entities/` --> `shared/`. No lateral imports between features. Enforced via barrel exports.
-
-### Dual-Mode Data Flow
-
-The `useEntryData()` hook abstracts the mode difference so the UI layer never knows which path is active:
-
-**Guest mode:**
-```
-capture --> entryStorageUtils.saveEntry()
-  --> MMKV storage updated
-  --> guestEntryStore.bump() (Zustand)
-  --> useEntryStorage hook detects version change
-  --> UI re-renders
-```
-
-**Auth mode:**
-```
-capture --> uploadQueueStore.enqueue() (Zustand)
-  --> useUploadProcessor picks up pending item
-  --> validate photo URIs (file://, ph://, content://, asset-library://)
-  --> upload photos to R2 in parallel (presigned PUT)
-  --> entryApi.create() on server
-  --> photoApi.createPhoto() to link photos
-  --> POST /diary/{id}/analyze (fire & forget)
-  --> queryClient.invalidateQueries(diary.all(), statistics.all())
-  --> queue item removed
-```
-
-On login, a `useMigration` hook transfers all guest entries to the server in a single batch, then clears MMKV.
-
-### Provider Stack
-
-```tsx
-<GestureHandlerRootView>
-  <ErrorBoundary>               {/* Sentry crash reporting */}
-    <QueryClientProvider>       {/* TanStack Query */}
-      <I18nextProvider>         {/* i18next (EN + KO, 7 namespaces) */}
-        <ThemeProvider>         {/* Light/Dark/System */}
-          <OverlayProvider>     {/* Toast, bottom sheet, confirm dialog */}
-            <AppInitializer>    {/* Load auth state, sync offline data */}
-              <UploadProcessorMount />  {/* Background upload queue */}
-              {children}
-            </AppInitializer>
-          </OverlayProvider>
-        </ThemeProvider>
-      </I18nextProvider>
-    </QueryClientProvider>
-  </ErrorBoundary>
-</GestureHandlerRootView>
-```
-
-### Navigation (Expo Router)
-
-File-based routing with typed routes:
-
-```
-app/
-  _layout.tsx         # Root layout (Sentry, navigation)
-  index.tsx           # Home --> Camera view
-  auth.tsx            # Auth screen
-  diary/
-    _layout.tsx       # Diary stack layout
-    index.tsx         # Diary feed (month/week)
-    search.tsx        # Search & filter
-    [id].tsx          # Entry detail (edit)
-  settings.tsx        # Settings
-```
-
-## API Architecture
-
-### Rust/Axum with Tower Middleware
-
-| Crate | Role |
-|-------|------|
-| `axum` 0.8 | HTTP framework with Tower middleware ecosystem |
-| `tokio` | Multi-threaded async runtime with signal handling |
-| `sqlx` | Compile-time checked SQL queries against PostgreSQL |
-| `jsonwebtoken` | JWT HS256 signing and verification |
-| `blake3` | Fast cryptographic hashing for token storage |
-| `tower-http` | CORS, request tracing, timeout middleware |
-| `tower_governor` | Rate limiting (auth: 10/min, global: 60/min) |
-| `aws-sdk-s3` | Presigned URL generation (S3-compatible, used with R2) |
-| `reqwest` | HTTP client for Gemini API calls and photo downloads |
-| `bigdecimal` | Precise decimal arithmetic for nutrition values |
-| `sentry` | Error tracking with Tower integration (20% trace sampling) |
-| `utoipa` | OpenAPI spec generation with Swagger UI |
-
-### Application State
-
-```rust
-pub struct AppState {
-    pub db: PgPool,                     // Max 10 connections, 3s timeout
-    pub jwt_secret: String,             // HS256 signing key
-    pub google_client_id: String,       // OAuth verification
-    pub apple_team_id: String,          // Apple ID verification
-    pub apple_bundle_id: String,        // Apple bundle check
-    pub jwks_cache: JwksCache,          // 1-hour TTL, auto-refreshed
-    pub s3_client: aws_sdk_s3::Client,  // R2-compatible S3 client
-    pub r2_bucket: String,              // "mealio-uploads"
-    pub r2_public_url: String,          // Public R2 domain
-    pub gemini_api_key: String,         // AI analysis
-    pub gemini_model: String,           // Model selection
-    pub http_client: reqwest::Client,   // Shared HTTP client
-}
-```
-
-All secrets injected via environment variables sourced from GCP Secret Manager at runtime. No secrets in code or config files.
-
-### Middleware Stack
-
-Requests flow through five middleware layers in order:
-
-```
-Request -->
-  1. SentryHttpLayer      --> Error tracking + performance monitoring
-  2. TraceLayer            --> Structured request/response logging (JSON)
-  3. CorsLayer             --> CORS headers (env-configurable origins)
-  4. TimeoutLayer(30s)     --> Request timeout
-  5. RateLimitLayer        --> Auth: 10/min, Global: 60/min
-  --> Router --> Handler --> Response
-```
-
-### Module Structure
-
-```
-api/src/
-  main.rs               # Server bootstrap, signal handling, middleware
-  lib.rs                # AppState definition
-  error.rs              # AppError enum + RFC 9457 ProblemDetail
-  extractors.rs         # AuthUser, Db extractors
-  response.rs           # Typed response wrappers (Ok, Created, Accepted, NoContent)
-  features/
-    auth/               # OAuth verification, JWT issuance, JWKS caching
-    diary/              # CRUD for diary_entries + entry_locations
-    photos/             # Entry photo management (max 10, primary flag)
-    nutrition/          # User nutrition upsert/delete
-    uploads/            # Presigned URL generation
-    ai_analyses/        # Gemini integration + async analysis pipeline
-    ingredients/        # Trigram search + entry-ingredient linking
-    statistics/         # Aggregated nutrition/meal stats
-    users/              # Profile + settings
-```
-
-### Error Handling
-
-All errors return RFC 9457 Problem Detail JSON. Database errors auto-map:
-
-```
-RowNotFound       --> 404 Not Found
-UniqueViolation   --> 409 Conflict
-ForeignKeyViolation --> 400 Bad Request
-CheckViolation    --> 400 Bad Request
-Other             --> 500 Internal (auto-reported to Sentry)
-```
-
-**37 API endpoints** across 9 feature modules + 5 system endpoints (health, deep link fallback, well-known files, Swagger UI).
-
-## Database Design
-
-### PostgreSQL 18 on Neon
-
-Serverless PostgreSQL with automatic scaling, branching for dev environments, and point-in-time recovery. Two extensions: `uuid-ossp` for UUID generation and `pg_trgm` for trigram-based fuzzy search.
-
-### Schema (11 tables, 10 migrations)
-
-| Table | Purpose | Key Constraints |
-|-------|---------|----------------|
-| `users` | User accounts | Soft delete via `deleted_at`; unique email |
-| `user_auth_providers` | OAuth provider links | `UNIQUE(provider, provider_uid)` -- multi-provider support |
-| `user_settings` | Preferences (theme, language) | Auto-created via trigger on user insert |
-| `auth_tokens` | Refresh token tracking | BLAKE3 hashed; expiry + revocation columns |
-| `diary_entries` | Meal records | Rating 0-5, soft delete, indexed on `(user_id, eaten_at)` |
-| `entry_locations` | GPS coordinates | One-to-one with diary entry |
-| `entry_photos` | Photo URLs | Max 10 per entry (DB trigger); one primary (partial unique index) |
-| `user_nutrition` | Manual nutrition data | All fields `NUMERIC(8,2)`, non-negative constraints |
-| `ai_analyses` | Gemini analysis results | Status state machine, raw JSON response, confidence score |
-| `ingredients` | Normalized ingredient list | Trigram GIN index for fuzzy search |
-| `entry_ingredients` | Entry-ingredient junction | `UNIQUE(entry_id, ingredient_id)` |
-
-**Enum:** `meal_type` -- breakfast, lunch, dinner, snack, dessert, drink, other.
-
-**Database triggers:**
-- `trigger_set_updated_at` -- auto-updates `updated_at` on 6 tables
-- `check_max_photos` -- enforces 10-photo limit per entry at the database level
-- `auto_create_user_settings` -- creates default settings row on user creation
-
-**Indexing strategy:**
-- Composite indexes on `(user_id, eaten_at)` and `(user_id, deleted_at)` for filtered diary queries
-- Partial unique index on `entry_photos(entry_id) WHERE is_primary = true`
-- Trigram GIN index on `ingredients(name)` for fuzzy search
-- Partial index on `ai_analyses(status)` for pending/processing lookups
-
-### SQLx Compile-Time Verification
-
-All SQL queries are verified against the actual database schema at build time. The `.sqlx/` directory contains pre-compiled query metadata. CI and Docker builds use `SQLX_OFFLINE=true` -- no live database needed. After changing any query, regenerate with `cargo sqlx prepare`.
-
-This eliminates an entire class of runtime errors. No query typos, no column mismatches, no type coercion bugs.
+On login, a migration hook transfers all guest entries to the server in a single batch, then clears local storage. The user never loses data regardless of when they decide to create an account.
 
 ## Upload Pipeline
 
-Photos never pass through the API server. The pipeline:
+Photos never pass through the API server. This was a deliberate decision -- keeping photo bytes off the server means lower memory, lower bandwidth costs, and simpler horizontal scaling.
 
-1. Mobile requests a presigned URL: `POST /api/v1/uploads/presign`
-2. API generates a 15-minute presigned PUT URL for R2 (key format: `photos/{user_id}/{uuid}.{ext}`)
-3. Mobile uploads directly to R2 via PUT (supports JPEG, PNG, WebP, HEIC)
-4. Mobile links the photo to the entry: `POST /api/v1/diary/{entry_id}/photos`
+1. Mobile requests a presigned URL from the API
+2. API generates a 15-minute presigned PUT URL for R2
+3. Mobile uploads directly to R2 via PUT (JPEG, PNG, WebP, HEIC)
+4. Mobile links the uploaded photo to the diary entry
 
-On Android, `XMLHttpRequest` is used instead of `fetch()` because `fetch()` cannot read `file://` URIs. Photos are uploaded in parallel per entry, but entries are processed sequentially to prevent race conditions.
+One platform quirk: on Android, `XMLHttpRequest` is used instead of `fetch()` because `fetch()` cannot read `file://` URIs. Photos upload in parallel per entry, but entries process sequentially to prevent race conditions.
 
 ## AI Analysis Pipeline
 
-The analysis is fully asynchronous using a trigger-and-poll pattern:
+Analysis is fully asynchronous using a trigger-and-poll pattern. This avoids long-lived HTTP connections and lets the client remain responsive.
 
-**Trigger (API handler):**
-```
-POST /api/v1/diary/{entry_id}/analyze
-  --> verify ownership (AuthUser)
-  --> check: has photos? (400 if none)
-  --> idempotency: return existing if pending/completed; only retry if failed
-  --> INSERT ai_analyses (status = 'pending')
-  --> tokio::spawn background task
-  --> return 202 Accepted
-```
+**Trigger:** The client calls `POST /diary/{entry_id}/analyze`. The API validates ownership, checks for photos, inserts a pending analysis record, spawns a background Tokio task, and immediately returns 202 Accepted. The endpoint is idempotent -- it returns the existing result if one is already pending or completed, and only retries on failure.
 
-**Background task (Tokio):**
-```
-  --> UPDATE status = 'processing'
-  --> fetch photo URLs from entry_photos
-  --> validate each URL against R2 public prefix (SSRF protection)
-  --> download photos (max 5, max 20MB each)
-  --> base64 encode --> build Gemini request
-  --> POST to Gemini API (temperature: 0.1, structured JSON schema)
-  --> parse response --> BigDecimal conversion for nutrition values
-  --> UPDATE ai_analyses (status = 'completed', nutrition data, raw_response)
-  --> on error: UPDATE status = 'failed' with sanitized error message
-```
+**Background task:** Downloads entry photos (validating each URL against the R2 prefix to prevent SSRF), encodes them as base64, sends them to Gemini Vision API with a structured JSON schema, and writes the parsed nutrition data back to the database.
 
-**Client polling:**
-```
-useQuery('/diary/{id}/analysis', { refetchInterval: 3000 })
-  --> status = 'processing' --> show spinner
-  --> status = 'completed' --> display nutrition results
-  --> status = 'failed' --> show retry button
-```
+**Client polling:** A TanStack Query hook polls every 3 seconds, showing a spinner while processing, nutrition results on completion, or a retry button on failure.
 
-**Reliability:** On server startup, a `find_stuck()` query identifies analyses stuck in `pending`/`processing` for more than 5 minutes and resets them. Client polling requests also keep the Cloud Run instance alive while the background task runs (typically 5-30 seconds).
+**Reliability:** On server startup, a recovery query finds analyses stuck in pending/processing for over 5 minutes and resets them. Client polling also keeps the Cloud Run instance alive while the background task runs (typically 5-30 seconds).
 
 ## Authentication Flow
 
 ```
 Mobile (native OAuth SDK)
   --> POST /api/v1/auth/sign-in with ID token
-  --> API verifies token via JWKS (Google: tokeninfo; Apple: cached JWKS, 1-hour TTL)
+  --> API verifies via JWKS (Google: tokeninfo; Apple: cached JWKS, 1-hour TTL)
   --> Find or create user + link auth provider
-  --> Issue JWT (HS256) + refresh token
-  --> Store refresh token hash (BLAKE3) in auth_tokens
+  --> Issue JWT (HS256) + refresh token (BLAKE3 hashed in DB)
   --> Return: { access_token, refresh_token, expires_in, user }
-
-Mobile stores:
-  --> access + refresh tokens in expo-secure-store (iOS Keychain / Android Keystore)
-  --> token expiry in MMKV (for pre-emptive refresh checks)
-
-Subsequent requests:
-  --> AuthUser extractor validates JWT from Authorization: Bearer header
-  --> Pre-emptive refresh 30s before expiry, mutex-protected
-  --> On 401: refresh + retry once (no further retries)
-  --> Refresh token reuse detection via BLAKE3 hash comparison
 ```
 
-Multi-provider support: a single user can link both Google and Apple accounts via the `user_auth_providers` junction table.
+Tokens are stored in expo-secure-store (iOS Keychain / Android Keystore). The client refreshes pre-emptively 30 seconds before expiry, mutex-protected to avoid duplicate refreshes. On 401, it retries once after refreshing -- no further retries.
 
-## Infrastructure
+A single user can link both Google and Apple accounts via a junction table, so switching sign-in providers never creates a duplicate account.
 
-### Cloud Resources (Pulumi IaC, TypeScript)
+## Key Architecture Decisions
 
-All infrastructure declared in code with `protect: true` on stateful resources:
+**Rust for the API** -- A meal tracking app is photo-heavy and latency-sensitive. Rust on Cloud Run gives roughly 100ms cold starts, low memory (512MB is plenty), and the confidence of compile-time checked SQL via SQLx. No query typos, no column mismatches, no type coercion bugs at runtime.
 
-**GCP Cloud Run** (`mealio-api`)
-- Scaling: 0-3 instances (scale-to-zero for cost optimization)
-- Resources: 1 vCPU, 512MB RAM, startup CPU boost enabled
-- Concurrency: 80 requests/instance, 30s timeout
-- Health: startup probe (4s period, 5 failure threshold), liveness probe (15s period)
+**Cloudflare R2 for storage** -- Zero egress fees are essential for a photo-heavy app. The S3-compatible API means standard tooling works out of the box.
 
-**Cloudflare R2** (`mealio-uploads`)
-- Private bucket, East North America region
-- Zero egress fees -- essential for a photo-heavy application
+**Scale-to-zero infrastructure** -- Cloud Run, Neon (serverless Postgres), and R2 all scale to zero. The entire stack costs $0 at idle, with costs proportional to actual usage.
 
-**Neon PostgreSQL 18**
-- Region: `aws-us-east-1`
-- Serverless: auto-suspend on idle, auto-scale on demand
-- Short-term point-in-time recovery
+**All errors as RFC 9457 Problem Detail** -- Database errors auto-map to HTTP status codes (RowNotFound to 404, UniqueViolation to 409, etc.). No stack traces leak in production; 5xx errors auto-report to Sentry.
 
-**GCP IAM -- Workload Identity Federation**
-- OIDC provider: GitHub Actions
-- Attribute condition: `assertion.repository == "zzoohub/mealio"` (scoped to this repo only)
-- No long-lived service account keys -- GitHub Actions authenticates via short-lived OIDC tokens
-
-**GCP Artifact Registry** -- Docker images tagged by git commit SHA for traceability.
-
-### Cost Profile
-
-$0 at idle. Cloud Run scales to zero. Neon suspends on idle. R2 charges only for storage (no egress). The entire infrastructure cost is proportional to actual usage.
-
-## CI/CD Pipelines
-
-Four GitHub Actions workflows, each path-filtered:
-
-### 1. API CI/CD (`api.yml`)
-
-Triggers on `api/**` changes (push to main + PRs):
-
-```
-Test --> cargo build (SQLX_OFFLINE=true) + cargo test
-Deploy (main only) --> GCP auth via WIF --> Docker build
-  --> push to Artifact Registry (tagged: commit SHA) --> gcloud run deploy
-```
-
-### 2. Mobile CI (`mobile-ci.yml`)
-
-Triggers on `mobile/**` PRs:
-
-```
-bun install (frozen lockfile) --> expo lint --> jest --ci
-```
-
-### 3. Mobile Build (`mobile-build.yml`)
-
-Manual trigger with inputs (platform, profile, submit):
-
-```
-eas build --platform {platform} --profile {profile}
-  --> (optional) eas submit --platform {platform}
-```
-
-### 4. Mobile OTA (`mobile-ota.yml`)
-
-Triggers on `mobile/**` push to main:
-
-```
-Test --> (pass) --> eas update --channel production
-```
-
-## Security Architecture
-
-| Layer | Protection |
-|-------|-----------|
-| Transport | HTTPS only (Cloud Run enforced) |
-| Auth tokens | BLAKE3 hashed in DB; stored in expo-secure-store on device |
-| Token refresh | Pre-emptive (30s before expiry); reuse detection via hash comparison |
-| Rate limiting | Auth: 10/min, Global: 60/min (`tower_governor`) |
-| CORS | Env-configurable origins; permissive in dev only |
-| SQL injection | SQLx compile-time parameterized queries |
-| Upload security | Presigned URLs with 15-minute expiry; validated content types |
-| SSRF protection | Photo URLs validated against R2 prefix before sending to Gemini |
-| Error leakage | RFC 9457 responses; no stack traces, generic titles on 5xx |
-| Ownership | `verify_ownership(entry_id, user_id)` on every entry operation |
-| Timezone | IANA timezone validation via regex whitelist |
-
-## Observability
-
-- **Sentry** -- API: `sentry-tower` middleware for automatic HTTP span capture, 20% trace sampling. Mobile: `@sentry/react-native` with ErrorBoundary. All 5xx errors auto-reported.
-- **PostHog** -- Product analytics for feature usage, retention, and funnel analysis.
-- **Structured logging** -- `tracing` + `tracing-subscriber` with JSON output, configurable via `RUST_LOG`.
-- **Health check** -- `GET /health` runs `SELECT 1` against PostgreSQL. Used by Cloud Run startup (4s) and liveness (15s) probes.
-
-## Performance Considerations
-
-**Database:** Connection pool max 10, 3s acquire timeout. Composite indexes on hot query paths. Pagination clamped to 1-100 per page. Soft-delete index prevents full table scans.
-
-**Mobile:** FlashList for virtualized list rendering. `expo-image` with built-in caching. MMKV for synchronous persistence (JSI-based, ~30x faster than AsyncStorage). 100ms debounce on batch writes.
-
-**Upload:** Direct client-to-R2 upload bypasses the API server entirely. Photos upload in parallel per entry. Sequential entry processing prevents race conditions. Background processing keeps UI non-blocking.
-
-**Cold start:** Rust binary starts in ~100ms on Cloud Run. 512MB memory is sufficient. Startup CPU boost enabled for faster first request.
+**Workload Identity Federation for CI/CD** -- GitHub Actions authenticates to GCP via short-lived OIDC tokens scoped to the repository. No long-lived service account keys to rotate or leak.

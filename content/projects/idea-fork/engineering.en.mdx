@@ -8,231 +8,61 @@ Idea Fork uses a split-path architecture built around one key observation: the d
 
 **The split:**
 
-- **Web App (Next.js on Vercel)** — Queries Neon PostgreSQL directly via `@neondatabase/serverless`. Handles all user-facing reads and the single write action (brief ratings via Server Actions). No API server in the production read path.
-- **API + Pipeline (FastAPI on GCP Cloud Run)** — Runs only as a daily scheduled pipeline. Fetches data from 5+ sources, tags posts via LLM, clusters them, and synthesizes briefs. Writes to the same Neon database. Not deployed for serving user requests.
-- **Database (Neon PostgreSQL)** — Single source of truth. Accessed by both the web app (reads) and the pipeline (writes). Scale-to-zero pricing means near-zero cost when idle.
+- **Web App (Next.js on Vercel)** — Queries Neon PostgreSQL directly via `@neondatabase/serverless`. No API server in the production read path.
+- **API + Pipeline (FastAPI on GCP Cloud Run)** — Runs only as a daily scheduled pipeline. Fetches data from 5+ sources, tags posts via LLM, clusters them, and synthesizes briefs. Not deployed for serving user requests.
+- **Database (Neon PostgreSQL)** — Single source of truth. Scale-to-zero pricing means near-zero cost when idle.
 
-The data access layer is switchable via the `DATA_SOURCE` env var. In production, it's `neon` (Next.js queries the database directly). For local development, it's `api` (Next.js calls the FastAPI server). Switching back to the API server for production reads requires only changing an environment variable — no code changes.
+The data access layer is switchable via the `DATA_SOURCE` env var (`neon` for production, `api` for local dev). Switching back to the API server for production reads requires only changing an environment variable.
 
 ```
 User → Next.js (Vercel) → Neon DB ← FastAPI Pipeline (Cloud Run)
          ↑ reads directly                  ↑ writes on schedule
 ```
 
-## Architecture Decision Records
+## Key Architecture Decisions
 
-### ADR-1: Python (FastAPI) for Backend
+### ADR-1: Python for the Pipeline
 
-The pipeline does LLM tagging (google-genai SDK), embedding vectorization (Gemini Embedding API), density-based clustering (scikit-learn HDBSCAN), and multi-source data ingestion. Python's ML/data ecosystem made this straightforward. The alternative was TypeScript end-to-end, but scikit-learn, numpy, and the google-genai SDK are significantly more mature in Python.
+The pipeline does LLM tagging, embedding vectorization, density-based clustering (scikit-learn), and multi-source data ingestion. Python's ML/data ecosystem made this straightforward. TypeScript end-to-end was considered, but scikit-learn, numpy, and the google-genai SDK are significantly more mature in Python.
 
-The bottleneck is LLM API latency (30s+ for batch synthesis), not server-side compute. Rust's speed advantage would be invisible here. Python's async support (FastAPI + asyncpg) handles the I/O-bound pipeline efficiently.
+The bottleneck is LLM API latency (30s+ for batch synthesis), not compute. Rust's speed advantage would be invisible here. Trade-off: higher memory and 1-2s cold starts on Cloud Run, acceptable because the pipeline is not user-facing.
 
-Trade-off: higher memory footprint and 1-2s cold starts on Cloud Run, vs ~200ms in Rust. Acceptable because the pipeline isn't user-facing.
+### ADR-7: HDBSCAN over LLM Clustering
 
-### ADR-2: Single Service + Scheduled Pipeline
+The original approach sent all posts to the LLM and asked it to group them. This hit three walls: O(n) token cost, context window limits (around 50 posts per call), and degrading accuracy with volume.
 
-The API server and data pipeline share the same codebase, domain models, and database. They're not separate microservices — the pipeline runs as a Cloud Run Job on a cron schedule, using the same Docker image.
+The replacement: vectorize posts via Gemini Embedding API, then cluster via HDBSCAN (density-based, from scikit-learn). HDBSCAN automatically determines cluster count, handles noise points, and scales to thousands of posts. The LLM is used only for labeling each cluster — a short, cheap call per cluster instead of a massive prompt containing all posts. This cut clustering costs by roughly 10x.
 
-The alternative was splitting into two services (API + pipeline). Rejected because a solo developer can't justify the ops overhead of managing two deployment pipelines, two sets of monitoring, and inter-service networking. The workloads don't need independent scaling at MVP load (~500 WAU, ~50 req/s peak).
-
-If the pipeline grows to process millions of posts per day, extraction to a separate service is straightforward — the hexagonal architecture already isolates domain logic from infrastructure.
-
-### ADR-3: Hexagonal Architecture (Ports & Adapters)
-
-The pipeline integrates with Reddit API, Product Hunt API (GraphQL), App Store, Play Store, RSS feeds, Google Gemini (three different model endpoints), and Google Trends. Any of these could change, break, or need replacement.
-
-Hexagonal architecture defines ports (Protocol ABCs in Python) for each integration point. Adapters implement the protocols. Domain logic depends on ports, never on concrete adapters. This means swapping from Reddit to a different forum source, or from Gemini to Claude for synthesis, requires writing a new adapter without touching business logic.
-
-The code structure follows domain modules: `post`, `brief`, `product`, `pipeline`. Each module owns its domain logic, port definitions, and adapter implementations. Read APIs are independent — no cross-module queries on the read path.
-
-### ADR-4: Neon as Sole Data Store
-
-PostgreSQL handles everything: relational data, full-text search (tsvector + pg_trgm), JSON storage (JSONB for denormalized brief data), and cursor-based pagination. No Redis cache, no search service, no document store.
-
-At < 10K DAU, PostgreSQL with proper indexes handles the read load directly. Adding Redis would mean cache invalidation complexity for a pipeline that writes once daily. Adding Meilisearch would double the ops surface for search quality that pg_trgm already provides.
-
-Neon's scale-to-zero pricing is critical for a pre-revenue MVP — the database costs $0 when idle. Neon's branching model provides isolated database environments for development without separate instances.
-
-### ADR-7: Embedding Clustering (HDBSCAN) over LLM Clustering
-
-The original approach sent all posts to the LLM and asked it to group them. This hit three walls: O(n) token cost, context window limits (~50 posts per call), and degrading accuracy with volume.
-
-The replacement: vectorize posts via Gemini Embedding API, then cluster via HDBSCAN (density-based, from scikit-learn). HDBSCAN automatically determines cluster count, handles noise points (unclustered outliers), and scales to thousands of posts. The LLM is used only for labeling each cluster — a short, cheap call per cluster rather than a massive prompt with all posts.
-
-K-means was considered and rejected because it requires specifying the cluster count upfront. Local sentence-transformers were rejected because Gemini embeddings are higher quality and the API cost is negligible.
+K-means was rejected because it requires specifying cluster count upfront. Local sentence-transformers were rejected because Gemini embeddings are higher quality at negligible API cost.
 
 ### ADR-8: Direct Neon Access from Next.js
 
-In production, Next.js queries Neon directly using `@neondatabase/serverless`. The API server is not in the production read path. This eliminates a network hop (Next.js → Cloud Run → Neon becomes Next.js → Neon) and removes an infrastructure component from the critical path.
+In production, Next.js queries Neon directly using `@neondatabase/serverless`, eliminating a network hop (Next.js to Cloud Run to Neon becomes Next.js to Neon). The `server-only` package prevents accidental client-side imports of database code. Rating writes use Next.js Server Actions that write to Neon directly.
 
-Each entity's data access file checks `DATA_SOURCE` and dynamically imports either the Neon query module or the `apiFetch` client. The `server-only` package prevents accidental client-side imports of database code. Rating writes use Next.js Server Actions that write to Neon directly.
+Trade-off: SQL queries are duplicated in TypeScript (ported from the Python originals). Acceptable because the query surface is small and stable.
 
-Trade-off: SQL queries are duplicated in TypeScript (ported from the Python originals). Schema changes require updating both codebases. Acceptable because the query surface is small and stable.
+PostgreSQL handles everything with no additional infrastructure: relational data, full-text search (tsvector + pg_trgm), JSON storage (JSONB for denormalized brief data), and cursor-based pagination. At MVP scale, adding Redis or a dedicated search service would only increase ops complexity for a pipeline that writes once daily.
 
-## Data Pipeline Deep-Dive
+## Data Pipeline
 
-The pipeline runs daily, triggered by GCP Cloud Scheduler. It executes on Cloud Run (1 vCPU, 1Gi RAM, 0-3 instances) and processes ~4K posts per run across all sources. An advisory lock (`pg_try_advisory_lock`) prevents overlapping runs.
+The pipeline runs daily via GCP Cloud Scheduler, processing around 4K posts per run. An advisory lock prevents overlapping runs.
 
-### Stage 1: Fetch
+**Five stages:**
 
-Concurrent data collection via `asyncio.gather()` with semaphore-controlled review fetching (3 concurrent):
+1. **Fetch** — Concurrent collection from Reddit, RSS (Hacker News, TechCrunch), App Store, Play Store, and Product Hunt. Posts are upserted via `ON CONFLICT` to avoid duplicates.
+2. **Tag** — Batches of 20 posts sent to Gemini Flash Lite. Each post receives a type classification (7 actionable + 3 non-actionable categories), sentiment, and 2-3 topic tags.
+3. **Score** — Updates trending scores and complaint counts on products based on shared tags with posts.
+4. **Cluster** — Batches of 200 tagged posts vectorized via Gemini Embedding API, then clustered via HDBSCAN. Each cluster gets a label from a short LLM call.
+5. **Synthesize** — For each cluster, fetches Google Trends data and related products, then sends everything to Gemini Flash to generate a complete opportunity brief (problem statement, opportunity analysis, solution directions, competitive landscape).
 
-- **Reddit** — ~44 subreddits, local-only pipeline trigger (not in production due to API policy). Data flows to production DB.
-- **RSS** — Hacker News (50+ point threshold), TechCrunch. Parsed via feedparser.
-- **App Store** — iTunes Search API, 20 keyword categories for review discovery.
-- **Play Store** — google-play-scraper (unofficial), 20 keyword categories.
-- **Product Hunt** — GraphQL API with token auth, 30 products per run.
+Each brief stores source references in two places: a normalized `brief_source` table (referential integrity) and a `source_snapshots` JSONB column (fast reads without joins). This dual storage is intentional — the read path never needs cross-table joins for a brief detail page.
 
-Posts are upserted via `INSERT ... ON CONFLICT (source, external_id)` — re-fetched posts update scores and comment counts without creating duplicates.
+## Infrastructure
 
-### Stage 2: Tag
+- **Web App**: Vercel (auto-deploy on push to main, preview deploys on PRs)
+- **Pipeline**: GCP Cloud Run (1 vCPU, 1Gi RAM, scale-to-zero)
+- **Database**: Neon PostgreSQL (scale-to-zero, branching for dev environments)
+- **IaC**: Pulumi (TypeScript) for declarative management of GCP + Neon + Vercel
+- **CI/CD**: GitHub Actions — web via Vercel integration, API via Docker to Artifact Registry to Cloud Run
 
-Batches of 20 posts sent to Gemini Flash Lite. Each post receives:
-
-- `post_type` — one of 10 categories: 7 actionable (need, complaint, feature_request, alternative_seeking, comparison, question, review) + 3 non-actionable (showcase, discussion, other)
-- `sentiment` — positive, negative, neutral, or mixed
-- Topic tags — 2-3 freeform category tags, with few-shot prompting to reuse existing tags
-
-Failed batches are marked with `tagging_status = 'failed'` and retried on the next run. Only actionable post types feed into the clustering stage.
-
-### Stage 3: Score
-
-Updates `trending_score` and `complaint_count` on products based on matched post tags. Products link to complaint posts through the `product_tag` → `post_tag` join path — shared tags are the connection mechanism.
-
-### Stage 4: Cluster
-
-Batches of 200 tagged posts are vectorized via Gemini Embedding API, then clustered via HDBSCAN (`min_cluster_size=3`, `min_samples=2`). Noise points (posts that don't fit any cluster) are grouped as "Miscellaneous." Each cluster gets a label from a short Gemini Flash Lite call.
-
-The embedding + HDBSCAN approach replaced the original LLM-based clustering, cutting costs by ~10x and removing the context window bottleneck.
-
-### Stage 5: Synthesize
-
-For each cluster, the pipeline:
-
-1. Fetches Google Trends data for relevant keywords (parallel)
-2. Fetches related products from the database (parallel)
-3. Sends the cluster's posts, trend data, and competitive context to Gemini Flash (temperature 0.9)
-4. Gemini writes a complete brief: title, summary, problem statement, opportunity analysis, solution directions, demand signals, competitive landscape, and source snapshots
-
-Each brief stores source references in two places: the normalized `brief_source` table (referential integrity) and the `source_snapshots` JSONB column (fast reads without joins). This dual denormalization is intentional — the read path never needs to join across tables for a brief detail page.
-
-## Database Design
-
-### Schema Overview
-
-10 tables across 4 domain areas:
-
-**Posts (demand signal):**
-- `post` — Raw user complaints with source-agnostic columns (`source`, `external_id`, `subreddit` nullable for non-Reddit). `tsvector` column for full-text search. Soft delete via `deleted_at`.
-- `tag` — Freeform category tags (SaaS, Mobile App, Developer Tools). Many-to-many via `post_tag`.
-- `post_tag` — Junction table linking posts to tags.
-
-**Clusters & Briefs (synthesis):**
-- `cluster` — Groups of related posts. Label and summary from LLM.
-- `cluster_post` — Junction table. A post can belong to one cluster.
-- `brief` — AI-generated opportunity briefs. Denormalized JSONB columns for `demand_signals`, `solution_directions`, and `source_snapshots`.
-- `brief_source` — Normalized FK relationship between briefs and source posts. Redundant with `source_snapshots` by design.
-
-**Products (supply signal):**
-- `product` — Products from Product Hunt, App Store, Play Store. `source` + `external_id` pattern (same as posts). Deduplication at query time via `DISTINCT ON (lower(name))`.
-- `product_tag` — Junction table linking products to tags.
-- `product_post` — Links products to complaint posts via shared tags.
-
-**Ratings:**
-- `rating` — Anonymous brief ratings. `UNIQUE(brief_id, session_id)` prevents duplicates. `brief.upvote_count` / `downvote_count` are denormalized counters updated inline.
-
-### Key Design Decisions
-
-**TEXT + CHECK over ENUM** — `post_type` and `sentiment` use TEXT columns with CHECK constraints instead of PostgreSQL ENUMs. Adding a new type requires `ALTER TABLE` (fast) instead of `ALTER TYPE` (which can require table rewrites in older PostgreSQL versions).
-
-**Dual denormalization for briefs** — `brief_source` exists for referential integrity. `brief.source_snapshots` exists so the brief detail page loads in a single query without joining to the posts table. The JSONB is a snapshot at generation time — if a source post is later deleted, the brief retains its citation.
-
-**Generic source columns** — Posts use `source` + `external_id` instead of Reddit-specific column names. This supports the multi-source strategy without schema changes when adding new platforms.
-
-**Keyset pagination** — All listing endpoints use cursor-based pagination (base64-encoded JSON cursors encoding `{sort_field, id}`). Constant-time performance at any page depth, unlike OFFSET which degrades linearly.
-
-### Index Strategy
-
-Feed performance is the critical path (it's the landing page):
-
-- **`idx_post_feed`** — B-tree partial index on `(external_created_at DESC, id DESC) WHERE deleted_at IS NULL`. Covers the default feed sort.
-- **`idx_post_search_vector`** — GIN index on `tsvector` for full-text `@@` queries.
-- **`idx_post_title_trgm`** — GIN/pg_trgm index for `LIKE '%keyword%'` fuzzy search.
-
-All post indexes are partial (`WHERE deleted_at IS NULL`) to exclude soft-deleted rows — archived posts don't consume index space.
-
-Product search uses a pg_trgm GIN index on `product.name` for `ILIKE` queries. Brief listing uses a partial B-tree index on `published_at` for keyset pagination over published briefs.
-
-## API Design
-
-REST API with consistent conventions:
-
-- **Envelope**: `{ data, meta }` for all responses. `meta` contains pagination cursors.
-- **Errors**: RFC 9457 Problem Details (`application/problem+json`) with `type`, `title`, `status`, `detail`.
-- **Pagination**: Cursor-based (keyset). Forward-only in MVP. `cursor` + `limit` (max 100) params.
-- **Filtering**: Query string params (`?tag=saas&post_type=complaint`). Comma-separated for multi-value.
-- **Caching**: `Cache-Control: public, max-age=60` for collections, `max-age=300` for detail endpoints. Pipeline writes once daily — 60s staleness is acceptable.
-
-Key endpoints:
-
-| Endpoint | Purpose | Cache |
-|----------|---------|-------|
-| `GET /v1/posts` | Feed listing with filter/sort/search/paginate | 60s |
-| `GET /v1/briefs` | Brief listing, published only | 60s |
-| `GET /v1/briefs/{slug}` | Brief detail with `source_snapshots` (no join) | 300s |
-| `GET /v1/products` | Product listing with trending/complaint sort | 60s |
-| `GET /v1/products/{slug}` | Product detail + linked complaints + related briefs | 300s |
-| `POST /v1/briefs/{id}/ratings` | Anonymous rating (session cookie, 10/min rate limit) | no-store |
-
-The single write endpoint (ratings) uses `slowapi` for rate limiting at 10 requests/min per session. Duplicate ratings hit a UNIQUE constraint and return 409.
-
-## Infrastructure & Deployment
-
-| Component | Platform | Key config |
-|-----------|----------|------------|
-| Web App | Vercel | Auto-deploy on push to main, preview deploys on PRs |
-| API + Pipeline | GCP Cloud Run | 1 vCPU, 1Gi RAM, 0-3 instances, scale-to-zero |
-| Pipeline trigger | GCP Cloud Scheduler | Daily cron |
-| Database | Neon PostgreSQL | us-east-1, scale-to-zero, branching for dev environments |
-| IaC | Pulumi (TypeScript) | Declarative management for GCP + Neon + Vercel |
-
-**CI/CD:** GitHub Actions handles all deployments. Web deploys via Vercel's GitHub integration (zero-config). API deploys via Docker build → GCP Artifact Registry → Cloud Run rolling update. Rollback: Vercel instant rollback; Cloud Run traffic split to previous revision.
-
-**Environment topology:** Development (localhost + Neon branch), Preview (Vercel preview URL + Neon branch), Production (Vercel + Cloud Run + Neon main branch). No staging environment — Neon's branching model provides sufficient isolation.
-
-## Security Architecture
-
-| Concern | Implementation |
-|---------|---------------|
-| Data in transit | TLS 1.3 enforced by Vercel, Cloud Run, and Neon |
-| Data at rest | Neon AES-256 encryption at rest (default) |
-| Secrets | GCP Secret Manager for API keys; Vercel env vars for web. Never in code. |
-| Input validation | Pydantic models (API), Zod schemas (web). Parameterized SQL (SQLAlchemy, `@neondatabase/serverless`). |
-| XSS | React escapes output by default. CSP headers with strict `default-src 'self'`. |
-| CORS | API allows only the production web app origin. No wildcard. |
-| Rate limiting | 10 ratings/min per session (slowapi), 100 req/min per IP globally |
-| Auth | None in MVP. Anonymous sessions via httpOnly cookie for ratings. |
-| DB access | `server-only` package prevents client-side database imports in Next.js |
-| GDPR | No PII collected. Anonymous session IDs. Post data is public with links to originals. |
-
-## Performance Considerations
-
-**Expected load (MVP):** 500 WAU → ~100 DAU → ~10 concurrent users peak → ~50 req/s. The system is sized for this, not for scale — premature optimization for 100K users would waste development time.
-
-**Feed latency target:** < 200ms TTFB (p95). Achieved via direct Neon queries with partial indexes. No cache layer needed at this load.
-
-**Pipeline budget:** < $5/day LLM cost. Gemini Flash Lite for tagging (cheap, fast), Gemini Flash for synthesis (higher quality). Budget circuit breaker stops the pipeline if daily cost exceeds threshold.
-
-**Scaling triggers (post-MVP):**
-- p95 > 300ms → add Neon read replica
-- DAU > 10K → add Redis caching layer
-- Pipeline > 4 hours/day → extract to dedicated Cloud Run Job with more CPU
-
-## Observability
-
-- **Error tracking**: Sentry on both Next.js and FastAPI. Source maps for web.
-- **Analytics**: PostHog for page views, brief reads, source link clicks (client-side) and pipeline metrics (server-side).
-- **Logging**: Cloud Run built-in (Cloud Logging). Structured JSON from FastAPI.
-- **Alerting**: Cloud Monitoring — critical alerts for API error rate > 5% and pipeline failures; warnings for LLM cost overruns and latency spikes.
-
-No distributed tracing in MVP. Single service, no inter-service calls to trace.
+No staging environment. Neon's branching model provides sufficient isolation across development, preview, and production.

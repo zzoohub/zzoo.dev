@@ -6,7 +6,7 @@ title: "Mealio -- 엔지니어링"
 
 Mealio는 3개 패키지 모노레포입니다: `mobile` (React Native/Expo), `api` (Rust/Axum), `infra` (Pulumi/TypeScript). 각 패키지는 경로 필터링된 CI/CD 파이프라인을 통해 독립 배포됩니다.
 
-데이터 흐름은 단순합니다: **Mobile --> API --> PostgreSQL + R2**. 사진은 presigned URL을 통해 모바일에서 Cloudflare R2로 직접 업로드됩니다 -- API 서버는 사진 바이트를 절대 만지지 않습니다. AI 분석은 백그라운드 Tokio 태스크에서 비동기 실행되며, 요청-응답 사이클과 완전히 분리되어 있습니다.
+데이터 흐름은 단순합니다: **Mobile --&gt; API --&gt; PostgreSQL + R2**. 사진은 presigned URL을 통해 모바일에서 Cloudflare R2로 직접 업로드됩니다 -- API 서버는 사진 바이트를 절대 만지지 않습니다. AI 분석은 백그라운드 Tokio 태스크에서 비동기 실행되며, 요청-응답 사이클과 완전히 분리되어 있습니다.
 
 ```
 Mobile Client (React Native / Expo 55)
@@ -19,293 +19,38 @@ Mobile Client (React Native / Expo 55)
   |-- Presigned PUT --> Cloudflare R2 (직접 업로드)
 ```
 
-## 모바일 아키텍처
+## 듀얼 모드 데이터 플로우
 
-### 프레임워크 선택
+앱은 게스트(계정 없음)와 인증 두 가지 모드로 동작하지만, UI 레이어는 어떤 경로가 활성인지 모릅니다. `useEntryData()` 훅이 차이를 추상화합니다.
 
-| 구성 요소 | 선택 | 근거 |
-|-----------|------|------|
-| 런타임 | React Native 0.83 + Expo 55 | 네이티브 카메라 접근이 가능한 크로스플랫폼; OTA 업데이트와 클라우드 빌드를 위한 EAS |
-| 네비게이션 | Expo Router (파일 기반) | 설정보다 관례; 딥 링크 기본 지원 |
-| 언어 | TypeScript (strict) | 모바일 코드베이스 전체의 컴파일 타임 안전성 |
+**게스트 모드**는 모든 것을 MMKV에 로컬 저장합니다. 캡처 시 항목이 디바이스 저장소에 저장되고, Zustand 버전 범프가 리렌더를 트리거합니다.
 
-### 3계층 상태 관리
+**인증 모드**는 캡처를 업로드 큐에 넣습니다. 백그라운드 프로세서가 대기 항목을 처리하여 presigned URL로 R2에 사진을 병렬 업로드하고, 서버에 항목을 생성하고, AI 분석 요청을 보내고, 캐시된 쿼리를 무효화합니다.
 
-앱은 상태를 세 가지 레이어로 분리하며, 각각 해당 도메인에 최적화되어 있습니다:
-
-**클라이언트 상태 -- Zustand v5**
-- `useGuestEntryStore` -- 게스트 모드용 로컬 전용 항목 (MMKV로 영속)
-- `useUploadQueueStore` -- 재시도 추적이 있는 사진 업로드 큐 (MMKV로 영속)
-
-**서버 상태 -- TanStack Query v5**
-- `useEntryListQuery` / `useEntryDetailQuery` -- 백그라운드 리페치가 있는 페이지네이션 조회
-- `useCreateEntryMutation` / `useUpdateEntryMutation` / `useDeleteEntryMutation` -- 옵티미스틱 뮤테이션
-- `useAiAnalysisQuery` -- `completed` 또는 `failed`까지 3초 간격으로 분석 상태 폴링
-- `useNutritionStatsQuery` / `useOverviewQuery` -- 집계 통계
-
-**로컬 영속성 -- MMKV**
-- 인증 토큰, 사용자 설정, 게스트 항목, 업로드 큐 상태
-- AsyncStorage 대신 MMKV를 선택한 이유: 동기 읽기/쓰기가 가능하며, 비동기 지연이 1초 목표를 깨뜨리는 캡처 플로우에서 핵심적 (MMKV가 약 30배 빠름)
-
-쿼리 설정: `staleTime: 5min`, `gcTime: 30min`. 뮤테이션 후 `diary.all()`과 `statistics.all()` 쿼리 키를 무효화합니다.
-
-### Feature-Sliced Design 레이어
-
-```
-src/
-  app/              # 프로바이더, 에러 바운더리, 오버레이 시스템
-  widgets/          # 복합 블록 (entry-grid, recent-entries)
-  features/         # 사용자 인터랙션 (auth, capture-meal, entry-feed, settings)
-  entities/         # 도메인 객체 (entry, meal, user) + API/모델 레이어
-  shared/           # 인프라 (api, i18n, storage, 디자인 토큰, UI 프리미티브)
-```
-
-임포트 규칙: 각 레이어는 아래 레이어에서만 임포트 가능. `features/` --> `entities/` --> `shared/`. features 간 수평 임포트 금지. 배럴 익스포트로 강제.
-
-### 듀얼 모드 데이터 플로우
-
-`useEntryData()` 훅이 모드 차이를 추상화하여 UI 레이어는 어떤 경로가 활성인지 모릅니다:
-
-**게스트 모드:**
-```
-캡처 --> entryStorageUtils.saveEntry()
-  --> MMKV 저장소 업데이트
-  --> guestEntryStore.bump() (Zustand)
-  --> useEntryStorage 훅이 버전 변경 감지
-  --> UI 리렌더
-```
-
-**인증 모드:**
-```
-캡처 --> uploadQueueStore.enqueue() (Zustand)
-  --> useUploadProcessor가 대기 항목 처리
-  --> 사진 URI 검증 (file://, ph://, content://, asset-library://)
-  --> R2에 사진 병렬 업로드 (presigned PUT)
-  --> entryApi.create() 서버 호출
-  --> photoApi.createPhoto()로 사진 연결
-  --> POST /diary/{id}/analyze (fire & forget)
-  --> queryClient.invalidateQueries(diary.all(), statistics.all())
-  --> 큐 항목 제거
-```
-
-로그인 시, `useMigration` 훅이 모든 게스트 항목을 단일 배치로 서버에 전송한 후 MMKV를 클리어합니다.
-
-### Provider 스택
-
-```tsx
-<GestureHandlerRootView>
-  <ErrorBoundary>               {/* Sentry 크래시 리포팅 */}
-    <QueryClientProvider>       {/* TanStack Query */}
-      <I18nextProvider>         {/* i18next (EN + KO, 7개 네임스페이스) */}
-        <ThemeProvider>         {/* Light/Dark/System */}
-          <OverlayProvider>     {/* 토스트, 바텀시트, 확인 다이얼로그 */}
-            <AppInitializer>    {/* 인증 상태 로드, 오프라인 데이터 동기화 */}
-              <UploadProcessorMount />  {/* 백그라운드 업로드 큐 */}
-              {children}
-            </AppInitializer>
-          </OverlayProvider>
-        </ThemeProvider>
-      </I18nextProvider>
-    </QueryClientProvider>
-  </ErrorBoundary>
-</GestureHandlerRootView>
-```
-
-### 네비게이션 (Expo Router)
-
-타입이 있는 파일 기반 라우팅:
-
-```
-app/
-  _layout.tsx         # 루트 레이아웃 (Sentry, 네비게이션)
-  index.tsx           # 홈 --> 카메라 뷰
-  auth.tsx            # 인증 화면
-  diary/
-    _layout.tsx       # 다이어리 스택 레이아웃
-    index.tsx         # 다이어리 피드 (월/주)
-    search.tsx        # 검색 & 필터
-    [id].tsx          # 항목 디테일 (편집)
-  settings.tsx        # 설정
-```
-
-## API 아키텍처
-
-### Rust/Axum + Tower 미들웨어
-
-| 크레이트 | 역할 |
-|----------|------|
-| `axum` 0.8 | Tower 미들웨어 생태계가 있는 HTTP 프레임워크 |
-| `tokio` | 시그널 처리가 포함된 멀티스레드 비동기 런타임 |
-| `sqlx` | PostgreSQL에 대한 컴파일 타임 SQL 쿼리 검증 |
-| `jsonwebtoken` | JWT HS256 서명 및 검증 |
-| `blake3` | 토큰 저장용 빠른 암호화 해싱 |
-| `tower-http` | CORS, 요청 트레이싱, 타임아웃 미들웨어 |
-| `tower_governor` | 속도 제한 (auth: 10/min, global: 60/min) |
-| `aws-sdk-s3` | Presigned URL 생성 (S3 호환, R2에 사용) |
-| `reqwest` | Gemini API 호출 및 사진 다운로드용 HTTP 클라이언트 |
-| `bigdecimal` | 영양소 값의 정밀 소수점 산술 |
-| `sentry` | Tower 통합이 포함된 에러 추적 (20% 트레이스 샘플링) |
-| `utoipa` | Swagger UI가 포함된 OpenAPI 스펙 생성 |
-
-### 애플리케이션 상태
-
-```rust
-pub struct AppState {
-    pub db: PgPool,                     // 최대 10 커넥션, 3초 타임아웃
-    pub jwt_secret: String,             // HS256 서명 키
-    pub google_client_id: String,       // OAuth 검증
-    pub apple_team_id: String,          // Apple ID 검증
-    pub apple_bundle_id: String,        // Apple 번들 확인
-    pub jwks_cache: JwksCache,          // 1시간 TTL, 자동 갱신
-    pub s3_client: aws_sdk_s3::Client,  // R2 호환 S3 클라이언트
-    pub r2_bucket: String,              // "mealio-uploads"
-    pub r2_public_url: String,          // 공개 R2 도메인
-    pub gemini_api_key: String,         // AI 분석
-    pub gemini_model: String,           // 모델 선택
-    pub http_client: reqwest::Client,   // 공유 HTTP 클라이언트
-}
-```
-
-모든 시크릿은 환경 변수를 통해 주입됩니다 (런타임에 GCP Secret Manager에서 소싱). 코드나 설정 파일에 시크릿 없음.
-
-### 미들웨어 스택
-
-요청은 5개의 미들웨어 레이어를 순서대로 통과합니다:
-
-```
-Request -->
-  1. SentryHttpLayer      --> 에러 추적 + 성능 모니터링
-  2. TraceLayer            --> 구조화된 요청/응답 로깅 (JSON)
-  3. CorsLayer             --> CORS 헤더 (환경별 설정 가능한 오리진)
-  4. TimeoutLayer(30s)     --> 요청 타임아웃
-  5. RateLimitLayer        --> Auth: 10/min, Global: 60/min
-  --> Router --> Handler --> Response
-```
-
-### 모듈 구조
-
-```
-api/src/
-  main.rs               # 서버 부트스트랩, 시그널 처리, 미들웨어
-  lib.rs                # AppState 정의
-  error.rs              # AppError 열거형 + RFC 9457 ProblemDetail
-  extractors.rs         # AuthUser, Db 익스트랙터
-  response.rs           # 타입화된 응답 래퍼 (Ok, Created, Accepted, NoContent)
-  features/
-    auth/               # OAuth 검증, JWT 발행, JWKS 캐싱
-    diary/              # diary_entries + entry_locations CRUD
-    photos/             # 항목 사진 관리 (최대 10장, 대표 플래그)
-    nutrition/          # 사용자 영양 upsert/delete
-    uploads/            # Presigned URL 생성
-    ai_analyses/        # Gemini 통합 + 비동기 분석 파이프라인
-    ingredients/        # 트라이그램 검색 + 항목-재료 연결
-    statistics/         # 집계 영양/식사 통계
-    users/              # 프로필 + 설정
-```
-
-### 에러 처리
-
-모든 에러는 RFC 9457 Problem Detail JSON을 반환합니다. 데이터베이스 에러는 자동 매핑:
-
-```
-RowNotFound       --> 404 Not Found
-UniqueViolation   --> 409 Conflict
-ForeignKeyViolation --> 400 Bad Request
-CheckViolation    --> 400 Bad Request
-Other             --> 500 Internal (Sentry에 자동 리포트)
-```
-
-9개 feature 모듈에 걸쳐 **37개 API 엔드포인트** + 5개 시스템 엔드포인트 (health, 딥 링크 폴백, well-known 파일, Swagger UI).
-
-## 데이터베이스 설계
-
-### Neon의 PostgreSQL 18
-
-자동 스케일링, 개발 환경용 브랜칭, 시점 복구를 갖춘 서버리스 PostgreSQL. 두 개의 확장: UUID 생성용 `uuid-ossp`와 트라이그램 기반 퍼지 검색용 `pg_trgm`.
-
-### 스키마 (11개 테이블, 10개 마이그레이션)
-
-| 테이블 | 목적 | 주요 제약 |
-|--------|------|----------|
-| `users` | 사용자 계정 | `deleted_at`을 통한 소프트 삭제; 유니크 이메일 |
-| `user_auth_providers` | OAuth 프로바이더 링크 | `UNIQUE(provider, provider_uid)` -- 멀티 프로바이더 지원 |
-| `user_settings` | 설정 (테마, 언어) | 사용자 생성 시 트리거로 자동 생성 |
-| `auth_tokens` | 리프레시 토큰 추적 | BLAKE3 해시; 만료 + 폐기 컬럼 |
-| `diary_entries` | 식사 기록 | 평점 0-5, 소프트 삭제, `(user_id, eaten_at)` 인덱스 |
-| `entry_locations` | GPS 좌표 | 식사 항목과 일대일 |
-| `entry_photos` | 사진 URL | 항목당 최대 10장 (DB 트리거); 대표 1장 (부분 유니크 인덱스) |
-| `user_nutrition` | 수동 영양 데이터 | 모든 필드 `NUMERIC(8,2)`, 비음수 제약 |
-| `ai_analyses` | Gemini 분석 결과 | 상태 머신, 원본 JSON 응답, 신뢰도 점수 |
-| `ingredients` | 정규화된 재료 목록 | 퍼지 검색용 트라이그램 GIN 인덱스 |
-| `entry_ingredients` | 항목-재료 연결 | `UNIQUE(entry_id, ingredient_id)` |
-
-**Enum:** `meal_type` -- breakfast, lunch, dinner, snack, dessert, drink, other.
-
-**데이터베이스 트리거:**
-- `trigger_set_updated_at` -- 6개 테이블에서 `updated_at` 자동 업데이트
-- `check_max_photos` -- 데이터베이스 레벨에서 항목당 10장 사진 제한 강제
-- `auto_create_user_settings` -- 사용자 생성 시 기본 설정 행 자동 생성
-
-**인덱싱 전략:**
-- 필터링 다이어리 쿼리용 `(user_id, eaten_at)` 및 `(user_id, deleted_at)` 복합 인덱스
-- `entry_photos(entry_id) WHERE is_primary = true` 부분 유니크 인덱스
-- 퍼지 검색용 `ingredients(name)` 트라이그램 GIN 인덱스
-- pending/processing 조회용 `ai_analyses(status)` 부분 인덱스
-
-### SQLx 컴파일 타임 검증
-
-모든 SQL 쿼리가 빌드 시 실제 데이터베이스 스키마와 대조 검증됩니다. `.sqlx/` 디렉토리에 사전 컴파일된 쿼리 메타데이터가 있습니다. CI와 Docker 빌드는 `SQLX_OFFLINE=true`를 사용 -- 라이브 데이터베이스가 필요 없습니다. 쿼리 변경 후 `cargo sqlx prepare`로 재생성합니다.
-
-이것으로 런타임 에러의 한 카테고리 전체가 제거됩니다. 쿼리 오타도, 컬럼 불일치도, 타입 변환 버그도 없습니다.
+로그인 시, 마이그레이션 훅이 모든 게스트 항목을 단일 배치로 서버에 전송한 후 로컬 저장소를 클리어합니다. 사용자가 언제 계정을 만들든 데이터를 잃지 않습니다.
 
 ## 업로드 파이프라인
 
-사진은 절대 API 서버를 거치지 않습니다. 파이프라인:
+사진은 절대 API 서버를 거치지 않습니다. 의도된 설계입니다 -- 사진 바이트를 서버에서 처리하지 않으면 메모리 사용이 줄고, 대역폭 비용이 낮아지고, 수평 스케일링이 단순해집니다.
 
-1. 모바일이 presigned URL 요청: `POST /api/v1/uploads/presign`
-2. API가 15분짜리 presigned PUT URL 생성 (키 형식: `photos/{user_id}/{uuid}.{ext}`)
-3. 모바일이 R2에 직접 PUT 업로드 (JPEG, PNG, WebP, HEIC 지원)
-4. 모바일이 사진을 항목에 연결: `POST /api/v1/diary/{entry_id}/photos`
+1. 모바일이 API에 presigned URL을 요청
+2. API가 15분짜리 presigned PUT URL을 R2용으로 생성
+3. 모바일이 R2에 직접 PUT 업로드 (JPEG, PNG, WebP, HEIC)
+4. 모바일이 업로드된 사진을 다이어리 항목에 연결
 
-Android에서는 `fetch()`가 `file://` URI를 읽을 수 없어서 `XMLHttpRequest`를 사용합니다. 항목당 사진은 병렬 업로드되지만, 항목 자체는 레이스 컨디션 방지를 위해 순차 처리됩니다.
+플랫폼 특이사항: Android에서는 `fetch()`가 `file://` URI를 읽을 수 없어서 `XMLHttpRequest`를 사용합니다. 항목당 사진은 병렬 업로드되지만, 항목 자체는 레이스 컨디션 방지를 위해 순차 처리됩니다.
 
 ## AI 분석 파이프라인
 
-분석은 trigger-and-poll 패턴으로 완전 비동기 실행됩니다:
+분석은 trigger-and-poll 패턴으로 완전 비동기 실행됩니다. 이 방식은 장시간 HTTP 연결을 피하고 클라이언트의 반응성을 유지합니다.
 
-**트리거 (API 핸들러):**
-```
-POST /api/v1/diary/{entry_id}/analyze
-  --> 소유권 확인 (AuthUser)
-  --> 검사: 사진이 있는지? (없으면 400)
-  --> 멱등성: pending/completed이면 기존 반환; failed일 때만 재시도
-  --> INSERT ai_analyses (status = 'pending')
-  --> tokio::spawn 백그라운드 태스크
-  --> 202 Accepted 반환
-```
+**트리거:** 클라이언트가 `POST /diary/{entry_id}/analyze`를 호출합니다. API가 소유권을 확인하고, 사진 유무를 검사하고, pending 분석 레코드를 삽입하고, 백그라운드 Tokio 태스크를 생성한 뒤 즉시 202 Accepted를 반환합니다. 엔드포인트는 멱등성을 보장합니다 -- pending이나 completed 상태면 기존 결과를 반환하고, failed일 때만 재시도합니다.
 
-**백그라운드 태스크 (Tokio):**
-```
-  --> UPDATE status = 'processing'
-  --> entry_photos에서 사진 URL 조회
-  --> 각 URL을 R2 공개 접두사와 대조 검증 (SSRF 방어)
-  --> 사진 다운로드 (최대 5장, 각 최대 20MB)
-  --> base64 인코딩 --> Gemini 요청 구성
-  --> Gemini API에 POST (temperature: 0.1, 구조화된 JSON 스키마)
-  --> 응답 파싱 --> BigDecimal 변환으로 영양소 값 처리
-  --> UPDATE ai_analyses (status = 'completed', 영양 데이터, raw_response)
-  --> 에러 시: UPDATE status = 'failed' + 정제된 에러 메시지
-```
+**백그라운드 태스크:** 항목 사진을 다운로드하고(각 URL을 R2 접두사와 대조하여 SSRF 방어), base64로 인코딩하고, 구조화된 JSON 스키마와 함께 Gemini Vision API에 전송한 뒤, 파싱된 영양 데이터를 데이터베이스에 기록합니다.
 
-**클라이언트 폴링:**
-```
-useQuery('/diary/{id}/analysis', { refetchInterval: 3000 })
-  --> status = 'processing' --> 스피너 표시
-  --> status = 'completed' --> 영양 결과 표시
-  --> status = 'failed' --> 재시도 버튼 표시
-```
+**클라이언트 폴링:** TanStack Query 훅이 3초마다 폴링하며, 처리 중에는 스피너를, 완료 시에는 영양 결과를, 실패 시에는 재시도 버튼을 표시합니다.
 
-**안정성:** 서버 시작 시 `find_stuck()` 쿼리가 5분 이상 `pending`/`processing` 상태인 분석을 식별하여 리셋합니다. 클라이언트 폴링 요청도 백그라운드 태스크가 실행되는 동안(보통 5-30초) Cloud Run 인스턴스를 활성 상태로 유지합니다.
+**안정성:** 서버 시작 시 복구 쿼리가 5분 이상 pending/processing 상태인 분석을 찾아 리셋합니다. 클라이언트 폴링 요청도 백그라운드 태스크가 실행되는 동안(보통 5-30초) Cloud Run 인스턴스를 활성 상태로 유지합니다.
 
 ## 인증 플로우
 
@@ -314,123 +59,22 @@ Mobile (네이티브 OAuth SDK)
   --> POST /api/v1/auth/sign-in에 ID 토큰 전송
   --> API가 JWKS로 토큰 검증 (Google: tokeninfo; Apple: 캐시된 JWKS, 1시간 TTL)
   --> 사용자 찾기 또는 생성 + auth provider 연결
-  --> JWT (HS256) + 리프레시 토큰 발행
-  --> 리프레시 토큰 해시 (BLAKE3)를 auth_tokens에 저장
+  --> JWT (HS256) + 리프레시 토큰 발행 (BLAKE3 해시로 DB 저장)
   --> 반환: { access_token, refresh_token, expires_in, user }
-
-Mobile 저장:
-  --> access + refresh 토큰을 expo-secure-store에 저장 (iOS Keychain / Android Keystore)
-  --> 토큰 만료 시간을 MMKV에 저장 (선제적 갱신 확인용)
-
-이후 요청:
-  --> AuthUser 익스트랙터가 Authorization: Bearer 헤더에서 JWT 검증
-  --> 만료 30초 전 선제적 갱신, mutex로 보호
-  --> 401 시: 갱신 + 1회 재시도 (추가 재시도 없음)
-  --> BLAKE3 해시 비교를 통한 리프레시 토큰 재사용 탐지
 ```
 
-멀티 프로바이더 지원: 단일 사용자가 `user_auth_providers` 연결 테이블을 통해 Google과 Apple 계정을 모두 연결 가능.
+토큰은 expo-secure-store(iOS Keychain / Android Keystore)에 저장됩니다. 클라이언트는 만료 30초 전에 선제적으로 갱신하며, 중복 갱신 방지를 위해 mutex로 보호됩니다. 401 발생 시 갱신 후 1회 재시도 -- 추가 재시도는 없습니다.
 
-## 인프라
+단일 사용자가 연결 테이블을 통해 Google과 Apple 계정을 모두 연결할 수 있어, 로그인 프로바이더를 바꿔도 중복 계정이 생기지 않습니다.
 
-### 클라우드 리소스 (Pulumi IaC, TypeScript)
+## 핵심 아키텍처 결정
 
-모든 인프라가 코드로 선언되며, 상태가 있는 리소스에 `protect: true` 적용:
+**API에 Rust 선택** -- 식사 추적 앱은 사진이 많고 지연 시간에 민감합니다. Cloud Run 위의 Rust는 약 100ms 콜드 스타트, 낮은 메모리(512MB면 충분), 그리고 SQLx를 통한 컴파일 타임 SQL 검증의 확신을 제공합니다. 쿼리 오타도, 컬럼 불일치도, 런타임 타입 변환 버그도 없습니다.
 
-**GCP Cloud Run** (`mealio-api`)
-- 스케일링: 0-3 인스턴스 (비용 최적화를 위한 제로 스케일)
-- 리소스: 1 vCPU, 512MB RAM, 스타트업 CPU 부스트 활성화
-- 동시성: 인스턴스당 80 요청, 30초 타임아웃
-- 헬스: 스타트업 프로브 (4초 주기, 실패 임계값 5), 라이브니스 프로브 (15초 주기)
+**스토리지에 Cloudflare R2** -- 사진 중심 앱에서 이그레스 비용 제로는 필수입니다. S3 호환 API 덕분에 표준 도구가 그대로 동작합니다.
 
-**Cloudflare R2** (`mealio-uploads`)
-- 동부 북미 리전의 프라이빗 버킷
-- 이그레스 비용 제로 -- 사진 중심 앱에 필수
+**제로 스케일 인프라** -- Cloud Run, Neon(서버리스 Postgres), R2 모두 제로로 스케일 다운됩니다. 유휴 시 전체 스택 비용이 $0이며, 실제 사용량에 비례하여 과금됩니다.
 
-**Neon PostgreSQL 18**
-- 리전: `aws-us-east-1`
-- 서버리스: 유휴 시 자동 일시정지, 수요 시 자동 스케일
-- 단기 시점 복구
+**모든 에러를 RFC 9457 Problem Detail로** -- 데이터베이스 에러가 HTTP 상태 코드로 자동 매핑됩니다 (RowNotFound는 404, UniqueViolation은 409 등). 프로덕션에서 스택 트레이스가 노출되지 않으며, 5xx 에러는 Sentry에 자동 리포트됩니다.
 
-**GCP IAM -- Workload Identity Federation**
-- OIDC 프로바이더: GitHub Actions
-- 속성 조건: `assertion.repository == "zzoohub/mealio"` (이 리포만 허용)
-- 장기 서비스 계정 키 없음 -- GitHub Actions가 단기 OIDC 토큰으로 인증
-
-**GCP Artifact Registry** -- 추적 가능성을 위해 git 커밋 SHA로 Docker 이미지 태그.
-
-### 비용 프로필
-
-유휴 시 $0. Cloud Run은 제로로 스케일 다운. Neon은 유휴 시 일시정지. R2는 스토리지에만 과금 (이그레스 없음). 전체 인프라 비용이 실제 사용량에 비례합니다.
-
-## CI/CD 파이프라인
-
-4개의 GitHub Actions 워크플로우, 각각 경로 필터 적용:
-
-### 1. API CI/CD (`api.yml`)
-
-`api/**` 변경 시 트리거 (main 푸시 + PR):
-
-```
-Test --> cargo build (SQLX_OFFLINE=true) + cargo test
-Deploy (main만) --> WIF로 GCP 인증 --> Docker 빌드
-  --> Artifact Registry 푸시 (태그: 커밋 SHA) --> gcloud run deploy
-```
-
-### 2. 모바일 CI (`mobile-ci.yml`)
-
-`mobile/**` PR 시 트리거:
-
-```
-bun install (frozen lockfile) --> expo lint --> jest --ci
-```
-
-### 3. 모바일 빌드 (`mobile-build.yml`)
-
-수동 트리거 + 입력값 (platform, profile, submit):
-
-```
-eas build --platform {platform} --profile {profile}
-  --> (선택) eas submit --platform {platform}
-```
-
-### 4. 모바일 OTA (`mobile-ota.yml`)
-
-`mobile/**` main 푸시 시 트리거:
-
-```
-Test --> (통과) --> eas update --channel production
-```
-
-## 보안 아키텍처
-
-| 레이어 | 보호 |
-|--------|------|
-| 전송 | HTTPS 전용 (Cloud Run 강제) |
-| 인증 토큰 | DB에 BLAKE3 해시 저장; 디바이스에서 expo-secure-store 사용 |
-| 토큰 갱신 | 만료 30초 전 선제적 갱신; 해시 비교를 통한 재사용 탐지 |
-| 속도 제한 | Auth: 10/min, Global: 60/min (`tower_governor`) |
-| CORS | 환경별 설정 가능한 오리진; dev에서만 허용적 |
-| SQL 인젝션 | SQLx 컴파일 타임 파라미터화 쿼리 |
-| 업로드 보안 | 15분 만료 Presigned URL; 검증된 콘텐츠 타입 |
-| SSRF 방어 | Gemini 전송 전 R2 접두사 대조 사진 URL 검증 |
-| 에러 유출 | RFC 9457 응답; 5xx에 스택 트레이스 없음, 일반적 제목 |
-| 소유권 | 모든 항목 작업에 `verify_ownership(entry_id, user_id)` |
-| 타임존 | IANA 타임존 정규식 화이트리스트 검증 |
-
-## 관측성
-
-- **Sentry** -- API: `sentry-tower` 미들웨어로 자동 HTTP 스팬 캡처, 20% 트레이스 샘플링. 모바일: `@sentry/react-native` + ErrorBoundary. 모든 5xx 에러 자동 리포트.
-- **PostHog** -- 기능 사용, 리텐션, 퍼널 분석을 위한 프로덕트 애널리틱스.
-- **구조화된 로깅** -- `tracing` + `tracing-subscriber` JSON 출력, `RUST_LOG`으로 설정 가능.
-- **헬스 체크** -- `GET /health`가 PostgreSQL에 `SELECT 1` 실행. Cloud Run 스타트업(4초)과 라이브니스(15초) 프로브에서 사용.
-
-## 성능 고려 사항
-
-**데이터베이스:** 커넥션 풀 최대 10, 3초 획득 타임아웃. 핫 쿼리 경로에 복합 인덱스. 페이지네이션 1-100 범위 제한. 소프트 삭제 인덱스로 풀 테이블 스캔 방지.
-
-**모바일:** 가상화된 리스트 렌더링에 FlashList. 빌트인 캐싱이 있는 `expo-image`. 동기 영속성에 MMKV (JSI 기반, AsyncStorage 대비 ~30배 빠름). 배치 쓰기에 100ms 디바운스.
-
-**업로드:** 클라이언트에서 R2로의 직접 업로드가 API 서버를 완전히 우회. 항목당 사진은 병렬 업로드. 순차 항목 처리로 레이스 컨디션 방지. 백그라운드 처리로 UI 논블로킹 유지.
-
-**콜드 스타트:** Rust 바이너리가 Cloud Run에서 ~100ms에 시작. 512MB 메모리로 충분. 스타트업 CPU 부스트 활성화로 첫 요청 가속.
+**CI/CD에 Workload Identity Federation** -- GitHub Actions가 리포지토리로 스코프된 단기 OIDC 토큰으로 GCP에 인증합니다. 교체하거나 유출될 장기 서비스 계정 키가 없습니다.

@@ -13,17 +13,11 @@ The `llm` crate is a separate workspace crate — the compiler physically preven
 ```
 apps/api/
 ├── crates/llm/              # LLM provider abstraction (standalone)
-│   ├── provider.rs           # LlmProvider trait
-│   ├── gemini.rs             # Gemini Flash-Lite implementation
-│   ├── cf_workers.rs         # CF Workers AI implementation
-│   └── gateway.rs            # Failover routing
 ├── src/domain/               # Business logic (no infra deps)
-│   ├── auth/                 # Google OAuth, JWT, sessions
 │   ├── project/              # Project CRUD, story config
 │   ├── timeline/             # Tracks, scenes, branch/merge
 │   ├── character/            # Characters, relationships
-│   ├── ai/                   # Prompt assembly, generation
-│   └── sample/               # Sample project seeding
+│   └── ai/                   # Prompt assembly, generation
 ├── src/inbound/http/         # HTTP adapters (Axum handlers)
 └── src/outbound/             # Infra adapters (SQLx, R2, JWT)
 ```
@@ -32,31 +26,29 @@ apps/api/
 
 SolidJS was chosen over React specifically for the timeline UI. Fine-grained reactivity means each scene node updates independently during drag-and-drop — no virtual DOM diffing across hundreds of elements. Deployed to Cloudflare Workers via Nitro adapter.
 
-## Tech Stack
-
-| Layer | Technology | Why |
-|-------|-----------|-----|
-| Backend | Rust + Axum | Sub-ms latency, 10–30MB memory, compile-time safety, native SSE streaming |
-| Frontend | TanStack Start + SolidJS | Fine-grained reactivity for timeline, smaller bundles than React |
-| Database | Neon PostgreSQL (us-east-1) | Scale-to-zero, branch-based dev, pgvector for future embeddings |
-| Cache | Upstash Redis | HTTP API, scale-to-zero, rate limiting + context cache |
-| LLM (primary) | Gemini 2.5 Flash-Lite | Best Korean prose quality at lowest cost ($0.10/1M tokens) |
-| LLM (fallback) | CF Workers AI | Zero-cost fallback, automatic failover |
-| API Hosting | GCP Cloud Run (us-east4) | Container-based, auto-scale to zero, 300s timeout for streaming |
-| Web Hosting | Cloudflare Workers | Edge-first via Nitro, free plan |
-| Storage | Cloudflare R2 | User avatars, S3-compatible, zero egress |
-
 ## Database Design
 
 **11 tables in Phase 1.** Core design choices:
 
 - **NLE positioning** — `scene.start_position` and `scene.duration` as `DOUBLE PRECISION`. Scenes are clips with extent, not list items. Initial spacing of 1024.0 allows ~50 midpoint insertions before rebalancing. Simultaneity across tracks via overlapping ranges.
 
-- **Draft versioning** — Separate `draft` table with `(scene_id, version)`. Preserves full edit history, separates large text blobs from frequently-read scene metadata. Each draft records source (`ai_generation`, `ai_edit`, `manual`), model, token counts, and cost.
+- **Draft versioning** — Separate `draft` table with `(scene_id, version)`. Preserves full edit history, separates large text blobs from frequently-read scene metadata. Each draft records source (`ai_generation`, `ai_edit`, `manual`), model, and token counts.
 
 - **Context compression** — `scene_summary` table (1:1 with scene) stores AI-compressed summaries (~200–300 tokens). Preceding summaries replace full scene text in generation prompts, keeping context manageable at 15+ scenes.
 
 - **Generation cost tracking** — `generation_log` with `ON DELETE SET NULL` for project/scene FKs. Cost data survives entity deletion for billing analytics.
+
+## Data Flows
+
+Four primary flows, all streaming via SSE through `LlmGateway`:
+
+1. **Idea to project** — User pastes a story idea. LLM returns structured JSON (project config, tracks, scenes, characters). Written to Postgres in a single transaction. Vague idea becomes a visual timeline in seconds.
+
+2. **Scene draft generation** — System assembles context from six sources: story config, scene details, character cards, compressed preceding summaries, simultaneous events from parallel tracks, and next scene preview (~2,500–5,000 tokens total). Draft is versioned on completion; auto-applies if no existing content, otherwise user confirms.
+
+3. **Direction-based edit** — User selects a passage and types a direction like "more tension." Same context assembly as generation, plus the selected text. New draft version recorded as `ai_edit`.
+
+4. **Editor auto-save** — Edits debounce for 1–2 seconds, then PATCH directly. Scene status transitions from `ai_draft` to `edited` on first manual modification.
 
 ## AI / LLM Architecture
 
@@ -71,7 +63,7 @@ pub trait LlmProvider: Send + Sync {
 }
 ```
 
-`LlmGateway` handles failover: Gemini Flash-Lite first, CF Workers AI on failure (timeout >30s, 5xx, 429).
+`LlmGateway` handles failover: Gemini Flash-Lite first, CF Workers AI on failure (timeout, 5xx, 429).
 
 **Context assembly per scene (~2,500–5,000 tokens):**
 
@@ -85,17 +77,22 @@ pub trait LlmProvider: Send + Sync {
 | Simultaneous events | Overlapping scenes on other tracks | ~200–400 |
 | Next scene preview | Title + summary | ~100 |
 
-**Streaming:** SSE via Axum's native `Sse` type + `async-stream`. Cloud Run timeout set to 300s for generation endpoints.
+Assembly is deterministic given the same data — no randomness in prompt construction.
 
-## Infrastructure & Cost
+**Context compression:** After each draft completes, the system generates a ~200–300 token summary preserving key plot events, character states, and foreshadowing. Stored in Postgres (durable) and cached in Redis (fast reads). At 15 scenes with 250-token summaries, that is roughly 3,750 tokens — well within context limits.
 
-| Component | Launch (~100 DAU) | Growth (~1K DAU) |
-|-----------|-------------------|------------------|
-| Cloud Run | ~$0 (free tier) | ~$15–30 |
-| Neon PostgreSQL | ~$0 (free tier) | ~$19 |
-| Upstash Redis | ~$0 (free tier) | ~$10 |
-| Gemini Flash-Lite | ~$2–5 | ~$20–50 |
-| CF Workers + CDN + R2 | ~$0 (free plan) | ~$5 |
-| **Total** | **~$2–5/mo** | **~$70–115/mo** |
+**Streaming:** SSE via Axum's native `Sse` type + `async-stream`. Three endpoints: scene generation, direction-based edit, and project auto-structuring (3-phase: world, characters, timeline). Frontend consumes via custom `fetch` + `ReadableStream` parser in SolidJS — no Vercel AI SDK dependency since no SolidJS adapter exists.
 
-CI/CD via GitHub Actions: Rust binary in Docker → Cloud Run, web build → CF Workers on push to main.
+## Key Decisions
+
+**Rust/Axum over FastAPI** — No Python-only libraries needed. LLM calls are HTTP via `reqwest`. Rust gives sub-ms latency, 10–30MB memory, and compile-time safety at the lowest cloud cost.
+
+**Monolith over microservices** — One developer, one deployable unit. Generation reads from every other module. One deployment = one CI pipeline, one container, one log stream. Revisit if the team grows or generation needs GPU compute.
+
+**Neon over Supabase** — Scale-to-zero pricing (free at launch), branch-based dev workflow, pgvector for future embeddings. Co-located with Cloud Run in Virginia for low cross-cloud latency.
+
+**`llm` as a separate workspace crate** — Compiler-enforced boundary. Independently testable with mock providers. Reusable across CLI tools or workers. Zero runtime cost — it is a library, not a service.
+
+**SSE over WebSocket** — Token delivery only needs server-to-client streaming. SSE is stateless, HTTP-native, trivially handled by Cloud Run. WebSocket adds connection management for no benefit. Revisit when real-time collaboration is added.
+
+**Google OAuth only (Phase 1)** — Simplest implementation. Adding Kakao is a two-way door — just another OAuth provider, addable in weeks. Revisit if acquisition data shows bounce at login.

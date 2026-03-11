@@ -81,7 +81,7 @@ title: "Project Name — Design"
 
 ## Tab 3: Engineering (`engineering.en.mdx` / `engineering.ko.mdx`)
 
-Technical deep-dive for engineers. Covers architecture, implementation, and infrastructure.
+Technical showcase for a portfolio audience. Show **engineering thinking** — not exhaustive documentation.
 
 ### Frontmatter (minimal)
 
@@ -91,19 +91,44 @@ title: "Project Name — Engineering"
 ---
 ```
 
+### Writing principles
+
+**This is a portfolio, not an internal design doc.** Target 100–150 lines per file. The reader is a fellow engineer or hiring manager scanning your projects — they want to see how you think about trade-offs, not read every implementation detail.
+
+- **Focus on why, not what.** "We chose X over Y because Z" is interesting. "X is configured with these 8 settings" is not.
+- **Lead with architecture.** A brief system overview that orients the reader — components, data flow, how they connect.
+- **Highlight unique technical challenges.** What makes this project's engineering interesting? NLE positioning for timeline scenes, dual-layer browser blocking, HDBSCAN clustering instead of LLM-based grouping, presigned upload bypassing the API — these are the stories worth telling.
+- **Keep decisions concise.** Each ADR should be 1–3 sentences: what was chosen, what was rejected, why. No need for full "Revisit when" sections.
+- **Cut generic sections.** Auth/security, observability, CI/CD, performance metrics — unless your project does something unusual here, these don't add signal. Every project has "structured JSON logging" and "Sentry error tracking."
+
+### What to keep vs. remove
+
+| Keep | Remove |
+|------|--------|
+| Architecture overview (brief) | Crate/package listing tables |
+| Interesting design decisions with trade-offs | Middleware/provider stack details |
+| Unique technical challenges | CI/CD pipeline configurations |
+| Data flow descriptions (brief) | Full DB schema tables (every column) |
+| Key code snippets that show design (e.g., trait definitions) | Security checklist tables |
+| | Performance metric/goal tables |
+| | Observability bullet lists |
+| | Config struct code blocks |
+| | Index strategy details |
+
 ### Recommended sections
+
+Sections are flexible — adapt to what's interesting about the project. Not every project needs every section.
 
 | # | Section | Required? | Description |
 |---|---------|-----------|-------------|
-| 1 | System Architecture | Required | Components, data flow, and how they connect |
-| 2 | Architecture Decisions | Required | Key ADRs with rationale and trade-offs |
-| 3 | Tech Stack Rationale | Recommended | Why each technology was chosen |
-| 4 | Database Design | Recommended | Schema, normalization, indexing, query optimization |
-| 5 | API Design | Recommended | Endpoints, contracts, and patterns |
-| 6 | Infrastructure | Recommended | Deployment, CI/CD, and monitoring |
-| 7 | Security | Recommended | Auth, data handling, and threat model |
-| 8 | Performance | Optional | Benchmarks and optimization strategies |
-| 9 | Observability | Optional | Logging, monitoring, error tracking |
+| 1 | Architecture | Required | System overview, component diagram, key boundaries |
+| 2 | Key design details | Recommended | 2–4 interesting technical aspects (DB design, data flows, pipelines, etc.) |
+| 3 | Key Decisions | Required | ADRs — what was chosen, over what, and why |
+
+### MDX gotchas
+
+- **Angle brackets in prose:** Bare `<` and `>` outside code blocks are parsed as JSX tags. Use `&lt;`/`&gt;` inside backtick inline code, or rewrite as plain English ("fewer than 100", "more than 10K").
+- **HTML-like tags in inline code:** `` `<context>` `` works because remark processes backtick spans before MDX/JSX parsing, but it's safer to use `&lt;context&gt;` to avoid issues if backticks are accidentally removed.
 
 D2 diagrams referenced by the `d2Diagram` frontmatter field will be rendered at the bottom of the Engineering tab automatically.
 
@@ -114,6 +139,6 @@ D2 diagrams referenced by the `d2Diagram` frontmatter field will be rendered at 
 - Write for three audiences: potential clients (Overview), product-minded readers (Design), and fellow engineers (Engineering).
 - Keep the Overview scannable — use bullet points and short paragraphs.
 - Design tab: focus on the "why" behind product choices, not the "how" of implementation.
-- Engineering tab: can be longer and more detailed with technical specifics.
+- Engineering tab: show engineering thinking in 100–150 lines, not exhaustive documentation.
 - Not every project needs all 3 tabs. Tabs only appear when their MDX files exist.
 - Both locales (en + ko) must exist for bilingual support.

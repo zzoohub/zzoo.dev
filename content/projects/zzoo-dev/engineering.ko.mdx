@@ -12,168 +12,47 @@ title: "zzoo.dev — Engineering"
 
 트레이드오프: 콘텐츠 변경 때마다 리빌드가 필요합니다. 하지만 Vercel의 GitHub 연동으로 `main`에 push하면 2분 이내에 자동 빌드와 배포가 됩니다.
 
-## 프레임워크: Next.js 16 + React 19
+## Server Components 우선
 
-Next.js 16의 App Router가 정적 생성 파이프라인, 파일 기반 라우팅, 페이지별 SEO를 위한 `generateMetadata()`를 제공합니다. React 19는 Server Components를 기본값으로 사용하여 — 대부분의 페이지가 프레임워크 런타임 외에 클라이언트 사이드 JavaScript를 전혀 전송하지 않습니다.
-
-Client 컴포넌트는 인터랙션이 필요한 곳에서만 절제해서 사용합니다: 블로그 태그 필터, 테마 토글, 모바일 내비게이션, 클립보드 복사 버튼, D2 다이어그램 테마 전환기. 각각 서버 렌더링된 부모를 감싸는 얇은 인터랙티브 래퍼입니다.
-
-TypeScript는 코드베이스 전체에서 strict 모드입니다. 모든 콘텐츠 프론트매터, 사이트 설정, 컴포넌트 props가 완전히 타입 지정됩니다.
+React 19 Server Components가 기본입니다. 대부분의 페이지가 프레임워크 런타임 외에 클라이언트 사이드 JavaScript를 전혀 전송하지 않습니다. Client 컴포넌트는 꼭 필요한 곳에서만 사용합니다 — 블로그 태그 필터, 테마 토글, 모바일 내비게이션, 클립보드 복사, D2 다이어그램 전환기 — 각각 서버 렌더링된 부모를 감싸는 얇은 인터랙티브 래퍼입니다.
 
 ## 콘텐츠 시스템
 
-콘텐츠는 파일 기반 MDX로, 코드와 함께 레포지토리에서 관리합니다:
+콘텐츠는 코드와 함께 저장되는 파일 기반 MDX입니다. 블로그 포스트, 프로젝트 페이지, About 페이지 각각 로케일별 MDX 파일을 가집니다. 프로젝트는 세 탭 구조를 지원합니다: Overview(필수), Design(선택), Engineering(선택).
 
-```
-content/
-├── blog/{slug}/{locale}.mdx
-├── projects/{slug}/
-│   ├── {locale}.mdx              # Overview (필수)
-│   ├── design.{locale}.mdx       # Design 탭 (선택)
-│   └── engineering.{locale}.mdx  # Engineering 탭 (선택)
-├── about/{locale}.mdx
-└── testimonials.json
-```
+주목할 만한 설계 결정 두 가지:
 
-### 프론트매터 검증
+**로케일 폴백.** 요청된 로케일이 없으면 `en.mdx`로 폴백합니다. 영어가 항상 기준선이고, 한국어 번역은 라우트를 깨뜨리지 않으면서 점진적으로 추가할 수 있습니다.
 
-모든 프론트매터는 `lib/content/schemas.ts`에 정의된 Zod 스키마로 파싱됩니다. 필수 필드가 없으면 에러를 throw합니다. 선택 필드는 `.catch(undefined)`를 사용하여 — 유효하지 않은 선택 데이터는 빌드를 깨뜨리지 않고 조용히 드롭됩니다. 날짜 필드는 `Date` 객체를 `"YYYY-MM-DD"` 문자열로 변환합니다.
+**Zod 프론트매터 검증.** 모든 프론트매터는 Zod 스키마로 파싱됩니다. 필수 필드가 없으면 에러를 throw합니다. 선택 필드는 `.catch(undefined)`를 사용하여 유효하지 않은 데이터를 조용히 드롭합니다. 잘못된 선택 필드 하나가 사이트 전체를 멈추는 일은 없습니다.
 
-이미지 경로는 엄격한 패턴으로 검증됩니다: 상대 경로는 `/^[a-zA-Z0-9._-]+\.(png|jpg|jpeg|gif|webp|svg|avif)$/i`에 매칭되어야 하고, 절대 경로는 `/images/`로 시작해야 하며 `..` 순회는 허용되지 않습니다. Slug는 `/^[a-zA-Z0-9_-]+$/`로 검증됩니다.
+**스크립트별 읽기 시간.** 영어는 단어 수(200 WPM), 한국어는 글자 수(CJK 분당 300자)를 사용합니다. 콘텐츠가 아닌 로케일 기반 감지 — 단순하고 예측 가능합니다.
 
-### 로케일 폴백
+## i18n과 SSG 제약
 
-각 콘텐츠 파일은 로케일별로 존재합니다. 요청된 로케일이 없으면 `en.mdx`로 폴백합니다. `resolveContentLocale()` 유틸리티가 먼저 `{locale}.mdx`를 확인하고, 없으면 `en.mdx`를 확인합니다. 영어 콘텐츠가 항상 기준선이 되고, 한국어 번역은 라우트를 깨뜨리지 않으면서 점진적으로 추가할 수 있습니다.
+다국어 처리는 `next-intl`로 두 로케일(`en`, `ko`)을 지원합니다. UI 문자열은 JSON 번역 파일에, 콘텐츠 번역은 별도 MDX 파일에 위치합니다.
 
-### 읽기 시간
+핵심 SSG 함정: 서버 컴포넌트는 `getLocale()`가 아니라 페이지의 `params`에서 `setRequestLocale(locale)`을 호출해야 합니다. `getLocale()`는 정적 생성 중 존재하지 않는 요청 시점 컨텍스트에 의존하여 빌드를 조용히 깨뜨립니다.
 
-읽기 시간은 스크립트별로 다르게 계산됩니다: 영어는 `ceil(words / 200)` (200 WPM), 한국어는 `ceil(chars / 300)` (CJK 분당 300자). 콘텐츠가 아닌 로케일을 기준으로 감지하여 로직을 단순하고 예측 가능하게 유지합니다.
-
-## i18n: next-intl
-
-다국어 처리는 `next-intl`로 두 로케일(`en`, `ko`)을 지원합니다. 영어가 기본값.
-
-UI 문자열은 `messages/{locale}.json`에 위치합니다 — 레이블, 버튼, 내비게이션을 위한 번역 파일. 콘텐츠 번역은 로케일별 별도 MDX 파일입니다.
-
-핵심 SSG 패턴: 서버 컴포넌트는 `getLocale()`가 아니라 페이지의 `params`에서 `setRequestLocale(locale)`을 호출해야 합니다. 정적 생성 페이지에서 `getLocale()`을 사용하면 정적 생성 중 존재하지 않는 요청 시점 컨텍스트에 의존하기 때문에 빌드가 깨집니다.
-
-번역이 필요한 async 서버 컴포넌트는 params를 처리하는 async 래퍼와 `useTranslations()`를 호출하는 sync 내부 컴포넌트 패턴을 사용합니다:
-
-```tsx
-// Async 외부 — params 처리, 데이터 fetch
-async function Page({ params }: Props) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-  const data = await fetchData();
-  return <PageContent data={data} />;
-}
-
-// Sync 내부 — hooks 사용
-function PageContent({ data }: { data: Data }) {
-  const t = useTranslations("page");
-  return <div>{t("heading")}</div>;
-}
-```
-
-`i18n/request.ts` 설정은 동적 `import()` 대신 명시적 import를 사용하는 정적 `MESSAGE_MAP`을 씁니다 — 이 맥락에서 동적 import는 서버 사이드 해석이 필요하므로, SSG 호환성을 위한 의도적 선택입니다.
+번역이 필요한 async 서버 컴포넌트는 async 외부 컴포넌트(params 처리, 데이터 fetch)와 sync 내부 컴포넌트(`useTranslations()` 호출)로 분리하는 우회 패턴을 사용합니다. 번역 설정 역시 동적 `import()` 대신 명시적 정적 import를 사용하여 SSG 호환성을 확보합니다.
 
 ## D2 다이어그램 파이프라인
 
-아키텍처 다이어그램은 선언적 다이어그래밍 언어인 D2로 작성합니다. 파이프라인:
+아키텍처 다이어그램은 선언적 다이어그래밍 언어인 D2로 작성합니다. 빌드 시 각 `.d2` 파일을 두 번 컴파일 — 라이트 테마 한 번, 다크 테마 한 번 — 쌍을 이루는 SVG를 생성합니다.
 
-1. `content/projects/{slug}/`에 `.d2` 소스 파일 작성
-2. 빌드 시 `bun run build:diagrams`가 각 `.d2` 파일을 두 번 컴파일 — 라이트 테마 한 번, 다크 테마 한 번 — `public/diagrams/{name}-light.svg`와 `public/diagrams/{name}-dark.svg`로 출력
-3. `D2Diagram` 컴포넌트가 현재 테마에 맞는 SVG를 렌더링
-
-컴포넌트는 SSR hydration 안전을 위해 `useSyncExternalStore`를 사용합니다: 서버에서는 항상 라이트 테마를 렌더링하고, 클라이언트 마운트 시 올바른 테마로 전환합니다. 테마 인식 다이어그램을 지원하면서 hydration 불일치를 방지합니다.
+`D2Diagram` 컴포넌트는 hydration 안전을 위해 `useSyncExternalStore`를 사용합니다: 서버에서는 라이트 테마를 렌더링하고, 클라이언트 마운트 시 사용자 테마로 전환합니다. Hydration 불일치를 방지하면서 테마 인식 다이어그램을 유지합니다.
 
 ```tsx
 <img src="/diagrams/arch-light.svg" className="dark:hidden" />
 <img src="/diagrams/arch-dark.svg" className="hidden dark:block" />
 ```
 
-## SEO 구현
+## SEO
 
-모든 페이지가 `generateMetadata()`를 사용합니다(정적 metadata export가 아님). 로케일별, 페이지별 title, description, canonical URL, hreflang 대체 링크, Open Graph 메타데이터를 생성합니다.
+모든 페이지가 `generateMetadata()`를 사용하여 로케일별 title, description, canonical URL, hreflang 대체 링크, Open Graph 태그를 생성합니다. 중앙화된 `lib/seo.ts` 모듈이 페이지 메타데이터, canonical URL, 대체 링크, 구조화 데이터(website, person, article, project, breadcrumb, FAQ 타입의 JSON-LD) 빌더를 제공합니다.
 
-`lib/seo.ts` 모듈이 빌더를 제공합니다:
+JSON-LD 출력은 script 태그에서의 XSS를 방지하기 위해 꺾쇠괄호와 앰퍼샌드를 이스케이프합니다. 추가 SEO 인프라로 hreflang이 포함된 자동 생성 XML 사이트맵, 영어 블로그 포스트 기반 RSS 피드, robots.txt, LLM 탐색을 위한 llms.txt 파일이 있습니다.
 
-- `buildPageMeta()` — Canonical URL, alternates, OG 태그, 로케일별 메타데이터가 포함된 전체 `Metadata` 객체 조립
-- `buildCanonicalUrl()` — `{siteUrl}/{locale}{pathname}` 구성
-- `buildAlternates()` — 모든 로케일과 `x-default`에 대한 `hreflang` 링크 생성
-- JSON-LD 빌더 — `buildWebSiteJsonLd`, `buildPersonJsonLd`, `buildArticleJsonLd`, `buildProjectJsonLd`, `buildBreadcrumbJsonLd`, `buildFAQJsonLd`
+## 보안
 
-JSON-LD는 `components/shared/json-ld.tsx`를 통해 렌더링되며, `<script type="application/ld+json">` 태그에서 XSS 주입을 방지하기 위해 `<`, `>`, `&`를 이스케이프합니다.
-
-추가 SEO 인프라:
-
-- **XML Sitemap** — Next.js가 양 로케일의 hreflang 대체 링크와 함께 자동 생성
-- **RSS Feed** — `bun run build:rss`로 영어 블로그 포스트에서 빌드, `public/rss.xml`로 출력
-- **robots.txt** — Next.js가 생성, 주요 크롤러 모두 허용
-- **llms.txt** — 사이트 루트의 정적 파일, LLM 소비용
-
-## 스타일링: Tailwind CSS v4
-
-스타일링 레이어는 oklch 컬러 테마의 Tailwind CSS v4를 사용하며, `app/globals.css`의 CSS 커스텀 프로퍼티로 설정합니다. `lib/utils`의 `cn()` 유틸리티가 `clsx` + `tailwind-merge`로 클래스명을 병합하여 충돌 없는 조건부 스타일링을 제공합니다.
-
-shadcn/ui가 컴포넌트 라이브러리 — 접근성을 위한 Radix 프리미티브 위에 구축, new-york 변형으로 Tailwind 스타일링. `bunx --bun shadcn@latest add <component>`로 개별 추가하여 번들을 가볍게 유지합니다.
-
-다크 모드는 `next-themes`의 `.dark` 클래스 전략을 사용합니다. 테마 트랜지션은 주요 컨테이너의 `color`와 `background-color`에 150ms를 적용합니다 — 성능 오버헤드를 피하기 위해 의도적으로 모든 요소에 적용하지 않습니다.
-
-`lib/utils`의 `proseClassName` 상수가 블로그 포스트, 프로젝트 설명, About 페이지 콘텐츠에 걸쳐 일관된 MDX 콘텐츠 스타일링을 제공합니다.
-
-## 빌드 파이프라인
-
-`main`에 push할 때마다 트리거되는 전체 빌드 시퀀스:
-
-```
-bun install
-  → bun run build:images    (content/에서 public/images/로 프로젝트 이미지 복사)
-  → bun run build:diagrams  (.d2를 라이트/다크 SVG로 컴파일)
-  → bun run build:rss       (EN 블로그 포스트에서 public/rss.xml 생성)
-  → next build              (모든 페이지 정적 생성)
-```
-
-Vercel이 이 파이프라인을 자동 실행합니다. 모든 Pull Request에 대해 프리뷰 배포가 생성됩니다. 빌드는 모든 라우트가 static(`●`)으로 출력되는지 검증합니다 — dynamic 라우트(`ƒ`)가 있으면 빌드 실패입니다.
-
-프로젝트 이미지는 특정 흐름을 따릅니다: 소스 이미지는 `content/projects/{slug}/images/`에 위치하고, `build:images`가 이를 `public/images/projects/{slug}/`로 복사합니다. `resolveProjectImage()` 유틸리티가 프론트매터의 상대 경로를 public URL로 매핑합니다.
-
-## 테스팅
-
-테스트는 Vitest와 Testing Library(jsdom 환경)를 사용합니다. 테스트 파일은 소스 옆에 위치: `foo.test.tsx`.
-
-`vitest.setup.ts`가 다음에 대한 mock을 제공합니다:
-- `next-intl` — 번역 키를 그대로 반환, `"booked"` 키에 대해 값을 보간하는 특수 케이스
-- `next-intl/routing` — `defineRouting` mock
-- `next-themes` — 기본 테마로 `"light"` 반환
-
-핵심 테스팅 패턴: `vi.useFakeTimers()`는 `{ shouldAdvanceTime: true }` 없이 호출해야 합니다 — 이 옵션은 CI에서 flaky 테스트를 유발합니다. fake 타이머와 async 코드를 함께 사용할 때는 `act()` 안에서 `vi.advanceTimersByTimeAsync(0)`으로 promise를 flush합니다.
-
-커버리지 대상은 `lib/**/*.{ts,tsx}`와 `components/**/*.{ts,tsx}`이며, 타입 정의 파일은 제외합니다.
-
-## 배포
-
-사이트는 GitHub 연동을 통해 Vercel에 배포됩니다:
-
-| 환경 | 트리거 | URL |
-|------|--------|-----|
-| Production | `main`에 push | zzoo.dev |
-| Preview | Pull request | `{hash}.vercel.app` |
-| Local | `bun dev` | `localhost:3000` |
-
-보안 헤더는 `next.config.ts`의 `headers()` 함수로 설정: Content Security Policy, HSTS, X-Frame-Options 등. CSP `frame-src`는 YouTube(프로젝트 비디오)와 Giscus(블로그 댓글)만 허용합니다.
-
-"백엔드 없음" 제약은 공격 면이 최소화된다는 의미입니다: API 엔드포인트 없음, 폼 처리 없음, 사용자 입력 처리 없음, 데이터베이스 연결 없음. 유일한 동적 클라이언트 사이드 동작은 테마 전환, 로케일 전환, 태그 필터링, 클립보드 복사입니다.
-
-## 성능 목표
-
-| 지표 | 목표 |
-|------|------|
-| Lighthouse Performance | 95+ |
-| Lighthouse SEO | 100 |
-| First Contentful Paint | 1.0초 미만 |
-| Total Blocking Time | 200ms 미만 |
-| Cumulative Layout Shift | 0.1 미만 |
-| 초기 JS (gzip) | 100KB 미만 |
-
-이 목표들은 설계에 의해 강제됩니다: SSG가 서버 응답 시간을 제거하고, 최소한의 클라이언트 JS 예산이 무거운 라이브러리를 배제하며, 이미지 최적화는 빌드 타임에 발생합니다. 성능 예산은 최적화 대상이 아니라 디자인 제약입니다 — 아키텍처 자체가 이를 위반하기 어렵게 만듭니다.
+보안 헤더(CSP, HSTS, X-Frame-Options)는 `next.config.ts`에서 설정합니다. CSP `frame-src`는 YouTube와 Giscus만 허용합니다. "백엔드 없음" 제약은 공격 면이 설계상 최소화된다는 의미입니다 — API 엔드포인트 없음, 폼 처리 없음, 사용자 입력 처리 없음, 데이터베이스 연결 없음.
