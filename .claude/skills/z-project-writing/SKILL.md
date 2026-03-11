@@ -30,6 +30,8 @@ A portfolio project page tells a story in three chapters — each for a differen
 
 8. **Each Overview must have its own structure.** Portfolio visitors read multiple projects. If every overview follows the same template (problem → criticism of alternatives → our solution → how it works → CTA), the formula becomes visible and personality disappears. Design and Engineering tabs are builder documents — consistent structure is fine. But Overview is the project's face; it must reflect the project's unique character. A manifesto-style opening for a radical product, a numbers-forward comparison for a speed-focused app, a scenario walkthrough for a creative tool. The structure should emerge from what makes the project interesting, not from a template.
 
+9. **No competitor comparison sections.** The `competitors` frontmatter handles positioning as structured data. The overview should make the product's approach obvious through description alone — if it needs a "here's why alternatives fail" section, the description isn't working. Competitor names can appear naturally in hooks, but never in a dedicated comparison section.
+
 ## Process
 
 ### Step 1: Understand the Project

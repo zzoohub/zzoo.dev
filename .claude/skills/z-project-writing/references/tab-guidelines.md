@@ -37,7 +37,7 @@ Every overview should still cover these, but the sequence and emphasis should va
 
 - **A hook** in the first 1–2 sentences that creates curiosity
 - **What the product does** — concrete, not abstract
-- **What makes it different** — what's the unique approach or constraint? Be specific
+- **The unique approach** — what constraint or decision defines this product? Show it through what the product does, not through competitor comparisons. The `competitors` frontmatter handles positioning; the prose should let the product speak for itself
 - **A next step** — CTA: try it, view source, download
 
 ### Voice
@@ -50,7 +50,7 @@ Conversational. Short paragraphs. No corporate-speak. This is a builder talking 
 - Opening with "Project X is a Y that does Z" (boring — lead with something specific)
 - Listing every feature (pick the 2–3 that show the core tension)
 - Forgetting the CTA (don't leave the reader with nothing to do)
-- Being vague about what makes it different (be specific about the unique approach)
+- Dedicating a section to competitor comparisons ("X does this poorly, Y doesn't do that") — the `competitors` frontmatter handles positioning. If the product description doesn't make the difference obvious on its own, the description needs work, not a comparison section
 
 ---
 
