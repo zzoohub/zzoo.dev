@@ -2,68 +2,92 @@
 title: "zzoo.dev — Design"
 ---
 
-The insight behind this site is simple: a developer's portfolio has two audiences now, and most sites serve only one. Humans visit to evaluate competence. Machines visit to extract structured facts. A portfolio that only works for humans is half-invisible.
+## The audience problem
 
-That realization drove every design decision — from the information architecture to the content format to what was deliberately left out.
+Developer portfolios pretend they have one reader. They don't. A hiring manager, a fellow developer, and a search crawler visit the same URL and want completely different things.
 
-## Who reads this site
+The hiring manager needs a signal in five seconds: can this person solve my problem? The developer skips straight to architecture decisions and code. The crawler needs structured data it can parse — JSON-LD, clean headings, semantic HTML.
 
-**The evaluator.** A startup founder or hiring manager, scanning for signal. They land on a project page, need to know within five seconds whether this developer can solve their problem, and want a clear path to make contact. They will not read the engineering tab. They might not scroll past the fold.
+Designing for one audience is a layout problem. Designing for three simultaneously is an information architecture problem. That distinction drove every decision on this site.
 
-**The peer.** A fellow developer, curious about how something was built. They skip the overview entirely and go straight to the Engineering or Design tab. They care about trade-offs and decisions, not outcomes or CTAs.
+## Who visits
 
-**The machine.** A search crawler, an AI answer engine, an LLM building a response about "developers who specialize in X." It needs structured data — JSON-LD, clean headings, semantic HTML — not visual polish.
+**The evaluator — 5 seconds.**
 
-These three audiences want completely different things from the same URL. The three-tab system exists to serve all of them without forcing any one to wade through content meant for another.
+A startup founder or engineering manager, scanning. They land on a project page and decide within five seconds whether to keep reading or leave. They care about outcomes, not implementation. They will not click the Engineering tab.
+
+What they need above the fold: what this person builds, proof they can ship, and one clear path to make contact.
+
+**The peer — the Engineering tab.**
+
+A fellow developer who found the site through a blog post or a project link. They skip Overview entirely. Trade-offs, architecture diagrams, and "why not X" are what they came for.
+
+What they need: honest reasoning about decisions, not a sales pitch.
+
+**The machine — structured data.**
+
+A Google crawler building a search result. Perplexity composing an answer. ChatGPT pulling facts about "developers who specialize in X." None of them read prose — they parse schemas, headings, and metadata.
+
+What they need: JSON-LD entities, semantic HTML, hreflang alternates, and clean content they can extract without guessing.
+
+## Three tabs, not one long page
+
+The obvious design was a single scrolling page per project: problem, solution, tech stack, architecture. Most portfolios do this.
+
+The problem: it forces every reader through every section. An engineer endures business context to reach the architecture. A hiring manager hits a code block and bounces.
+
+The three-tab system lets each audience self-select:
+
+- **Overview** — what is this, why does it exist, what happened. Short, outcome-focused, scannable.
+- **Design** — product decisions, user thinking, trade-offs. What was rejected and why.
+- **Engineering** — architecture, implementation, technical choices.
+
+The trade-off is discoverability. Some visitors might not notice the Design or Engineering tabs exist. Mitigation: the tab bar is always visible, and Overview naturally references what the other tabs contain.
 
 ## The five-second test
 
-Every page answers one question above the fold: can this developer solve my problem? The hero section carries the entire weight of first impression — value proposition, a single CTA, and one proof point (availability badge or a concrete outcome). No decorative filler.
+Every page answers one question above the fold: can this developer help me?
 
-This sounds obvious, but it rules out a lot of common portfolio patterns. No full-screen hero images. No animated transitions before content appears. No "About Me" paragraphs above the project list. The visitor's first five seconds are spent reading, not waiting.
+This principle eliminated a lot of common portfolio patterns. No full-screen hero images. No animated introductions before content loads. No "About Me" text above the project list. The visitor's first five seconds are spent reading, not waiting.
 
-## Progressive disclosure as structure
+The home page loads directly into a value proposition, an availability indicator, and the project list. No splash screen. No decorative gap between the visitor and the content.
 
-The site map is deliberately compact: four items in the primary nav (Home, Projects, Blog, About). Secondary pages — Now and Contact — live in the footer and contextual CTAs, never competing for header space.
+## Search visibility as architecture
 
-Within each project, the three-tab structure is progressive disclosure made concrete:
+SEO is usually added after a site is built. Here, it is a structural constraint that shaped the HTML from day one.
 
-- **Overview** — What is this, why does it exist, what were the results. Scannable, short, outcome-focused.
-- **Design** — Product thinking: UX decisions, trade-offs, what was rejected and why.
-- **Engineering** — Architecture, technical choices, interesting implementation details.
+Three discovery channels, simultaneously:
 
-A hiring manager reads one tab. A product designer reads two. A fellow engineer reads all three. Nobody reads content meant for someone else.
+- **Traditional search** — semantic HTML, XML sitemap with hreflang, canonical URLs per locale.
+- **Answer engines** — JSON-LD schemas for every entity type: Person, WebSite, BlogPosting, SoftwareApplication, BreadcrumbList.
+- **Generative AI** — `llms.txt` at the site root plus clean MDX that LLMs can extract and cite.
 
-## Content format: why three tabs instead of one long page
+The design consequence: every heading must be descriptive (not clever), every page must have a single clear topic, and every piece of metadata must be machine-readable. Creative-but-vague section titles, multi-topic pages, and JavaScript-rendered content that crawlers cannot parse — all ruled out.
 
-The alternative was a single scrolling page per project — problem, solution, tech stack, architecture, all in sequence. Most portfolio sites do this.
+## Bilingual UX
 
-The problem: it forces every reader through every section. An engineer sits through the business context to reach the architecture diagram. A non-technical evaluator hits a code block and bounces.
+Two languages, one button. When on English, the switcher says "KO." When on Korean, it says "EN." A dropdown would add a click for zero benefit.
 
-Tabs let each audience self-select. The tradeoff is discoverability — some visitors might not realize the Design or Engineering tabs exist. The mitigation: the tab bar is always visible, and the Overview gently references what the other tabs contain.
+The deeper decision: English and Korean are not translations of each other. They are parallel content, written natively in each language. Structure is shared. Phrasing is natural to each language. This avoids the stilted feel of translated text.
 
-## Search visibility as a design constraint
+When Korean is missing, the system shows English content — not a 404. New content ships in one language first. The constraint is "always accessible," not "always bilingual."
 
-SEO is usually an afterthought — something a developer adds after the site is built. Here, it is a structural constraint that shaped the HTML, the content format, and the metadata architecture from day one.
+## What was deliberately left out
 
-The site targets three discovery channels simultaneously: traditional search (semantic HTML, sitemaps, hreflang), answer engines (JSON-LD schemas for every entity type), and generative AI (an `llms.txt` file plus clean, well-structured MDX that LLMs can extract and cite).
+**No contact form.** A form needs a backend. A backend needs a server. A server creates attack surface, maintenance, and spam filtering. A `mailto` link works. For mobile, there is a copy-to-clipboard fallback.
 
-The design consequence: every heading must be meaningful (not clever), every page must have a single clear topic, and every piece of metadata must be machine-readable. This rules out creative-but-vague section titles, multi-topic pages, and JavaScript-rendered content that crawlers cannot parse.
+**No animation library.** Every transition is CSS — hover at 150ms, mobile nav at 200ms, floating CTA at 300ms. The performance budget (initial JS under 100KB gzipped, FCP under 1.0s) does not have room for Framer Motion.
 
-## Bilingual UX: two locales, not a translation layer
+**No image carousel.** Project screenshots are static. A carousel adds JavaScript, interaction complexity, and accessibility burden. A single well-chosen image communicates more than six rotating ones.
 
-With only two languages, the language switcher is a single button — "KO" when on English, "EN" when on Korean. A dropdown would add a click for zero benefit.
+**No CMS.** Content is MDX in a git repo. A CMS would add a dependency, an account, and a sync layer between the content and the code. For a solo builder, files in git are faster to edit, easier to version, and impossible to lose.
 
-The deeper design decision: English and Korean are not translations of each other. They are parallel content, written natively in each language. The structure is the same, but the phrasing is natural to each language. This avoids the stilted quality of translated text.
+These are not missing features. They are the product of one constraint: zero backend, zero runtime, minimal surface area. The constraint IS the product.
 
-When a Korean translation is missing, the system falls back to English content rather than showing a 404. This means new content can ship in one language first — the constraint is "always available," not "always bilingual."
+## Why not a template
 
-## What was left out
+Portfolio templates — Next.js, Astro, Gatsby — give layout and styling. They do not give content architecture. No template ships with three-tab project documentation, Zod-validated frontmatter, bilingual content with locale fallback, or structured data for AI discoverability.
 
-**No contact form.** A form needs a backend, which means a server, which means attack surface, maintenance, and spam. A `mailto` link does the job. For mobile users, there is a copy-to-clipboard fallback.
+Notion and WordPress offer convenience but no control over structured output. Neither supports JSON-LD schemas, hreflang alternates, or `llms.txt`. They optimize for writing ease, not for how machines consume the content.
 
-**No animation library.** Every transition is CSS-only — 150ms for hovers, 200ms for mobile nav, 300ms for the floating CTA. The performance budget (initial JS under 100KB gzipped, FCP under 1.0 second) does not leave room for Framer Motion or similar.
-
-**No image carousel.** Project images are static, intentionally. A carousel adds JavaScript, interaction complexity, and accessibility burden for minimal information gain. A single well-chosen hero image communicates more than six auto-rotating ones.
-
-These omissions are not limitations. They are the product of a constraint that IS the product: zero backend, zero runtime, minimal attack surface — and still rich, bilingual, and content-driven.
+This site chose the harder path: build the architecture, own the output, serve every audience from the same static HTML.

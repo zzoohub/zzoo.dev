@@ -1,6 +1,6 @@
 ---
-title: "zzoo.dev — Builder Log"
-description: "A bilingual builder log (EN/KO), optimized for search engines, answer engines, and generative AI. Open source."
+title: "zzoo.dev — The Invisible Audience"
+description: "A bilingual builder log engineered for three audiences: humans who evaluate, search engines that rank, and AI systems that cite. Pure static, zero runtime, open source."
 status: "active"
 techStack:
   - Next.js 16
@@ -21,65 +21,63 @@ launchDate: "2026-01-01"
 links:
   github: "https://github.com/zzoohub/zzoo.dev"
 
-tagline: "A bilingual builder log, for humans and AI alike."
+tagline: "A builder log for humans and machines alike."
 category: "web"
 keywords:
   primary:
-    - "developer builder log SEO"
-    - "builder log for developers"
+    - "developer builder log"
+    - "portfolio for AI discoverability"
   longTail:
-    - "nextjs builder log template with SEO"
-    - "how to make developer site discoverable by AI"
+    - "how to make developer portfolio visible to AI"
+    - "bilingual developer site with structured data"
 competitors:
-  - name: "Next.js developer site templates"
-    differentiator: "Templates give you a starting point but no content architecture — this has a 3-layer document system (product brief, case study, design doc) with Zod-validated frontmatter per project"
+  - name: "Next.js portfolio templates"
+    differentiator: "Templates give layout, not content architecture — this has three-tab project docs, Zod-validated frontmatter, and triple-channel SEO built in"
   - name: "Astro developer sites"
-    differentiator: "Astro is fast but single-language by default — this ships bilingual (EN/KO) with automatic fallback, hreflang alternates, and per-locale MDX content"
-  - name: "Notion / WordPress sites"
-    differentiator: "Neither supports structured data, JSON-LD schemas, or llms.txt — this site is engineered for SEO, answer engines, and generative AI from the ground up"
+    differentiator: "Astro is fast but single-language by default — this ships bilingual with locale fallback, hreflang alternates, and per-locale MDX"
+  - name: "Notion / WordPress portfolios"
+    differentiator: "Neither supports JSON-LD schemas, llms.txt, or structured data for AI — this site is engineered for machine discoverability from the ground up"
 cta:
   primary:
-    label: "View Source on GitHub"
+    label: "View Source"
     url: "https://github.com/zzoohub/zzoo.dev"
 features:
   - title: "Bilingual"
-    description: "Full i18n across EN and KO with automatic locale fallback and hreflang alternates."
+    description: "English and Korean as parallel content with automatic fallback — not translations, native writing in each language."
     icon: "globe"
-  - title: "3-Layer Project Docs"
-    description: "Each project has a product brief, case study, and design doc — all Zod-validated and independently translated."
+  - title: "Three-Tab Projects"
+    description: "Overview for evaluators, Design for product thinkers, Engineering for fellow builders. Each reader self-selects."
     icon: "layers"
-  - title: "SEO + AEO + GEO"
-    description: "JSON-LD schemas, llms.txt, RSS feed, semantic HTML — optimized for search, answer engines, and generative AI."
+  - title: "Triple-Channel SEO"
+    description: "JSON-LD schemas, llms.txt, hreflang, semantic HTML — optimized for search, answer engines, and generative AI simultaneously."
     icon: "search"
-  - title: "Edge-Served SSG"
-    description: "Every page statically generated, served from Vercel's edge network. Lighthouse 95+."
+  - title: "Zero Runtime"
+    description: "Every page pre-rendered at build time. No server, no database, no API routes. Lighthouse 95+."
     icon: "zap"
 ---
 
-Most developer portfolios have a quiet problem: humans can read them, but machines cannot. Google might index them, but AI answer engines and LLMs have no structured way to understand who this person is, what they have built, or why it matters.
+Google indexes your portfolio. Perplexity cites it in answers. ChatGPT pulls facts from it when someone asks about your stack. Or none of that happens — because your site is a visual brochure that machines cannot parse.
 
-This site is the experiment: can a portfolio be pure static HTML — no server, no database, no runtime — and still be rich enough for humans, structured enough for AI, and naturally bilingual?
+Most developer portfolios optimize for one audience: the human visitor. This site is an experiment in serving three simultaneously — humans who evaluate, search engines that rank, and AI systems that extract and cite — from pure static HTML.
 
-## Three discovery channels, one architecture
+## Three audiences, one constraint
 
-The content is designed to be found three different ways:
+The constraint is zero runtime. No server, no database, no API routes. Every page is pre-rendered HTML served from Vercel's edge. That sounds limiting until you realize what it enables: sub-second loads, zero attack surface, and a deployment model where pushing to `main` is the entire workflow.
 
-1. **Search engines** — Static generation, semantic HTML, XML sitemap with hreflang, canonical URLs. The result: Lighthouse 95+, sub-second load times.
-2. **Answer engines** — JSON-LD schemas (`Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList`) give Perplexity and Google AI Overviews machine-readable context about every page.
-3. **Generative AI** — An `llms.txt` file at the site root and clean MDX content let LLMs extract and cite accurately.
+The interesting question is whether static HTML can carry enough structure for machines without sacrificing readability for humans. JSON-LD schemas give answer engines machine-readable context about every entity — person, project, blog post. An `llms.txt` file at the site root gives LLMs a plain-text map of the site. Semantic HTML and hreflang alternates handle traditional search. All three channels share the same content; they just read it differently.
 
-Most sites optimize for one of these. This one treats all three as first-class constraints.
+## Content that shows thinking
 
-## Content that captures decisions, not just output
+Each project gets three tabs. Overview for the five-second scan — what is this, why does it matter. Design for the product thinker who wants trade-offs and rejected alternatives. Engineering for the builder who wants architecture decisions and implementation details.
 
-Each project gets three tabs — Overview, Design, Engineering — each for a different reader. A hiring manager scans the Overview. A product thinker reads the Design tab for trade-offs. A fellow engineer checks Engineering for architecture decisions.
+A hiring manager reads one tab. A fellow engineer reads all three. Nobody wades through content meant for someone else.
 
-All frontmatter is Zod-validated. Content lives as per-locale MDX files with automatic English fallback when a Korean translation is missing. No CMS, no database — just files in a git repo.
+All content is file-based MDX with Zod-validated frontmatter. Missing Korean translations fall back to English. No CMS, no database — files in a git repo, version-controlled like code.
 
-## Bilingual by default
+## Bilingual, not translated
 
-English and Korean are not bolted on. Every page, every project tab, every UI string exists in both languages. The language switcher is a single button — with only two locales, a dropdown would be slower. Missing translations fall back to English gracefully, so new content can ship in one language first.
+English and Korean exist as parallel content. Same structure, but each written natively in its language. The language switcher is a single button — with two locales, a dropdown wastes a click. New content ships in one language first; the fallback ensures nothing breaks.
 
-## The whole thing is open source
+## Open source
 
-The [entire codebase](https://github.com/zzoohub/zzoo.dev) is public. Built with Next.js 16, React 19, TypeScript, and Tailwind CSS v4. Fork it, swap the content, deploy to Vercel. The content architecture — the three-tab project system, Zod schemas, triple-channel SEO — is the part worth stealing.
+The [entire codebase](https://github.com/zzoohub/zzoo.dev) is public. The part worth taking is the content architecture — three-tab project system, Zod schemas, triple-channel discoverability. Fork it, swap the content, deploy.

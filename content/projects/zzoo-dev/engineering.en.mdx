@@ -2,50 +2,54 @@
 title: "zzoo.dev — Engineering"
 ---
 
-No server. No database. No API routes. No runtime. Every page is pre-rendered at build time and served as static HTML from Vercel's edge network. This is not a limitation — it is the central architectural decision. Zero backend means a minimal attack surface, near-instant load times, and a deployment model where pushing to `main` is the entire workflow.
+## SSG as the core constraint
 
-## Why SSG, not SSR
+Every page is pre-rendered at build time and served as static HTML from Vercel's edge. No server. No database. No API routes. This is not a budget decision — it is the architectural foundation.
 
-The content changes when the developer pushes a commit, not when a visitor arrives. There is no user-specific data, no authentication, no form submissions. SSR would add cold starts, server costs, and caching strategies — complexity with zero benefit for this use case.
+Content changes when the developer pushes a commit, not when a visitor arrives. SSR would add cold starts, server costs, and caching complexity for zero benefit. The build output proves the constraint: every route shows `●` (static) in the Next.js log. If `ƒ` (dynamic) appears, something broke.
 
-The tradeoff: every content change requires a rebuild. But Vercel's GitHub integration turns a push to `main` into a deployed site in under two minutes. For a content site with no real-time requirements, that is fast enough.
+The trade-off: every content change triggers a rebuild. Vercel's GitHub integration deploys in under two minutes. For a content site with no real-time requirements, that is fast enough.
 
-The build output confirms the constraint: every route shows `●` (static) in the Next.js build log. If `ƒ` (dynamic) ever appears, something is wrong.
+## The next-intl SSG Trap
 
-## The SSG gotcha with next-intl
+Two locales (EN, KO) via `next-intl`. Straightforward — except for one trap that silently breaks static generation.
 
-Internationalization uses `next-intl` with two locales. The implementation is straightforward — except for one trap that silently breaks static generation.
+Server components must call `setRequestLocale(locale)` from page params. The intuitive alternative — `getLocale()` — depends on request-time context that does not exist during static generation. The build succeeds, but the locale is wrong at runtime. A one-line fix for a day-long debug.
 
-Server components must call `setRequestLocale(locale)` from the page's `params`. The intuitive alternative, `getLocale()`, relies on request-time context that does not exist during static generation. The build succeeds, but the locale is wrong at runtime.
+A second constraint: async server components cannot call `useTranslations()` directly. The fix splits each page into an async outer component (resolves params, fetches data) and a sync inner component (calls hooks). The i18n config uses explicit static imports instead of dynamic `import()` — another SSG compatibility requirement that is easy to miss.
 
-A second constraint: async server components cannot call `useTranslations()` directly. The workaround splits each page into an async outer component (resolves params, fetches data) and a sync inner component (calls hooks). The translation config uses explicit static imports instead of dynamic `import()` — another SSG compatibility requirement.
+## Content System
 
-## Content system: Zod as the safety net
+File-based MDX in the repository. No CMS. Blog posts, project pages, and the about page each have per-locale files. Projects support three optional tabs: Overview (always present), Design, Engineering.
 
-Content is file-based MDX stored in the repository. No CMS, no database. Blog posts, project pages, and the about page each have per-locale MDX files. Projects support three tabs: Overview (always present), Design (optional), Engineering (optional).
+Two Zod decisions shaped the system:
 
-Two Zod decisions matter:
+**Required fields break the build.** A project without a title fails validation intentionally. The error surfaces at `bun run build`, not after deployment.
 
-**Graceful degradation for optional fields.** Required fields throw on missing values — a project without a title breaks the build intentionally. Optional fields use `.catch(undefined)`, silently dropping invalid data. A malformed `video` URL in frontmatter does not take down the entire site.
+**Optional fields degrade gracefully.** Invalid optional data — a malformed video URL, a missing thumbnail — is silently dropped via `.catch(undefined)`. One bad field does not take down the site.
 
-**Reading time by locale.** English uses word count at 200 WPM. Korean uses character count at 300 CPM for CJK text. The detection is locale-based, not content-based — simple, predictable, and correct for bilingual content where a single post is always in one language.
+Reading time is locale-aware. English: word count at 200 WPM. Korean: character count at 300 CPM. Detection is locale-based, not content-based — each post is always in one language, so this is correct and simple.
 
-## D2 diagrams: build-time, dual-theme
+## Build Pipeline
 
-Architecture diagrams use D2, a declarative diagramming language. Each `.d2` file is compiled twice at build time — once for light theme, once for dark — producing paired SVGs in `/public/diagrams/`.
+Three prebuild scripts run before Next.js:
 
-The rendering component uses `useSyncExternalStore` for hydration safety. On the server, it always renders the light variant. On client mount, it switches to match the user's theme. This avoids the hydration mismatch that would occur if the server tried to guess the theme.
+1. **copy-images** — moves project images from `content/` to `public/`. Validates slug format. Whitelists image extensions.
+2. **build-diagrams** — compiles each D2 file twice: light theme and dark theme, producing paired SVGs. Falls back gracefully if the D2 CLI is missing.
+3. **generate-rss** — produces an RSS feed from English blog posts. XML-escapes all content.
 
-## Triple-channel SEO
+The D2 rendering component uses `useSyncExternalStore` for hydration safety. Server always renders the light variant. Client switches to the user's theme on mount. This avoids the hydration mismatch that would occur if the server tried to guess the theme.
 
-The SEO implementation is not a plugin — it is a module (`lib/seo.ts`) that every page calls through `generateMetadata()`. Each page produces locale-specific titles, descriptions, canonical URLs, hreflang alternates, and Open Graph tags.
+## Triple-Channel SEO
 
-JSON-LD schemas cover five entity types: `WebSite`, `Person`, `BlogPosting`, `SoftwareApplication`, and `BreadcrumbList`. The output is sanitized — angle brackets and ampersands are escaped in the JSON-LD script tags to prevent XSS injection.
+The SEO layer is a module (`lib/seo.ts`), not a plugin. Every page calls it through `generateMetadata()` to produce locale-specific titles, descriptions, canonical URLs, hreflang alternates, and Open Graph tags.
 
-The `llms.txt` file at the site root gives LLMs a plain-text summary of the site's structure and content — a convention that is still emerging, but costs nothing to support.
+JSON-LD covers five entity types: `WebSite`, `Person`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList`. The output is sanitized — angle brackets and ampersands are escaped in script tags to prevent XSS.
 
-## Security through absence
+An `llms.txt` file at the site root gives LLMs a plain-text map of the site. The convention is still emerging, but the cost is one file.
 
-Security headers — CSP, HSTS, X-Frame-Options — are configured in `next.config.ts`. The CSP `frame-src` allows only YouTube (for project videos) and Giscus (for blog comments). Everything else is blocked.
+## Security Through Absence
 
-But the real security story is what does not exist. No API endpoints. No form handling. No user input processing. No database connections. The attack surface of a static site is the CDN itself — and that is Vercel's problem, not mine.
+Security headers — CSP, HSTS, X-Frame-Options — live in `next.config.ts`. The CSP `frame-src` allows only YouTube and Giscus. Everything else is blocked.
+
+The real security is what does not exist. No API endpoints. No form processing. No user input. No database connections. The attack surface of a static site is the CDN — and that is Vercel's problem, not this codebase's.

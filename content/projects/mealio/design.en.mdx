@@ -1,91 +1,73 @@
 ---
-title: "Mealio — Product Design"
+title: "Mealio — Design"
 ---
 
-## The Core Tension
+## The Insight
 
-Meal tracking has a retention problem, not a feature problem. MyFitnessPal has 300,000 foods in its database. Lose It! has barcode scanning. Neither solved the real issue: every entry demands 30-45 seconds of active input, so most people quit within a week.
+Meal tracking has a retention problem, not a feature problem. MyFitnessPal has 300,000 foods in its database. Lose It! has barcode scanning. Neither stops most users from quitting within a week. The reason: every entry demands 30–45 seconds of active input.
 
-The insight behind Mealio: **the camera should replace the calorie database.** If logging a meal takes less than 1 second — tap, snap, done — people will actually stick with it. That constraint drove every product decision.
+Mealio starts from one constraint: **the camera replaces the calorie database.** If logging a meal takes under 1 second — tap, snap, done — people will actually keep doing it. That constraint drove every decision.
 
 ## Who This Is For
 
 **Jisoo — the lapsed logger**
 
-28, wants to eat better, has abandoned three tracking apps. She liked the idea of food logging but hated the process. Searching "bibimbap" in a database built for American diets returned nothing useful. By Thursday she was typing "lunch" with no photo. By Friday she'd stopped entirely.
+28, wants to eat better, has quit three tracking apps. She liked the idea of food logging but hated the process. Searching "bibimbap" in a database built for Western diets returned nothing useful. By Thursday she was typing "lunch" with no photo. By Friday she'd stopped entirely.
 
 She doesn't need calorie precision. She needs a visual record that builds itself.
 
-*"I just want to see what I've been eating this week. Why does that require a 5-minute data entry session?"*
+*"I just want to see what I've been eating. Why does that require 5 minutes of data entry?"*
 
 **Minho — the macro tracker**
 
-32, managing protein and calories for a gym routine. Already tracks nutrition, but the repetitive manual input burns him out. Tried barcode scanners, but most of what he eats is home-cooked Korean food with no barcode.
+32, managing protein and calories for a gym routine. He already tracks nutrition, but the manual input wears him down. Barcode scanners are useless — most of what he eats is home-cooked Korean food with no barcode.
 
-He wants accurate-enough numbers without typing them.
+He wants rough numbers without typing them.
 
-*"If I could just take a photo and get a rough macro estimate, I'd log every meal instead of just the ones I feel like tracking."*
+*"If I could just take a photo and get macro estimates, I'd log every meal instead of just the ones I feel like tracking."*
 
-## The Core Loop
-
-1. **Capture** — Open the app, camera is ready, take a photo. Entry exists.
-2. **Review** — Scroll through your photo diary. See what you ate this week at a glance.
-3. **Enrich** — Optionally add nutrition, ingredients, notes. AI fills in what you skip.
-
-Steps 2 and 3 only happen if step 1 is effortless. The entire product bets on making capture feel like nothing.
-
-## Key Product Decisions
+## Product Decisions
 
 ### Camera as home screen
 
-The home screen is a camera. Not a feed, not a dashboard — a camera. The capture button sits at the thumb's natural resting position in single-hand grip. One tap, one shutter press, entry saved.
+The home screen is a camera. Not a feed, not a dashboard. The capture button sits where your thumb naturally rests in single-hand grip. One tap, one shutter, entry saved.
 
-Every other meal tracker puts "Add Entry" behind a navigation step. That extra tap is the difference between logging and not logging when you're standing in a cafeteria line.
+Every other meal tracker puts "Add Entry" behind a navigation step. That extra tap is the gap between logging and not logging when you're standing in a cafeteria line.
 
-### Progressive detail over mandatory fields
+### Progressive detail, not mandatory fields
 
-A photo alone is a complete record. Everything else is enrichment: meal type (auto-detected by time of day), notes, nutrition, ingredients, location, rating. Jisoo logs photos and never touches nutrition. Minho adds macros to every entry. Same app, no sense of misuse for either.
+A photo alone is a complete record. Everything else is optional enrichment: meal type (auto-detected by time of day), notes, nutrition, ingredients, location, rating. Jisoo logs photos and never touches nutrition. Minho adds macros to every entry. Same app, neither feels like they're using it wrong.
 
-The alternative was structured entry forms with required fields — what every competitor does. Required fields feel complete but kill consistency. Optional fields feel incomplete but keep people logging. We chose the record people actually maintain.
+The alternative: structured forms with required fields. What every competitor does. Required fields feel complete but kill consistency. Optional fields feel incomplete but keep people logging. We chose the record people actually maintain.
 
 ### Guest mode as conversion funnel
 
-Signup friction kills new user activation. Mealio's answer: skip it entirely.
+Signup friction kills new user activation. Mealio's answer: skip it.
 
 Guest mode stores 10 entries locally. No email, no password, no OAuth prompts. The cap is deliberate — enough to form a habit (about 3 days of meals), scarce enough to create natural demand for the full experience.
 
-When a user signs up, every guest entry migrates silently to the server. No data loss, no re-entry, no "your trial data will be deleted" warning. The transition feels like the app got an upgrade, not like you switched products.
+On signup, every guest entry migrates silently to the server. No data loss, no re-entry. The transition feels like the app got an upgrade, not like you switched products.
 
 This dual-mode architecture is the hardest product decision to maintain — every feature needs two parallel data paths. But users who experience the product before signing up convert at a fundamentally different rate than users who hit a login wall on first launch.
 
-### AI as background layer, not blocking step
+### AI as background layer
 
-AI nutrition analysis deliberately runs after capture, not during. This isn't a technical limitation — it's a product decision with three reasons:
+AI nutrition analysis runs after capture, not during. This isn't a technical limitation — it's three deliberate choices:
 
-1. **Latency** — AI analysis takes 5-30 seconds. Blocking capture on that destroys the 1-second promise.
-2. **Accuracy framing** — Presenting estimates during capture implies precision. Presenting them later as suggestions sets the right expectation.
-3. **Core dependency** — If AI is required to create an entry, an API outage breaks the entire app. Making AI optional means the core experience never degrades.
+1. **Speed** — AI takes 5–30 seconds. Blocking capture on that destroys the 1-second promise.
+2. **Framing** — Showing estimates during capture implies precision. Showing them later as suggestions sets the right expectation.
+3. **Independence** — If AI is required to create an entry, an API outage breaks the entire app. Making AI optional means the core experience never degrades.
 
-The AI identifies ingredients, estimates macros, adds a confidence score, and generates a comment in the language matching the cuisine. Users can accept, adjust, or ignore the results entirely.
+The AI identifies ingredients, estimates macros, and generates a comment in the language matching the cuisine. Users can accept, adjust, or ignore the results.
 
 ## Competitive Positioning
 
 | | MyFitnessPal | Lose It! | Mealio |
 |---|---|---|---|
-| Entry creation | Search 300K+ food database | Barcode scan or text search | Single tap photo capture |
-| Time to log | 30-45 seconds | 15-30 seconds | Under 1 second |
+| Entry creation | Search 300K+ food database | Barcode or text search | Single photo capture |
+| Time to log | 30–45 seconds | 15–30 seconds | Under 1 second |
 | First use | Signup required | Signup required | Guest mode, no signup |
 | Primary interface | Search bar | Search bar | Camera |
-| Detail requirement | Mandatory fields | Mandatory fields | Everything optional |
-| Language | English-centric | English-centric | Native Korean + English |
+| Detail | Mandatory fields | Mandatory fields | Everything optional |
 
 Mealio doesn't compete on database size or calorie accuracy. It competes on capture speed and retention. The bet: an imperfect record you actually keep is more valuable than a precise record you abandon after a week.
-
-## Business Model
-
-Freemium, anchored on guest-to-auth conversion:
-
-- **Guest** — 10 local entries, full capture experience, no sync
-- **Authenticated (free)** — Unlimited entries, cloud sync, AI analysis, statistics
-
-The free tier is intentionally generous. A large free user base with high retention creates optionality for future monetization — premium AI features, data export, social sharing — without pressuring early users into a paywall that kills growth.

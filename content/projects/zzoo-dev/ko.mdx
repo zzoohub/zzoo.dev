@@ -1,6 +1,6 @@
 ---
-title: "zzoo.dev — Builder Log"
-description: "한영 이중 언어 Builder Log. 검색 엔진 · 답변 엔진 · 생성형 AI 동시 최적화. 오픈소스."
+title: "zzoo.dev — 보이지 않는 독자"
+description: "세 부류의 독자를 위한 이중 언어 Builder Log. 평가하는 사람, 순위를 매기는 검색 엔진, 인용하는 AI. 순수 정적, 런타임 제로, 오픈소스."
 status: "active"
 techStack:
   - Next.js 16
@@ -21,65 +21,63 @@ launchDate: "2026-01-01"
 links:
   github: "https://github.com/zzoohub/zzoo.dev"
 
-tagline: "한영 이중 언어 Builder Log, 사람과 AI 모두를 위해."
+tagline: "사람과 기계 모두를 위한 Builder Log."
 category: "web"
 keywords:
   primary:
-    - "개발자 builder log SEO"
-    - "개발자 빌더 로그 만들기"
+    - "개발자 빌더 로그"
+    - "AI 발견 가능한 포트폴리오"
   longTail:
-    - "Next.js 빌더 로그 만들기"
-    - "AI에 발견되는 개발자 사이트"
+    - "AI에 발견되는 개발자 포트폴리오 만들기"
+    - "구조화 데이터가 있는 이중 언어 개발자 사이트"
 competitors:
-  - name: "Next.js 개발자 사이트 템플릿"
-    differentiator: "템플릿은 시작점을 줄 뿐 콘텐츠 아키텍처가 없음 — 이 사이트는 프로젝트당 3-Layer 문서 시스템(프로덕트 브리프, 케이스 스터디, 설계 문서)과 Zod 검증 프론트매터를 갖추고 있음"
+  - name: "Next.js 포트폴리오 템플릿"
+    differentiator: "템플릿은 레이아웃만 줌 — 이 사이트는 세 탭 프로젝트 문서, Zod 검증 프론트매터, 세 채널 SEO를 내장"
   - name: "Astro 개발자 사이트"
-    differentiator: "Astro는 빠르지만 기본 단일 언어 — 이 사이트는 자동 폴백과 hreflang 대체 링크, 로케일별 MDX 콘텐츠로 한영 이중 언어를 지원"
-  - name: "Notion / WordPress 사이트"
-    differentiator: "둘 다 구조화 데이터, JSON-LD 스키마, llms.txt를 지원하지 않음 — 이 사이트는 SEO, 답변 엔진, 생성형 AI를 처음부터 설계에 반영"
+    differentiator: "Astro는 빠르지만 기본 단일 언어 — 이 사이트는 로케일 폴백, hreflang 대체 링크, 로케일별 MDX로 이중 언어 지원"
+  - name: "Notion / WordPress 포트폴리오"
+    differentiator: "둘 다 JSON-LD 스키마, llms.txt, AI 발견용 구조화 데이터를 지원 안 함 — 이 사이트는 처음부터 설계에 반영"
 cta:
   primary:
-    label: "GitHub에서 소스 보기"
+    label: "소스 보기"
     url: "https://github.com/zzoohub/zzoo.dev"
 features:
   - title: "이중 언어"
-    description: "EN, KO 완전 i18n. 자동 로케일 폴백과 hreflang 대체 링크."
+    description: "영어와 한국어가 번역이 아닌 병렬 콘텐츠. 자동 폴백으로 한쪽만 먼저 배포 가능."
     icon: "globe"
-  - title: "3-Layer 프로젝트 문서"
-    description: "프로젝트마다 프로덕트 브리프, 케이스 스터디, 설계 문서 — 모두 Zod 검증, 독립 번역."
+  - title: "세 탭 프로젝트"
+    description: "평가자에게 Overview, 프로덕트 씽커에게 Design, 동료 빌더에게 Engineering. 독자가 스스로 선택."
     icon: "layers"
-  - title: "SEO + AEO + GEO"
-    description: "JSON-LD 스키마, llms.txt, RSS 피드, 시맨틱 HTML — 검색, 답변 엔진, 생성형 AI 동시 최적화."
+  - title: "세 채널 SEO"
+    description: "JSON-LD 스키마, llms.txt, hreflang, 시맨틱 HTML — 검색·답변 엔진·생성형 AI 동시 최적화."
     icon: "search"
-  - title: "엣지 서빙 SSG"
-    description: "모든 페이지 정적 생성, Vercel 엣지 네트워크 서빙. Lighthouse 95+."
+  - title: "런타임 제로"
+    description: "모든 페이지 빌드 타임 사전 렌더링. 서버·데이터베이스·API 라우트 없음. Lighthouse 95+."
     icon: "zap"
 ---
 
-개발자 포트폴리오 대부분에는 조용한 문제가 있다. 사람은 읽을 수 있지만, 기계는 못 읽는다. 구글이 인덱싱은 해주겠지만, AI 답변 엔진이나 LLM이 이 사람이 누구인지, 뭘 만들었는지, 왜 중요한지를 구조적으로 이해할 방법이 없다.
+구글이 포트폴리오를 인덱싱한다. Perplexity가 답변에 인용한다. ChatGPT가 누군가 기술 스택을 물었을 때 정보를 뽑아간다. 아니면 아무 일도 일어나지 않는다 — 사이트가 기계는 파싱할 수 없는 시각적 브로슈어에 불과하니까.
 
-이 사이트는 하나의 실험이다. 서버 없이, 데이터베이스 없이, 런타임 없이 — 순수 정적 HTML만으로 사람에게도 충분히 풍부하고, AI에게도 구조적이고, 자연스럽게 이중 언어인 사이트를 만들 수 있을까?
+개발자 포트폴리오 대부분은 독자 하나만 최적화한다: 사람. 이 사이트는 세 부류를 동시에 서빙하는 실험이다 — 평가하는 사람, 순위를 매기는 검색 엔진, 추출하고 인용하는 AI 시스템. 순수 정적 HTML로.
 
-## 세 가지 발견 채널, 하나의 아키텍처
+## 세 독자, 하나의 제약
 
-콘텐츠가 발견되는 경로를 세 가지로 설계했다:
+제약은 런타임 제로다. 서버 없음, 데이터베이스 없음, API 라우트 없음. 모든 페이지가 사전 렌더링된 HTML이고 Vercel 엣지에서 서빙된다. 제한적으로 들리지만, 이게 만드는 것들이 있다: 1초 미만 로딩, 공격 면적 제로, `main`에 push하면 끝나는 배포.
 
-1. **검색 엔진** — 정적 생성, 시맨틱 HTML, hreflang이 포함된 XML 사이트맵, canonical URL. 결과: Lighthouse 95+, 1초 미만 로딩.
-2. **답변 엔진** — JSON-LD 스키마(`Person`, `WebSite`, `BlogPosting`, `SoftwareApplication`, `BreadcrumbList`)가 Perplexity와 Google AI Overview에 모든 페이지의 맥락을 기계가 읽을 수 있는 형태로 제공한다.
-3. **생성형 AI** — 사이트 루트의 `llms.txt`와 깔끔한 MDX 콘텐츠가 LLM의 정확한 추출과 인용을 돕는다.
+정적 HTML이 사람의 가독성을 해치지 않으면서 기계에 충분한 구조를 담을 수 있을까. JSON-LD 스키마가 답변 엔진에 모든 엔티티의 맥락을 전달한다. 사이트 루트의 `llms.txt`가 LLM에 사이트 지도를 제공한다. 시맨틱 HTML과 hreflang 대체 링크가 전통 검색을 처리한다. 세 채널이 같은 콘텐츠를 공유하고, 읽는 방식만 다르다.
 
-대부분의 사이트는 이 중 하나만 최적화한다. 이 사이트는 세 가지 모두를 일급 제약 조건으로 취급한다.
+## 사고 과정을 보여주는 콘텐츠
 
-## 결과물이 아니라 결정을 담는 콘텐츠
+프로젝트마다 탭 세 개. Overview는 5초 스캔용 — 이것이 뭔지, 왜 중요한지. Design은 트레이드오프와 기각된 대안을 원하는 프로덕트 씽커용. Engineering은 아키텍처 결정과 구현이 궁금한 빌더용.
 
-프로젝트마다 세 개의 탭이 있다 — Overview, Design, Engineering — 각각 다른 독자를 위한 것이다. 채용 담당자는 Overview를 훑고, 프로덕트 씽커는 Design 탭에서 트레이드오프를 읽고, 동료 엔지니어는 Engineering에서 아키텍처 결정을 확인한다.
+채용 담당자는 탭 하나를 읽는다. 동료 엔지니어는 셋 다 읽는다. 누구도 다른 사람을 위한 콘텐츠를 거쳐갈 필요가 없다.
 
-모든 프론트매터는 Zod로 검증한다. 콘텐츠는 로케일별 MDX 파일로 관리하며 한국어 번역이 없으면 영어로 자동 폴백한다. CMS도 데이터베이스도 없다 — git 저장소의 파일이 전부다.
+모든 콘텐츠가 Zod 검증 프론트매터를 가진 파일 기반 MDX다. 한국어 번역이 없으면 영어로 폴백한다. CMS도 데이터베이스도 없다 — git 저장소의 파일이 전부, 코드처럼 버전 관리된다.
 
-## 처음부터 이중 언어
+## 번역이 아니라 병렬 콘텐츠
 
-영어와 한국어는 나중에 붙인 게 아니다. 모든 페이지, 모든 프로젝트 탭, 모든 UI 문자열이 두 언어로 존재한다. 언어 전환은 버튼 하나 — 로케일이 두 개뿐인데 드롭다운을 쓸 이유가 없다. 번역이 없으면 영어로 자연스럽게 폴백하므로, 새 콘텐츠를 한 언어로 먼저 배포할 수 있다.
+영어와 한국어가 병렬로 존재한다. 구조는 같되 각 언어로 자연스럽게 쓴다. 언어 전환은 버튼 하나 — 로케일이 두 개인데 드롭다운을 쓸 이유가 없다. 새 콘텐츠는 한쪽 언어로 먼저 배포해도 폴백 덕분에 깨지지 않는다.
 
-## 전부 오픈소스다
+## 오픈소스
 
-[코드베이스 전체](https://github.com/zzoohub/zzoo.dev)가 공개되어 있다. Next.js 16, React 19, TypeScript, Tailwind CSS v4로 만들었다. 포크해서 콘텐츠를 바꾸고 Vercel에 배포하면 된다. 가져갈 만한 건 콘텐츠 아키텍처다 — 세 탭 프로젝트 시스템, Zod 스키마, 세 채널 동시 SEO.
+[코드베이스 전체](https://github.com/zzoohub/zzoo.dev)가 공개되어 있다. 가져갈 만한 건 콘텐츠 아키텍처다 — 세 탭 프로젝트 시스템, Zod 스키마, 세 채널 발견. 포크해서 콘텐츠를 바꾸고 배포하면 된다.

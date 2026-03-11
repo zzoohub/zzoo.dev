@@ -58,20 +58,20 @@ features:
 
 **There is no unblock button.**
 
-That's the entire product. Every other site blocker gives you an escape hatch — a password, a timer, a "just 5 more minutes" dialog — and hopes you'll be rational in the moment you're least rational. Permanent Site Blocker removes the choice entirely.
+That sentence is the entire product. Every other site blocker ships with an escape hatch — a password, a timer, a "just 5 more minutes" dialog — and bets on you being rational in the exact moment you're least rational. Permanent Site Blocker removes the choice.
 
-Block a site, and the only way to access it again is to reinstall the extension from scratch. Your entire blocklist disappears. You start over. That friction is the feature.
+Block a site, and the only way back is to uninstall the extension entirely. Your blocklist vanishes. You start over from zero. That friction is the feature.
 
-## Surgical, not blunt
+## Precise, not blunt
 
-YouTube isn't the problem — Shorts is. Reddit isn't the problem — the front page rabbit hole is. Block precisely what distracts you:
+YouTube isn't the problem — Shorts is. Reddit isn't the problem — the front page is. Block exactly what distracts you:
 
-- **Full domains** — `twitter.com` blocks everything, `www.` included
-- **Specific paths** — `youtube.com/shorts` blocks only Shorts
-- **Regex patterns** — `youtube\.com.*[가-힣]` blocks Korean YouTube content
+- **Full domains** — `twitter.com` blocks everything, subdomains included
+- **Specific paths** — `youtube.com/shorts` blocks Shorts but leaves the rest
+- **Regex patterns** — `youtube\.com.*[가-힣]` blocks Korean YouTube content while keeping English videos
 
 ## Nothing leaves your browser
 
-Zero analytics. Zero external servers. Zero npm dependencies. The entire codebase is ~300 lines of vanilla JavaScript — small enough to read in 10 minutes. Your blocklist syncs across Chrome devices through Chrome's own storage. Nothing else touches your data.
+Zero analytics. Zero servers. Zero npm dependencies. The entire extension is ~300 lines of vanilla JavaScript — readable in 10 minutes, auditable by anyone. Your blocklist syncs across Chrome devices through Chrome's own storage API. Nothing else touches your data.
 
-1,100+ daily users. 5.0 average rating. Most reviews cite the missing unblock button as the reason they installed it.
+1,100+ daily active users. 5.0 average rating. The most common review: "I installed it because there's no unblock button."

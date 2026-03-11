@@ -1,83 +1,73 @@
 ---
-title: "Narrex — Product Design"
+title: "Narrex — Design"
 ---
 
-## The Observation That Started Everything
+## The Observation
 
-Writers think in scenes and plot arcs, not sentences. Every AI writing tool ignores this. Sentence autocomplete makes the writer do all the structural work. Fully automated generators strip creative control. Neither touches the real bottleneck: turning dozens of interconnected scenes into a consistent, multi-episode narrative.
+Writers think in scenes and plot arcs — not sentences. Every AI writing tool ignores this. Sentence autocomplete makes the writer do all the structural work. Full auto-generation strips creative control. Neither touches the real bottleneck: turning dozens of interconnected scenes into a consistent multi-episode narrative.
 
-The insight behind Narrex: if the unit of AI generation is a scene inside a visual structure, and the structure itself assembles the prompt, then authors never write prompts. They just arrange their story.
+Narrex's insight: if the unit of AI generation is a scene inside a visual structure, and that structure itself assembles the prompt, authors never write prompts. They arrange their story.
 
-## Who Narrex Is For
+## Who This Is For
 
-**Ji-yeon — The Aspiring Writer**
+**Ji-yeon — the aspiring writer**
 
-University student. She's been imagining a regression-fantasy for months. Characters have names, the opening scene is vivid. But between the idea and 40 episodes of finished prose, there's a wall she's never climbed. She tried ChatGPT — the output was fine for 2 chapters, then characters forgot who they were and a subplot evaporated. She doesn't lack imagination. She lacks a system that can hold her story together while she builds it.
+University student. She's been imagining a regression-fantasy for months. Characters have names, the opening scene is vivid. But between the idea and 40 episodes of finished prose, there's a wall she's never climbed. ChatGPT was fine for 2 chapters — then characters forgot who they were and subplots evaporated.
 
-*"I want to see my story exist as something people can actually read — without needing years of prose writing practice."*
+She doesn't lack imagination. She lacks a system that holds her story together while she builds it.
 
-**Min-ho — The Struggling Serializer**
+*"I want my story to exist as something people can read — without years of prose practice."*
 
-Published 8 episodes on Novelpia. Readers liked the premise but caught inconsistencies — a character's eye color changed, a subplot was forgotten. He writes 2-3 hours after work and barely produces one episode per week. He knows his story. He just can't maintain quality at the pace readers expect.
+**Min-ho — the struggling serializer**
 
-*"I need the tool to remember everything that's happened and generate drafts that are consistent with the established story."*
+Published 8 episodes on Novelpia. Readers liked the premise but caught inconsistencies — a character's eye color changed, a subplot went missing. He writes 2–3 hours after work and barely manages one episode per week. He knows his story. He can't maintain quality at the pace readers expect.
+
+*"I need the tool to remember everything and generate drafts that fit the established story."*
 
 ## The Core Loop
 
-Every design decision traces back to one journey:
-
 1. **Paste an idea** — rough paragraph, Notion dump, one-liner
-2. **Get structure instantly** — config, timeline with scenes, character map with relationships
-3. **Arrange the story visually** — drag scenes, add parallel tracks, edit characters
-4. **Generate prose per scene** — AI assembles full context and drafts
-5. **Direct and refine** — edit freely, or give a direction like "add more tension"
+2. **Get structure instantly** — config, scene-populated timeline, character map
+3. **Arrange visually** — drag scenes, add parallel tracks, edit characters
+4. **Generate per scene** — AI assembles full context and drafts prose
+5. **Direct and refine** — edit freely, or direct: "add more tension"
 
-Three clicks to first value. The hardest part of novel writing — going from "I have an idea" to "I have a plan" — happens in the first session.
+Three clicks to first value. The hardest step in novel writing — going from "I have an idea" to "I have a plan" — happens in the first session.
 
-## Product Decisions as Trade-Offs
+## Product Decisions
 
-### Why Scenes, Not Sentences or Chapters
+### Why scenes, not sentences or chapters
 
 The fundamental question: what unit does the AI generate?
 
-Sentence-level (Sudowrite, TypeTak) makes the writer do all the structural work. The AI just finishes sentences. Full auto-generation (ChatGPT) gives you no creative control. Consistency dies after a few exchanges. Scene-level is the sweet spot: enough context for coherent output, enough granularity for the author to stay in control.
+Sentence-level (Sudowrite, TypeTak) makes the writer do all structural work. Full auto-generation (ChatGPT) removes control and loses consistency after a few exchanges. Scene-level is the sweet spot — enough context for coherent output, enough granularity for the author to stay in charge.
 
-The consequence: Narrex can't help with line-level prose polishing the way Sudowrite can. That's an acceptable trade-off — the bottleneck for aspiring novelists is scene development, not sentence-level craft.
+The trade-off: Narrex can't polish individual sentences the way Sudowrite can. Acceptable — the bottleneck for aspiring novelists is scene development, not sentence craft.
 
-### Why a Video Editor, Not a Word Processor
+### Why a video editor, not a word processor
 
-The workspace is modeled after an NLE (non-linear editor) like Premiere or CapCut. Scenes are clips on a multi-track timeline, not paragraphs in a document. This was chosen because:
+The workspace is modeled after an NLE like Premiere or CapCut. Scenes are clips on a multi-track timeline, not paragraphs in a document.
 
 - Writers naturally think in parallel storylines — multi-track supports that directly
 - Scenes have extent (duration), not just position — enabling automatic simultaneity detection across tracks
-- The NLE metaphor is intuitive for digital-native users who've edited a video or built a GarageBand track
+- The NLE metaphor is intuitive for digital-native users who've edited a video or GarageBand track
 
-What was rejected: a traditional chapter-based document view. Chapters conflate "what happens" with "how it's packaged for readers." Narrex separates events from episodes — multiple small events can merge into one episode, one large event can span several. Dragging an episode divider on the timeline re-partitions chapters, and the AI prompt auto-rebuilds. No other tool makes this distinction.
+The rejected alternative: a traditional chapter-based view. Chapters conflate "what happens" with "how it's packaged for readers." Narrex separates events from episodes — multiple small events can merge into one episode, one large event can span several. Dragging an episode divider on the timeline re-partitions chapters and the AI prompt auto-rebuilds. No other tool makes this distinction.
 
-### Why "Director," Not "Writer"
+### Why "director," not "writer"
 
-AI generates drafts. The author directs and refines. This framing is deliberate — it shifts the user from "writer who can't write" to "director who shapes the output." Direction-based editing ("add more tension," "increase dialogue") lowers the craft barrier without removing creative ownership.
+AI generates drafts. The author directs and refines. This framing shifts the user from "writer who can't write" to "director who shapes output." Direction-based editing ("more tension," "increase dialogue") lowers the craft barrier without removing creative ownership.
 
-The risk: users may over-rely on AI drafts instead of developing their own voice. Phase 1 validates whether users spend more time editing than generating — the signal that drafts are good enough to refine, not discard.
+The risk: users may over-rely on AI instead of developing their own voice. The key validation signal for Phase 1: do users spend more time editing than generating?
 
 ## Progressive Disclosure
 
 The primary users are non-technical hobbyist writers. The interface must not overwhelm on first contact.
 
-First load shows a single-track timeline, the config bar, and the character map. Multi-track, branch/merge, and keyboard shortcuts are hidden until the user interacts with the timeline. Direction-based editing only appears after the first draft is generated. Features reveal themselves as the user's needs grow — never before.
-
-Scene visual states use fill pattern, icon, and text label together — not color alone. Empty, AI Draft, Edited, Needs Revision. Accessibility is not an afterthought.
+First load: single-track timeline, config bar, character map. Multi-track, branch/merge, and keyboard shortcuts stay hidden until the user interacts with the timeline. Direction-based editing appears only after the first draft is generated. Features reveal themselves as the user's needs grow — never before.
 
 ## Competitive Landscape
 
 8 tools reviewed — 4 international, 4 Korean. The gap: no tool combines a visual timeline, scene-level AI generation, and Korean web novel specialization.
 
-International tools (Sudowrite, Novelcrafter) are English-only with no visual timeline. Korean tools (AIWC, TypeTak) offer either full auto-generation with no quality control, or sentence-level assist with weak output. The scene-level sweet spot inside a visual structure is unoccupied.
-
-## Phase Strategy
-
-**Phase 1 (current):** Core loop validation. One question: do users keep editing AI drafts, or discard them? If they edit, the product works. If they discard, the generation quality needs to improve before anything else matters.
-
-**Phase 2:** Episode organization layer, draft variations with tone sliders, export to DOCX/EPUB.
-
-**Phase 3:** World map, temporal relationship tracking, revision tools, AI Surprise mode.
+International tools (Sudowrite, Novelcrafter) are English-only with no visual timeline. Korean tools (AIWC, TypeTak) offer full auto-generation with no quality control, or sentence-level assist with weak output. The scene-level sweet spot inside a visual structure is unoccupied.
