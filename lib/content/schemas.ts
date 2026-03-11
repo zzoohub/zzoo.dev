@@ -141,6 +141,14 @@ export const projectFrontmatterSchema = z.object({
     .refine(isYouTubeEmbedUrl, { message: "Must be a YouTube embed URL" })
     .optional()
     .catch(undefined),
+  tabs: z
+    .object({
+      overview: z.boolean().optional(),
+      design: z.boolean().optional(),
+      engineering: z.boolean().optional(),
+    })
+    .optional()
+    .catch(undefined),
 });
 
 // --- About ---

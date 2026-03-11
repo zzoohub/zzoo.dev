@@ -18,7 +18,7 @@ import {
   buildBreadcrumbJsonLd,
   buildCanonicalUrl,
 } from "@/lib/seo";
-import { siteConfig } from "@/lib/site-config";
+import { siteConfig, projectTabDefaults } from "@/lib/site-config";
 import { JsonLd } from "@/components/shared/json-ld";
 import { D2Diagram } from "@/components/project/d2-diagram";
 import { ProjectDetailTabs } from "@/components/project/project-detail-tabs";
@@ -87,26 +87,42 @@ export default async function ProjectDetailPage({
     options: mdxOptions,
   });
 
+  // Resolve tab visibility: central default AND per-project frontmatter AND file existence
+  // If any source says false, the tab is hidden
+  const tabsConfig = project.meta.tabs;
+  const showDesign =
+    (projectTabDefaults.design !== false) &&
+    (tabsConfig?.design !== false) &&
+    hasDesignContent(locale, slug);
+  const showEngineering =
+    (projectTabDefaults.engineering !== false) &&
+    (tabsConfig?.engineering !== false) &&
+    hasEngineeringDoc(locale, slug);
+
   // Compile design content (design.en.mdx / design.ko.mdx)
-  const designDoc = getDesignContent(locale, slug);
   let designMdx: React.ReactNode = null;
-  if (designDoc) {
-    const { content: compiled } = await compileMDX({
-      source: designDoc.content,
-      options: mdxOptions,
-    });
-    designMdx = compiled;
+  if (showDesign) {
+    const designDoc = getDesignContent(locale, slug);
+    if (designDoc) {
+      const { content: compiled } = await compileMDX({
+        source: designDoc.content,
+        options: mdxOptions,
+      });
+      designMdx = compiled;
+    }
   }
 
   // Compile engineering doc (engineering.en.mdx / engineering.ko.mdx)
-  const engineeringDoc = getEngineeringDoc(locale, slug);
   let engineeringMdx: React.ReactNode = null;
-  if (engineeringDoc) {
-    const { content: compiled } = await compileMDX({
-      source: engineeringDoc.content,
-      options: mdxOptions,
-    });
-    engineeringMdx = compiled;
+  if (showEngineering) {
+    const engineeringDoc = getEngineeringDoc(locale, slug);
+    if (engineeringDoc) {
+      const { content: compiled } = await compileMDX({
+        source: engineeringDoc.content,
+        options: mdxOptions,
+      });
+      engineeringMdx = compiled;
+    }
   }
 
   const pageUrl = buildCanonicalUrl(locale, `/projects/${slug}`);
@@ -141,8 +157,8 @@ export default async function ProjectDetailPage({
         overviewContent={overviewMdx}
         designContent={designMdx}
         engineeringContent={engineeringMdx}
-        hasDesign={hasDesignContent(locale, slug)}
-        hasEngineering={hasEngineeringDoc(locale, slug)}
+        hasDesign={showDesign}
+        hasEngineering={showEngineering}
         slug={slug}
       />
     </>

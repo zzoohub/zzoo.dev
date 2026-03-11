@@ -15,6 +15,12 @@ export const siteConfig = {
   },
 } as const;
 
+export const projectTabDefaults = {
+  overview: true,
+  design: false,
+  engineering: false,
+} as const;
+
 export const navItems = [
   { href: "/projects", key: "projects" },
   { href: "/blog", key: "blog" },
