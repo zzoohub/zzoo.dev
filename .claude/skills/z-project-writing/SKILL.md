@@ -18,17 +18,17 @@ A portfolio project page tells a story in three chapters — each for a differen
 
 2. **A project page is a story, not documentation.** Documentation describes what exists. A story reveals why it exists and what you learned building it. Every section should have narrative tension — a problem that needed solving, a choice that had consequences.
 
-2. **The reader decides in 10 seconds.** Every tab needs a hook in the first two sentences. If the opening doesn't create curiosity, nothing else matters.
+3. **The reader decides in 10 seconds.** Every tab needs a hook in the first two sentences. If the opening doesn't create curiosity, nothing else matters.
 
-3. **Trade-offs beat choices.** "We chose Rust" is a fact. "We chose Rust over Python because LLM calls are just HTTP — no Python-only libraries needed, and we get sub-ms latency at 10MB memory" is a story. Always name what was rejected and why.
+4. **Trade-offs beat choices.** "We chose Rust" is a fact. "We chose Rust over Python because LLM calls are just HTTP — no Python-only libraries needed, and we get sub-ms latency at 10MB memory" is a story. Always name what was rejected and why.
 
-4. **Specificity is credibility.** "Fast performance" means nothing. "Sub-ms responses, 10–30MB memory" is memorable and verifiable. Use real numbers, real names, real constraints.
+5. **Specificity is credibility.** "Fast performance" means nothing. "Sub-ms responses, 10–30MB memory" is memorable and verifiable. Use real numbers, real names, real constraints.
 
-5. **What you didn't build reveals judgment.** Deliberate omissions — no timer, no whitelist, no microservices — show you understood the problem deeply enough to resist adding things.
+6. **What you didn't build reveals judgment.** Deliberate omissions — no timer, no whitelist, no microservices — show you understood the problem deeply enough to resist adding things.
 
-6. **Irreversibility is the product.** The most interesting design decision in Site Blocker isn't the blocking mechanism — it's the absence of an unblock button. Look for the equivalent in every project: the one constraint that IS the product.
+7. **Irreversibility is the product.** The most interesting design decision in Site Blocker isn't the blocking mechanism — it's the absence of an unblock button. Look for the equivalent in every project: the one constraint that IS the product.
 
-7. **Each Overview must have its own structure.** Portfolio visitors read multiple projects. If every overview follows the same template (problem → criticism of alternatives → our solution → how it works → CTA), the formula becomes visible and personality disappears. Design and Engineering tabs are builder documents — consistent structure is fine. But Overview is the project's face; it must reflect the project's unique character. A manifesto-style opening for a radical product, a numbers-forward comparison for a speed-focused app, a scenario walkthrough for a creative tool. The structure should emerge from what makes the project interesting, not from a template.
+8. **Each Overview must have its own structure.** Portfolio visitors read multiple projects. If every overview follows the same template (problem → criticism of alternatives → our solution → how it works → CTA), the formula becomes visible and personality disappears. Design and Engineering tabs are builder documents — consistent structure is fine. But Overview is the project's face; it must reflect the project's unique character. A manifesto-style opening for a radical product, a numbers-forward comparison for a speed-focused app, a scenario walkthrough for a creative tool. The structure should emerge from what makes the project interesting, not from a template.
 
 ## Process
 
