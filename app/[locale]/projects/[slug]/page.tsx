@@ -24,7 +24,7 @@ import { D2Diagram } from "@/components/project/d2-diagram";
 import { ProjectDetailTabs } from "@/components/project/project-detail-tabs";
 import { ProjectImageGallery } from "@/components/project/project-image-gallery";
 import { FeatureGrid } from "@/components/project/feature-grid";
-import { CompetitorComparison } from "@/components/project/competitor-comparison";
+
 import { ProductCTA } from "@/components/project/product-cta";
 import { VideoEmbed } from "@/components/project/video-embed";
 import { compileMDX } from "next-mdx-remote/rsc";
@@ -179,14 +179,6 @@ function ProjectDetailContent({
         <FeatureGrid features={meta.features} heading={t("features")} />
       )}
 
-      {/* Competitor comparison */}
-      {meta.competitors && meta.competitors.length > 0 && (
-        <CompetitorComparison
-          competitors={meta.competitors}
-          heading={t("how_its_different")}
-          vsLabel={t("vs")}
-        />
-      )}
 
       {/* Video embed */}
       {meta.video && <VideoEmbed url={meta.video} title={meta.title} />}
