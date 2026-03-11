@@ -113,34 +113,42 @@ Think "smart colleague explaining their thinking over coffee," not "PM presentin
 **File**: `engineering.en.mdx` / `engineering.ko.mdx`
 **Length**: 60–100 lines
 **Audience**: Fellow engineers, hiring managers, technical co-founders
-**Core question**: "What engineering decisions did you make and why?"
+**Core question**: "What problems did you hit and how did you solve them?"
 
 ### Default Structure
 
-An engineering tab shows technical judgment, not technical inventory. Follow this structure:
+An engineering tab shows how you solved hard problems, not what tools you used. The narrative flows from **requirement → design → structure/data flow/processing**. Every technical detail earns its place by being rooted in a real constraint.
 
-1. **Architecture** — Orient the reader in 1–2 paragraphs. Structure, data flow, how components connect, processing model. Not tech stack justification — that's a resume, not a story. Focus on the shape of the system: what are the boundaries, how does data move through them, what are the interesting constraints on that flow.
+1. **System overview** — 1 paragraph + optional architecture diagram. Major components, how they connect, what data flows where. Quick orientation so the reader has a mental map before diving into stories. Not a tech stack listing — the reader already knows what you use. If the project has a D2 diagram, place it here — the reader needs the system picture first, then the stories make sense against that map.
 
-2. **Implementation stories** — The "how" — 2–4 stories about problems you actually hit and how you solved them. Pick aspects where:
-   - You solved a problem in a non-obvious way (NLE positioning for timeline scenes, dual-layer browser blocking)
-   - The data model reveals the domain (scenes as clips with extent, not list items)
-   - A pipeline does something clever (HDBSCAN clustering instead of asking an LLM to group posts)
-   - You hit a wall and had to rethink (presigned uploads after the API server became a bottleneck)
+2. **Requirement-driven stories** — 2–4 stories. This is the heart of the tab. Each story follows:
+   - **Requirement or constraint** — what the system needed to do, or what problem emerged
+   - **Design reasoning** — how you thought about it from a software engineering perspective: where to draw boundaries, how to separate concerns, which direction dependencies should flow, what to hide vs expose, how to model the domain
+   - **Resulting structure, data flow, or processing approach** — the concrete outcome: how data moves, how components are wired, how the system handles the requirement
 
-   Each story should be self-contained: what the problem was, how you solved it, and why this approach over the obvious alternative.
+   Pick stories where the engineering is genuinely interesting:
+   - A boundary decision that shaped everything downstream (e.g., separating generation orchestration from domain logic so either can change independently)
+   - A data model that reveals the domain (scenes as clips with extent, not list items)
+   - A processing pipeline where the flow itself is the insight (HDBSCAN clustering instead of asking an LLM to group posts)
+   - A constraint that forced a non-obvious structure (presigned uploads after the API server became a bottleneck)
+   - Dependency direction choices that prevent coupling (domain doesn't know about infrastructure)
 
-3. **Architecture decisions** — Structural choices about how the system is organized: monolith vs microservices, sync vs async, where boundaries are drawn, what's separated vs co-located. Each one: what was chosen, over what, and why. 1–3 sentences max.
+   The design principles — separation of concerns, dependency inversion, boundary setting, data flow control — should emerge naturally from the stories, not be listed as abstract theory.
+
+3. **Smaller structural decisions** (optional) — Choices that don't warrant a full story but still show judgment. 1–3 sentences each: what was chosen, the alternative, and why. Examples: sync vs async processing, co-locating vs separating modules, how error propagation crosses boundaries.
 
 ### What to Include
 
-- System structure, data flow, component boundaries
-- Implementation stories — problems hit, solutions found, why this approach
-- Structural decisions with trade-offs (monolith vs micro, sync vs async, etc.)
-- Key code snippets that show design intent (e.g., a trait definition that enforces a boundary)
+- Requirement-driven narratives: constraint → design reasoning → resulting structure
+- Software design reasoning: separation of concerns, dependency direction, boundary decisions, encapsulation, data flow control
+- Key code snippets that show design intent (e.g., a trait definition that enforces a boundary, a port interface that decouples layers)
 - Data flow descriptions when they reveal interesting constraints
+- How the system handles edge cases, concurrency, or failure modes
 
 ### What to Exclude
 
+- **Tech stack justifications** — "Why Rust over Python", "Why Neon over Supabase", "Why SolidJS over React". The solopreneur's stack is fixed; these become repetitive across projects. Tech names appear naturally when describing the system — just don't spend sentences defending the choice.
+- **Abstract design principle lectures** — Don't explain what "separation of concerns" means. Show it through the story. The principle should be visible in the decision, not stated as a label.
 - Crate/package listing tables (a Cargo.toml or package.json can show this)
 - Middleware stack details (generic plumbing)
 - CI/CD pipeline configurations (unless unusually interesting)
@@ -153,7 +161,7 @@ An engineering tab shows technical judgment, not technical inventory. Follow thi
 
 ### Voice
 
-Talk engineer-to-engineer. The reader knows what PostgreSQL is — skip the intro. But they don't know why YOU picked Neon over Supabase, or why you went with a monolith instead of microservices. That's what they came to read.
+Talk engineer-to-engineer. The reader knows what PostgreSQL is — skip the intro. What they came to read is why you drew the boundaries where you did, how a requirement shaped the data flow, and what interesting problems you hit along the way.
 
 Keep it approachable:
 - Assume the reader is competent but unfamiliar with your codebase
@@ -171,7 +179,7 @@ Keep it approachable:
 
 ### D2 Architecture Diagrams
 
-Projects can include a D2 architecture diagram that renders at the bottom of the Engineering tab. The diagram is declared in the **Overview** frontmatter (not the Engineering file):
+Projects can include a D2 architecture diagram. Place it at the top of the Engineering tab, right after the system overview paragraph — the reader needs the visual map before the requirement-driven stories reference specific components and data flows. The diagram is declared in the **Overview** frontmatter (not the Engineering file):
 
 ```yaml
 # in en.mdx (overview)
@@ -184,8 +192,10 @@ When a project has meaningful architecture worth visualizing, use the `d2:diagra
 
 ### Common Mistakes
 
+- **Describing structure without motivation** — "The system has three layers" is a fact. Start from the requirement that made three layers necessary.
+- **Lecturing on design principles** — Don't write "we applied separation of concerns." Show the separation through the story; the reader will recognize the principle.
+- Justifying tech stack choices (Rust over Python, Neon over Supabase) — the stack is fixed, these read as boilerplate across projects. Use tech names naturally but spend the words on structure and design instead.
 - Copying the design doc into the engineering tab (a design doc is reference material; the engineering tab is a highlight reel)
 - Including generic sections because "every project should have auth/security/observability" (only include what's genuinely interesting)
-- Listing technologies without explaining why they were chosen (a tech stack table without trade-offs is a resume bullet point, not engineering writing)
 - Being too detailed about infrastructure (Cloud Run config, Docker settings) — this is ops, not engineering storytelling
 - Sounding like a paper. "The architecture leverages..." → "The app is split into..." — use the simplest verb that works

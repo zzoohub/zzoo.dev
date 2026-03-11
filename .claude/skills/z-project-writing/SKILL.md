@@ -20,7 +20,7 @@ A portfolio project page tells a story in three chapters — each for a differen
 
 3. **The reader decides in 10 seconds.** Every tab needs a hook in the first two sentences. If the opening doesn't create curiosity, nothing else matters.
 
-4. **Trade-offs beat choices.** "We chose Rust" is a fact. "We chose Rust over Python because LLM calls are just HTTP — no Python-only libraries needed, and we get sub-ms latency at 10MB memory" is a story. Always name what was rejected and why.
+4. **Trade-offs beat choices.** "We use a modular monolith" is a fact. "One developer, one deploy unit — a generation request touches projects, scenes, characters, and AI all at once. Splitting into microservices means four cross-service calls per request. A monolith with trait-isolated modules avoids that overhead while staying extractable later" is a story. Name the structural alternative you rejected and why.
 
 5. **Specificity is credibility.** "Fast performance" means nothing. "Sub-ms responses, 10–30MB memory" is memorable and verifiable. Use real numbers, real names, real constraints.
 
@@ -51,7 +51,7 @@ Every project has a core tension. Find it before writing anything.
 - **Narrex**: "What if the structure the author builds IS the AI prompt?"
 - **Idea Fork**: "What if demand signals from complaints could be clustered into business opportunities automatically?"
 
-This tension should echo through all three tabs — Overview introduces it as a user problem, Design explains the product thinking behind it, Engineering shows how it was built.
+This tension should echo through all three tabs — Overview introduces it as a user problem, Design explains the product thinking behind it, Engineering shows what problems you hit building it and how you solved them.
 
 ### Step 3: Write the Tab
 
@@ -61,7 +61,7 @@ Read `references/tab-guidelines.md` for detailed guidance on each tab. Key const
 |-----|--------|----------|---------------|
 | Overview | 40–80 lines | Users, clients | "What is this and why should I care?" |
 | Design | 100–140 lines | PMs, designers | "How did you think about users and trade-offs?" |
-| Engineering | 60–100 lines | Engineers, hiring managers | "What engineering decisions did you make and why?" |
+| Engineering | 60–100 lines | Engineers, hiring managers | "What problems did you hit and how did you solve them?" |
 
 ### Step 4: Rewrite Tight
 
@@ -69,7 +69,7 @@ After the first draft, apply these checks:
 
 - **Hook test**: Do the first two sentences create curiosity? Would you keep reading?
 - **So-what test**: For every paragraph, ask "so what?" If you can't answer, cut it.
-- **Trade-off test**: Does every decision name what was rejected and why?
+- **Trade-off test**: Does every structural decision name the alternative and why it was rejected?
 - **Specificity test**: Replace every vague claim with a number, name, or constraint.
 - **Cut test**: Can any section be removed without losing the story? If yes, remove it.
 
