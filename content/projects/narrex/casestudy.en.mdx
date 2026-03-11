@@ -1,0 +1,39 @@
+---
+title: "Narrex — Case Study"
+---
+
+## Problem
+
+Aspiring Korean web novelists have stories in their heads but can't turn them into manuscripts. The bottleneck isn't creativity — it's the labor of structuring dozens of events, maintaining consistency across 40+ episodes, and producing 3,000–5,000 characters of prose per episode.
+
+Existing AI writing tools attack the wrong unit of work. Sentence-level autocomplete (Sudowrite) leaves all structural work to the writer. Fully automated generators (ChatGPT, standalone generators) strip creative control and lose consistency after a few exchanges. No tool — Korean or international — combines visual story structure with AI drafting at the scene level.
+
+Writers think in scenes and plot arcs, not individual sentences. That gap was the opening.
+
+## Solution
+
+Narrex is a visual timeline editor where the story structure itself becomes the AI prompt. Authors arrange scenes, characters, and relationships visually — then generate prose scene by scene with full narrative context. No prompt engineering required.
+
+### Key Design Decisions
+
+- **Scene as the unit of generation** — Not sentences, not chapters. A scene within a structured timeline is the natural unit novelists think in. AI generates full prose per scene with context: config, characters, prior summaries, and simultaneous events on parallel tracks.
+
+- **NLE timeline model** — Borrowed from video editing. Scenes are clips with `start_position` and `duration` on multi-track timelines, not items in a flat list. This enables parallel storylines, drag-and-drop reordering via midpoint insertion (no renumbering), and simultaneity detection through overlapping ranges.
+
+- **Event-episode separation** — Scenes (what happens) and episodes (how it's packaged for readers) are independent layers. Multiple small events can merge into one episode, or one large event can span multiple episodes. Episode dividers on the timeline can be dragged to re-partition chapters, and the AI prompt auto-rebuilds.
+
+- **Modular monolith in Rust** — Solo developer building tightly coupled domains. A single Axum service with hexagonal architecture (domain logic has no infrastructure dependencies) avoids deployment overhead while keeping modules extractable. Sub-ms responses, 10–30MB memory, compile-time safety.
+
+- **LLM crate as workspace boundary** — Provider abstraction lives in a separate Rust workspace crate (`crates/llm`). The compiler physically prevents it from importing API internals. Gemini 2.5 Flash-Lite as primary (~$0.002 per scene), Cloudflare Workers AI as zero-cost fallback. Failover is automatic.
+
+- **SolidJS for timeline reactivity** — Fine-grained reactivity is ideal for the timeline UI, where many DOM nodes update independently during drag-and-drop. Surgical DOM updates outperform virtual DOM diffing for this interaction pattern.
+
+## Current Status
+
+Narrex is in active Phase 1 development — validating the core loop: idea in, visual structure out, scene-by-scene AI drafting, author editing.
+
+- **~$0.002 per scene generation** — Gemini 2.5 Flash-Lite at ~4K input + ~2K output tokens per scene
+- **~$2–5/month total infrastructure** at launch (100 DAU) — Cloud Run, Neon, and Upstash all scale to zero
+- **Context assembly pipeline** — Config + characters + compressed summaries + simultaneous events auto-assembled into a ~2,500–5,000 token prompt per scene
+- **11 PostgreSQL tables** in Phase 1 — NLE-positioned scenes, versioned drafts (append-only), generation cost logs, character relationship graphs
+- **SSE streaming** — First token in under 2 seconds via Axum's native SSE with async-stream
