@@ -1,5 +1,5 @@
 ---
-name: z-dev-essay
+name: dev-essay
 description: Write essays in the style of Paul Graham — conversational, idea-driven, and surprising. Use this skill whenever the user asks to write a blog post, dev essay, opinion piece, retrospective, or any long-form essay about software, technology, startups, life, or ideas. Also use when the user says "write about", "write an essay", "blog post about", or asks to write about their experience, an observation, or a thought they've been mulling over. Do NOT use for tutorials, how-to guides, changelogs, technical documentation, or listicles — those aren't essays. Supports English and Korean at native level.
 ---
 

@@ -1,11 +1,11 @@
 ---
-name: z-project-writing
+name: project-writing
 description: |
   Write project content for the zzoo.dev portfolio — Overview, Design, and Engineering tabs.
   Use this skill whenever writing or rewriting project pages in content/projects/{slug}/.
   Triggers on: "write project page", "write overview", "write design tab", "write engineering tab",
   "new project content", "rewrite project", or when creating/editing any MDX file under content/projects/.
-  Do NOT use for blog posts (use z-dev-essay), marketing copy outside the portfolio, or documentation.
+  Do NOT use for blog posts (use dev-essay), marketing copy outside the portfolio, or documentation.
 ---
 
 # Project Writing
