@@ -1,0 +1,67 @@
+---
+title: "Claude Harness — AI Orchestration Framework"
+description: "A minimal multi-agent orchestration harness for Claude Code. Blocks the orchestrator from writing code and forces delegation to sub-agents."
+status: "active"
+techStack:
+  - TypeScript
+  - Node.js
+  - Claude Code Hooks
+tags:
+  - Developer Tools
+  - AI
+featured: true
+launchDate: "2026-03-15"
+links:
+  github: "https://github.com/zzoohub/claude-harness"
+tagline: "A framework that stops AI from writing code."
+category: "cli"
+keywords:
+  primary:
+    - "Claude Code orchestration"
+    - "multi-agent framework"
+  longTail:
+    - "Claude Code sub-agent delegation"
+    - "AI coding agent orchestrator"
+competitors:
+  - name: "oh-my-claudecode"
+    differentiator: "OMC is the full system with 19 agents and 30 skills — Harness extracts just the core mechanisms into 2,371 lines"
+cta:
+  primary:
+    label: "View Source"
+    url: "https://github.com/zzoohub/claude-harness"
+features:
+  - title: "Forced Delegation"
+    description: "Blocks Write/Edit for the orchestrator. The only option is calling sub-agents."
+    icon: "shield"
+  - title: "Persistent State"
+    description: "Mode and phase persist to disk. Progress survives session crashes."
+    icon: "hard-drive"
+  - title: "Forced Verification"
+    description: "After sub-agent completion, the orchestrator must verify tests and builds itself."
+    icon: "check-circle"
+  - title: "Parallel Execution"
+    description: "Up to 4 concurrent tasks via tmux. Auto-batching, polling, and retry."
+    icon: "git-branch"
+---
+
+Give Claude Code a complex task, and it handles everything. Explores the codebase, writes code, runs tests, fixes errors — all in one session. And that's the problem.
+
+When one agent does everything, context overflows. Exploration pushes implementation details out of the window. Implementation skips verification. Error recovery loses track of the original goal. The agent says "done" — but tests never ran and half the work is missing.
+
+Harness takes the code-writing tools away from the orchestrator. Write, Edit, NotebookEdit — all blocked on source files. The only thing it can do is delegate to sub-agents.
+
+## Hooks and State Machine
+
+Two axes.
+
+**Hooks** intercept five lifecycle events in Claude Code: session start, prompt submit, pre/post tool use, and stop. At each point, the harness injects context, blocks tools, or forces verification.
+
+**State machine** records mode and phase to disk. "Pipeline mode, execute phase, one retry spent" survives session crashes, context compaction, even restarts. The next session picks up exactly where the last one stopped.
+
+## Type "autopilot"
+
+Cycles through understand, plan, execute, verify. When a phase ends and Claude tries to stop, the stop guard blocks it and advances to the next phase. Verification failure loops back to execute — up to three retries. Only the last phase allows a clean exit.
+
+Type "loop" for execute then verify on repeat until it passes. Large tasks parallelize via tmux — batches of four, automatic polling, retry on failure.
+
+Extracted from oh-my-claudecode. 200+ files down to 19. Tens of thousands of lines down to 2,371. Zero runtime dependencies.
