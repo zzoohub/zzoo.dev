@@ -44,9 +44,11 @@ features:
     icon: "git-branch"
 ---
 
-oh-my-claudecode is a multi-agent system with 19 agents, 30 skills, and 35 MCP tools. 200+ files, tens of thousands of lines. Use it across projects and a pattern emerges — agents and skills get rewritten every time, but the orchestration flow stays the same. Force delegation, track progress, verify completion.
+Claude Code reads, writes, and tests code on its own. But push it on complex tasks and the limits show — context overflows, verification gets skipped, the thread loses track. An orchestrator harness is the layer that fixes this. It hooks into Claude Code's lifecycle to split work across sub-agents, track progress, and verify completion.
 
-Harness extracts that orchestrator and makes it pluggable — bring your own agents and skills per project. 200+ files down to 19. Tens of thousands of lines down to 2,371. Zero runtime dependencies.
+oh-my-claudecode is one of the most widely used harnesses in the Claude ecosystem. 19 agents, 30 skills, 35 MCP tools — 200+ files, tens of thousands of lines. Use it across projects and a pattern emerges. Agents and skills get rewritten every time. But the orchestration flow — force delegation, track progress, verify completion — stays identical.
+
+Claude Harness extracts that orchestrator into a lightweight, standalone harness. Plug in your own agents and skills per project. 19 files, 2,371 lines. Zero runtime dependencies.
 
 ## Core Flow
 
@@ -58,12 +60,11 @@ State survives session crashes. Mode, phase, working memory — all persisted to
 
 ## Install
 
-Works as a Claude Code plugin.
+Works as a Claude Code plugin. Install directly from GitHub:
 
 ```bash
-git clone https://github.com/zzoohub/claude-code.git
-cd claude-code && npm install && npm run build
-claude plugin add /path/to/claude-code
+/plugin marketplace add zzoohub/claude-code
+/plugin install claude-harness@zzoohub-claude-code
 ```
 
 Define your agents in `.claude/harness.json` — model, prompt, tool scope. That's all the setup there is.
