@@ -65,3 +65,13 @@ Cycles through understand, plan, execute, verify. When a phase ends and Claude t
 Type "loop" for execute then verify on repeat until it passes. Large tasks parallelize via tmux — batches of four, automatic polling, retry on failure.
 
 Extracted from oh-my-claudecode. 200+ files down to 19. Tens of thousands of lines down to 2,371. Zero runtime dependencies.
+
+## Install
+
+Works as a Claude Code plugin.
+
+```bash
+claude plugin add /path/to/claude-harness
+```
+
+Define your agents in `.claude/harness.json` — model, prompt, tool scope. That's all the setup there is.
