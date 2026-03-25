@@ -4,13 +4,11 @@ title: "Claude Harness — Design"
 
 ## The Observation
 
-Claude Code is remarkably capable. Reading code, writing code, testing, debugging — it handles whatever you throw at it. But give it a complex task, and a curious pattern emerges.
+Using oh-my-claudecode across multiple projects revealed a pattern. Agent prompts get rewritten for each project. Skills change to match the domain. MCP tools get swapped in and out. But the orchestration layer — the hooks that enforce delegation, the state machine that tracks workflow progress, the logic that verifies completion and recovers from errors — stays identical every time.
 
-It tries to do everything itself.
+Out of 200+ files, the truly reusable part was 19 files of orchestration core. Harness started from that observation.
 
-Exploration and implementation and verification all running in the same context window, with important findings from early exploration getting pushed out during implementation. Sub-agents are available, but it reaches for Write instead. It reports "done" with tests unrun. This isn't a capability problem. It's a behavioral one.
-
-AI agents don't delegate by default. If a tool is available, they use it. If they can do something, they do. That's efficient for small tasks, but at scale, it collides with the limits of a single context window.
+And the most important job of that core is one thing: stopping AI agents from doing everything themselves. Agents don't delegate by default. If a tool is available, they use it. If they can do something, they do. That's efficient for small tasks, but at scale, it collides with the limits of a single context window.
 
 ## Who This Is For
 
@@ -19,6 +17,8 @@ AI agents don't delegate by default. If a tool is available, they use it. If the
 **Eunji, team lead.** Wants to run sub-agents in parallel. But collecting results, verifying them, and retrying failures is entirely manual. When an agent reports "done," she checks each one individually. "I need an agent that manages agents."
 
 ## Product Decisions
+
+**Keep the orchestrator, make the rest pluggable.** Agent prompts, skills, MCP tools, model routing — these are project-specific by nature. The agents for a meal-tracking app have nothing in common with the agents for an infrastructure migration. OMC bundled all of this in; Harness provides only the orchestration flow and lets users define the rest in `.claude/harness.json` per project. The framework owns the flow — delegate, track, verify — and nothing else.
 
 **Blocking, not guidelines.** A system prompt saying "please delegate to sub-agents" gets ignored. Agents use whatever tools are available — prompts are suggestions, not constraints. So Harness takes the tools away. Write, Edit, NotebookEdit — all blocked on source files. Config files (`.harness/`, `CLAUDE.md`) are allowed. Only sub-agents can touch code.
 
@@ -33,5 +33,3 @@ The trade-off: occasional false positives. "Explain the loop structure" might tr
 A single JSON file is enough. It's a state machine — one process reads and writes, no concurrency to worry about.
 
 **"Sub-agents lie."** When a sub-agent reports completion, the orchestrator receives a message: "Do not trust this claim. Run the tests yourself, read the code, check the build." A git diff summary is included. Not trusting self-reports is the orchestrator's reason for existing.
-
-**What's missing is the identity.** Specific agent prompts, the skill system, MCP tool servers, model routing, external AI integration, guard systems — all removed. From OMC's 200+ files down to 19, what remains is pure mechanism. How agents are defined, which models they use, what prompts they get — all user decisions. The framework has exactly one opinion: the orchestrator doesn't write code.

@@ -1,6 +1,6 @@
 ---
 title: "Claude Harness — AI Orchestration Framework"
-description: "A minimal multi-agent orchestration harness for Claude Code. Blocks the orchestrator from writing code and forces delegation to sub-agents."
+description: "A multi-agent orchestration harness for Claude Code. Blocks the orchestrator from writing code directly and forces delegation to sub-agents."
 status: "active"
 techStack:
   - TypeScript
@@ -12,8 +12,8 @@ tags:
 featured: true
 launchDate: "2026-03-15"
 links:
-  github: "https://github.com/zzoohub/claude-harness"
-tagline: "A framework that stops AI from writing code."
+  github: "https://github.com/zzoohub/claude-code"
+tagline: "The orchestrator, extracted from a multi-agent system."
 category: "cli"
 keywords:
   primary:
@@ -24,11 +24,11 @@ keywords:
     - "AI coding agent orchestrator"
 competitors:
   - name: "oh-my-claudecode"
-    differentiator: "OMC is the full system with 19 agents and 30 skills — Harness extracts just the core mechanisms into 2,371 lines"
+    differentiator: "OMC is the full system with 19 agents and 30 skills — Harness extracts just the core orchestration flow into 2,371 lines"
 cta:
   primary:
     label: "View Source"
-    url: "https://github.com/zzoohub/claude-harness"
+    url: "https://github.com/zzoohub/claude-code"
 features:
   - title: "Forced Delegation"
     description: "Blocks Write/Edit for the orchestrator. The only option is calling sub-agents."
@@ -44,34 +44,26 @@ features:
     icon: "git-branch"
 ---
 
-Give Claude Code a complex task, and it handles everything. Explores the codebase, writes code, runs tests, fixes errors — all in one session. And that's the problem.
+oh-my-claudecode is a multi-agent system with 19 agents, 30 skills, and 35 MCP tools. 200+ files, tens of thousands of lines. Use it across projects and a pattern emerges — agents and skills get rewritten every time, but the orchestration flow stays the same. Force delegation, track progress, verify completion.
 
-When one agent does everything, context overflows. Exploration pushes implementation details out of the window. Implementation skips verification. Error recovery loses track of the original goal. The agent says "done" — but tests never ran and half the work is missing.
+Harness extracts that orchestrator and makes it pluggable — bring your own agents and skills per project. 200+ files down to 19. Tens of thousands of lines down to 2,371. Zero runtime dependencies.
 
-Harness takes the code-writing tools away from the orchestrator. Write, Edit, NotebookEdit — all blocked on source files. The only thing it can do is delegate to sub-agents.
+## Core Flow
 
-## Hooks and State Machine
-
-Two axes.
-
-**Hooks** intercept five lifecycle events in Claude Code: session start, prompt submit, pre/post tool use, and stop. At each point, the harness injects context, blocks tools, or forces verification.
-
-**State machine** records mode and phase to disk. "Pipeline mode, execute phase, one retry spent" survives session crashes, context compaction, even restarts. The next session picks up exactly where the last one stopped.
-
-## Type "autopilot"
-
-Cycles through understand, plan, execute, verify. When a phase ends and Claude tries to stop, the stop guard blocks it and advances to the next phase. Verification failure loops back to execute — up to three retries. Only the last phase allows a clean exit.
+Type "autopilot" and it cycles through understand, plan, execute, verify. The orchestrator can't write code directly — Write and Edit are blocked on source files, forcing delegation to sub-agents. When a sub-agent reports "done," the orchestrator verifies with tests and builds. Failure loops back to execute. Only the last phase allows a clean exit.
 
 Type "loop" for execute then verify on repeat until it passes. Large tasks parallelize via tmux — batches of four, automatic polling, retry on failure.
 
-Extracted from oh-my-claudecode. 200+ files down to 19. Tens of thousands of lines down to 2,371. Zero runtime dependencies.
+State survives session crashes. Mode, phase, working memory — all persisted to disk and auto-restored on the next session.
 
 ## Install
 
 Works as a Claude Code plugin.
 
 ```bash
-claude plugin add /path/to/claude-harness
+git clone https://github.com/zzoohub/claude-code.git
+cd claude-code && npm install && npm run build
+claude plugin add /path/to/claude-code
 ```
 
 Define your agents in `.claude/harness.json` — model, prompt, tool scope. That's all the setup there is.

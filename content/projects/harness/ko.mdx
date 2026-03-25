@@ -12,8 +12,8 @@ tags:
 featured: true
 launchDate: "2026-03-15"
 links:
-  github: "https://github.com/zzoohub/claude-harness"
-tagline: "AI가 코드를 안 쓰게 만드는 프레임워크."
+  github: "https://github.com/zzoohub/claude-code"
+tagline: "멀티에이전트 시스템에서 오케스트레이터만 떼어냈다."
 category: "cli"
 keywords:
   primary:
@@ -24,11 +24,11 @@ keywords:
     - "AI 코딩 에이전트 오케스트레이터"
 competitors:
   - name: "oh-my-claudecode"
-    differentiator: "OMC는 19개 에이전트, 30개 스킬의 풀셋 — Harness는 핵심 메커니즘만 2,371줄로 추출"
+    differentiator: "OMC는 19개 에이전트, 30개 스킬의 풀셋 — Harness는 핵심 오케스트레이션 흐름만 2,371줄로 추출"
 cta:
   primary:
     label: "소스 보기"
-    url: "https://github.com/zzoohub/claude-harness"
+    url: "https://github.com/zzoohub/claude-code"
 features:
   - title: "위임 강제"
     description: "오케스트레이터의 Write/Edit를 차단. 할 수 있는 건 서브에이전트 호출뿐."
@@ -44,34 +44,26 @@ features:
     icon: "git-branch"
 ---
 
-Claude Code에 큰 작업을 시키면, 혼자서 다 한다. 탐색하고, 코드 쓰고, 테스트 돌리고, 에러 고치고 — 한 세션에서 전부 처리한다. 그리고 그게 문제다.
+oh-my-claudecode는 19개 에이전트, 30개 스킬, 35개 MCP 도구를 가진 멀티에이전트 시스템이다. 200개 파일, 수만 줄. 쓰다 보면 패턴이 보인다 — 에이전트와 스킬은 프로젝트마다 새로 짜는데, 오케스트레이션 흐름은 매번 같다. 위임을 강제하고, 진행을 추적하고, 완료를 검증하는 구조.
 
-한 에이전트가 모든 걸 하면 컨텍스트가 넘친다. 탐색이 구현을 밀어내고, 구현이 검증을 건너뛰게 만들고, 에러 복구가 원래 목표를 잊게 한다. 결국 "다 했습니다"인데 테스트는 안 돌렸고 절반은 빠져 있다.
+Harness는 그 오케스트레이터만 떼어내서, 프로젝트별 에이전트와 스킬을 꽂아 쓸 수 있게 만든 것이다. 200개 파일 → 19개. 수만 줄 → 2,371줄. 런타임 의존성 제로.
 
-Harness는 오케스트레이터에게서 코드 작성 도구를 빼앗는다. Write, Edit, NotebookEdit — 소스 파일에 대해서는 전부 차단. 할 수 있는 건 딱 하나, 서브에이전트에게 위임하는 것뿐이다.
+## 핵심 흐름
 
-## 훅과 상태 머신
-
-두 축이 있다.
-
-**Hooks** — Claude Code의 라이프사이클 이벤트에 개입한다. 세션 시작, 프롬프트 입력, 도구 호출 전/후, 중단. 다섯 지점에서 컨텍스트를 주입하거나, 도구를 차단하거나, 검증을 강제한다.
-
-**State machine** — 모드와 phase를 디스크에 기록한다. "pipeline의 구현 phase, retry 1회 소진" 같은 상태가 세션이 죽어도 사라지지 않는다. 다음 세션이 시작되면 자동으로 복원된다.
-
-## "autopilot"이라고 치면
-
-분석 → 설계 → 구현 → 검증을 자동으로 순회한다. 한 phase가 끝나면 Claude가 멈추려 해도 stop guard가 차단하고 다음 phase로 넘긴다. 검증에서 실패하면 구현으로 돌아가서 고치고 다시 검증한다. 마지막 phase까지 가야 비로소 멈출 수 있다.
+"autopilot"이라고 치면 분석 → 설계 → 구현 → 검증을 자동 순회한다. 오케스트레이터는 직접 코드를 쓰지 못한다 — Write, Edit는 소스 파일에 대해 차단되고, 서브에이전트에 위임해야 한다. 서브에이전트가 "완료"를 보고하면, 오케스트레이터가 직접 테스트와 빌드로 검증한다. 실패하면 구현으로 돌아간다. 마지막 phase까지 가야 비로소 멈출 수 있다.
 
 "loop"이라고 치면 실행 → 검증을 될 때까지 반복한다. 대규모 작업은 tmux로 4개씩 병렬 실행.
 
-oh-my-claudecode에서 핵심만 추출했다. 200개 파일 → 19개. 수만 줄 → 2,371줄. 런타임 의존성 제로.
+세션이 죽어도 상태가 사라지지 않는다. 모드, phase, 작업 메모리 — 전부 디스크에 영속되고 다음 세션에서 자동 복원된다.
 
 ## 설치
 
 Claude Code 플러그인으로 동작한다.
 
 ```bash
-claude plugin add /path/to/claude-harness
+git clone https://github.com/zzoohub/claude-code.git
+cd claude-code && npm install && npm run build
+claude plugin add /path/to/claude-code
 ```
 
 `.claude/harness.json`에 에이전트를 정의하면 바로 쓸 수 있다. 모델, 프롬프트, 도구 범위 — 전부 여기서 설정한다.
