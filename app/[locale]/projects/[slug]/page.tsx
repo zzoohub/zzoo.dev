@@ -20,18 +20,18 @@ import {
 } from "@/lib/seo";
 import { siteConfig, projectTabDefaults } from "@/lib/site-config";
 import { JsonLd } from "@/components/shared/json-ld";
-import { D2Diagram } from "@/components/project/d2-diagram";
-import { ProjectDetailTabs } from "@/components/project/project-detail-tabs";
-import { ProjectImageGallery } from "@/components/project/project-image-gallery";
-import { FeatureGrid } from "@/components/project/feature-grid";
+import { D2Diagram } from "../_components/d2-diagram";
+import { ProjectDetailTabs } from "../_components/project-detail-tabs";
+import { ProjectImageGallery } from "../_components/project-image-gallery";
+import { FeatureGrid } from "../_components/feature-grid";
 
-import { ProductCTA } from "@/components/project/product-cta";
-import { VideoEmbed } from "@/components/project/video-embed";
+import { ProductCTA } from "../_components/product-cta";
+import { VideoEmbed } from "../_components/video-embed";
 import { compileMDX } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import type { ProjectMeta } from "@/lib/types";
 import { Comments } from "@/components/shared/comments";
-import { ProjectTitle } from "@/components/project/project-title";
+import { ProjectTitle } from "../_components/project-title";
 import { proseClassName } from "@/lib/utils";
 import { generateContentStaticParams } from "@/lib/static-params";
 

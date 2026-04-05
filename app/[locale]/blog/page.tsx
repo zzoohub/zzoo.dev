@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { getAllBlogPosts } from "@/lib/content";
 import { buildPageMeta } from "@/lib/seo";
-import { BlogListClient } from "./blog-list-client";
+import { BlogListClient } from "./_components/blog-list-client";
 
 export async function generateMetadata({
   params,

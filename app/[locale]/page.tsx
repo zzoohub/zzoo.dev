@@ -13,7 +13,7 @@ import {
 import { JsonLd } from "@/components/shared/json-ld";
 import { AvailabilityBadge } from "@/components/shared/availability-badge";
 import { Section } from "@/components/shared/section";
-import { ProjectCard } from "@/components/project/project-card";
+import { ProjectCard } from "./projects/_components/project-card";
 import { Testimonial } from "@/components/shared/testimonial";
 
 export async function generateMetadata({

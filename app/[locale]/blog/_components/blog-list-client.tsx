@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import type { BlogPostMeta } from "@/lib/types";
-import { TagFilter } from "@/components/blog/tag-filter";
-import { BlogPostItem } from "@/components/blog/blog-post-item";
+import { TagFilter } from "./tag-filter";
+import { BlogPostItem } from "./blog-post-item";
 
 
 export function BlogListClient({

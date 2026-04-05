@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { getAllProjects } from "@/lib/content";
 import { buildPageMeta } from "@/lib/seo";
-import { ProjectCard } from "@/components/project/project-card";
+import { ProjectCard } from "./_components/project-card";
 
 export async function generateMetadata({
   params,

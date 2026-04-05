@@ -47,6 +47,44 @@ Next.js 16 (App Router, SSG only), React 19, TypeScript strict, Tailwind CSS v4 
 
 ## Architecture
 
+### Folder Structure (feature co-location)
+
+Feature-specific components live alongside their routes (`_components/`). Shared components stay in `components/`.
+
+```
+app/[locale]/
+├── blog/
+│   ├── page.tsx                  # Blog list
+│   ├── [slug]/page.tsx           # Blog detail
+│   └── _components/              # Blog-specific UI
+│       ├── blog-list-client.tsx
+│       ├── blog-post-item.tsx
+│       ├── tag-filter.tsx
+│       └── tag-filter.test.tsx
+├── projects/
+│   ├── page.tsx                  # Project list
+│   ├── [slug]/page.tsx           # Project detail
+│   └── _components/              # Project-specific UI
+│       ├── d2-diagram.tsx
+│       ├── feature-grid.tsx
+│       ├── product-cta.tsx
+│       ├── project-card.tsx
+│       ├── project-detail-tabs.tsx
+│       ├── project-image-gallery.tsx
+│       ├── project-title.tsx
+│       └── video-embed.tsx
+├── about/page.tsx
+├── contact/page.tsx
+├── now/page.tsx
+└── page.tsx
+
+components/                        # Shared only
+├── layout/                        # Header, footer, theme-toggle, language-switcher, skip-link
+├── shared/                        # json-ld, comments, availability-badge, cta-section, etc.
+├── ui/                            # Primitives (button, tabs)
+└── theme-provider.tsx
+```
+
 ### Content System (file-based MDX)
 
 The content system is a module at `lib/content/` (import via `@/lib/content`):
@@ -127,7 +165,7 @@ Project frontmatter: `title`, `description`, `status` (`active|completed|archive
 
 - Vitest + Testing Library (jsdom). Test files alongside source: `foo.test.tsx`
 - `vitest.setup.ts` mocks `next-intl` (returns key as-is, special case for `"booked"` key with values), `next-intl/routing` (`defineRouting`), and `next-themes` (returns `"light"`)
-- Coverage: `lib/**/*.{ts,tsx}` and `components/**/*.{ts,tsx}`, excludes `**/types.ts`
+- Coverage: `lib/**/*.{ts,tsx}`, `components/**/*.{ts,tsx}`, and `app/**/_components/**/*.{ts,tsx}`, excludes `**/types.ts`
 - **Gotcha**: `vi.useFakeTimers({ shouldAdvanceTime: true })` causes CI flakes — use `vi.useFakeTimers()` without it
 - For async + fake timers: `vi.advanceTimersByTimeAsync(0)` inside `act()` to flush promises
 
