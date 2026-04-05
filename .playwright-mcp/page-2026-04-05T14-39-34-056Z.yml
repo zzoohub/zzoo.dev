@@ -1,0 +1,148 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "zzoo.dev" [ref=e5] [cursor=pointer]:
+        - /url: /en
+      - navigation "Main" [ref=e6]:
+        - link "Projects" [ref=e7] [cursor=pointer]:
+          - /url: /en/projects
+        - link "Blog" [ref=e8] [cursor=pointer]:
+          - /url: /en/blog
+        - link "About" [ref=e9] [cursor=pointer]:
+          - /url: /en/about
+      - combobox "Select language" [ref=e12]:
+        - option "🇺🇸 EN" [selected]
+        - option "🇰🇷 KO"
+  - main [ref=e14]:
+    - generic [ref=e16]:
+      - generic [ref=e17]:
+        - heading "Blog" [level=1] [ref=e18]
+        - paragraph [ref=e19]: Notes on building stuff, breaking stuff, and shipping anyway.
+      - tablist "Filter by tag" [ref=e21]:
+        - tab "All" [selected] [ref=e22]
+        - tab "claude-code" [ref=e23]
+        - tab "ai" [ref=e24]
+        - tab "solo-developer" [ref=e25]
+        - tab "setup" [ref=e26]
+        - tab "learning" [ref=e27]
+        - tab "career" [ref=e28]
+        - tab "solidjs" [ref=e29]
+        - tab "reactivity" [ref=e30]
+        - tab "frontend" [ref=e31]
+        - tab "javascript" [ref=e32]
+        - tab "opinion" [ref=e33]
+        - tab "infrastructure" [ref=e34]
+        - tab "devops" [ref=e35]
+        - tab "pulumi" [ref=e36]
+        - tab "cloudflare" [ref=e37]
+        - tab "gcp" [ref=e38]
+        - tab "neon" [ref=e39]
+        - tab "rust" [ref=e40]
+        - tab "vibe-coding" [ref=e41]
+      - generic [ref=e42]:
+        - article [ref=e43]:
+          - generic [ref=e44]:
+            - time [ref=e45]: Mar 25, 2026
+            - generic [ref=e46]: ·
+            - generic "5 minute read" [ref=e47]: 5 min read
+          - heading "A Team of One" [level=3] [ref=e48]:
+            - link "A Team of One" [ref=e49] [cursor=pointer]:
+              - /url: /en/blog/my-claude-code-setup
+          - paragraph [ref=e50]: Can one person have a team?
+          - generic [ref=e51]:
+            - generic [ref=e52]: claude-code
+            - generic [ref=e53]: ai
+            - generic [ref=e54]: solo-developer
+            - generic [ref=e55]: setup
+        - article [ref=e56]:
+          - generic [ref=e57]:
+            - time [ref=e58]: Mar 7, 2026
+            - generic [ref=e59]: ·
+            - generic "5 minute read" [ref=e60]: 5 min read
+          - heading "Borrowed Seniors" [level=3] [ref=e61]:
+            - link "Borrowed Seniors" [ref=e62] [cursor=pointer]:
+              - /url: /en/blog/borrowed-seniors
+          - paragraph [ref=e63]: I set out to build domain experts. What I got was a curriculum.
+          - generic [ref=e64]:
+            - generic [ref=e65]: ai
+            - generic [ref=e66]: learning
+            - generic [ref=e67]: solo-developer
+            - generic [ref=e68]: career
+        - article [ref=e69]:
+          - generic [ref=e70]:
+            - time [ref=e71]: Mar 6, 2026
+            - generic [ref=e72]: ·
+            - generic "7 minute read" [ref=e73]: 7 min read
+          - heading "A UI Framework That Runs on One Closure — SolidJS" [level=3] [ref=e74]:
+            - link "A UI Framework That Runs on One Closure — SolidJS" [ref=e75] [cursor=pointer]:
+              - /url: /en/blog/solidjs-fine-grained-reactivity
+          - paragraph [ref=e76]: I dug into SolidJS's reactivity and found something far simpler than React under the hood.
+          - generic [ref=e77]:
+            - generic [ref=e78]: solidjs
+            - generic [ref=e79]: reactivity
+            - generic [ref=e80]: frontend
+            - generic [ref=e81]: javascript
+        - article [ref=e82]:
+          - generic [ref=e83]:
+            - time [ref=e84]: Feb 19, 2026
+            - generic [ref=e85]: ·
+            - generic "7 minute read" [ref=e86]: 7 min read
+          - heading "Taste and Code" [level=3] [ref=e87]:
+            - link "Taste and Code" [ref=e88] [cursor=pointer]:
+              - /url: /en/blog/developers-who-matter-in-the-ai-era
+          - paragraph [ref=e89]: Everyone says learn to code better. But when code is free, the scarce thing isn't writing it — it's knowing what to write.
+          - generic [ref=e90]:
+            - generic [ref=e91]: ai
+            - generic [ref=e92]: career
+            - generic [ref=e93]: opinion
+        - article [ref=e94]:
+          - generic [ref=e95]:
+            - time [ref=e96]: Feb 8, 2026
+            - generic [ref=e97]: ·
+            - generic "6 minute read" [ref=e98]: 6 min read
+          - heading "Infrastructure Debt" [level=3] [ref=e99]:
+            - link "Infrastructure Debt" [ref=e100] [cursor=pointer]:
+              - /url: /en/blog/why-i-chose-this-infra-stack-as-a-solo-developer
+          - paragraph [ref=e101]: The most important command in my infrastructure isn't deploy. It's destroy.
+          - generic [ref=e102]:
+            - generic [ref=e103]: infrastructure
+            - generic [ref=e104]: devops
+            - generic [ref=e105]: solo-developer
+            - generic [ref=e106]: pulumi
+            - generic [ref=e107]: cloudflare
+            - generic [ref=e108]: gcp
+            - generic [ref=e109]: neon
+        - article [ref=e110]:
+          - generic [ref=e111]:
+            - time [ref=e112]: Jan 15, 2026
+            - generic [ref=e113]: ·
+            - generic "6 minute read" [ref=e114]: 6 min read
+          - heading "The Hardest Language" [level=3] [ref=e115]:
+            - link "The Hardest Language" [ref=e116] [cursor=pointer]:
+              - /url: /en/blog/why-rust-is-the-perfect-language-for-vibe-coding
+          - paragraph [ref=e117]: Everyone assumes vibe coding works best with easy languages. They have it exactly backwards.
+          - generic [ref=e118]:
+            - generic [ref=e119]: rust
+            - generic [ref=e120]: vibe-coding
+            - generic [ref=e121]: ai
+  - contentinfo [ref=e122]:
+    - generic [ref=e123]:
+      - generic [ref=e124]:
+        - generic [ref=e125]:
+          - paragraph [ref=e126]: zzoo.dev
+          - status [ref=e127]: Building something new
+        - generic [ref=e129]:
+          - link "GitHub" [ref=e130] [cursor=pointer]:
+            - /url: https://github.com/zzoohub
+            - img [ref=e131]
+          - link "LinkedIn" [ref=e134] [cursor=pointer]:
+            - /url: https://linkedin.com/in/zzoo
+            - img [ref=e135]
+          - link "Email" [ref=e139] [cursor=pointer]:
+            - /url: mailto:zzoo.origin@gmail.com
+            - img [ref=e140]
+      - paragraph [ref=e144]: © 2026 zzoo.dev
+  - button "Open Next.js Dev Tools" [ref=e150] [cursor=pointer]:
+    - img [ref=e151]

@@ -7,6 +7,17 @@
     <language>en</language>
     <atom:link href="https://zzoo.dev/rss.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>A Team of One</title>
+      <link>https://zzoo.dev/en/blog/my-claude-code-setup</link>
+      <guid isPermaLink="true">https://zzoo.dev/en/blog/my-claude-code-setup</guid>
+      <description>Can one person have a team?</description>
+      <pubDate>Wed, 25 Mar 2026 00:00:00 GMT</pubDate>
+      <category>claude-code</category>
+      <category>ai</category>
+      <category>solo-developer</category>
+      <category>setup</category>
+    </item>
+    <item>
       <title>Borrowed Seniors</title>
       <link>https://zzoo.dev/en/blog/borrowed-seniors</link>
       <guid isPermaLink="true">https://zzoo.dev/en/blog/borrowed-seniors</guid>
@@ -37,17 +48,6 @@
       <category>ai</category>
       <category>career</category>
       <category>opinion</category>
-    </item>
-    <item>
-      <title>A Team of One</title>
-      <link>https://zzoo.dev/en/blog/my-claude-code-setup</link>
-      <guid isPermaLink="true">https://zzoo.dev/en/blog/my-claude-code-setup</guid>
-      <description>Can one person have a team? Turns out the answer isn&apos;t about hiring.</description>
-      <pubDate>Tue, 17 Feb 2026 00:00:00 GMT</pubDate>
-      <category>claude-code</category>
-      <category>ai</category>
-      <category>solo-developer</category>
-      <category>setup</category>
     </item>
     <item>
       <title>Infrastructure Debt</title>

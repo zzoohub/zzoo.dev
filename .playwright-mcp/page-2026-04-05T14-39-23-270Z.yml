@@ -1,0 +1,133 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "zzoo.dev" [ref=e5] [cursor=pointer]:
+        - /url: /en
+      - navigation "Main" [ref=e6]:
+        - link "Projects" [ref=e7] [cursor=pointer]:
+          - /url: /en/projects
+        - link "Blog" [ref=e8] [cursor=pointer]:
+          - /url: /en/blog
+        - link "About" [ref=e9] [cursor=pointer]:
+          - /url: /en/about
+      - combobox "Select language" [ref=e12]:
+        - option "🇺🇸 EN" [selected]
+        - option "🇰🇷 KO"
+  - main [ref=e14]:
+    - generic [ref=e17]:
+      - status [ref=e18]: Building something new
+      - heading "Build the Whole Damn Thing." [level=1] [ref=e20]
+      - paragraph [ref=e21]: I tinker, I build, I ship.
+      - generic [ref=e22]:
+        - link "See What I Built" [ref=e23] [cursor=pointer]:
+          - /url: /en/projects
+        - link "Say Hi" [ref=e24] [cursor=pointer]:
+          - /url: /en/contact
+    - generic [ref=e26]:
+      - paragraph [ref=e27]: Recent Builds
+      - heading "What I've Shipped" [level=2] [ref=e28]
+      - generic [ref=e30]:
+        - link "CLI active Mar 2026 Claude Harness — AI Orchestration Framework A multi-agent orchestration harness for Claude Code. Blocks the orchestrator from writing code directly and forces delegation to sub-agents. Developer Tools AI" [ref=e31] [cursor=pointer]:
+          - /url: /en/projects/harness
+          - generic [ref=e32]:
+            - generic [ref=e33]: CLI
+            - generic [ref=e34]: ·
+            - generic [ref=e35]: active
+            - generic [ref=e36]: ·
+            - time [ref=e37]: Mar 2026
+          - heading "Claude Harness — AI Orchestration Framework" [level=3] [ref=e38]
+          - paragraph [ref=e39]: A multi-agent orchestration harness for Claude Code. Blocks the orchestrator from writing code directly and forces delegation to sub-agents.
+          - generic [ref=e40]:
+            - generic [ref=e41]: Developer Tools
+            - generic [ref=e42]: AI
+        - link "Web active Mar 2026 Narrex — AI Visual Novel Editor for Korean Web Novelists A timeline-based visual novel editor where you structure stories visually and AI generates scene-level prose with full narrative context. No prompt engineering — your timeline is the prompt. SaaS Web App AI Creative Tools" [ref=e43] [cursor=pointer]:
+          - /url: /en/projects/narrex
+          - generic [ref=e44]:
+            - generic [ref=e45]: Web
+            - generic [ref=e46]: ·
+            - generic [ref=e47]: active
+            - generic [ref=e48]: ·
+            - time [ref=e49]: Mar 2026
+          - heading "Narrex — AI Visual Novel Editor for Korean Web Novelists" [level=3] [ref=e50]
+          - paragraph [ref=e51]: A timeline-based visual novel editor where you structure stories visually and AI generates scene-level prose with full narrative context. No prompt engineering — your timeline is the prompt.
+          - generic [ref=e52]:
+            - generic [ref=e53]: SaaS
+            - generic [ref=e54]: Web App
+            - generic [ref=e55]: AI
+            - generic [ref=e56]: Creative Tools
+        - link "Mobile App active Feb 2026 Mealio — Photo-First Meal Tracker with AI Log meals in 1 second with just a photo. No calorie databases, no manual input. The easiest meal tracking app for people who gave up on food diaries. Healthcare Mobile App AI" [ref=e57] [cursor=pointer]:
+          - /url: /en/projects/mealio
+          - generic [ref=e58]:
+            - generic [ref=e59]: Mobile App
+            - generic [ref=e60]: ·
+            - generic [ref=e61]: active
+            - generic [ref=e62]: ·
+            - time [ref=e63]: Feb 2026
+          - heading "Mealio — Photo-First Meal Tracker with AI" [level=3] [ref=e64]
+          - paragraph [ref=e65]: Log meals in 1 second with just a photo. No calorie databases, no manual input. The easiest meal tracking app for people who gave up on food diaries.
+          - generic [ref=e66]:
+            - generic [ref=e67]: Healthcare
+            - generic [ref=e68]: Mobile App
+            - generic [ref=e69]: AI
+        - link "Web active Feb 2026 Idea Fork — Product Hunt for Problems Automated product opportunity discovery. Aggregates real user complaints from Reddit and app stores, tracks new products, and synthesizes AI briefs with source-backed evidence. SaaS Web App AI" [ref=e70] [cursor=pointer]:
+          - /url: /en/projects/idea-fork
+          - generic [ref=e71]:
+            - generic [ref=e72]: Web
+            - generic [ref=e73]: ·
+            - generic [ref=e74]: active
+            - generic [ref=e75]: ·
+            - time [ref=e76]: Feb 2026
+          - heading "Idea Fork — Product Hunt for Problems" [level=3] [ref=e77]
+          - paragraph [ref=e78]: Automated product opportunity discovery. Aggregates real user complaints from Reddit and app stores, tracks new products, and synthesizes AI briefs with source-backed evidence.
+          - generic [ref=e79]:
+            - generic [ref=e80]: SaaS
+            - generic [ref=e81]: Web App
+            - generic [ref=e82]: AI
+        - link "Chrome Extension active Jan 2026 Permanent Site Blocker — Chrome Extension Block distracting websites permanently. No unblock button, no password bypass, no timer. The Chrome extension for people who are serious about focus. Productivity Chrome Extension" [ref=e83] [cursor=pointer]:
+          - /url: /en/projects/site-blocker
+          - generic [ref=e84]:
+            - generic [ref=e85]: Chrome Extension
+            - generic [ref=e86]: ·
+            - generic [ref=e87]: active
+            - generic [ref=e88]: ·
+            - time [ref=e89]: Jan 2026
+          - heading "Permanent Site Blocker — Chrome Extension" [level=3] [ref=e90]
+          - paragraph [ref=e91]: Block distracting websites permanently. No unblock button, no password bypass, no timer. The Chrome extension for people who are serious about focus.
+          - generic [ref=e92]:
+            - generic [ref=e93]: Productivity
+            - generic [ref=e94]: Chrome Extension
+        - 'link "Web active Jan 2026 zzoo.dev — The Invisible Audience A bilingual builder log engineered for three audiences: humans who evaluate, search engines that rank, and AI systems that cite. Pure static, zero runtime, open source. Builder Log Web App Open Source" [ref=e95] [cursor=pointer]':
+          - /url: /en/projects/zzoo-dev
+          - generic [ref=e96]:
+            - generic [ref=e97]: Web
+            - generic [ref=e98]: ·
+            - generic [ref=e99]: active
+            - generic [ref=e100]: ·
+            - time [ref=e101]: Jan 2026
+          - heading "zzoo.dev — The Invisible Audience" [level=3] [ref=e102]
+          - paragraph [ref=e103]: "A bilingual builder log engineered for three audiences: humans who evaluate, search engines that rank, and AI systems that cite. Pure static, zero runtime, open source."
+          - generic [ref=e104]:
+            - generic [ref=e105]: Builder Log
+            - generic [ref=e106]: Web App
+            - generic [ref=e107]: Open Source
+  - contentinfo [ref=e108]:
+    - generic [ref=e109]:
+      - generic [ref=e110]:
+        - generic [ref=e111]:
+          - paragraph [ref=e112]: zzoo.dev
+          - status [ref=e113]: Building something new
+        - generic [ref=e115]:
+          - link "GitHub" [ref=e116] [cursor=pointer]:
+            - /url: https://github.com/zzoohub
+            - img [ref=e117]
+          - link "LinkedIn" [ref=e120] [cursor=pointer]:
+            - /url: https://linkedin.com/in/zzoo
+            - img [ref=e121]
+          - link "Email" [ref=e125] [cursor=pointer]:
+            - /url: mailto:zzoo.origin@gmail.com
+            - img [ref=e126]
+      - paragraph [ref=e130]: © 2026 zzoo.dev
+  - button "Open Next.js Dev Tools" [ref=e136] [cursor=pointer]:
+    - img [ref=e137]

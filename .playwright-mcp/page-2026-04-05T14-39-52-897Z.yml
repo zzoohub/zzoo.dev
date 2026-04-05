@@ -1,0 +1,109 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "zzoo.dev" [ref=e5] [cursor=pointer]:
+        - /url: /en
+      - navigation "Main" [ref=e6]:
+        - link "Projects" [ref=e7] [cursor=pointer]:
+          - /url: /en/projects
+        - link "Blog" [ref=e8] [cursor=pointer]:
+          - /url: /en/blog
+        - link "About" [ref=e9] [cursor=pointer]:
+          - /url: /en/about
+      - generic [ref=e11]:
+        - combobox "Select language" [ref=e12]:
+          - option "🇺🇸 EN" [selected]
+          - option "🇰🇷 KO"
+        - button "Switch to dark mode" [ref=e13]:
+          - img [ref=e14]
+  - main [ref=e16]:
+    - generic [ref=e18]:
+      - navigation "Breadcrumb" [ref=e19]:
+        - list [ref=e20]:
+          - listitem [ref=e21]:
+            - link "Projects" [ref=e22] [cursor=pointer]:
+              - /url: /en/projects
+          - listitem [ref=e23]: /
+          - listitem [ref=e24]: zzoo.dev — The Invisible Audience
+      - generic [ref=e25]:
+        - heading "zzoo.dev — The Invisible Audience" [level=1] [ref=e26]
+        - paragraph [ref=e27]: "A bilingual builder log engineered for three audiences: humans who evaluate, search engines that rank, and AI systems that cite. Pure static, zero runtime, open source."
+        - generic [ref=e28]:
+          - generic [ref=e29]: Builder Log
+          - generic [ref=e30]: Web App
+          - generic [ref=e31]: Open Source
+      - generic [ref=e32]:
+        - generic [ref=e33]:
+          - paragraph [ref=e34]: Google indexes your portfolio. Perplexity cites it in answers. ChatGPT pulls facts from it when someone asks about your stack. Or none of that happens — because your site is a visual brochure that machines cannot parse.
+          - paragraph [ref=e35]: "Most developer portfolios optimize for one audience: the human visitor. This site is an experiment in serving three simultaneously — humans who evaluate, search engines that rank, and AI systems that extract and cite — from pure static HTML."
+          - heading "Three audiences, one constraint" [level=2] [ref=e36]
+          - paragraph [ref=e37]:
+            - text: "The constraint is zero runtime. No server, no database, no API routes. Every page is pre-rendered HTML served from Vercel's edge. That sounds limiting until you realize what it enables: sub-second loads, zero attack surface, and a deployment model where pushing to"
+            - code [ref=e38]: main
+            - text: is the entire workflow.
+          - paragraph [ref=e39]:
+            - text: The interesting question is whether static HTML can carry enough structure for machines without sacrificing readability for humans. JSON-LD schemas give answer engines machine-readable context about every entity — person, project, blog post. An
+            - code [ref=e40]: llms.txt
+            - text: file at the site root gives LLMs a plain-text map of the site. Semantic HTML and hreflang alternates handle traditional search. All three channels share the same content; they just read it differently.
+          - heading "Content that shows thinking" [level=2] [ref=e41]
+          - paragraph [ref=e42]: Each project gets three tabs. Overview for the five-second scan — what is this, why does it matter. Design for the product thinker who wants trade-offs and rejected alternatives. Engineering for the builder who wants architecture decisions and implementation details.
+          - paragraph [ref=e43]: A hiring manager reads one tab. A fellow engineer reads all three. Nobody wades through content meant for someone else.
+          - paragraph [ref=e44]: All content is file-based MDX with Zod-validated frontmatter. Missing Korean translations fall back to English. No CMS, no database — files in a git repo, version-controlled like code.
+          - heading "Bilingual, not translated" [level=2] [ref=e45]
+          - paragraph [ref=e46]: English and Korean exist as parallel content. Same structure, but each written natively in its language. The language switcher is a single button — with two locales, a dropdown wastes a click. New content ships in one language first; the fallback ensures nothing breaks.
+          - heading "Open source" [level=2] [ref=e47]
+          - paragraph [ref=e48]:
+            - text: The
+            - link "entire codebase" [ref=e49] [cursor=pointer]:
+              - /url: https://github.com/zzoohub/zzoo.dev
+            - text: is public. The part worth taking is the content architecture — three-tab project system, Zod schemas, triple-channel discoverability. Fork it, swap the content, deploy.
+        - generic [ref=e50]:
+          - heading "Features" [level=2] [ref=e51]
+          - generic [ref=e52]:
+            - generic [ref=e53]:
+              - img [ref=e55]
+              - heading "Bilingual" [level=3] [ref=e58]
+              - paragraph [ref=e59]: English and Korean as parallel content with automatic fallback — not translations, native writing in each language.
+            - generic [ref=e60]:
+              - img [ref=e62]
+              - heading "Three-Tab Projects" [level=3] [ref=e66]
+              - paragraph [ref=e67]: Overview for evaluators, Design for product thinkers, Engineering for fellow builders. Each reader self-selects.
+            - generic [ref=e68]:
+              - img [ref=e70]
+              - heading "Triple-Channel SEO" [level=3] [ref=e73]
+              - paragraph [ref=e74]: JSON-LD schemas, llms.txt, hreflang, semantic HTML — optimized for search, answer engines, and generative AI simultaneously.
+            - generic [ref=e75]:
+              - img [ref=e77]
+              - heading "Zero Runtime" [level=3] [ref=e79]
+              - paragraph [ref=e80]: Every page pre-rendered at build time. No server, no database, no API routes. Lighthouse 95+.
+        - generic [ref=e81]:
+          - heading "Get Started" [level=2] [ref=e82]
+          - link "View Source" [ref=e84] [cursor=pointer]:
+            - /url: https://github.com/zzoohub/zzoo.dev
+            - img [ref=e85]
+            - text: View Source
+      - iframe [ref=e91]:
+        - main [ref=f1e3]:
+          - generic [ref=f1e6]: Loading comments…
+  - contentinfo [ref=e92]:
+    - generic [ref=e93]:
+      - generic [ref=e94]:
+        - generic [ref=e95]:
+          - paragraph [ref=e96]: zzoo.dev
+          - status [ref=e97]: Building something new
+        - generic [ref=e99]:
+          - link "GitHub" [ref=e100] [cursor=pointer]:
+            - /url: https://github.com/zzoohub
+            - img [ref=e101]
+          - link "LinkedIn" [ref=e104] [cursor=pointer]:
+            - /url: https://linkedin.com/in/zzoo
+            - img [ref=e105]
+          - link "Email" [ref=e109] [cursor=pointer]:
+            - /url: mailto:zzoo.origin@gmail.com
+            - img [ref=e110]
+      - paragraph [ref=e114]: © 2026 zzoo.dev
+  - button "Open Next.js Dev Tools" [ref=e120] [cursor=pointer]:
+    - img [ref=e121]
+  - alert [ref=e124]

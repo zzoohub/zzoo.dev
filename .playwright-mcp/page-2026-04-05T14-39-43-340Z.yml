@@ -1,0 +1,79 @@
+- generic [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "zzoo.dev" [ref=e5] [cursor=pointer]:
+        - /url: /en
+      - navigation "Main" [ref=e6]:
+        - link "Projects" [ref=e7] [cursor=pointer]:
+          - /url: /en/projects
+        - link "Blog" [ref=e8] [cursor=pointer]:
+          - /url: /en/blog
+        - link "About" [ref=e9] [cursor=pointer]:
+          - /url: /en/about
+      - generic [ref=e11]:
+        - combobox "Select language" [ref=e12]:
+          - option "🇺🇸 EN" [selected]
+          - option "🇰🇷 KO"
+        - button "Switch to dark mode" [ref=e154]:
+          - img [ref=e155]
+  - main [ref=e14]:
+    - generic [ref=e16]:
+      - generic [ref=e17]:
+        - heading "Blog" [level=1] [ref=e18]
+        - paragraph [ref=e19]: Notes on building stuff, breaking stuff, and shipping anyway.
+      - tablist "Filter by tag" [ref=e21]:
+        - tab "All" [ref=e22]
+        - tab "claude-code" [ref=e23]
+        - tab "ai" [ref=e24]
+        - tab "solo-developer" [ref=e25]
+        - tab "setup" [ref=e26]
+        - tab "learning" [ref=e27]
+        - tab "career" [ref=e28]
+        - tab "solidjs" [ref=e29]
+        - tab "reactivity" [ref=e30]
+        - tab "frontend" [ref=e31]
+        - tab "javascript" [ref=e32]
+        - tab "opinion" [ref=e33]
+        - tab "infrastructure" [ref=e34]
+        - tab "devops" [ref=e35]
+        - tab "pulumi" [ref=e36]
+        - tab "cloudflare" [ref=e37]
+        - tab "gcp" [ref=e38]
+        - tab "neon" [ref=e39]
+        - tab "rust" [active] [selected] [ref=e40]
+        - tab "vibe-coding" [ref=e41]
+      - article [ref=e110]:
+        - generic [ref=e111]:
+          - time [ref=e112]: Jan 15, 2026
+          - generic [ref=e113]: ·
+          - generic "6 minute read" [ref=e114]: 6 min read
+        - heading "The Hardest Language" [level=3] [ref=e115]:
+          - link "The Hardest Language" [ref=e116] [cursor=pointer]:
+            - /url: /en/blog/why-rust-is-the-perfect-language-for-vibe-coding
+        - paragraph [ref=e117]: Everyone assumes vibe coding works best with easy languages. They have it exactly backwards.
+        - generic [ref=e118]:
+          - generic [ref=e119]: rust
+          - generic [ref=e120]: vibe-coding
+          - generic [ref=e121]: ai
+  - contentinfo [ref=e122]:
+    - generic [ref=e123]:
+      - generic [ref=e124]:
+        - generic [ref=e125]:
+          - paragraph [ref=e126]: zzoo.dev
+          - status [ref=e127]: Building something new
+        - generic [ref=e129]:
+          - link "GitHub" [ref=e130] [cursor=pointer]:
+            - /url: https://github.com/zzoohub
+            - img [ref=e131]
+          - link "LinkedIn" [ref=e134] [cursor=pointer]:
+            - /url: https://linkedin.com/in/zzoo
+            - img [ref=e135]
+          - link "Email" [ref=e139] [cursor=pointer]:
+            - /url: mailto:zzoo.origin@gmail.com
+            - img [ref=e140]
+      - paragraph [ref=e144]: © 2026 zzoo.dev
+  - button "Open Next.js Dev Tools" [ref=e150] [cursor=pointer]:
+    - img [ref=e151]
+  - alert [ref=e157]
