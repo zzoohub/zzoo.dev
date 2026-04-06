@@ -12,7 +12,7 @@ tags:
 featured: true
 launchDate: "2026-03-15"
 links:
-  github: "https://github.com/zzoohub/claude-code"
+  github: "https://github.com/zzoohub/claude-harness"
 tagline: "The orchestrator, extracted from a multi-agent system."
 category: "cli"
 keywords:
@@ -28,7 +28,7 @@ competitors:
 cta:
   primary:
     label: "View Source"
-    url: "https://github.com/zzoohub/claude-code"
+    url: "https://github.com/zzoohub/claude-harness"
 features:
   - title: "Forced Delegation"
     description: "Blocks Write/Edit for the orchestrator. The only option is calling sub-agents."
@@ -63,8 +63,8 @@ State survives session crashes. Mode, phase, working memory — all persisted to
 Works as a Claude Code plugin. Install directly from GitHub:
 
 ```bash
-/plugin marketplace add zzoohub/claude-code
-/plugin install claude-harness@zzoohub-claude-code
+/plugin marketplace add zzoohub/claude-plugins
+/plugin install claude-harness@zzoohub-plugins
 ```
 
 Define your agents in `.claude/harness.json` — model, prompt, tool scope. That's all the setup there is.
