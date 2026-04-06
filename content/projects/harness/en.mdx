@@ -48,23 +48,55 @@ Claude Code reads, writes, and tests code on its own. But push it on complex tas
 
 oh-my-claudecode is one of the most widely used harnesses in the Claude ecosystem. 19 agents, 30 skills, 35 MCP tools — 200+ files, tens of thousands of lines. Use it across projects and a pattern emerges. Agents and skills get rewritten every time. But the orchestration flow — force delegation, track progress, verify completion — stays identical.
 
-Claude Harness extracts that orchestrator into a lightweight, standalone harness. Plug in your own agents and skills per project. 19 files, 2,371 lines. Zero runtime dependencies.
+Claude Harness extracts that orchestrator into a lightweight, standalone harness. It uses Claude Code's existing agents and skills directly. 19 files, 2,371 lines. Zero runtime dependencies.
 
-## Core Flow
+## Install & Use
 
-Type "autopilot" and it cycles through understand, plan, execute, verify. The orchestrator can't write code directly — Write and Edit are blocked on source files, forcing delegation to sub-agents. When a sub-agent reports "done," the orchestrator verifies with tests and builds. Failure loops back to execute. Only the last phase allows a clean exit.
-
-Type "loop" for execute then verify on repeat until it passes. Large tasks parallelize via tmux — batches of four, automatic polling, retry on failure.
-
-State survives session crashes. Mode, phase, working memory — all persisted to disk and auto-restored on the next session.
-
-## Install
-
-Works as a Claude Code plugin. Install directly from GitHub:
+Works as a Claude Code plugin. Install and use immediately — no config needed:
 
 ```bash
 /plugin marketplace add zzoohub/claude-plugins
 /plugin install claude-harness@zzoohub-plugins
 ```
 
-Define your agents in `.claude/harness.json` — model, prompt, tool scope. That's all the setup there is.
+That's it. Now in any project:
+
+```
+autopilot refactor the auth module
+```
+
+The harness automatically uses whatever agents and skills are already installed in your Claude Code. No config file required.
+
+## Core Flow
+
+`autopilot` cycles through four phases automatically:
+
+1. **Understand** — analyze requirements, identify constraints
+2. **Plan** — create a step-by-step work plan
+3. **Execute** — delegate implementation to sub-agents
+4. **Verify** — verify with tests and builds directly
+
+The orchestrator can't write code directly — Write and Edit are blocked on source files, forcing delegation to sub-agents. Verification failure loops back to Execute. Only the last phase allows a clean exit.
+
+`loop` runs execute-then-verify on repeat until it passes (up to 20 iterations). Large tasks parallelize via tmux — batches of four, automatic polling, retry on failure.
+
+State survives session crashes. Mode, phase, working memory — all persisted to disk and auto-restored on the next session.
+
+## Custom Config (Optional)
+
+To override defaults, add `.claude/harness.json`:
+
+```json
+{
+  "agents": {
+    "implementer": {
+      "description": "Code implementation specialist",
+      "prompt": "Implement the given task.",
+      "model": "sonnet"
+    }
+  },
+  "systemPromptSuffix": "Always explain your reasoning."
+}
+```
+
+Without it, the harness uses Claude Code's built-in agents automatically.
