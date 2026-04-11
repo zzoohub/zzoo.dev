@@ -91,11 +91,11 @@ export default async function ProjectDetailPage({
   // If any source says false, the tab is hidden
   const tabsConfig = project.meta.tabs;
   const showDesign =
-    (projectTabDefaults.design !== false) &&
+    (projectTabDefaults.design as boolean) &&
     (tabsConfig?.design !== false) &&
     hasDesignContent(locale, slug);
   const showEngineering =
-    (projectTabDefaults.engineering !== false) &&
+    (projectTabDefaults.engineering as boolean) &&
     (tabsConfig?.engineering !== false) &&
     hasEngineeringDoc(locale, slug);
 
