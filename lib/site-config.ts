@@ -17,8 +17,8 @@ export const siteConfig = {
 
 export const projectTabDefaults = {
   overview: true,
-  design: false,
-  engineering: false,
+  design: true,
+  engineering: true,
 } as const;
 
 export const navItems = [
