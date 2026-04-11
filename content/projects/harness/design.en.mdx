@@ -2,34 +2,18 @@
 title: "Claude Harness — Design"
 ---
 
-## The Observation
+## Core Observation
 
-Using oh-my-claudecode across multiple projects revealed a pattern. Agent prompts get rewritten for each project. Skills change to match the domain. MCP tools get swapped in and out. But the orchestration layer — the hooks that enforce delegation, the state machine that tracks workflow progress, the logic that verifies completion and recovers from errors — stays identical every time.
+Using oh-my-claudecode across multiple projects revealed a pattern. Agents and skills get rewritten every time. But the orchestration — delegation enforcement, progress tracking, completion verification, error recovery — stays identical. Out of 200+ files, only the orchestration core was reusable. Harness extracts that core.
 
-Out of 200+ files, the truly reusable part was 19 files of orchestration core. Harness started from that observation.
+Its most important job: stopping AI agents from doing everything themselves. Agents don't delegate by default. If a tool is available, they use it. That's efficient for small tasks, but at scale, it collides with the limits of a single context window.
 
-And the most important job of that core is one thing: stopping AI agents from doing everything themselves. Agents don't delegate by default. If a tool is available, they use it. If they can do something, they do. That's efficient for small tasks, but at scale, it collides with the limits of a single context window.
+## Why It's Built This Way
 
-## Who This Is For
+**Delegation is enforced by hooks, not prompts.** A system prompt saying "please delegate" gets ignored. Agents use whatever tools are available — prompts are suggestions, not constraints. So Harness intercepts Write, Edit, and NotebookEdit at the PreToolUse hook. The default mode is `warn` (injects a reminder message); setting it to `strict` blocks execution entirely. Source files (`.ts`, `.py`, `.rs`) and config files (`.harness/`, `CLAUDE.md`) are distinguished — source gets stronger warnings. Bash is also monitored: read-only commands (`ls`, `git diff`, `bun test`) pass through; modifying commands get a delegation reminder.
 
-**Jaehyun, 30s, developer.** Uses Claude Code daily. Small bug fixes work perfectly, but large refactorings lose context midway. Claude does 80% of the work, and he spends the remaining 20% — finding what's missing, checking what wasn't tested, re-injecting context. "There's a point where managing the agent takes longer than the coding would."
+**Modes start with natural language.** Type "autopilot refactor the auth module" and pipeline mode begins. Code blocks are skipped, matching is case-insensitive, Korean works ("계속", "파이프라인", "중단"). Occasional false positives happen, but that's better than typing explicit commands every time.
 
-**Eunji, team lead.** Wants to run sub-agents in parallel. But collecting results, verifying them, and retrying failures is entirely manual. When an agent reports "done," she checks each one individually. "I need an agent that manages agents."
+**State lives on disk.** Mode, phase, and data are written to `.harness/state.json`. Session crashes, context compaction — the next session auto-restores. Working memory (`<remember>` tags) persists in `.harness/memory.json` and comes back too. A single JSON file is enough — one process reads and writes, no concurrency to worry about.
 
-## Product Decisions
-
-**Keep the orchestrator, make the rest pluggable.** Agent prompts, skills, MCP tools, model routing — these are project-specific by nature. The agents for a meal-tracking app have nothing in common with the agents for an infrastructure migration. OMC bundled all of this in; Harness provides only the orchestration flow and lets users define the rest in `.claude/harness.json` per project. The framework owns the flow — delegate, track, verify — and nothing else.
-
-**Blocking, not guidelines.** A system prompt saying "please delegate to sub-agents" gets ignored. Agents use whatever tools are available — prompts are suggestions, not constraints. So Harness takes the tools away. Write, Edit, NotebookEdit — all blocked on source files. Config files (`.harness/`, `CLAUDE.md`) are allowed. Only sub-agents can touch code.
-
-The alternative was a 'warn' mode that just shows a message. Like telling someone to eat less at midnight — they hear it, nothing changes. The default is 'strict'.
-
-**Natural language triggers.** "autopilot refactor the auth module" — one line starts pipeline mode. No separate command system or UI. Keywords are detected in prompts, code blocks are skipped, matching is case-insensitive. Korean works too — "계속", "파이프라인", "중단".
-
-The trade-off: occasional false positives. "Explain the loop structure" might trigger the keyword. Accepted — an accidental mode start is noticed immediately, but typing explicit commands every time adds up.
-
-**State lives on disk.** Mode, phase, and data are written to `.harness/state.json`. Session crashes, context compaction — "pipeline, execute phase, one retry spent" persists through all of it. Next session auto-restores. Working memory (`<remember>` tags) comes back too.
-
-A single JSON file is enough. It's a state machine — one process reads and writes, no concurrency to worry about.
-
-**"Sub-agents lie."** When a sub-agent reports completion, the orchestrator receives a message: "Do not trust this claim. Run the tests yourself, read the code, check the build." A git diff summary is included. Not trusting self-reports is the orchestrator's reason for existing.
+**Sub-agents lie.** When a sub-agent reports completion, the orchestrator receives a message: "Do not trust this claim. Run the tests yourself, read the code, check the build." A git diff summary is included. Not trusting self-reports is the orchestrator's reason for existing.

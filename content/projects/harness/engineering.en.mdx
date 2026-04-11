@@ -2,30 +2,38 @@
 title: "Claude Harness — Engineering"
 ---
 
-## System Overview
+## Architecture
 
-Three layers. `core/` is the engine — types, constants, hook dispatch, state machine. Rarely changes. `hooks/` is behavior — delegation guard, keyword detection, mode execution, verification, recovery, memory. Changes most often. `runtime/` is external integration — Claude Code's stdin/stdout bridge, settings.json registration, tmux parallel execution. The split follows change frequency: the machine is stable, behaviors get added regularly, integration adapts occasionally.
+Three layers, split by change frequency.
 
-## Intercepting Tool Calls
+- **`core/`** — Types, constants, hook engine, state machine. Rarely changes.
+- **`hooks/`** — Delegation guard, keyword detection, mode execution, verification, error recovery, memory. Changes most often.
+- **`runtime/`** — Claude Code stdin/stdout bridge, settings registration, tmux parallel execution.
 
-When Claude Code is about to call a tool, a PreToolUse event fires before execution. bridge.ts reads JSON from stdin — `tool_name`, `file_path`, metadata. The HookEngine dispatches to registered handlers that match on `toolName`.
+21 files, ~2,600 lines.
 
-delegation.ts catches Write, Edit, and NotebookEdit. If the target path is on the allow list (`.harness/`, `CLAUDE.md`), it passes through. Source files get `{ decision: "block" }` — Claude Code receives the block message instead of executing the tool. Files with source extensions like `.ts`, `.py`, `.rs` get stronger warnings.
+## Tool Interception
 
-This is where it fundamentally differs from writing "please delegate" in a system prompt. A prompt is a suggestion. A PreToolUse hook prevents execution.
+When Claude Code is about to call a tool, a PreToolUse event fires. `bridge.ts` reads JSON from stdin (`tool_name`, `file_path`, etc.) and dispatches it through the HookEngine.
 
-## A State Machine That Won't Let You Stop
+`delegation.ts` intercepts at three layers:
 
-In pipeline mode, when Claude finishes the "analyze" phase, it naturally tries to stop. The Stop event triggers the stop guard, which checks `isLastPhase()`. Not the last phase — return `{ decision: "block" }` and call `transition()` to advance to the next one.
+1. **Bash guard** — Only allows read-only commands (`ls`, `git status`, `bun test`, etc.) directly. Modifying commands get a delegation reminder.
+2. **Agent guard** — Blocks Agent calls without `subagent_type`. Prevents generic delegation.
+3. **Write/Edit guard** — Paths on the allow list (`.harness/`, `CLAUDE.md`, etc.) pass through. Source files (`.ts`, `.py`, `.rs`) get stronger messages. `warn` mode injects a warning; `strict` mode blocks execution.
 
-When verification finds problems, it loops back to execute. `data.retries` increments, and after three attempts, it exits anyway. Only at the last phase does `endMode()` get called and state get cleared.
+This is where it fundamentally differs from a system prompt. A prompt is a suggestion. A PreToolUse hook intervenes before execution.
 
-Transition history accumulates in `state.history`. A single file — `.harness/state.json` — holds mode, current phase, phase list, data, and full history. One reader, one writer, no lock needed.
+## State Machine
 
-## tmux Leader/Worker Protocol
+In pipeline mode, when a phase finishes, Claude naturally tries to stop. The Stop event triggers the stop guard, which checks `isLastPhase()`. Not the last phase — Stop is blocked, and `transition()` advances to the next one.
 
-Given 20 tasks, `runTeam()` splits them into batches of four. The first task creates a tmux session; the remaining three attach as split panes. Each worker runs `claude --print` and writes results to `.harness/team/results/{taskId}`.
+When verification finds problems, it loops back to execute. `data.retries` increments; after three attempts, it exits. Only at the last phase does `endMode()` get called and state get cleared.
 
-The leader polls every five seconds. A `[DONE]` marker means complete. Error patterns in the output get classified as failures and queued for retry. When a batch finishes, the next one spawns. After two retry attempts, a `TeamReport` comes back — success list, failure list, total time.
+All state persists in a single `.harness/state.json` — mode, current phase, phase list, data, transition history. One reader, one writer, no lock needed.
 
-The caller writes `runTeam(tasks, { concurrency: 4, maxRetries: 2 })`. Batch splitting, spawning, polling, failure detection, retry, result merging — all internal.
+## Parallel Execution
+
+One call: `runTeam(tasks, { concurrency: 4, maxRetries: 2 })`. Internally, tasks are split into batches of four. A tmux session is created, workers attach as split panes. Each worker runs `claude --print` and writes results to `.harness/team/results/{taskId}`.
+
+The leader polls every five seconds. A `[DONE]` marker means complete; error patterns (`error:`, `fatal:`, `FAILED`, etc.) classify failures. Failed tasks retry up to twice. When a batch finishes, the next one spawns. The final `TeamReport` contains success list, failure list, and total time.

@@ -2,30 +2,38 @@
 title: "Claude Harness — Engineering"
 ---
 
-## 시스템 개요
+## 구조
 
-세 개의 레이어로 나뉜다. `core/`는 엔진이다 — 타입, 상수, 훅 디스패치, 상태 머신. 거의 바뀌지 않는다. `hooks/`는 행동이다 — 위임 가드, 키워드 감지, 모드 실행, 검증, 복구, 메모리. 가장 자주 추가되고 수정된다. `runtime/`은 외부 연결이다 — Claude Code의 stdin/stdout 브릿지, settings.json 등록, tmux 병렬 실행. 나눈 기준은 변경 빈도다. 기계는 안정적이고, 행동은 자주 추가되고, 연결은 가끔 바뀐다.
+세 레이어로 나뉜다. 나눈 기준은 변경 빈도다.
 
-## 도구 호출을 가로채는 법
+- **`core/`** — 타입, 상수, 훅 엔진, 상태 머신. 거의 바뀌지 않는다.
+- **`hooks/`** — 위임 가드, 키워드 감지, 모드 실행, 검증, 에러 복구, 메모리. 가장 자주 바뀐다.
+- **`runtime/`** — Claude Code stdin/stdout 브릿지, 설정 등록, tmux 병렬 실행.
 
-Claude Code가 도구를 호출하려는 순간, 호출 전에 PreToolUse 이벤트가 발생한다. bridge.ts가 stdin으로 JSON을 받는다 — `tool_name`, `file_path`, 기타 메타데이터. HookEngine에 전달하면, 등록된 핸들러들이 `toolName`으로 매칭을 시도한다.
+21개 파일, ~2,600줄.
 
-delegation.ts가 Write, Edit, NotebookEdit을 잡는다. 대상 경로가 허용 목록(`.harness/`, `CLAUDE.md` 등)에 있으면 통과. 소스 파일이면 `{ decision: "block" }`을 반환한다 — Claude Code는 도구를 실행하지 않고 차단 메시지를 받는다. `.ts`, `.py`, `.rs` 같은 소스 파일에는 더 강한 경고가 붙는다.
+## 도구 가로채기
 
-시스템 프롬프트에 "위임하세요"라고 쓰는 것과 근본적으로 다른 지점이 여기다. 프롬프트는 제안이다. PreToolUse hook은 실행 자체를 막는다.
+Claude Code가 도구를 호출하기 직전에 PreToolUse 이벤트가 발생한다. `bridge.ts`가 stdin에서 JSON을 받고(`tool_name`, `file_path` 등), HookEngine에 전달한다.
 
-## Stop을 허락하지 않는 상태 머신
+`delegation.ts`가 세 레이어로 가로챈다:
 
-Pipeline 모드에서 Claude가 "분석" phase를 끝내면, 자연스럽게 멈추려 한다. Stop 이벤트가 발생하면 stop guard가 `isLastPhase()`를 확인한다. 마지막이 아니면 `{ decision: "block" }`을 반환하고, `transition()`으로 다음 phase로 넘긴다.
+1. **Bash 가드** — 읽기 전용 명령어(`ls`, `git status`, `bun test` 등)만 직접 허용. 수정 명령어에는 위임 리마인더 주입.
+2. **Agent 가드** — `subagent_type` 없는 Agent 호출을 차단. 제네릭 위임 방지.
+3. **Write/Edit 가드** — 경로가 허용 목록(`.harness/`, `CLAUDE.md` 등)에 있으면 통과. 소스 파일(`.ts`, `.py`, `.rs`)에는 더 강한 메시지를 붙인다. `warn` 모드는 경고만, `strict` 모드는 실행 자체를 차단.
 
-검증 phase에서 문제가 발견되면 구현 phase로 되돌아간다. `data.retries`가 증가하고, 3회를 넘기면 그대로 종료한다. 마지막 phase의 Stop에서만 `endMode()`가 호출되고 상태가 초기화된다.
+시스템 프롬프트에 "위임하세요"라고 쓰는 것과 근본적으로 다른 지점이 여기다. 프롬프트는 제안이다. PreToolUse 훅은 실행 전에 개입한다.
 
-전이 이력은 `state.history`에 쌓인다. `.harness/state.json` 파일 하나에 모드, 현재 phase, 전체 phase 목록, 데이터, 이력이 전부 들어간다. 읽기/쓰기 주체가 하나뿐이라 락이 필요 없다.
+## 상태 머신
 
-## tmux 리더/워커 프로토콜
+Pipeline 모드에서 하나의 phase가 끝나면, Claude는 자연스럽게 멈추려 한다. Stop 이벤트가 발생하면 stop guard가 `isLastPhase()`를 확인한다. 마지막이 아니면 Stop을 차단하고 `transition()`으로 다음 phase를 시작한다.
 
-20개 태스크를 받으면, `runTeam()`이 4개씩 배치로 나눈다. 첫 태스크로 tmux 세션을 만들고, 나머지 셋을 split-pane으로 붙인다. 각 워커는 `claude --print`로 실행되고, 결과를 `.harness/team/results/{taskId}` 파일에 쓴다.
+검증 phase에서 문제가 발견되면 실행 phase로 되돌아간다. `data.retries`가 증가하고, 3회를 넘기면 종료한다. 마지막 phase에서만 `endMode()`가 호출되고 상태가 초기화된다.
 
-리더는 5초 간격으로 결과 파일을 확인한다. `[DONE]` 마커가 있으면 완료. 출력에서 에러 패턴이 감지되면 실패로 분류하고 재시도 큐에 넣는다. 현재 배치가 끝나면 다음 배치를 스폰한다. 최대 2회 재시도 후 `TeamReport`를 반환한다 — 성공 목록, 실패 목록, 총 소요 시간.
+모든 상태는 `.harness/state.json` 하나에 영속 — 모드, 현재 phase, phase 목록, 데이터, 전이 이력. 읽기/쓰기 주체가 하나뿐이라 락이 필요 없다.
 
-호출하는 쪽은 `runTeam(tasks, { concurrency: 4, maxRetries: 2 })` 한 줄이면 된다. 배치 분할, 스폰, 폴링, 실패 감지, 재시도, 결과 병합 — 전부 안에서 일어난다.
+## 병렬 실행
+
+`runTeam(tasks, { concurrency: 4, maxRetries: 2 })` 한 줄로 호출한다. 내부에서 태스크를 4개씩 배치로 나누고, tmux 세션을 만들어 split-pane으로 워커를 붙인다. 각 워커는 `claude --print`로 실행되고 결과를 `.harness/team/results/{taskId}`에 쓴다.
+
+리더가 5초마다 폴링한다. `[DONE]` 마커로 완료를 감지하고, 에러 패턴(`error:`, `fatal:`, `FAILED` 등)으로 실패를 분류한다. 실패한 태스크는 최대 2회 재시도. 배치가 끝나면 다음 배치를 스폰한다. 최종적으로 성공 목록, 실패 목록, 소요 시간이 담긴 `TeamReport`를 반환한다.
