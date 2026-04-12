@@ -71,56 +71,51 @@ export function getProject(
   };
 }
 
-export function hasDesignContent(locale: string, slug: string): boolean {
+type ProjectTabType = "design" | "engineering";
+
+function hasTabContent(type: ProjectTabType, locale: string, slug: string): boolean {
   if (!isValidSlug(slug)) return false;
   const dir = path.join(contentDir, "projects", slug);
-  return resolveContentPath(dir, locale, `design.${locale}.mdx`) !== null;
+  return resolveContentPath(dir, locale, `${type}.${locale}.mdx`) !== null;
+}
+
+function getTabContent(
+  type: ProjectTabType,
+  locale: string,
+  slug: string
+): { meta: ProjectMeta; content: string } | null {
+  if (!isValidSlug(slug)) return null;
+  const dir = path.join(contentDir, "projects", slug);
+  const filePath = resolveContentPath(dir, locale, `${type}.${locale}.mdx`);
+  if (!filePath) return null;
+
+  const raw = fs.readFileSync(filePath, "utf-8");
+  const { content } = matter(raw);
+
+  const project = getProject(locale, slug);
+  if (!project) return null;
+
+  return { meta: project.meta, content };
+}
+
+export function hasDesignContent(locale: string, slug: string): boolean {
+  return hasTabContent("design", locale, slug);
 }
 
 export function getDesignContent(
   locale: string,
   slug: string
 ): { meta: ProjectMeta; content: string } | null {
-  if (!isValidSlug(slug)) return null;
-  const dir = path.join(contentDir, "projects", slug);
-  const filePath = resolveContentPath(dir, locale, `design.${locale}.mdx`);
-  if (!filePath) return null;
-
-  const raw = fs.readFileSync(filePath, "utf-8");
-  const { content } = matter(raw);
-
-  const project = getProject(locale, slug);
-  if (!project) return null;
-
-  return {
-    meta: project.meta,
-    content,
-  };
+  return getTabContent("design", locale, slug);
 }
 
 export function hasEngineeringDoc(locale: string, slug: string): boolean {
-  if (!isValidSlug(slug)) return false;
-  const dir = path.join(contentDir, "projects", slug);
-  return resolveContentPath(dir, locale, `engineering.${locale}.mdx`) !== null;
+  return hasTabContent("engineering", locale, slug);
 }
 
 export function getEngineeringDoc(
   locale: string,
   slug: string
 ): { meta: ProjectMeta; content: string } | null {
-  if (!isValidSlug(slug)) return null;
-  const dir = path.join(contentDir, "projects", slug);
-  const filePath = resolveContentPath(dir, locale, `engineering.${locale}.mdx`);
-  if (!filePath) return null;
-
-  const raw = fs.readFileSync(filePath, "utf-8");
-  const { content } = matter(raw);
-
-  const project = getProject(locale, slug);
-  if (!project) return null;
-
-  return {
-    meta: project.meta,
-    content,
-  };
+  return getTabContent("engineering", locale, slug);
 }
