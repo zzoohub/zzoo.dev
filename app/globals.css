@@ -126,6 +126,19 @@
   }
 }
 
+/* Content container — single source of truth for prose-width pages */
+@utility content-container {
+  margin-inline: auto;
+  max-width: 42rem;
+  padding-inline: 1rem;
+  @media (min-width: 640px) {
+    padding-inline: 1.5rem;
+  }
+  @media (min-width: 1024px) {
+    padding-inline: 2rem;
+  }
+}
+
 /* Prose refinements for MDX content */
 .prose-custom {
   --tw-prose-pre-bg: var(--muted);
