@@ -12,6 +12,7 @@ import {
   buildCanonicalUrl,
 } from "@/lib/seo";
 import { JsonLd } from "@/components/shared/json-ld";
+import { Breadcrumb } from "@/components/shared/breadcrumb";
 import { compileMdx } from "@/lib/mdx";
 import { siteConfig } from "@/lib/site-config";
 import { Comments } from "@/components/shared/comments";
@@ -108,20 +109,11 @@ function BlogPostContent({
       <article className="py-10 md:py-16">
         <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
-          <nav aria-label="Breadcrumb" className="mb-8">
-            <ol className="flex items-center gap-1.5 text-sm text-muted-foreground">
-              <li>
-                <Link
-                  href="/blog"
-                  className="transition-colors hover:text-foreground"
-                >
-                  Blog
-                </Link>
-              </li>
-              <li aria-hidden="true" className="text-border">/</li>
-              <li className="truncate text-foreground">{meta.title}</li>
-            </ol>
-          </nav>
+          <Breadcrumb
+            parentHref="/blog"
+            parentLabel="Blog"
+            currentLabel={meta.title}
+          />
 
           {/* Post header */}
           <header>

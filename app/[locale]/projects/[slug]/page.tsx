@@ -31,6 +31,7 @@ import { compileMdx } from "@/lib/mdx";
 import type { ProjectMeta } from "@/lib/types";
 import { Comments } from "@/components/shared/comments";
 import { ProjectTitle } from "../_components/project-title";
+import { Breadcrumb } from "@/components/shared/breadcrumb";
 import { proseClassName } from "@/lib/utils";
 import { generateContentStaticParams } from "@/lib/static-params";
 
@@ -198,22 +199,11 @@ function ProjectDetailContent({
     <section className="py-10 md:py-16">
       <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
-        <nav aria-label="Breadcrumb" className="mb-8">
-          <ol className="flex items-center gap-1.5 text-sm text-muted-foreground">
-            <li>
-              <Link
-                href="/projects"
-                className="transition-colors hover:text-foreground"
-              >
-                {t("breadcrumb_projects")}
-              </Link>
-            </li>
-            <li aria-hidden="true" className="text-border">
-              /
-            </li>
-            <li className="text-foreground">{meta.title}</li>
-          </ol>
-        </nav>
+        <Breadcrumb
+          parentHref="/projects"
+          parentLabel={t("breadcrumb_projects")}
+          currentLabel={meta.title}
+        />
 
         {/* Header */}
         <header>
