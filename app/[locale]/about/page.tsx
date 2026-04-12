@@ -8,7 +8,7 @@ import { getAboutContent } from "@/lib/content";
 import { buildPageMeta, buildPersonJsonLd } from "@/lib/seo";
 import { JsonLd } from "@/components/shared/json-ld";
 import { CTASection } from "@/components/shared/cta-section";
-import type { ExperienceEntry } from "@/lib/types";
+import type { ExperienceEntry } from "@/lib/content";
 
 export async function generateMetadata({
   params,

@@ -28,7 +28,7 @@ import { FeatureGrid } from "../_components/feature-grid";
 import { ProductCTA } from "../_components/product-cta";
 import { VideoEmbed } from "../_components/video-embed";
 import { compileMdx } from "@/lib/mdx";
-import type { ProjectMeta } from "@/lib/types";
+import type { ProjectMeta } from "@/lib/content";
 import { Comments } from "@/components/shared/comments";
 import { ProjectTitle } from "../_components/project-title";
 import { Breadcrumb } from "@/components/shared/breadcrumb";

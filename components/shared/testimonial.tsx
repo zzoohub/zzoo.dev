@@ -1,4 +1,4 @@
-import type { Testimonial as TestimonialType } from "@/lib/types";
+import type { Testimonial as TestimonialType } from "@/lib/content";
 
 export function Testimonial({ testimonial }: { testimonial: TestimonialType }) {
   return (

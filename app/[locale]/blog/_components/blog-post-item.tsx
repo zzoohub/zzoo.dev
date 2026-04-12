@@ -1,6 +1,6 @@
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import type { BlogPostMeta } from "@/lib/types";
+import type { BlogPostMeta } from "@/lib/content";
 
 export function BlogPostItem({ post }: { post: BlogPostMeta }) {
   const t = useTranslations("blog");

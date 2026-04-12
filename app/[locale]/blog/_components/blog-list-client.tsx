@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import type { BlogPostMeta } from "@/lib/types";
+import type { BlogPostMeta } from "@/lib/content";
 import { TagFilter } from "./tag-filter";
 import { BlogPostItem } from "./blog-post-item";
 

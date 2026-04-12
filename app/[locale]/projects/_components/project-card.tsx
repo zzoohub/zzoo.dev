@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import type { ProjectMeta } from "@/lib/types";
+import type { ProjectMeta } from "@/lib/content";
 import { ProjectTitle } from "./project-title";
 
 const CATEGORY_LABELS: Record<string, string> = {
