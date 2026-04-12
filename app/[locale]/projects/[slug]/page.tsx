@@ -27,18 +27,12 @@ import { FeatureGrid } from "../_components/feature-grid";
 
 import { ProductCTA } from "../_components/product-cta";
 import { VideoEmbed } from "../_components/video-embed";
-import { compileMDX } from "next-mdx-remote/rsc";
-import remarkGfm from "remark-gfm";
+import { compileMdx } from "@/lib/mdx";
 import type { ProjectMeta } from "@/lib/types";
 import { Comments } from "@/components/shared/comments";
 import { ProjectTitle } from "../_components/project-title";
 import { proseClassName } from "@/lib/utils";
 import { generateContentStaticParams } from "@/lib/static-params";
-
-const mdxOptions = {
-  parseFrontmatter: false,
-  mdxOptions: { remarkPlugins: [remarkGfm] },
-};
 
 export async function generateStaticParams() {
   return generateContentStaticParams((locale) => getAllProjects(locale));
@@ -82,10 +76,7 @@ export default async function ProjectDetailPage({
   if (!project) notFound();
 
   // Compile main overview content (en.mdx / ko.mdx)
-  const { content: overviewMdx } = await compileMDX({
-    source: project.content,
-    options: mdxOptions,
-  });
+  const overviewMdx = await compileMdx(project.content);
 
   // Resolve tab visibility: central default AND per-project frontmatter AND file existence
   // If any source says false, the tab is hidden
@@ -104,11 +95,7 @@ export default async function ProjectDetailPage({
   if (showDesign) {
     const designDoc = getDesignContent(locale, slug);
     if (designDoc) {
-      const { content: compiled } = await compileMDX({
-        source: designDoc.content,
-        options: mdxOptions,
-      });
-      designMdx = compiled;
+      designMdx = await compileMdx(designDoc.content);
     }
   }
 
@@ -117,11 +104,7 @@ export default async function ProjectDetailPage({
   if (showEngineering) {
     const engineeringDoc = getEngineeringDoc(locale, slug);
     if (engineeringDoc) {
-      const { content: compiled } = await compileMDX({
-        source: engineeringDoc.content,
-        options: mdxOptions,
-      });
-      engineeringMdx = compiled;
+      engineeringMdx = await compileMdx(engineeringDoc.content);
     }
   }
 

@@ -3,7 +3,7 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { hasLocale, useTranslations } from "next-intl";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
-import { compileMDX } from "next-mdx-remote/rsc";
+import { compileMdx } from "@/lib/mdx";
 import { getAboutContent } from "@/lib/content";
 import { buildPageMeta, buildPersonJsonLd } from "@/lib/seo";
 import { JsonLd } from "@/components/shared/json-ld";
@@ -35,14 +35,7 @@ export default async function AboutPage({
   setRequestLocale(locale);
   const about = getAboutContent(locale);
 
-  const mdxContent = about
-    ? (
-        await compileMDX({
-          source: about.content,
-          options: { parseFrontmatter: false },
-        })
-      ).content
-    : null;
+  const mdxContent = about ? await compileMdx(about.content) : null;
 
   return (
     <>

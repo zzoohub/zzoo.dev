@@ -12,8 +12,7 @@ import {
   buildCanonicalUrl,
 } from "@/lib/seo";
 import { JsonLd } from "@/components/shared/json-ld";
-import { compileMDX } from "next-mdx-remote/rsc";
-import remarkGfm from "remark-gfm";
+import { compileMdx } from "@/lib/mdx";
 import { siteConfig } from "@/lib/site-config";
 import { Comments } from "@/components/shared/comments";
 import { proseClassName } from "@/lib/utils";
@@ -54,10 +53,7 @@ export default async function BlogPostPage({
 
   if (!post) notFound();
 
-  const { content: mdxContent } = await compileMDX({
-    source: post.content,
-    options: { parseFrontmatter: false, mdxOptions: { remarkPlugins: [remarkGfm] } },
-  });
+  const mdxContent = await compileMdx(post.content);
 
   const allPosts = getAllBlogPosts(locale);
   const currentIndex = allPosts.findIndex((p) => p.slug === slug);
