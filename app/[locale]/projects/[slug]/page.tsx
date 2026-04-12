@@ -32,6 +32,7 @@ import type { ProjectMeta } from "@/lib/types";
 import { Comments } from "@/components/shared/comments";
 import { ProjectTitle } from "../_components/project-title";
 import { Breadcrumb } from "@/components/shared/breadcrumb";
+import { TagList } from "@/components/shared/tag-list";
 import { proseClassName } from "@/lib/utils";
 import { generateContentStaticParams } from "@/lib/static-params";
 
@@ -216,18 +217,9 @@ function ProjectDetailContent({
           </p>
 
           {/* Tags */}
-          {meta.tags.length > 0 && (
-            <div className="mt-6 flex flex-wrap gap-2">
-              {meta.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full border border-border bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
+          <div className="mt-6">
+            <TagList tags={meta.tags} />
+          </div>
         </header>
 
         {/* Image Gallery */}

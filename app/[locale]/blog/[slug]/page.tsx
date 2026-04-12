@@ -13,6 +13,7 @@ import {
 } from "@/lib/seo";
 import { JsonLd } from "@/components/shared/json-ld";
 import { Breadcrumb } from "@/components/shared/breadcrumb";
+import { TagList } from "@/components/shared/tag-list";
 import { compileMdx } from "@/lib/mdx";
 import { siteConfig } from "@/lib/site-config";
 import { Comments } from "@/components/shared/comments";
@@ -135,15 +136,8 @@ function BlogPostContent({
               {meta.title}
             </h1>
 
-            <div className="mt-5 flex flex-wrap gap-2">
-              {meta.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full border border-border bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground"
-                >
-                  {tag}
-                </span>
-              ))}
+            <div className="mt-5">
+              <TagList tags={meta.tags} />
             </div>
           </header>
 
