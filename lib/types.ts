@@ -3,8 +3,6 @@ export type {
   BlogPost,
   ProjectMeta,
   Project,
-  CaseStudyMeta,
-  CaseStudy,
   ExperienceEntry,
   AboutData,
   Testimonial,

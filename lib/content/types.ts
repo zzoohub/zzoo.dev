@@ -24,10 +24,6 @@ export interface Project extends ProjectMeta {
   content: string;
 }
 
-/** @deprecated Use ProjectMeta instead */
-export type CaseStudyMeta = ProjectMeta;
-/** @deprecated Use Project instead */
-export type CaseStudy = Project;
 
 export type ExperienceEntry = z.infer<typeof aboutFrontmatterSchema>["experience"][number];
 export type AboutData = z.infer<typeof aboutFrontmatterSchema> & {

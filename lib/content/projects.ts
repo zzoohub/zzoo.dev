@@ -124,17 +124,3 @@ export function getEngineeringDoc(
     content,
   };
 }
-
-// Backward-compatible aliases
-/** @deprecated Use getAllProjects */
-export const getAllCaseStudies = getAllProjects;
-/** @deprecated Use getProject */
-export const getCaseStudy = getProject;
-/** @deprecated Use hasDesignContent */
-export const hasCaseStudy = hasDesignContent;
-/** @deprecated Use getDesignContent */
-export const getCaseStudyContent = getDesignContent;
-/** @deprecated Use hasEngineeringDoc */
-export const hasDesignDoc = hasEngineeringDoc;
-/** @deprecated Use getEngineeringDoc */
-export const getDesignDoc = getEngineeringDoc;
